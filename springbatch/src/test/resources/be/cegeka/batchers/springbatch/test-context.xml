@@ -33,4 +33,7 @@
 
     <beans:bean id="jobLauncher" class="org.springframework.batch.core.launch.support.SimpleJobLauncher"
                 p:jobRepository-ref="jobRepository"/>
+
+    <context:component-scan base-package="be.cegeka" />
+    <beans:import resource="persistence.xml"/>
 </beans:beans>
