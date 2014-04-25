@@ -1,22 +1,32 @@
 package be.cegeka.batchers.springbatch.domain;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
 public class Employee {
-    private int income;
+    private Integer income;
 
     @Id
     @GeneratedValue
     private Long id;
+    private String firstName;
+    private String lastName;
+    private Integer savings = new Integer(0);
+    private String address;
+    @Type(type = "org.joda.time.contrib.hibernate.PersistentDateTime")
+    private DateTime calculationDate;
+    private int retirementSavings;
 
     public void setIncome(int income) {
         this.income = income;
     }
 
-    public int getIncome() {
+    public Integer getIncome() {
         return income;
     }
 
@@ -28,4 +38,41 @@ public class Employee {
         this.id = id;
     }
 
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public DateTime getCalculationDate() {
+        return calculationDate;
+    }
+
+
+    public void setRetirementSavings(int retirementSavings) {
+        this.retirementSavings = retirementSavings;
+        this.calculationDate = new DateTime();
+    }
+
+    public int getRetirementSavings() {
+        return retirementSavings;
+    }
 }
