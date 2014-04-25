@@ -59,6 +59,6 @@ public class EmployeeRepositoryTest {
         repository.save(employee);
 
         Employee saved = repository.getBy(employee.getId());
-        assertThat(saved.getCalculationDate().isBeforeNow());
+        assertThat(saved.getCalculationDate().isBeforeNow()).isTrue();
     }
 }
