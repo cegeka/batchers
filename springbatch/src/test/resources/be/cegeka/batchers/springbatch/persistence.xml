@@ -18,7 +18,7 @@
         <property name="packagesToScan" value="be.cegeka.batchers.springbatch"/>
         <property name="jpaPropertyMap">
             <map>
-                <entry key="hibernate.hbm2ddl.auto" value="create"/>
+                <entry key="hibernate.hbm2ddl.auto" value="create-drop"/>
                 <entry key="hibernate.show_sql" value="true"/>
             </map>
         </property>
