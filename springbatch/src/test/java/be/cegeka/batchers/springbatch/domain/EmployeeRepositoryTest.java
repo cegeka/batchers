@@ -44,14 +44,14 @@ public class EmployeeRepositoryTest extends IntegrationTest {
         assertThat(savedEmployee.getIncome()).isEqualTo(INCOME);
         assertThat(savedEmployee.getFirstName()).isEqualTo(FIRST_NAME);
         assertThat(savedEmployee.getLastName()).isEqualTo(LAST_NAME);
-        assertThat(savedEmployee.getRetirementSavings()).isEqualTo(new Integer(0));
+        assertThat(savedEmployee.getTaxTotal()).isEqualTo(new Integer(0));
         assertThat(savedEmployee.getAddress()).isEqualTo(SOME_ADDRESS);
     }
 
     @Test
     public void testWhenSettingRetirementSavingsTheCalculationDateIsCurrentDate() throws Exception {
         Employee employee = new Employee();
-        employee.setRetirementSavings(34);
+        employee.setTaxTotal(34);
         repository.save(employee);
 
         Employee saved = repository.getBy(employee.getId());

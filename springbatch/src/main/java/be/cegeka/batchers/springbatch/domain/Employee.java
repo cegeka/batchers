@@ -16,11 +16,10 @@ public class Employee {
     private Long id;
     private String firstName;
     private String lastName;
-    private Integer savings = new Integer(0);
     private String address;
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime calculationDate;
-    private int retirementSavings;
+    private int taxTotal;
 
     public void setIncome(int income) {
         this.income = income;
@@ -67,12 +66,12 @@ public class Employee {
     }
 
 
-    public void setRetirementSavings(int retirementSavings) {
-        this.retirementSavings = retirementSavings;
+    public void setTaxTotal(int taxTotal) {
+        this.taxTotal = taxTotal;
         this.calculationDate = new DateTime();
     }
 
-    public int getRetirementSavings() {
-        return retirementSavings;
+    public int getTaxTotal() {
+        return taxTotal;
     }
 }
