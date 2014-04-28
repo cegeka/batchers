@@ -18,7 +18,7 @@ public class Employee {
     private String lastName;
     private Integer savings = new Integer(0);
     private String address;
-    @Type(type = "org.joda.time.contrib.hibernate.PersistentDateTime")
+    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime calculationDate;
     private int retirementSavings;
 
