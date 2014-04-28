@@ -11,6 +11,10 @@ public class ApplicationInitializer implements ApplicationListener<ContextRefres
     private boolean generateEmployees = true;
 
     public void onApplicationEvent(ContextRefreshedEvent event) {
+        runEmployeesGenerator();
+    }
+
+    private void runEmployeesGenerator() {
         if (generateEmployees) {
             employeeGenerator.generateAll();
         }
