@@ -109,6 +109,11 @@
             <artifactId>usertype.core</artifactId>
             <version>3.1.0.CR1</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.javafaker</groupId>
+            <artifactId>javafaker</artifactId>
+            <version>0.3</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

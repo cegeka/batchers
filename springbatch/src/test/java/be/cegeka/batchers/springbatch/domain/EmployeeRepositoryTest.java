@@ -57,4 +57,33 @@ public class EmployeeRepositoryTest extends IntegrationTest {
         Employee saved = repository.getBy(employee.getId());
         assertThat(saved.getCalculationDate().isBeforeNow()).isTrue();
     }
+
+    @Test
+    public void testCount() throws Exception {
+        Employee first = new Employee();
+        Employee second = new Employee();
+
+        repository.save(first);
+        repository.save(second);
+
+        assertThat(repository.count()).isEqualTo(2L);
+    }
+
+    @Test
+    public void testGetAll() throws Exception {
+        Employee first = new Employee();
+        Employee second = new Employee();
+
+        repository.save(first);
+        repository.save(second);
+
+        assertThat(repository.getAll()).containsOnly(first, second);
+    }
+
+    @Test
+    public void testGetAllIsEmptyWhenNoEmployees() throws Exception {
+        assertThat(repository.getAll()).isEmpty();
+    }
+
+
 }
