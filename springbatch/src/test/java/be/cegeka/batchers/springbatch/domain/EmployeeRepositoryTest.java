@@ -2,8 +2,12 @@ package be.cegeka.batchers.springbatch.domain;
 
 
 import be.cegeka.batchers.springbatch.infrastructure.IntegrationTest;
+import org.joda.money.CurrencyUnit;
+import org.joda.money.Money;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.math.BigDecimal;
 
 import static org.fest.assertions.Assertions.assertThat;
 
@@ -36,7 +40,6 @@ public class EmployeeRepositoryTest extends IntegrationTest {
         employee.setIncome(INCOME);
         employee.setFirstName(FIRST_NAME);
         employee.setLastName(LAST_NAME);
-        employee.setAddress(SOME_ADDRESS);
 
         repository.save(employee);
 
@@ -44,14 +47,13 @@ public class EmployeeRepositoryTest extends IntegrationTest {
         assertThat(savedEmployee.getIncome()).isEqualTo(INCOME);
         assertThat(savedEmployee.getFirstName()).isEqualTo(FIRST_NAME);
         assertThat(savedEmployee.getLastName()).isEqualTo(LAST_NAME);
-        assertThat(savedEmployee.getTaxTotal()).isEqualTo(new Integer(0));
-        assertThat(savedEmployee.getAddress()).isEqualTo(SOME_ADDRESS);
+        assertThat(savedEmployee.getTaxTotal()).isEqualTo(Money.zero(CurrencyUnit.EUR));
     }
 
     @Test
     public void testWhenSettingRetirementSavingsTheCalculationDateIsCurrentDate() throws Exception {
         Employee employee = new Employee();
-        employee.setTaxTotal(34);
+        employee.addTax(Money.of(CurrencyUnit.EUR, BigDecimal.TEN));
         repository.save(employee);
 
         Employee saved = repository.getBy(employee.getId());

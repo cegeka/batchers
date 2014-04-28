@@ -2,6 +2,8 @@ package be.cegeka.batchers.springbatch.domain;
 
 import be.cegeka.batchers.springbatch.infrastructure.IntegrationTest;
 import org.fest.assertions.Assertions;
+import org.joda.money.CurrencyUnit;
+import org.joda.money.Money;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -45,6 +47,7 @@ public class EmployeeGeneratorTest extends IntegrationTest {
             assertThat(employee.getFirstName()).isNotNull();
             assertThat(employee.getIncome()).isGreaterThanOrEqualTo(500);
             assertThat(employee.getIncome()).isLessThanOrEqualTo(5000);
+            assertThat(employee.getTaxTotal()).isEqualTo(Money.zero(CurrencyUnit.EUR));
         }
 
         employeeGenerator.resetSize();

@@ -120,6 +120,11 @@
             <version>1.9.5</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.joda</groupId>
+            <artifactId>joda-money</artifactId>
+            <version>0.9.1</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
