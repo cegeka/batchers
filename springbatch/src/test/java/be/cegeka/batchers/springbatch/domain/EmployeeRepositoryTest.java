@@ -84,6 +84,4 @@ public class EmployeeRepositoryTest extends IntegrationTest {
     public void testGetAllIsEmptyWhenNoEmployees() throws Exception {
         assertThat(repository.getAll()).isEmpty();
     }
-
-
 }

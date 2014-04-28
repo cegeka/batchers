@@ -34,4 +34,11 @@
 
     <beans:bean id="jobLauncher" class="org.springframework.batch.core.launch.support.SimpleJobLauncher"
                 p:jobRepository-ref="jobRepository"/>
+
+    <context:component-scan base-package="be.cegeka.batchers.springbatch" />
+
+    <beans:bean class="be.cegeka.batchers.springbatch.application.ApplicationInitializer">
+        <beans:property name="generateEmployees" value="true"/>
+        <beans:property name="employeeGenerator" ref="employeeGenerator"/>
+    </beans:bean>
 </beans:beans>

@@ -17,6 +17,13 @@
                 p:username="${jdbc.user}"
                 p:password="${jdbc.password}"/>
 
+
+    <beans:bean class="be.cegeka.batchers.springbatch.application.ApplicationInitializer">
+        <beans:property name="generateEmployees" value="false" />
+        <beans:property name="employeeGenerator" ref="employeeGenerator" />
+    </beans:bean>
+
     <context:component-scan base-package="be.cegeka"/>
+
     <beans:import resource="persistence.xml"/>
 </beans:beans>

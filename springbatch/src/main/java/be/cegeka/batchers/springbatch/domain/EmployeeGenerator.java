@@ -10,7 +10,7 @@ import static java.lang.System.currentTimeMillis;
 
 @Component
 public class EmployeeGenerator {
-    public static final Long GENERATED_COUNT = 300_000L;
+    public static final Long GENERATED_COUNT = 300L;
 
     private Long size = GENERATED_COUNT;
 

@@ -12,6 +12,7 @@ import static org.fest.assertions.Assertions.assertThat;
 public class EmployeeGeneratorTest extends IntegrationTest {
 
     public static final long SIZE = 7L;
+
     @Autowired
     private EmployeeRepository employeeRepository;
 
