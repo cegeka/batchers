@@ -23,8 +23,8 @@
         <maven.exec.plugin.version>1.2.1</maven.exec.plugin.version>
         <maven.jar.plugin.version>2.4</maven.jar.plugin.version>
         <maven.assembly.plugin.version>2.4</maven.assembly.plugin.version>
-        <compiler.target.version>1.6</compiler.target.version>
-        <compiler.source.version>1.6</compiler.source.version>
+        <compiler.target.version>1.8</compiler.target.version>
+        <compiler.source.version>1.8</compiler.source.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
