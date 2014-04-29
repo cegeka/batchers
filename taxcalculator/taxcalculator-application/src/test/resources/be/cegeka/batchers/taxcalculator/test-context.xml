@@ -8,19 +8,21 @@
         xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:property-placeholder location="classpath:/be/cegeka/batchers/springbatch/test-context.properties"
+    <context:property-placeholder location="classpath:/be/cegeka/batchers/taxcalculator/test-context.properties"
                                   ignore-unresolvable="true"/>
 
     <beans:bean id="dataSource" class="${jdbc.datasource.class}"
                 p:driverClassName="${jdbc.driver}"
                 p:url="${jdbc.url}"
                 p:username="${jdbc.user}"
-                p:password="${jdbc.password}"/>
+                p:password="${jdbc.password}"
+                p:defaultAutoCommit="false"
+            />
 
 
     <beans:bean class="be.cegeka.batchers.taxcalculator.application.ApplicationInitializer">
-        <beans:property name="generateEmployees" value="false" />
-        <beans:property name="employeeGenerator" ref="employeeGenerator" />
+        <beans:property name="generateEmployees" value="false"/>
+        <beans:property name="employeeGenerator" ref="employeeGenerator"/>
     </beans:bean>
 
     <context:component-scan base-package="be.cegeka"/>
