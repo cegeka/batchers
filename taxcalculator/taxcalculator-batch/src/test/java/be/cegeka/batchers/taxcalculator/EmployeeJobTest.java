@@ -30,7 +30,6 @@ public class EmployeeJobTest {
     private Job job;
 
     @Test
-    @Ignore
     public void testEmployeeJob() throws Exception {
         JobExecution jobExecution = jobLauncher.run(job, new JobParametersBuilder()
                 .addDate("run.date", new Date())
