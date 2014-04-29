@@ -39,4 +39,12 @@ public class TaxTo {
     public void setAmount(Double amount) {
         this.amount = amount;
     }
+
+    @Override
+    public String toString() {
+        return "TaxTo{" +
+                "employeeId='" + employeeId + '\'' +
+                ", amount=" + amount +
+                '}';
+    }
 }
