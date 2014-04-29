@@ -10,6 +10,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = "be.cegeka")
+@ComponentScan(basePackages = "be.cegeka.batchers.taxservice")
 public class AppConfig {
 }
