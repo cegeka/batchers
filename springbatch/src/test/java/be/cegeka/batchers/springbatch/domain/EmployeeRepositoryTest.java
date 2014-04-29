@@ -15,7 +15,6 @@ public class EmployeeRepositoryTest extends IntegrationTest {
     public static final int INCOME = 500;
     public static final String FIRST_NAME = "FirstName";
     public static final String LAST_NAME = "LastName";
-    public static final String SOME_ADDRESS = "Some address";
 
     @Autowired
     EmployeeRepository repository;
