@@ -30,7 +30,7 @@ public class EmployeeProcesorTest {
     }
 
     @Test
-    public void testRead() throws Exception {
+    public void whenAnEmployeeWithoutCalculatedTax_isProcessed_thenTaxIsOnlyPercentOfCurrentIncome() throws Exception {
         int income1 = 1000;
         int income2 = 1500;
         Employee employee1 = new Employee();
@@ -64,9 +64,24 @@ public class EmployeeProcesorTest {
 
         employee1 = employeeProcessor.process(employee1);
 
-        assertEquals("processed employee tax is not equal to given one", (int) (taxTotal + income1 * 0.1),
+        assertEquals("processed employee tax is not correct", (int) (taxTotal + income1 * 0.1),
                 employee1.getTaxTotal());
         DateTime calculationDate1 = employee1.getCalculationDate();
         assertTrue("tax calculation date is wrong", interval.contains(calculationDate1));
+    }
+
+    @Test
+    public void whenAnAlreadyProcessedEmployee_isProcessed_thenTaxIsSame() {
+        Employee employee = new Employee();
+        int taxTotal = 12345;
+        employee.setTaxTotal(taxTotal);
+        employee.setIncome(2000);
+        DateTime calculationDate = employee.getCalculationDate();
+
+        employee = employeeProcessor.process(employee);
+
+        assertEquals("tax should not change", taxTotal, employee.getTaxTotal());
+        assertEquals("calculation date should not change", calculationDate, employee.getCalculationDate());
+
     }
 }
