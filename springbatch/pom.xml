@@ -114,7 +114,16 @@
             <artifactId>javafaker</artifactId>
             <version>0.3</version>
         </dependency>
+        <!-- mockito needs extra dependencies: objenesis & hamcrest -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>1.9.5</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -170,6 +179,25 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <mainClass>org.springframework.batch.core.launch.support.CommandLineJobRunner</mainClass>
+                    <arguments>
+                        <argument>META-INF/spring/jobs/personJob/personJob-context.xml</argument>
+                        <argument>personJob</argument>
+                    </arguments>
+                </configuration>
             </plugin>
         </plugins>
     </build>
