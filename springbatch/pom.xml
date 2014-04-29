@@ -12,7 +12,7 @@
     <description>springbatch - 1.0-SNAPSHOT</description>
     <properties>
         <spring.framework.version>4.0.3.RELEASE</spring.framework.version>
-        <spring.batch.version>2.2.5.RELEASE</spring.batch.version>
+        <spring.batch.version>3.0.0.M3</spring.batch.version>
         <hibernate.version>4.3.1.Final</hibernate.version>
         <junit.version>4.11</junit.version>
         <commons.dbcp.version>1.4</commons.dbcp.version>
@@ -27,6 +27,18 @@
         <compiler.source.version>1.8</compiler.source.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>http://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -179,25 +191,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.2.1</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <mainClass>org.springframework.batch.core.launch.support.CommandLineJobRunner</mainClass>
-                    <arguments>
-                        <argument>META-INF/spring/jobs/personJob/personJob-context.xml</argument>
-                        <argument>personJob</argument>
-                    </arguments>
-                </configuration>
             </plugin>
         </plugins>
     </build>
