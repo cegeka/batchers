@@ -71,6 +71,14 @@ public class Employee {
         this.calculationDate = new DateTime();
     }
 
+    /**
+     * used only in testing
+     * @param calculationDate
+     */
+    public void setCalculationDate(DateTime calculationDate) {
+        this.calculationDate = calculationDate;
+    }
+
     public int getTaxTotal() {
         return taxTotal;
     }
@@ -105,4 +113,5 @@ public class Employee {
         result = 31 * result + taxTotal;
         return result;
     }
+
 }
