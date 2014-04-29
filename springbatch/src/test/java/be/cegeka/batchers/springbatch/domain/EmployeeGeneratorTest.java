@@ -1,7 +1,7 @@
 package be.cegeka.batchers.springbatch.domain;
 
 import be.cegeka.batchers.springbatch.infrastructure.IntegrationTest;
-import org.fest.assertions.Assertions;
+import org.fest.assertions.api.Assertions;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.junit.Test;
@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.assertThat;
 
 public class EmployeeGeneratorTest extends IntegrationTest {
 
