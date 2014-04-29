@@ -31,5 +31,5 @@
     <tx:annotation-driven/>
     <!--TODO: rename this file to something else because TX is not just about persistence -->
 
-    <context:component-scan base-package="be.cegeka" />
+    <context:component-scan base-package="be.cegeka"/>
 </beans>

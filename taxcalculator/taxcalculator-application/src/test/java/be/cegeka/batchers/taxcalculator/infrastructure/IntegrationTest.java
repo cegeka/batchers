@@ -7,7 +7,7 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 
 import javax.transaction.Transactional;
 
-@ContextConfiguration(locations = "classpath:/be/cegeka/batchers/springbatch/test-context.xml")
+@ContextConfiguration(locations = "classpath:/be/cegeka/batchers/taxcalculator/test-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
 @TransactionConfiguration(defaultRollback = true)
 @Transactional

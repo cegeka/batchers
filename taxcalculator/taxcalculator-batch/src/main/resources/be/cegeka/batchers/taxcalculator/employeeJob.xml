@@ -19,5 +19,5 @@
         </batch:step>
     </batch:job>
 
-    <beans:import resource="classpath:/META-INF/spring/jobs/personJob/personJob-beans.xml"/>
+    <beans:import resource="classpath:/be/cegeka/batchers/taxcalculator/employeeJob-beans.xml"/>
 </beans:beans>

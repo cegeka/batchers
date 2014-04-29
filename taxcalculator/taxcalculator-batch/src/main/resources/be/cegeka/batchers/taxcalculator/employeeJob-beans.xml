@@ -23,14 +23,14 @@
                 </beans:property>
                 <beans:property name="fieldSetMapper">
                     <beans:bean class="org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper">
-                        <beans:property name="targetType" value="be.cegeka.batchers.taxcalculator.Person"/>
+                        <beans:property name="targetType" value="be.cegeka.batchers.taxcalculator.domain.Employee"/>
                     </beans:bean>
                 </beans:property>
             </beans:bean>
         </beans:property>
     </beans:bean>
 
-    <beans:bean id="itemProcessor" class="be.cegeka.batchers.taxcalculator.PersonItemProcessor"/>
+    <beans:bean id="itemProcessor" class="be.cegeka.batchers.taxcalculator.EmployeeItemProcessor"/>
 
     <beans:bean id="itemWriter" class="org.springframework.batch.item.database.JdbcBatchItemWriter">
         <beans:property name="itemSqlParameterSourceProvider">

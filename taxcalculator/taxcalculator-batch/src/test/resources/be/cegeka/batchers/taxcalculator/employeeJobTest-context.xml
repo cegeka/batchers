@@ -13,9 +13,11 @@
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:property-placeholder location="classpath:/META-INF/spring/jobs/personJob/personJob-context.properties"/>
+    <context:property-placeholder
+            location="classpath:/be/cegeka/batchers/taxcalculator/employeeJobTest-context.properties"
+            ignore-unresolvable="true"/>
 
-    <beans:import resource="classpath:/META-INF/spring/jobs/personJob/personJob.xml"/>
+    <beans:import resource="classpath:/be/cegeka/batchers/taxcalculator/test-context.xml"/>
 
     <jdbc:initialize-database data-source="dataSource">
         <jdbc:script location="${schema.script}"/>
@@ -23,22 +25,10 @@
 
     <batch:job-repository id="jobRepository"/>
 
-    <beans:bean id="dataSource" class="${jdbc.datasource.class}"
-                p:driverClassName="${jdbc.driver}"
-                p:url="${jdbc.url}"
-                p:username="${jdbc.user}"
-                p:password="${jdbc.password}"/>
-
-    <beans:bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
-                p:dataSource-ref="dataSource"/>
-
     <beans:bean id="jobLauncher" class="org.springframework.batch.core.launch.support.SimpleJobLauncher"
                 p:jobRepository-ref="jobRepository"/>
+    <beans:import resource="classpath*:/be/cegeka/batchers/taxcalculator/employeeJob.xml"/>
 
-    <context:component-scan base-package="be.cegeka.batchers.springbatch" />
-
-    <beans:bean class="be.cegeka.batchers.taxcalculator.application.ApplicationInitializer">
-        <beans:property name="generateEmployees" value="true"/>
-        <beans:property name="employeeGenerator" ref="employeeGenerator"/>
-    </beans:bean>
+    <beans:bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate"
+                p:dataSource-ref="dataSource"/>
 </beans:beans>
