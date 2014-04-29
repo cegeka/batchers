@@ -15,7 +15,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("test")
 @WebAppConfiguration
-@ContextConfiguration(locations = {"classpath:spring-context.xml", "classpath:spring-servlet.xml"})
+@ContextConfiguration(classes = AppConfig.class)
 public abstract class WebAppConfigurationAware {
 
     @Resource

@@ -3,12 +3,17 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_5.xsd"
 	version="2.5">
 
-	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>
-			classpath:/spring-context.xml
-		</param-value>
-	</context-param>
+    <context-param>
+        <param-name>contextClass</param-name>
+        <param-value>
+            org.springframework.web.context.support.AnnotationConfigWebApplicationContext
+        </param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>be.cegeka.batchers.taxservice.config.AppConfig</param-value>
+    </context-param>
 
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
@@ -18,10 +23,18 @@
 	<servlet>
 		<servlet-name>springServlet</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-		<init-param>
-			<param-name>contextConfigLocation</param-name>
-			<param-value>classpath:/spring-servlet.xml</param-value>
-		</init-param>
+        <init-param>
+            <param-name>contextClass</param-name>
+            <param-value>
+                org.springframework.web.context.support.AnnotationConfigWebApplicationContext
+            </param-value>
+        </init-param>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>
+                be.cegeka.batchers.taxservice.config.AppConfig
+            </param-value>
+        </init-param>
 		<init-param>
 			<param-name>debug</param-name>
 			<param-value>0</param-value>
