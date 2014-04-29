@@ -23,7 +23,7 @@
         <jdbc:script location="${schema.script}"/>
     </jdbc:initialize-database>
 
-    <batch:job-repository id="jobRepository"/>
+    <batch:job-repository id="jobRepository" isolation-level-for-create="DEFAULT"/>
 
     <beans:bean id="jobLauncher" class="org.springframework.batch.core.launch.support.SimpleJobLauncher"
                 p:jobRepository-ref="jobRepository"/>
