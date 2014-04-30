@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import java.util.List;
@@ -40,7 +41,7 @@ public class EmployeeRepository {
                         criteriaQuery.from(Employee.class))
         );
 
-         return entityManager.createQuery(criteriaQuery).getSingleResult();
+        return entityManager.createQuery(criteriaQuery).getSingleResult();
     }
 
     public List<Employee> getAll() {
@@ -51,5 +52,12 @@ public class EmployeeRepository {
 
         return entityManager.createQuery(criteriaQuery).getResultList();
 
+    }
+
+    public List<Employee> getFirst20() {
+        TypedQuery<Employee> first20 = entityManager.createNamedQuery("first20", Employee.class);
+        first20.setMaxResults(20);
+
+        return first20.getResultList();
     }
 }

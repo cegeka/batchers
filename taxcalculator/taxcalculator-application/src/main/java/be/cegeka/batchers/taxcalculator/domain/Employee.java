@@ -7,9 +7,11 @@ import org.joda.money.Money;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+
+@NamedQueries({
+        @NamedQuery(name = "first20", query = "SELECT e FROM Employee e")
+})
 
 @Entity
 public class Employee {

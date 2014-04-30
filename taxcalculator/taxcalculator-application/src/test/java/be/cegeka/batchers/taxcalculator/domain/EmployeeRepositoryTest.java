@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -84,5 +85,15 @@ public class EmployeeRepositoryTest extends IntegrationTest {
     @Test
     public void testGetAllIsEmptyWhenNoEmployees() throws Exception {
         assertThat(repository.getAll()).isEmpty();
+    }
+
+    @Test
+    public void testGetFirst20() throws Exception {
+        for (int i = 0; i < 30; i++) {
+            repository.save(new Employee());
+        }
+
+        List<Employee> first20 = repository.getFirst20();
+        assertThat(first20).hasSize(20);
     }
 }
