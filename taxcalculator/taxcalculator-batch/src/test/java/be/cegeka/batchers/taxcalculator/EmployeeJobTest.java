@@ -19,6 +19,7 @@ import static org.junit.Assert.assertTrue;
 
 @ContextConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
+@Ignore
 public class EmployeeJobTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -30,6 +31,7 @@ public class EmployeeJobTest {
     private Job job;
 
     @Test
+    @Ignore
     public void testEmployeeJob() throws Exception {
         JobExecution jobExecution = jobLauncher.run(job, new JobParametersBuilder()
                 .addDate("run.date", new Date())

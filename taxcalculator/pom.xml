@@ -12,7 +12,7 @@
     <description>TaxCalculator - 1.0-SNAPSHOT</description>
     <properties>
         <spring.framework.version>4.0.3.RELEASE</spring.framework.version>
-        <spring.batch.version>2.2.5.RELEASE</spring.batch.version>
+        <spring.batch.version>3.0.0.M3</spring.batch.version>
         <hibernate.version>4.3.1.Final</hibernate.version>
         <junit.version>4.11</junit.version>
         <commons.dbcp.version>1.4</commons.dbcp.version>
@@ -33,6 +33,17 @@
         <module>taxcalculator-batch</module>
         <module>taxcalculator-presentation</module>
     </modules>
+
+    <repositories>
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>http://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <dependencyManagement>
         <dependencies>

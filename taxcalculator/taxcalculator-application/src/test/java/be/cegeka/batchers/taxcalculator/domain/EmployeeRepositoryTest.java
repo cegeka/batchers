@@ -51,7 +51,8 @@ public class EmployeeRepositoryTest extends IntegrationTest {
     @Test
     public void testWhenSettingRetirementSavingsTheCalculationDateIsCurrentDate() throws Exception {
         Employee employee = new Employee();
-        employee.addTax(Money.of(CurrencyUnit.EUR, BigDecimal.TEN));
+        employee.setIncome(100);
+        employee.addTax();
         repository.save(employee);
 
         Employee saved = repository.getBy(employee.getId());

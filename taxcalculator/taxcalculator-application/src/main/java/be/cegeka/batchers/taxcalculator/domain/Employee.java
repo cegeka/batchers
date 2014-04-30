@@ -5,6 +5,7 @@ import org.hibernate.annotations.Type;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.joda.time.DateTime;
+import org.joda.time.Interval;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -61,9 +62,33 @@ public class Employee {
         return calculationDate;
     }
 
-    public void addTax(Money amount) {
-        this.taxTotal = Money.total(taxTotal, amount);
-        this.calculationDate = new DateTime();
+    public void addTax() {
+        if (!taxWasCalculatedThisMonth(calculationDate)) {
+            double amount = getIncomeTax();
+            CurrencyUnit currency = taxTotal.getCurrencyUnit();
+            this.taxTotal = Money.total(taxTotal, Money.of(currency, amount));
+            this.calculationDate = new DateTime();
+        }
+    }
+
+    public double getIncomeTax() {
+        return income * 0.1;
+    }
+
+    private boolean taxWasCalculatedThisMonth(DateTime calculationDate) {
+        return calculationDate != null && getCurrentMonthInterval().contains(calculationDate);
+    }
+
+    private Interval getCurrentMonthInterval() {
+        return DateTime.now().monthOfYear().toInterval();
+    }
+
+    /**
+     * used only in testing
+     * @param calculationDate the date when it was calculated
+     */
+    public void setCalculationDate(DateTime calculationDate) {
+        this.calculationDate = calculationDate;
     }
 
     public Money getTaxTotal() {
@@ -98,4 +123,5 @@ public class Employee {
         result = 31 * result + (taxTotal != null ? taxTotal.hashCode() : 0);
         return result;
     }
+
 }
