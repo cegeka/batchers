@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class EmployeeProcessor implements ItemProcessor<Employee, Employee> {
+
     @Override
     public Employee process(Employee item) {
         DateTime calculationDate = item.getCalculationDate();

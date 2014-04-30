@@ -1,21 +1,20 @@
 package be.cegeka.batchers.springbatch.jobs.employeetax;
 
 import be.cegeka.batchers.springbatch.domain.Employee;
-import be.cegeka.batchers.springbatch.jobs.StandaloneInfrastructureConfiguration;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 
 /**
  * Created by andreip on 29.04.2014.
  */
 @Configuration
-@Import(StandaloneInfrastructureConfiguration.class)
+@EnableBatchProcessing
 public class EmployeeTaxJob {
 
     @Autowired
@@ -24,7 +23,6 @@ public class EmployeeTaxJob {
     @Autowired
     private StepBuilderFactory stepBuilders;
 
-/*
     @Autowired
     private EmployeeReader employeeReader;
 
@@ -33,7 +31,6 @@ public class EmployeeTaxJob {
 
     @Autowired
     private EmployeeProcessor employeeProcessor;
-*/
 
     @Bean
     public Job employeeTaxJob() {
@@ -46,22 +43,10 @@ public class EmployeeTaxJob {
     public Step step() {
         return stepBuilders.get("step")
                 .<Employee, Employee>chunk(1)
-                .reader(getEmployeeReader())
-                .processor(getEmployeeProcessor())
-                .writer(getEmployeeWriter())
+                .reader(employeeReader)
+                .processor(employeeProcessor)
+                .writer(employeeWriter)
                 .build();
-    }
-
-    private EmployeeWriter getEmployeeWriter() {
-        return new EmployeeWriter();
-    }
-
-    private EmployeeProcessor getEmployeeProcessor() {
-        return new EmployeeProcessor();
-    }
-
-    private EmployeeReader getEmployeeReader() {
-        return new EmployeeReader();
     }
 
 }
