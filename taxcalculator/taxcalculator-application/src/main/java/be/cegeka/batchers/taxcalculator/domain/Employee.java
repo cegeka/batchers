@@ -6,9 +6,11 @@ import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.joda.time.DateTime;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+
+@NamedQueries({
+        @NamedQuery(name = "first20", query = "SELECT e FROM Employee e")
+})
 
 @Entity
 public class Employee {
