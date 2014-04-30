@@ -14,16 +14,78 @@
     <artifactId>taxcalculator-presentation</artifactId>
     <packaging>war</packaging>
 
+    <dependencies>
+        <dependency>
+            <groupId>be.cegeka.batchers</groupId>
+            <artifactId>taxcalculator-application</artifactId>
+        </dependency>
+    </dependencies>
+
+
+    <!-- ___________Karma Configuration___________ -->
+
+    <properties>
+        <browsers>Chrome</browsers>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.4</version>
+                <groupId>com.kelveden</groupId>
+                <artifactId>maven-karma-plugin</artifactId>
+                <version>1.2</version>
+                <executions>
+                    <execution>
+                        <id>unit</id>
+                        <goals>
+                            <goal>start</goal>
+                        </goals>
+                        <configuration>
+                            <singleRun>true</singleRun>
+                            <browsers>${browsers}</browsers>
+                            <configFile>src/test/js/karma/config/karma.conf.js</configFile>
+                            <reporters>dots,junit</reporters>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>e2e</id>
+                        <goals>
+                            <goal>start</goal>
+                        </goals>
+                        <configuration>
+                            <singleRun>true</singleRun>
+                            <browsers>${browsers}</browsers>
+                            <configFile>src/test/js/karma/config/karma-e2e.conf.js</configFile>
+                            <reporters>dots,junit</reporters>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!-- If you get ClassNotFoundExceptions on the Tomcat dependencies, try
+                    running Tomcat in advisor-client -->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>tomcat-maven-plugin</artifactId>
+                <version>1.1</version>
                 <configuration>
-                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <path>/taxcalculator</path>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.1.1</version>
+                <configuration>
+                    <webappDirectory>${project.build.directory}/${project.build.finalName}-war.war</webappDirectory>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
+
 </project>

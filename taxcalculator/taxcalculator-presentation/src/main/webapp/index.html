@@ -1,0 +1,53 @@
+<html ng-app="maintenancetool_app">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="application-name" content=""/>
+
+    <script src="resources/js/lib/angular.min.js"></script>
+    <script src="resources/js/lib/angular-sanitize.min.js"></script>
+    <script src="resources/js/lib/angular-translate.min.js"></script>
+    <script src="resources/js/lib/angular-translate-loader-url.min.js"></script>
+    <script src="resources/js/lib/angular-route.min.js"></script>
+    <script src="resources/js/lib/angular-resource.min.js"></script>
+    <script src="resources/js/lib/underscore.js"></script>
+
+    <script src="resources/js/lib/ui-bootstrap-tpls-0.10.0.min.js"></script>
+
+    <script src="resources/js/utils.js"></script>
+    <script src="resources/js/maintenancetool-app.js"></script>
+    <script src="resources/js/maintenancetool-services.js"></script>
+    <script src="resources/js/maintenancetool-controllers.js"></script>
+    <script src="resources/js/maintenancetool-directives.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="resources/css/bootstrap/bootstrap.min.css"/>
+    <link href="resources/css/init.css" rel="stylesheet"/>
+    <link href="resources/css/login.css" rel="stylesheet"/>
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+    <title>Customer Availability Tool</title>
+</head>
+<body ng-controller="MaintenanceConfigRootCtrl">
+
+<div class="container">
+
+    <div class="well form-signin">
+        <form class="" role="form" ng-controller="LoginCtrl">
+            <h2 class="form-signin-heading">Customer Availability Tool {{environment | uppercase}}</h2>
+            <h3>Please sign in</h3>
+            <input type="text" class="form-control" placeholder="username" ng-model="user.userName" required autofocus>
+            <input type="password" class="form-control" placeholder="Password" ng-model="user.password" required>
+
+            <div ng-if="response && !response.succeeded" class="alert alert-warning">
+                {{response.message}}
+            </div>
+
+            <button class="btn btn-lg btn-primary btn-block" ng-click="login(user)">Sign in</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>
