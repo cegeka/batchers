@@ -18,6 +18,9 @@ import java.util.Set;
 @Component
 public class WebAppInitializer implements WebApplicationInitializer {
 
+    public static final String DISPATCHER_SERVLET_NAME = "dispatcher";
+    public static final String DISPATCHER_SERVLET_MAPPING = "/rest/*";
+
     private static Logger LOG = LoggerFactory.getLogger(WebAppInitializer.class);
 
     @Override
@@ -30,7 +33,6 @@ public class WebAppInitializer implements WebApplicationInitializer {
     private WebApplicationContext createRootContext(ServletContext servletContext) {
         AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
         rootContext.register(ApplicationContext.class);
-        rootContext.refresh();
 
         servletContext.addListener(new ContextLoaderListener(rootContext));
         servletContext.setInitParameter("defaultHtmlEscape", "true");
@@ -44,10 +46,10 @@ public class WebAppInitializer implements WebApplicationInitializer {
 
         mvcContext.setParent(rootContext);
 
-        ServletRegistration.Dynamic appServlet = servletContext.addServlet(
-                "webservice", new DispatcherServlet(mvcContext));
-        appServlet.setLoadOnStartup(1);
-        Set<String> mappingConflicts = appServlet.addMapping("/");
+        ServletRegistration.Dynamic dispatcher = servletContext.addServlet(
+                DISPATCHER_SERVLET_NAME, new DispatcherServlet(mvcContext));
+        dispatcher.setLoadOnStartup(1);
+        Set<String> mappingConflicts = dispatcher.addMapping(DISPATCHER_SERVLET_MAPPING);
 
         if (!mappingConflicts.isEmpty()) {
             for (String s : mappingConflicts) {
