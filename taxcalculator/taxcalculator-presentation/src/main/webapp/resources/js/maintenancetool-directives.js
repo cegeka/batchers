@@ -1,1 +1,0 @@
-angular.module('maintenancetool_directives', [])

@@ -1,0 +1,22 @@
+<h1 class="page-header">Employees</h1>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>First name</th>
+            <th>Last name</th>
+            <th>Amount</th>
+            <th>Date Calculated</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="employee in employees | filter:searchQuery">
+            <td>{{employee.firstName}}</td>
+            <td>{{employee.lastName}}</td>
+            <td>{{employee.taxTotal}}</td>
+            <td>{{employee.calculationDate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
