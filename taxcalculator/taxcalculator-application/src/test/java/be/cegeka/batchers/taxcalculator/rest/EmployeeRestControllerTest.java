@@ -45,6 +45,7 @@ public class EmployeeRestControllerTest {
     public void testGetFirst20Employees() throws Exception {
         Employee employee = new Employee();
         employee.setFirstName("firstName");
+        employee.setIncome(200);
         List<Employee> employees = Lists.newArrayList(employee);
         String expectedJSON = new JacksonJsonObjectMapper().toJson(employees);
 
