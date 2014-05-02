@@ -5,12 +5,14 @@ import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
+@WebAppConfiguration
 public class EmployeeRepositoryTest extends IntegrationTest {
     public static final int INCOME = 500;
     public static final String FIRST_NAME = "FirstName";
