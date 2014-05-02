@@ -6,11 +6,13 @@ import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
+@WebAppConfiguration
 public class EmployeeGeneratorTest extends IntegrationTest {
     public static final long SIZE = 7L;
 
