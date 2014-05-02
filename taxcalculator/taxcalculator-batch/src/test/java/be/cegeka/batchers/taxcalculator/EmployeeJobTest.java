@@ -1,6 +1,5 @@
 package be.cegeka.batchers.taxcalculator;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.BatchStatus;
@@ -17,9 +16,8 @@ import java.util.Date;
 
 import static org.junit.Assert.assertTrue;
 
-@ContextConfiguration
+@ContextConfiguration("employeeJobTest-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
-@Ignore
 public class EmployeeJobTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -31,7 +29,6 @@ public class EmployeeJobTest {
     private Job job;
 
     @Test
-    @Ignore
     public void testEmployeeJob() throws Exception {
         JobExecution jobExecution = jobLauncher.run(job, new JobParametersBuilder()
                 .addDate("run.date", new Date())

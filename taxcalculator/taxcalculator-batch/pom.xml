@@ -40,4 +40,8 @@
         </dependency>
     </dependencies>
 
+    <!--
+    mvn compile exec:java -Dexec.mainClass=org.springframework.batch.core.launch.support.CommandLineJobRunner -Dexec.args="be.cegeka.batchers.taxcalculator.EmployeeJobTest employeeJobTest"
+    -->
+
 </project>
