@@ -14,6 +14,7 @@
         <spring.framework.version>4.0.3.RELEASE</spring.framework.version>
         <spring.batch.version>3.0.0.M3</spring.batch.version>
         <hibernate.version>4.3.1.Final</hibernate.version>
+        <slf4j.version>1.7.2</slf4j.version>
         <junit.version>4.11</junit.version>
         <commons.dbcp.version>1.4</commons.dbcp.version>
         <commons.io.version>2.4</commons.io.version>
@@ -110,6 +111,11 @@
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>4.3.0.Final</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-entitymanager</artifactId>
                 <version>${hibernate.version}</version>
             </dependency>
@@ -131,13 +137,6 @@
             </dependency>
 
             <dependency>
-                <groupId>log4j</groupId>
-                <artifactId>log4j</artifactId>
-                <version>${log4j.version}</version>
-            </dependency>
-
-
-            <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
                 <version>2.3</version>
@@ -157,6 +156,27 @@
                 <groupId>com.github.javafaker</groupId>
                 <artifactId>javafaker</artifactId>
                 <version>0.3</version>
+            </dependency>
+
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jcl-over-slf4j</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
             </dependency>
 
 

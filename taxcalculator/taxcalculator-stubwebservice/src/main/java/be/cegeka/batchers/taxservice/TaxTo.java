@@ -2,13 +2,6 @@ package be.cegeka.batchers.taxservice;
 
 import javax.validation.constraints.NotNull;
 
-/**
- * Created with IntelliJ IDEA.
- * User: raduci
- * Date: 29.04.2014
- * Time: 12:20
- * To change this template use File | Settings | File Templates.
- */
 public class TaxTo {
 
     @NotNull
