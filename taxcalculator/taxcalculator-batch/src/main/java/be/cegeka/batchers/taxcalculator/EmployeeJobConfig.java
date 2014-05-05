@@ -30,7 +30,8 @@ public class EmployeeJobConfig {
     @Autowired
     private DataSource dataSource;
 
-    private ItemReader<Employee> reader = new EmployeeReader();
+    @Autowired
+    private ItemReader<Employee> reader;
 
     @Bean
     public DataSource dataSource(){
@@ -67,7 +68,13 @@ public class EmployeeJobConfig {
     }
 
     private ItemReader<Employee> getReader() {
+        if(reader == null){
+            reader = new EmployeeReader();
+        }
         return reader;
     }
 
+    public void setReader(ItemReader<Employee> reader) {
+        this.reader = reader;
+    }
 }
