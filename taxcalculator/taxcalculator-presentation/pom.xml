@@ -76,6 +76,7 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.1.1</version>
                 <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
                     <webappDirectory>${project.build.directory}/${project.build.finalName}-war.war</webappDirectory>
                     <archive>
                         <manifest>
