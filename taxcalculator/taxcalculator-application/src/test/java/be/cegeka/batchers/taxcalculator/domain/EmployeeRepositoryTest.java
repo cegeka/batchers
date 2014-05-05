@@ -12,7 +12,6 @@ import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-@WebAppConfiguration
 public class EmployeeRepositoryTest extends IntegrationTest {
     public static final int INCOME = 500;
     public static final String FIRST_NAME = "FirstName";

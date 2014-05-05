@@ -12,7 +12,6 @@ import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-@WebAppConfiguration
 public class EmployeeGeneratorTest extends IntegrationTest {
     public static final long SIZE = 7L;
 

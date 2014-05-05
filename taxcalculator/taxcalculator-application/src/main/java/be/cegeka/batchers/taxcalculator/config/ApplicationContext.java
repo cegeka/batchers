@@ -12,7 +12,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @Configuration
 @EnableTransactionManagement
-@EnableWebMvc
 @Import(PersistenceConfig.class)
 @ComponentScan(basePackages = "be.cegeka.batchers.taxcalculator")
 public class ApplicationContext {
