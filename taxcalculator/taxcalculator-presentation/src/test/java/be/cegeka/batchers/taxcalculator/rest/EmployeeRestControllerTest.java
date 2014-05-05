@@ -13,6 +13,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.integration.support.json.Jackson2JsonObjectMapper;
 import org.springframework.integration.support.json.JacksonJsonObjectMapper;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -21,6 +22,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
 
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -47,16 +50,16 @@ public class EmployeeRestControllerTest {
         employee.setFirstName("firstName");
         employee.setIncome(200);
         List<Employee> employees = Lists.newArrayList(employee);
-        String expectedJSON = new JacksonJsonObjectMapper().toJson(employees);
+        String expectedJSON = new Jackson2JsonObjectMapper().toJson(employees);
 
         Mockito.when(employeeServiceMock.getFirst20()).thenReturn(employees);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/employees").contentType(MediaType.APPLICATION_JSON))
+        MvcResult mvcResult = mockMvc.perform(get("/employees").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
 
         String actualJSON = mvcResult.getResponse().getContentAsString();
 
-        Assertions.assertThat(actualJSON).isEqualTo(expectedJSON);
+        assertThat(actualJSON).isEqualTo(expectedJSON);
     }
 }
 
