@@ -11,14 +11,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-/**
- * Created with IntelliJ IDEA.
- * User: raduci
- * Date: 29.04.2014
- * Time: 14:42
- * To change this template use File | Settings | File Templates.
- */
-
 @RunWith(MockitoJUnitRunner.class)
 public class TaxServiceTest {
 

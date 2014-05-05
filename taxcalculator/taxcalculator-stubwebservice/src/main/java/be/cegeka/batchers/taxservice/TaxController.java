@@ -10,14 +10,6 @@ import javax.validation.Valid;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-/**
- * Created with IntelliJ IDEA.
- * User: raduci
- * Date: 28.04.2014
- * Time: 17:00
- * To change this template use File | Settings | File Templates.
- */
-
 @Controller
 public class TaxController {
 
