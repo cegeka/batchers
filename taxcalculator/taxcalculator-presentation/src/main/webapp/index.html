@@ -16,14 +16,27 @@
 </head>
 <body>
 
+<div class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <a href="#/" class="navbar-brand">Batchers</a>
+        </div>
+        <div class="navbar-collapse collapse" id="navbar-main">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="#/">Home</a>
+                </li>
+                <li>
+                    <a href="#/employees">Employees</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
 <div class="container">
     <div class="page-header"></div>
     <div ng-view></div>
-    <footer>
-        <div class="row">
-            <div>User Admin: v<span app-version></span></div>
-        </div>
-    </footer>
 </div>
 
 <script src="resources/js/lib/angular.min.js"></script>
