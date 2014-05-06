@@ -7,9 +7,9 @@ import java.util.Random;
 
 @Component
 public class RunningTimeService {
-    @Value(value = "${runningtimeservice.minimumTime}")
+    @Value(value = "${runningtimeservice.minimumTime:0}")
     private long minimumTime = 0L;
-    @Value(value = "${runningtimeservice.maximumTime}")
+    @Value(value = "${runningtimeservice.maximumTime:0}")
     private long maximumTime = 0L;
 
     public void sleep() {
