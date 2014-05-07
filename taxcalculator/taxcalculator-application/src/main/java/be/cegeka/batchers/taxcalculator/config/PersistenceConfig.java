@@ -44,9 +44,6 @@ public class PersistenceConfig {
         return ds;
     }
 
-    @Autowired
-    private DataSource dataSource;
-
     @Bean
     public JpaVendorAdapter jpaVendorAdapter() {
         HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
@@ -57,7 +54,7 @@ public class PersistenceConfig {
     @Bean
     public EntityManagerFactory entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean entityManager = new LocalContainerEntityManagerFactoryBean();
-        entityManager.setDataSource(dataSource);
+        entityManager.setDataSource(dataSource());
         entityManager.setPersistenceProviderClass(HibernatePersistence.class);
         entityManager.setJpaVendorAdapter(jpaVendorAdapter());
         entityManager.setPackagesToScan("be.cegeka.batchers.taxcalculator");

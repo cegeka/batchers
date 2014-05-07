@@ -4,11 +4,22 @@ import org.joda.money.Money;
 import org.joda.time.DateTime;
 
 public class EmployeeBuilder {
-    private Integer income;
+    private Long employeeId;
+    private Integer income = 0;
     private String firstName;
     private String lastName;
     private DateTime calculationDate;
     private Money taxTotal;
+
+    public Employee build() {
+        Employee employee = new Employee();
+        employee.setId(employeeId);
+        employee.setFirstName(firstName);
+        employee.setLastName(lastName);
+        employee.setIncome(income);
+        employee.setCalculationDate(calculationDate);
+        return employee;
+    }
 
     public EmployeeBuilder withIncome(Integer income) {
         this.income = income;
@@ -35,7 +46,10 @@ public class EmployeeBuilder {
         return this;
     }
 
-    public Employee createEmployee() {
-        return new Employee(income, firstName, lastName, calculationDate, taxTotal);
+
+
+    public EmployeeBuilder withId(long employeeId) {
+        this.employeeId = employeeId;
+        return this;
     }
 }

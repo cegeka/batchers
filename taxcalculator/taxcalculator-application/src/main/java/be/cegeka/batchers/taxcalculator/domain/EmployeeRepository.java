@@ -17,6 +17,7 @@ import java.util.List;
 @Repository
 @Transactional(isolation = Isolation.DEFAULT)
 public class EmployeeRepository {
+
     @PersistenceContext
     EntityManager entityManager;
 
@@ -55,7 +56,7 @@ public class EmployeeRepository {
     }
 
     public List<Employee> getFirst20() {
-        TypedQuery<Employee> first20 = entityManager.createNamedQuery("first20", Employee.class);
+        TypedQuery<Employee> first20 = entityManager.createNamedQuery(Employee.GET_ALL_NAME, Employee.class);
         first20.setMaxResults(20);
 
         return first20.getResultList();

@@ -1,7 +1,7 @@
 package be.cegeka.batchers.taxcalculator.batch;
 
-import be.cegeka.batchers.taxcalculator.batch.EmployeeProcessor;
 import be.cegeka.batchers.taxcalculator.domain.Employee;
+import be.cegeka.batchers.taxcalculator.domain.EmployeeBuilder;
 import be.cegeka.batchers.taxcalculator.domain.EmployeeRepository;
 import be.cegeka.batchers.taxcalculator.service.RunningTimeService;
 import be.cegeka.batchers.taxcalculator.service.TaxCalculatorService;
@@ -39,12 +39,12 @@ public class EmployeeProcessorTest {
 
     @Test
     public void whenAnEmployeeWithoutCalculatedTax_isProcessed_thenTaxIsOnlyPercentOfCurrentIncome() throws Exception {
-        int income1 = 1000;
-        int income2 = 1500;
-        Employee employee1 = new Employee();
-        employee1.setIncome(income1);
-        Employee employee2 = new Employee();
-        employee2.setIncome(income2);
+        Employee employee1 = new EmployeeBuilder()
+                .withIncome(1000)
+                .build();
+        Employee employee2 = new EmployeeBuilder()
+                .withIncome(1500)
+                .build();
 
         assertNull("employee should have empty calculation date", employee1.getCalculationDate());
         assertNull("employee should have empty calculation date", employee2.getCalculationDate());
@@ -63,10 +63,11 @@ public class EmployeeProcessorTest {
 
     @Test
     public void whenAnEmployeeWithPreviousTax_isProcessed_thenTaxOnCurrentIncomeIsAddedToTotalTax() throws Exception {
-        int income = 1000;
 
-        Employee employee = new Employee();
-        employee.setIncome(income);
+        Employee employee = new EmployeeBuilder()
+                .withIncome(1000)
+                .build();
+
         employee.addTax();
         employee.setCalculationDate(DateTime.now().minusMonths(1));
 
@@ -81,9 +82,10 @@ public class EmployeeProcessorTest {
 
     @Test
     public void whenAnAlreadyProcessedEmployee_isProcessed_thenTaxIsSame() {
-        Employee employee = new Employee();
+        Employee employee = new EmployeeBuilder()
+                .withIncome(2000)
+                .build();
 
-        employee.setIncome(2000);
         employee.addTax();
         DateTime calculationDate = employee.getCalculationDate();
 
@@ -96,8 +98,9 @@ public class EmployeeProcessorTest {
 
     @Test
     public void givenIncome_whenGetIncomeTax_thenReturnCorrectIncome() {
-        Employee employee = new Employee();
-        employee.setIncome(2000);
+        Employee employee = new EmployeeBuilder()
+                .withIncome(2000)
+                .build();
 
         double incomeTax = employee.getIncomeTax();
 

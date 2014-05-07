@@ -1,6 +1,7 @@
 package be.cegeka.batchers.taxcalculator.service;
 
 import be.cegeka.batchers.taxcalculator.domain.Employee;
+import be.cegeka.batchers.taxcalculator.domain.EmployeeBuilder;
 import be.cegeka.batchers.taxcalculator.domain.EmployeeRepository;
 import org.fest.assertions.api.Assertions;
 import org.joda.money.CurrencyUnit;
@@ -30,7 +31,7 @@ public class TaxCalculatorServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        employee = new Employee();
+        employee = new EmployeeBuilder().build();
         employee.setIncome(100);
     }
 

@@ -6,8 +6,8 @@ import static org.fest.assertions.api.Assertions.assertThat;
 
 public class RunningTimeServiceTest {
 
-    public static final long MINIMUM_TIME = 100L;
-    public static final long MAXIMUM_TIME = 500L;
+    public static final int MINIMUM_TIME = 100;
+    public static final int MAXIMUM_TIME = 500;
     RunningTimeService runningTimeService = new RunningTimeService();
     private long counter;
 

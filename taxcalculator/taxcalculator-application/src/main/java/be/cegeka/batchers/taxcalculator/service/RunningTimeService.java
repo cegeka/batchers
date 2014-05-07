@@ -7,10 +7,11 @@ import java.util.Random;
 
 @Component
 public class RunningTimeService {
+
     @Value(value = "${runningtimeservice.minimumTime:0}")
-    private long minimumTime = 0L;
+    private int minimumTime = 0;
     @Value(value = "${runningtimeservice.maximumTime:0}")
-    private long maximumTime = 0L;
+    private int maximumTime = 0;
 
     public void sleep() {
         if (minimumTime > 0 && maximumTime >= minimumTime) {
@@ -22,11 +23,11 @@ public class RunningTimeService {
         }
     }
 
-    public void setMinimumTime(long minimumTime) {
+    public void setMinimumTime(int minimumTime) {
         this.minimumTime = minimumTime;
     }
 
-    public void setMaximumTime(long maximumTime) {
+    public void setMaximumTime(int maximumTime) {
         this.maximumTime = maximumTime;
     }
 

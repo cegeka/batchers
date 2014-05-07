@@ -1,6 +1,7 @@
 package be.cegeka.batchers.taxcalculator.batch;
 
 import be.cegeka.batchers.taxcalculator.domain.Employee;
+import be.cegeka.batchers.taxcalculator.domain.EmployeeBuilder;
 import be.cegeka.batchers.taxcalculator.domain.EmployeeRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,10 +44,11 @@ public class EmployeeWriterTest {
     }
 
     private Employee getEmployee(long employeeNumber) {
-        Employee employee = new Employee();
-        employee.setId(employeeNumber);
-        employee.setFirstName("first name " + employeeNumber);
-        employee.setLastName("last name " + employeeNumber);
+        Employee employee = new EmployeeBuilder()
+                .withId(employeeNumber)
+                .withFirstName("first name " + employeeNumber)
+                .withLastName("last name " + employeeNumber)
+                .build();
         return employee;
     }
 }

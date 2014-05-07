@@ -6,17 +6,13 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import javax.sql.DataSource;
+import javax.persistence.EntityManagerFactory;
 
 @Configuration
 @EnableBatchProcessing
@@ -36,16 +32,17 @@ public class EmployeeJobConfig {
     private EmployeeProcessor processor;
 
     @Autowired
+    private EntityManagerFactory entityManagerFactory;
+
+    @Autowired
     private EmployeeWriter writer;
 
     @Bean
-    public DataSource dataSource(){
-        EmbeddedDatabaseBuilder embeddedDatabaseBuilder = new EmbeddedDatabaseBuilder();
-        return embeddedDatabaseBuilder
-                .addScript("classpath:org/springframework/batch/core/schema-drop-hsqldb.sql")
-                .addScript("classpath:org/springframework/batch/core/schema-hsqldb.sql")
-                .setType(EmbeddedDatabaseType.HSQL)
-                .build();
+    public JpaPagingItemReader<Employee> employeeItemReader() {
+        JpaPagingItemReader<Employee> employeeItemReader = new JpaPagingItemReader<>();
+        employeeItemReader.setEntityManagerFactory(entityManagerFactory);
+        employeeItemReader.setQueryString(Employee.GET_ALL_QUERY);
+        return employeeItemReader;
     }
 
     @Bean
@@ -59,7 +56,7 @@ public class EmployeeJobConfig {
     public Step step(){
         return stepBuilders.get("step")
                 .<Employee,Employee>chunk(1)
-                .reader(reader)
+                .reader(employeeItemReader())
                 .processor(processor)
                 .writer(writer)
                 .build();
