@@ -6,6 +6,7 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -26,16 +27,10 @@ public class EmployeeJobConfig {
     private StepBuilderFactory stepBuilders;
 
     @Autowired
-    private EmployeeReader reader;
-
-    @Autowired
     private EmployeeProcessor processor;
 
     @Autowired
     private EntityManagerFactory entityManagerFactory;
-
-    @Autowired
-    private EmployeeWriter writer;
 
     @Bean
     public JpaPagingItemReader<Employee> employeeItemReader() {
@@ -43,6 +38,13 @@ public class EmployeeJobConfig {
         employeeItemReader.setEntityManagerFactory(entityManagerFactory);
         employeeItemReader.setQueryString(Employee.GET_ALL_QUERY);
         return employeeItemReader;
+    }
+
+    @Bean
+    public JpaItemWriter<Employee> employeeItemWriter() {
+        JpaItemWriter<Employee> employeeJpaItemWriter = new JpaItemWriter<>();
+        employeeJpaItemWriter.setEntityManagerFactory(entityManagerFactory);
+        return employeeJpaItemWriter;
     }
 
     @Bean
@@ -58,7 +60,7 @@ public class EmployeeJobConfig {
                 .<Employee,Employee>chunk(1)
                 .reader(employeeItemReader())
                 .processor(processor)
-                .writer(writer)
+                .writer(employeeItemWriter())
                 .build();
     }
 }

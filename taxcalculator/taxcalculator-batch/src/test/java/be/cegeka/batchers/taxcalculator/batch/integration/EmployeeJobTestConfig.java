@@ -8,6 +8,8 @@ import org.mockito.Mockito;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.DatabasePopulator;
@@ -19,7 +21,7 @@ import javax.sql.DataSource;
 
 import static org.mockito.Mockito.mock;
 
-@ContextConfiguration
+@Configuration
 public class EmployeeJobTestConfig {
 
     @Autowired
@@ -47,9 +49,10 @@ public class EmployeeJobTestConfig {
         return new JobLauncherTestUtils();
     }
 
+    @Primary
     @Bean
     public TaxCalculatorService taxCalculatorService() {
-        return  mock(TaxCalculatorService.class);
+        return mock(TaxCalculatorService.class);
     }
 
     @Bean

@@ -18,6 +18,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.math.BigDecimal;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EmployeeProcessorTest {
@@ -109,8 +110,7 @@ public class EmployeeProcessorTest {
 
     public TaxCalculatorService createTaxCalculatorService() {
         TaxCalculatorService taxCalculatorService = new TaxCalculatorService();
-        taxCalculatorService.setRunningTimeService(Mockito.mock(RunningTimeService.class));
-        taxCalculatorService.setEmployeeRepository(Mockito.mock(EmployeeRepository.class));
+        taxCalculatorService.setRunningTimeService(mock(RunningTimeService.class));
         return taxCalculatorService;
     }
 }
