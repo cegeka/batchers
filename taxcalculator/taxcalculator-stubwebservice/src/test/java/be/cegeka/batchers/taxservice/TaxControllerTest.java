@@ -1,5 +1,6 @@
 package be.cegeka.batchers.taxservice;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -17,16 +18,24 @@ public class TaxControllerTest {
     @Mock
     TaxSubmissionLogger taxLogger;
     @Mock
-    BlacklistEmployeesService blacklistEmployeesService;
+    SpecialEmployeesService specialEmployeesService;
     @InjectMocks
     TaxController taxController = new TaxController();
+
+    private TaxTo taxTo;
+    private String employeeId;
+
+    @Before
+    public void setup() {
+        employeeId = "1";
+        taxTo = new TaxTo(employeeId, 123.0);
+    }
 
     @Test
     public void whenAValidTaxToIsReceived_ThenALogLineIsCreated() {
         //Arrange
 
         //Act
-        TaxTo taxTo = new TaxTo("1234567", 123.0);
         taxController.submitTaxForm(taxTo);
 
         //Assert
@@ -35,14 +44,28 @@ public class TaxControllerTest {
 
     @Test
     public void givenBlacklistEmployee_whenSubmitTaxForm_thenResponseFails() {
-        TaxTo taxTo = new TaxTo();
-        String employeeId = "1";
-        taxTo.setEmployeeId(employeeId);
-        when(blacklistEmployeesService.isEmployeeBlacklisted(employeeId)).thenReturn(true);
+        when(specialEmployeesService.isEmployeeBlacklisted(employeeId)).thenReturn(true);
 
         ResponseEntity<String> response = taxController.submitTaxForm(taxTo);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(response.getBody()).isEqualTo(TaxController.RESPONSE_BODY_FAIL);
+    }
+
+    @Test
+    public void givenEmployeeWithTax_whenSubmitTaxForm_thenItSleepsIfNecessary() throws InterruptedException {
+
+        taxController.submitTaxForm(taxTo);
+
+        verify(specialEmployeesService).sleepIfNecessary(employeeId);
+    }
+
+    @Test
+    public void givenBlacklistEmployee_whenSubmitTaxForm_thenDoNotTryToTimeout() {
+        when(specialEmployeesService.isEmployeeBlacklisted(employeeId)).thenReturn(true);
+
+        taxController.submitTaxForm(taxTo);
+
+        verify(specialEmployeesService, times(0)).sleepIfNecessary(employeeId);
     }
 }

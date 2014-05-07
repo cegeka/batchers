@@ -20,17 +20,18 @@ public class TaxController {
     TaxSubmissionLogger taxSubmissionLogger;
 
     @Autowired
-    BlacklistEmployeesService blacklistEmployeesService;
+    SpecialEmployeesService specialEmployeesService;
 
     @RequestMapping (value="/taxservice", method = POST)
     @ResponseBody
     public ResponseEntity<String> submitTaxForm(@RequestBody @Valid TaxTo taxTo){
         ResponseEntity<String> response = null;
 
-        if(blacklistEmployeesService.isEmployeeBlacklisted(taxTo.getEmployeeId())){
+        if(specialEmployeesService.isEmployeeBlacklisted(taxTo.getEmployeeId())){
             response = new ResponseEntity<String>(RESPONSE_BODY_FAIL, HttpStatus.BAD_REQUEST);
         }else{
             String okStatus = "OK";
+            specialEmployeesService.sleepIfNecessary(taxTo.getEmployeeId());
             taxSubmissionLogger.log(taxTo,okStatus);
             response = new ResponseEntity<String>(okStatus, HttpStatus.OK);
         }
