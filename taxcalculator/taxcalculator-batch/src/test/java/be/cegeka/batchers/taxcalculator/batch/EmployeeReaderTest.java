@@ -1,5 +1,6 @@
-package be.cegeka.batchers.taxcalculator;
+package be.cegeka.batchers.taxcalculator.batch;
 
+import be.cegeka.batchers.taxcalculator.batch.EmployeeReader;
 import be.cegeka.batchers.taxcalculator.domain.Employee;
 import be.cegeka.batchers.taxcalculator.domain.EmployeeRepository;
 import org.junit.Before;

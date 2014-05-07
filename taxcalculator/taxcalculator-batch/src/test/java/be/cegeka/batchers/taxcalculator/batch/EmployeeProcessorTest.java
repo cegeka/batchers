@@ -1,5 +1,6 @@
-package be.cegeka.batchers.taxcalculator;
+package be.cegeka.batchers.taxcalculator.batch;
 
+import be.cegeka.batchers.taxcalculator.batch.EmployeeProcessor;
 import be.cegeka.batchers.taxcalculator.domain.Employee;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
@@ -11,10 +12,7 @@ import java.math.BigDecimal;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by andreip on 29.04.2014.
- */
-public class EmployeeProcesorTest {
+public class EmployeeProcessorTest {
 
     public static final double DELTA = 1e-15;
     private EmployeeProcessor employeeProcessor;

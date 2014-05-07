@@ -1,4 +1,4 @@
-package be.cegeka.batchers.taxcalculator;
+package be.cegeka.batchers.taxcalculator.batch;
 
 import be.cegeka.batchers.taxcalculator.domain.Employee;
 import be.cegeka.batchers.taxcalculator.domain.EmployeeRepository;
@@ -8,9 +8,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-/**
- * Created by andreip on 29.04.2014.
- */
 @Component
 public class EmployeeWriter implements ItemWriter<Employee> {
 

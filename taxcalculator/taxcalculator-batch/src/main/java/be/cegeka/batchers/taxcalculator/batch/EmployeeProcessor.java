@@ -1,12 +1,9 @@
-package be.cegeka.batchers.taxcalculator;
+package be.cegeka.batchers.taxcalculator.batch;
 
 import be.cegeka.batchers.taxcalculator.domain.Employee;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
 
-/**
- * Created by andreip on 29.04.2014.
- */
 @Component
 public class EmployeeProcessor implements ItemProcessor<Employee, Employee> {
 

@@ -1,18 +1,17 @@
-package be.cegeka.batchers.taxcalculator;
+package be.cegeka.batchers.taxcalculator.batch;
 
 import be.cegeka.batchers.taxcalculator.domain.Employee;
 import be.cegeka.batchers.taxcalculator.domain.EmployeeRepository;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.Mock;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
-/**
- * Created by andreip on 29.04.2014.
- */
 public class EmployeeWriterTest {
 
     @Mock

@@ -30,7 +30,7 @@
         </beans:property>
     </beans:bean>
 
-    <beans:bean id="itemProcessor" class="be.cegeka.batchers.taxcalculator.EmployeeItemProcessor"/>
+    <beans:bean id="itemProcessor" class="be.cegeka.batchers.taxcalculator.batch.EmployeeItemProcessor"/>
 
     <beans:bean id="itemWriter" class="org.springframework.batch.item.database.JdbcBatchItemWriter">
         <beans:property name="itemSqlParameterSourceProvider">
