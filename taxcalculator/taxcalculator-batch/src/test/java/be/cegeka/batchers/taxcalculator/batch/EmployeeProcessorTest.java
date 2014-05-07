@@ -1,10 +1,10 @@
 package be.cegeka.batchers.taxcalculator.batch;
 
-import be.cegeka.batchers.taxcalculator.domain.Employee;
-import be.cegeka.batchers.taxcalculator.domain.EmployeeBuilder;
-import be.cegeka.batchers.taxcalculator.domain.EmployeeRepository;
-import be.cegeka.batchers.taxcalculator.service.RunningTimeService;
-import be.cegeka.batchers.taxcalculator.service.TaxCalculatorService;
+import be.cegeka.batchers.taxcalculator.application.domain.Employee;
+import be.cegeka.batchers.taxcalculator.application.domain.EmployeeBuilder;
+import be.cegeka.batchers.taxcalculator.application.domain.EmployeeRepository;
+import be.cegeka.batchers.taxcalculator.application.service.RunningTimeService;
+import be.cegeka.batchers.taxcalculator.application.service.TaxCalculatorService;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;

@@ -1,6 +1,6 @@
 package be.cegeka.batchers.taxcalculator.batch;
 
-import be.cegeka.batchers.taxcalculator.domain.Employee;
+import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;

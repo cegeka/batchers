@@ -1,8 +1,8 @@
 package be.cegeka.batchers.taxcalculator.batch.integration;
 
-import be.cegeka.batchers.taxcalculator.domain.Employee;
-import be.cegeka.batchers.taxcalculator.domain.EmployeeBuilder;
-import be.cegeka.batchers.taxcalculator.domain.EmployeeRepository;
+import be.cegeka.batchers.taxcalculator.application.domain.Employee;
+import be.cegeka.batchers.taxcalculator.application.domain.EmployeeBuilder;
+import be.cegeka.batchers.taxcalculator.application.domain.EmployeeRepository;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.joda.time.DateTime;
