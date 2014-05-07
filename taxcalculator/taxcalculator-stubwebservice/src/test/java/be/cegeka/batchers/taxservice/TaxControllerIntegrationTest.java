@@ -10,7 +10,7 @@ import java.io.IOException;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class TaxReportingIntegrationTest extends WebAppConfigurationAware {
+public class TaxControllerIntegrationTest extends WebAppConfigurationAware {
 
     public static byte[] convertObjectToJsonBytes(Object object)
             throws IOException {
@@ -44,6 +44,14 @@ public class TaxReportingIntegrationTest extends WebAppConfigurationAware {
         mockMvc.perform(post("/taxservice").contentType(MediaType.APPLICATION_JSON)
                 .content(convertObjectToJsonBytes(new TaxTo("1234455667", null)))
         ).andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    public void testUnluckEmployeesGetFailureResponse() throws Exception {
+        mockMvc.perform(post("/taxservice").contentType(MediaType.APPLICATION_JSON)
+                .content(convertObjectToJsonBytes(new TaxTo("radu", 222.3)))
+        ).andExpect(status().is4xxClientError());
     }
 
 
