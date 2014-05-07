@@ -2,26 +2,35 @@ package be.cegeka.batchers.taxcalculator.batch;
 
 import be.cegeka.batchers.taxcalculator.batch.EmployeeProcessor;
 import be.cegeka.batchers.taxcalculator.domain.Employee;
+import be.cegeka.batchers.taxcalculator.domain.EmployeeRepository;
+import be.cegeka.batchers.taxcalculator.service.RunningTimeService;
+import be.cegeka.batchers.taxcalculator.service.TaxCalculatorService;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
 
 import static org.junit.Assert.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class EmployeeProcessorTest {
 
     public static final double DELTA = 1e-15;
-    private EmployeeProcessor employeeProcessor;
     private Interval interval;
+
+    @InjectMocks
+    private EmployeeProcessor employeeProcessor;
 
     @Before
     public void setUp() {
-        employeeProcessor = new EmployeeProcessor();
-
+        employeeProcessor.taxCalculatorService = createTaxCalculatorService();
         DateTime now = new DateTime();
         LocalDate today = now.toLocalDate();
         LocalDate tomorrow = today.plusDays(1);
@@ -93,5 +102,12 @@ public class EmployeeProcessorTest {
         double incomeTax = employee.getIncomeTax();
 
         assertEquals("incomeTax is wrong", 200d, incomeTax, DELTA);
+    }
+
+    public TaxCalculatorService createTaxCalculatorService() {
+        TaxCalculatorService taxCalculatorService = new TaxCalculatorService();
+        taxCalculatorService.setRunningTimeService(Mockito.mock(RunningTimeService.class));
+        taxCalculatorService.setEmployeeRepository(Mockito.mock(EmployeeRepository.class));
+        return taxCalculatorService;
     }
 }
