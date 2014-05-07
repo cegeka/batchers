@@ -9,13 +9,6 @@ import java.util.HashSet;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-/**
- * Created with IntelliJ IDEA.
- * User: raduci
- * Date: 07.05.2014
- * Time: 10:34
- * To change this template use File | Settings | File Templates.
- */
 public class SpecialEmployeesServiceTest {
 
     public static final int TIMEOUT = 20;

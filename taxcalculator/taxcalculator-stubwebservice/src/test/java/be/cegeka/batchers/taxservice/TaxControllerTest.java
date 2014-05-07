@@ -16,11 +16,13 @@ import static org.mockito.Mockito.*;
 public class TaxControllerTest {
 
     @Mock
-    TaxSubmissionLogger taxLogger;
+    private TextFileTaxLogger taxLogger;
+
     @Mock
-    SpecialEmployeesService specialEmployeesService;
+    private SpecialEmployeesService specialEmployeesService;
+
     @InjectMocks
-    TaxController taxController = new TaxController();
+    private TaxController taxController;
 
     private TaxTo taxTo;
     private String employeeId;
@@ -32,13 +34,9 @@ public class TaxControllerTest {
     }
 
     @Test
-    public void whenAValidTaxToIsReceived_ThenALogLineIsCreated() {
-        //Arrange
-
-        //Act
+    public void givenValidTaxTo_whenSubmitTaxForm_ThenALogLineIsCreated() {
         taxController.submitTaxForm(taxTo);
 
-        //Assert
         verify(taxLogger, times(1)).log(taxTo, "OK");
     }
 

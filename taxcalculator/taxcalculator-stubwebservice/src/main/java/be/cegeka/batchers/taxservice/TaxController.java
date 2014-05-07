@@ -17,22 +17,21 @@ public class TaxController {
 
     public static final String RESPONSE_BODY_FAIL = "FAILURE";
     @Autowired
-    TaxSubmissionLogger taxSubmissionLogger;
-
+    TextFileTaxLogger taxLogger;
     @Autowired
     SpecialEmployeesService specialEmployeesService;
 
-    @RequestMapping (value="/taxservice", method = POST)
+    @RequestMapping(value = "/taxservice", method = POST)
     @ResponseBody
-    public ResponseEntity<String> submitTaxForm(@RequestBody @Valid TaxTo taxTo){
-        ResponseEntity<String> response = null;
+    public ResponseEntity<String> submitTaxForm(@RequestBody @Valid TaxTo taxTo) {
+        ResponseEntity<String> response;
 
-        if(specialEmployeesService.isEmployeeBlacklisted(taxTo.getEmployeeId())){
+        if (specialEmployeesService.isEmployeeBlacklisted(taxTo.getEmployeeId())) {
             response = new ResponseEntity<String>(RESPONSE_BODY_FAIL, HttpStatus.BAD_REQUEST);
-        }else{
+        } else {
             String okStatus = "OK";
             specialEmployeesService.sleepIfNecessary(taxTo.getEmployeeId());
-            taxSubmissionLogger.log(taxTo,okStatus);
+            taxLogger.log(taxTo, okStatus);
             response = new ResponseEntity<String>(okStatus, HttpStatus.OK);
         }
 

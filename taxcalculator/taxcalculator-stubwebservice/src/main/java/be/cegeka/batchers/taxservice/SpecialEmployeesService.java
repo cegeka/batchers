@@ -6,16 +6,8 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-/**
- * Created with IntelliJ IDEA.
- * User: raduci
- * Date: 07.05.2014
- * Time: 09:15
- * To change this template use File | Settings | File Templates.
- */
 @Service
 public class SpecialEmployeesService {
 
