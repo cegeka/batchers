@@ -1,6 +1,7 @@
 package be.cegeka.batchers.taxcalculator.application.service;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
+import be.cegeka.batchers.taxcalculator.application.domain.EmployeeBuilder;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeRepository;
 import org.fest.assertions.api.Assertions;
 import org.joda.money.CurrencyUnit;
@@ -13,15 +14,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TaxCalculatorServiceTest {
     @Mock
     RunningTimeService runningTimeService;
-
-    @Mock
-    EmployeeRepository employeeRepositoryMock;
 
     @InjectMocks
     TaxCalculatorService taxCalculatorService;
@@ -30,20 +29,17 @@ public class TaxCalculatorServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        employee = new Employee();
-        employee.setIncome(100);
+        employee = new EmployeeBuilder()
+                .withIncome(100)
+                .build();
     }
 
     @Test
     public void testCalculateTax() throws Exception {
         taxCalculatorService.calculateTax(employee);
 
-        ArgumentCaptor<Employee> argumentCaptor = ArgumentCaptor.forClass(Employee.class);
-
-        verify(employeeRepositoryMock).save(argumentCaptor.capture());
-        Employee capturedEmployee = argumentCaptor.getValue();
         Money expectedMoney = Money.of(CurrencyUnit.EUR, 10);
-        Assertions.assertThat(capturedEmployee.getTaxTotal()).isEqualTo(expectedMoney);
+        assertThat(employee.getTaxTotal()).isEqualTo(expectedMoney);
     }
 
     @Test

@@ -10,11 +10,13 @@ import org.joda.time.Interval;
 import javax.persistence.*;
 
 @NamedQueries({
-        @NamedQuery(name = "first20", query = "SELECT e FROM Employee e")
+        @NamedQuery(name = Employee.GET_ALL_NAME, query = Employee.GET_ALL_QUERY)
 })
 
 @Entity
 public class Employee {
+    public static final String GET_ALL_NAME = "Employee.getAll";
+    public static final String GET_ALL_QUERY = "SELECT e FROM Employee e";
     private Integer income;
 
     @Id
@@ -126,5 +128,4 @@ public class Employee {
         result = 31 * result + (taxTotal != null ? taxTotal.hashCode() : 0);
         return result;
     }
-
 }

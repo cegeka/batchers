@@ -19,6 +19,11 @@
             <groupId>be.cegeka.batchers</groupId>
             <artifactId>taxcalculator-application</artifactId>
         </dependency>
+        <dependency>
+            <groupId>be.cegeka.batchers</groupId>
+            <artifactId>taxcalculator-application</artifactId>
+            <type>test-jar</type>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>

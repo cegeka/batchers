@@ -25,7 +25,7 @@ public class EmployeeRepositoryTest extends IntegrationTest {
 
     @Test
     public void testWhenSavingEmployeeTheIdIsNotNull() throws Exception {
-        Employee employee = new Employee();
+        Employee employee = new EmployeeBuilder().build();
 
         repository.save(employee);
 
@@ -34,10 +34,11 @@ public class EmployeeRepositoryTest extends IntegrationTest {
 
     @Test
     public void testWhenSavingTheEmployeeIsPersisted() throws Exception {
-        Employee employee = new Employee();
-        employee.setIncome(INCOME);
-        employee.setFirstName(FIRST_NAME);
-        employee.setLastName(LAST_NAME);
+        Employee employee = new EmployeeBuilder()
+                .withIncome(INCOME)
+                .withFirstName(FIRST_NAME)
+                .withLastName(LAST_NAME)
+                .build();
 
         repository.save(employee);
 
@@ -50,8 +51,9 @@ public class EmployeeRepositoryTest extends IntegrationTest {
 
     @Test
     public void testWhenSettingRetirementSavingsTheCalculationDateIsCurrentDate() throws Exception {
-        Employee employee = new Employee();
-        employee.setIncome(100);
+        Employee employee = new EmployeeBuilder()
+                .withIncome(100)
+                .build();
         employee.addTax();
         repository.save(employee);
 
@@ -61,8 +63,8 @@ public class EmployeeRepositoryTest extends IntegrationTest {
 
     @Test
     public void testCount() throws Exception {
-        Employee first = new Employee();
-        Employee second = new Employee();
+        Employee first = new EmployeeBuilder().build();
+        Employee second = new EmployeeBuilder().build();
 
         repository.save(first);
         repository.save(second);
@@ -72,8 +74,8 @@ public class EmployeeRepositoryTest extends IntegrationTest {
 
     @Test
     public void testGetAll() throws Exception {
-        Employee first = new Employee();
-        Employee second = new Employee();
+        Employee first = new EmployeeBuilder().build();
+        Employee second = new EmployeeBuilder().build();
 
         repository.save(first);
         repository.save(second);
@@ -89,7 +91,7 @@ public class EmployeeRepositoryTest extends IntegrationTest {
     @Test
     public void testGetFirst20() throws Exception {
         for (int i = 0; i < 30; i++) {
-            repository.save(new Employee());
+            repository.save(new EmployeeBuilder().build());
         }
 
         List<Employee> first20 = repository.getFirst20();

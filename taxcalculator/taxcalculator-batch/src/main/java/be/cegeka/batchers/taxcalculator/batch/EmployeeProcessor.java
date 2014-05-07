@@ -6,9 +6,6 @@ import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-/**
- * Created by andreip on 29.04.2014.
- */
 @Component
 public class EmployeeProcessor implements ItemProcessor<Employee, Employee> {
 

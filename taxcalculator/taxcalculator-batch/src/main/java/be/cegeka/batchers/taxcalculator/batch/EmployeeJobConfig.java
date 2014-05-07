@@ -6,19 +6,18 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.database.JpaItemWriter;
+import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import javax.sql.DataSource;
+import javax.persistence.EntityManagerFactory;
 
 @Configuration
 @EnableBatchProcessing
+@ComponentScan(basePackages = "be.cegeka.batchers.taxcalculator.batch")
 public class EmployeeJobConfig {
 
     @Autowired
@@ -28,53 +27,40 @@ public class EmployeeJobConfig {
     private StepBuilderFactory stepBuilders;
 
     @Autowired
-    private DataSource dataSource;
+    private EmployeeProcessor processor;
 
     @Autowired
-    private ItemReader<Employee> reader;
+    private EntityManagerFactory entityManagerFactory;
 
     @Bean
-    public DataSource dataSource() {
-        EmbeddedDatabaseBuilder embeddedDatabaseBuilder = new EmbeddedDatabaseBuilder();
-        return embeddedDatabaseBuilder.addScript("classpath:org/springframework/batch/core/schema-drop-hsqldb.sql")
-                .addScript("classpath:org/springframework/batch/core/schema-hsqldb.sql")
-                .setType(EmbeddedDatabaseType.HSQL)
-                .build();
+    public JpaPagingItemReader<Employee> employeeItemReader() {
+        JpaPagingItemReader<Employee> employeeItemReader = new JpaPagingItemReader<>();
+        employeeItemReader.setEntityManagerFactory(entityManagerFactory);
+        employeeItemReader.setQueryString(Employee.GET_ALL_QUERY);
+        return employeeItemReader;
     }
 
     @Bean
-    public Job employeeJob() {
+    public JpaItemWriter<Employee> employeeItemWriter() {
+        JpaItemWriter<Employee> employeeJpaItemWriter = new JpaItemWriter<>();
+        employeeJpaItemWriter.setEntityManagerFactory(entityManagerFactory);
+        return employeeJpaItemWriter;
+    }
+
+    @Bean
+    public Job employeeJob(){
         return jobBuilders.get("employeeJob")
                 .start(step())
                 .build();
     }
 
     @Bean
-    public Step step() {
+    public Step step(){
         return stepBuilders.get("step")
-                .<Employee, Employee>chunk(1)
-                .reader(getReader())
-                .processor(processor())
-                .writer(writer())
+                .<Employee,Employee>chunk(1)
+                .reader(employeeItemReader())
+                .processor(processor)
+                .writer(employeeItemWriter())
                 .build();
-    }
-
-    private ItemWriter<Employee> writer() {
-        return new EmployeeWriter();
-    }
-
-    private ItemProcessor<Employee, Employee> processor() {
-        return new EmployeeProcessor();
-    }
-
-    private ItemReader<Employee> getReader() {
-        if (reader == null) {
-            reader = new EmployeeReader();
-        }
-        return reader;
-    }
-
-    public void setReader(ItemReader<Employee> reader) {
-        this.reader = reader;
     }
 }
