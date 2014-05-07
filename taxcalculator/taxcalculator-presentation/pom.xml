@@ -42,7 +42,7 @@
     <!-- ___________Karma Configuration___________ -->
 
     <properties>
-        <browsers>Chrome</browsers>
+        <browsers>Firefox</browsers>
     </properties>
 
     <build>
