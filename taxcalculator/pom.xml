@@ -33,6 +33,7 @@
         <module>taxcalculator-application</module>
         <module>taxcalculator-batch</module>
         <module>taxcalculator-presentation</module>
+        <module>taxcalculator-batch-api</module>
     </modules>
 
     <repositories>
