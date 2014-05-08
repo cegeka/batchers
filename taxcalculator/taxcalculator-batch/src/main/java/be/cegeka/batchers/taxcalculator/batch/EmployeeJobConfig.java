@@ -8,12 +8,14 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.JpaPagingItemReader;
+import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 import javax.persistence.EntityManagerFactory;
+import java.util.Arrays;
 
 @Configuration
 @EnableBatchProcessing
@@ -27,7 +29,10 @@ public class EmployeeJobConfig {
     private StepBuilderFactory stepBuilders;
 
     @Autowired
-    private EmployeeProcessor processor;
+    private CalculateTaxProcessor calculateTaxProcessor;
+
+    @Autowired
+    private CallWebserviceProcessor callWebserviceProcessor;
 
     @Autowired
     private EntityManagerFactory entityManagerFactory;
@@ -55,12 +60,23 @@ public class EmployeeJobConfig {
     }
 
     @Bean
+    public CompositeItemProcessor<Employee, Employee> processor() {
+        CompositeItemProcessor<Employee, Employee> employeeEmployeeCompositeItemProcessor = new CompositeItemProcessor<>();
+        employeeEmployeeCompositeItemProcessor.setDelegates(Arrays.asList(
+                calculateTaxProcessor,
+                callWebserviceProcessor
+        ));
+        return employeeEmployeeCompositeItemProcessor;
+    }
+
+    @Bean
     public Step step(){
         return stepBuilders.get("step")
                 .<Employee,Employee>chunk(1)
                 .reader(employeeItemReader())
-                .processor(processor)
+                .processor(processor())
                 .writer(employeeItemWriter())
                 .build();
     }
+
 }

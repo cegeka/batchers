@@ -11,7 +11,9 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.List;
 
 @Repository
@@ -60,5 +62,14 @@ public class EmployeeRepository {
         first20.setMaxResults(20);
 
         return first20.getResultList();
+    }
+
+    public void deleteAll() {
+        CriteriaBuilder criteriaBuilder = entityManagerFactory.getCriteriaBuilder();
+        CriteriaDelete<Employee> criteriaDelete = criteriaBuilder.createCriteriaDelete(Employee.class);
+
+        criteriaDelete.from(Employee.class);
+
+        entityManager.createQuery(criteriaDelete).executeUpdate();
     }
 }

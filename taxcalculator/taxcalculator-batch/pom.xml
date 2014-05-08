@@ -39,6 +39,15 @@
             <artifactId>spring-batch-infrastructure</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
         <!-- Spring Batch unit test -->
         <dependency>
             <groupId>org.springframework.batch</groupId>
