@@ -123,7 +123,7 @@ public class Employee {
     }
 
     private boolean isNotEqual(Object self, Object other) {
-        if (self != nulll) {
+        if (self != null) {
             return !self.equals(other);
         } else {
             return other != null;
