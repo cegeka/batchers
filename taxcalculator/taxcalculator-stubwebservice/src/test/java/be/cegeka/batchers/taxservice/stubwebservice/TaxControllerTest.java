@@ -1,5 +1,6 @@
 package be.cegeka.batchers.taxservice.stubwebservice;
 
+import be.cegeka.batchers.taxcalculator.to.TaxTo;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
