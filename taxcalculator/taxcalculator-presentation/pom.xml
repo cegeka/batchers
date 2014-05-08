@@ -19,13 +19,35 @@
             <groupId>be.cegeka.batchers</groupId>
             <artifactId>taxcalculator-application</artifactId>
         </dependency>
+        <dependency>
+            <groupId>be.cegeka.batchers</groupId>
+            <artifactId>taxcalculator-application</artifactId>
+            <type>test-jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-servlet-api</artifactId>
+        </dependency>
     </dependencies>
 
 
     <!-- ___________Karma Configuration___________ -->
 
     <properties>
-        <browsers>Chrome</browsers>
+        <browsers>Firefox</browsers>
     </properties>
 
     <build>
@@ -44,6 +66,7 @@
                             <singleRun>true</singleRun>
                             <browsers>${browsers}</browsers>
                             <configFile>src/test/js/karma/config/karma.conf.js</configFile>
+                            <logLevel>LOG_DEBUG</logLevel>
                             <reporters>dots,junit</reporters>
                         </configuration>
                     </execution>
@@ -76,6 +99,7 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.1.1</version>
                 <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
                     <webappDirectory>${project.build.directory}/${project.build.finalName}-war.war</webappDirectory>
                     <archive>
                         <manifest>

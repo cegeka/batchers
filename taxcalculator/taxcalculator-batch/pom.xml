@@ -38,6 +38,13 @@
             <groupId>org.springframework.batch</groupId>
             <artifactId>spring-batch-infrastructure</artifactId>
         </dependency>
+
+        <!-- Spring Batch unit test -->
+        <dependency>
+            <groupId>org.springframework.batch</groupId>
+            <artifactId>spring-batch-test</artifactId>
+            <version>3.0.0.M3</version>
+        </dependency>
     </dependencies>
 
     <!--
