@@ -2,10 +2,16 @@ package be.cegeka.batchers.taxcalculator.batch;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.job.builder.SimpleJobBuilder;
+import org.springframework.batch.core.launch.support.SimpleJobLauncher;
+import org.springframework.batch.core.listener.JobExecutionListenerSupport;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.batch.item.support.CompositeItemProcessor;
@@ -13,6 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.core.task.SyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
 
 import javax.persistence.EntityManagerFactory;
 import java.util.Arrays;
@@ -37,6 +46,9 @@ public class EmployeeJobConfig {
     @Autowired
     private EntityManagerFactory entityManagerFactory;
 
+    @Autowired
+    JobRepository repository;
+
     @Bean
     public JpaPagingItemReader<Employee> employeeItemReader() {
         JpaPagingItemReader<Employee> employeeItemReader = new JpaPagingItemReader<>();
@@ -54,9 +66,18 @@ public class EmployeeJobConfig {
 
     @Bean
     public Job employeeJob(){
-        return jobBuilders.get("employeeJob")
+         return jobBuilders.get("employeeJob")
                 .start(step())
                 .build();
+    }
+
+    @Bean
+    public SimpleJobLauncher jobLauncher(){
+        SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
+        jobLauncher.setJobRepository(repository);
+        TaskExecutor syncTaskExecutor = new SyncTaskExecutor();
+        jobLauncher.setTaskExecutor(syncTaskExecutor);
+        return  jobLauncher;
     }
 
     @Bean
@@ -78,5 +99,4 @@ public class EmployeeJobConfig {
                 .writer(employeeItemWriter())
                 .build();
     }
-
 }

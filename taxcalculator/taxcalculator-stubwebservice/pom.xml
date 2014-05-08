@@ -15,6 +15,11 @@
     <packaging>war</packaging>
 
 	<dependencies>
+        <dependency>
+            <groupId>be.cegeka.batchers</groupId>
+            <artifactId>taxcalculator-to</artifactId>
+        </dependency>
+
 		<!-- spring -->
 		<dependency>
 			<groupId>org.springframework</groupId>
