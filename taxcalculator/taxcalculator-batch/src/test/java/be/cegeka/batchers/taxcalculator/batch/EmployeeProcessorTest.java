@@ -2,7 +2,6 @@ package be.cegeka.batchers.taxcalculator.batch;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeBuilder;
-import be.cegeka.batchers.taxcalculator.application.domain.EmployeeRepository;
 import be.cegeka.batchers.taxcalculator.application.service.RunningTimeService;
 import be.cegeka.batchers.taxcalculator.application.service.TaxCalculatorService;
 import org.joda.time.DateTime;
@@ -12,7 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
@@ -27,11 +25,11 @@ public class EmployeeProcessorTest {
     private Interval interval;
 
     @InjectMocks
-    private EmployeeProcessor employeeProcessor;
+    private CalculateTaxProcessor calculateTaxProcessor;
 
     @Before
     public void setUp() {
-        employeeProcessor.taxCalculatorService = createTaxCalculatorService();
+        calculateTaxProcessor.taxCalculatorService = createTaxCalculatorService();
         DateTime now = new DateTime();
         LocalDate today = now.toLocalDate();
         LocalDate tomorrow = today.plusDays(1);
@@ -50,8 +48,8 @@ public class EmployeeProcessorTest {
         assertNull("employee should have empty calculation date", employee1.getCalculationDate());
         assertNull("employee should have empty calculation date", employee2.getCalculationDate());
 
-        employee1 = employeeProcessor.process(employee1);
-        employee2 = employeeProcessor.process(employee2);
+        employee1 = calculateTaxProcessor.process(employee1);
+        employee2 = calculateTaxProcessor.process(employee2);
 
         assertEquals("processed employee tax is not equal to given one", employee1.getIncomeTax(), employee1.getTaxTotal().getAmount().doubleValue(), DELTA);
         DateTime calculationDate1 = employee1.getCalculationDate();
@@ -72,7 +70,7 @@ public class EmployeeProcessorTest {
         employee.addTax();
         employee.setCalculationDate(DateTime.now().minusMonths(1));
 
-        employee = employeeProcessor.process(employee);
+        employee = calculateTaxProcessor.process(employee);
 
         double totalComputedTax = BigDecimal.valueOf(employee.getIncomeTax() * 2).doubleValue();
         assertEquals("processed employee tax is not correct", totalComputedTax,
@@ -90,7 +88,7 @@ public class EmployeeProcessorTest {
         employee.addTax();
         DateTime calculationDate = employee.getCalculationDate();
 
-        employee = employeeProcessor.process(employee);
+        employee = calculateTaxProcessor.process(employee);
 
         assertEquals("tax should not change", employee.getIncomeTax(), employee.getTaxTotal().getAmount().doubleValue(), DELTA);
         assertEquals("calculation date should not change", calculationDate, employee.getCalculationDate());

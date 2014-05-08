@@ -1,6 +1,5 @@
 package be.cegeka.batchers.taxcalculator.batch.integration;
 
-import org.mockito.Mockito;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 

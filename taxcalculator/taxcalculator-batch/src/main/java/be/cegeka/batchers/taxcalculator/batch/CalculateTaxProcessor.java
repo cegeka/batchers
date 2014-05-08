@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class EmployeeProcessor implements ItemProcessor<Employee, Employee> {
+public class CalculateTaxProcessor implements ItemProcessor<Employee, Employee> {
 
     @Autowired
     TaxCalculatorService taxCalculatorService;
