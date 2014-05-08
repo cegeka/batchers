@@ -6,16 +6,17 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.launch.support.SimpleJobLauncher;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.JpaPagingItemReader;
-import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 
 import javax.persistence.EntityManagerFactory;
-import java.util.Arrays;
 
 @Configuration
 @EnableBatchProcessing
@@ -36,6 +37,9 @@ public class EmployeeJobConfig {
 
     @Autowired
     private EntityManagerFactory entityManagerFactory;
+
+    @Autowired
+    JobRepository repository;
 
     @Bean
     public JpaPagingItemReader<Employee> employeeItemReader() {
@@ -60,6 +64,15 @@ public class EmployeeJobConfig {
     }
 
     @Bean
+    public SimpleJobLauncher jobLauncher(){
+        SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
+        jobLauncher.setJobRepository(repository);
+        SimpleAsyncTaskExecutor simpleAsyncTaskExecutor = new SimpleAsyncTaskExecutor();
+        jobLauncher.setTaskExecutor(simpleAsyncTaskExecutor);
+        return  jobLauncher;
+    }
+
+    @Bean
     public CompositeItemProcessor<Employee, Employee> processor() {
         CompositeItemProcessor<Employee, Employee> employeeEmployeeCompositeItemProcessor = new CompositeItemProcessor<>();
         employeeEmployeeCompositeItemProcessor.setDelegates(Arrays.asList(
@@ -78,5 +91,4 @@ public class EmployeeJobConfig {
                 .writer(employeeItemWriter())
                 .build();
     }
-
 }
