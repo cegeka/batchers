@@ -6,12 +6,15 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.launch.support.SimpleJobLauncher;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 
 import javax.persistence.EntityManagerFactory;
 
@@ -31,6 +34,9 @@ public class EmployeeJobConfig {
 
     @Autowired
     private EntityManagerFactory entityManagerFactory;
+
+    @Autowired
+    JobRepository repository;
 
     @Bean
     public JpaPagingItemReader<Employee> employeeItemReader() {
@@ -52,6 +58,15 @@ public class EmployeeJobConfig {
         return jobBuilders.get("employeeJob")
                 .start(step())
                 .build();
+    }
+
+    @Bean
+    public SimpleJobLauncher jobLauncher(){
+        SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
+        jobLauncher.setJobRepository(repository);
+        SimpleAsyncTaskExecutor simpleAsyncTaskExecutor = new SimpleAsyncTaskExecutor();
+        jobLauncher.setTaskExecutor(simpleAsyncTaskExecutor);
+        return  jobLauncher;
     }
 
     @Bean
