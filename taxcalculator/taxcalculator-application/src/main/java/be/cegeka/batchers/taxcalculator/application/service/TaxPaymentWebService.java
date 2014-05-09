@@ -1,6 +1,7 @@
 package be.cegeka.batchers.taxcalculator.application.service;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
+import be.cegeka.batchers.taxcalculator.to.TaxServiceResponse;
 import be.cegeka.batchers.taxcalculator.to.TaxTo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,8 +32,8 @@ public class TaxPaymentWebService {
     }
 
     private String getWebserviceResult(Employee employee) {
-        ResponseEntity<String> stringResponseEntity = restTemplate.postForEntity(getUri(), createWebserviceInput(employee), String.class);
-        return stringResponseEntity.getBody();
+        ResponseEntity<TaxServiceResponse> stringResponseEntity = restTemplate.postForEntity(getUri(), createWebserviceInput(employee), TaxServiceResponse.class);
+        return stringResponseEntity.getBody().status;
     }
 
     private URI getUri() {

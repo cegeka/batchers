@@ -2,18 +2,11 @@ package be.cegeka.batchers.taxcalculator.batch;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.service.TaxPaymentWebService;
-import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceException;
-import be.cegeka.batchers.taxcalculator.to.TaxTo;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.http.ResponseEntity;
 import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
-
-import java.net.URI;
 
 @Component
 public class CallWebserviceProcessor implements ItemProcessor<Employee, Employee> {
