@@ -2,6 +2,7 @@ package be.cegeka.batchers.taxcalculator.application.service;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeBuilder;
+import be.cegeka.batchers.taxcalculator.to.TaxServiceResponse;
 import be.cegeka.batchers.taxcalculator.to.TaxTo;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +40,7 @@ public class TaxPaymentWebServiceTest {
     private RestTemplate restTemplateMock;
 
     @Mock
-    private ResponseEntity<String> mockedResponse;
+    private ResponseEntity<TaxServiceResponse> mockedResponse;
 
     @Before
     public void setUpCallWebserviceProcessor() {
@@ -49,7 +50,7 @@ public class TaxPaymentWebServiceTest {
     @Test
     public void testProcessHappyPath_NoExceptionHasBeenThrownAndEmployeeIsReturned() throws Exception {
         whenCallingTheWebservice().thenReturn(mockedResponse);
-        when(mockedResponse.getBody()).thenReturn("OK");
+        when(mockedResponse.getBody()).thenReturn(new TaxServiceResponse("OK"));
 
         Employee employee = new EmployeeBuilder().build();
 
@@ -59,7 +60,7 @@ public class TaxPaymentWebServiceTest {
     @Test(expected = TaxWebServiceException.class)
     public void testProcessBadResponse_ExceptionHasBeenThrownForever() throws Exception {
         whenCallingTheWebservice().thenReturn(mockedResponse);
-        when(mockedResponse.getBody()).thenReturn("ERROR");
+        when(mockedResponse.getBody()).thenReturn(new TaxServiceResponse("ERROR"));
 
         taxPaymentWebService.doWebserviceCallToTaxService(new EmployeeBuilder().build());
     }
@@ -78,8 +79,8 @@ public class TaxPaymentWebServiceTest {
         taxPaymentWebService.doWebserviceCallToTaxService(new EmployeeBuilder().build());
     }
 
-    private OngoingStubbing<ResponseEntity<String>> whenCallingTheWebservice() {
-        return when(restTemplateMock.postForEntity(eq(URI.create(HTTP_SOMEHOST_SOMEURL)), any(TaxTo.class), eq(String.class)));
+    private OngoingStubbing<ResponseEntity<TaxServiceResponse>> whenCallingTheWebservice() {
+        return when(restTemplateMock.postForEntity(eq(URI.create(HTTP_SOMEHOST_SOMEURL)), any(TaxTo.class), eq(TaxServiceResponse.class)));
     }
 
     private HttpClientErrorException aMethodNotAllowedException() {

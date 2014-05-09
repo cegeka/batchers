@@ -109,7 +109,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
                 .andRespond(withBadRequest());
         mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
-                .andRespond(withSuccess("OK", MediaType.TEXT_PLAIN));
+                .andRespond(withSuccess("{\"status\": \"OK\" }", MediaType.APPLICATION_JSON));
 
         JobExecution jobExecution = jobLauncherTestUtils.launchJob();
         assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
