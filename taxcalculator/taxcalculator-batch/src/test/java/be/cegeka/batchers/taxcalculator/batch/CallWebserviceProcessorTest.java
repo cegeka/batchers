@@ -49,4 +49,15 @@ public class CallWebserviceProcessorTest {
 
         callWebserviceProcessor.process(employee);
     }
+
+    @Test
+    public void testProcessBadThenGoodResponse_RetryAndEmployeeIsReturned() throws Exception {
+        Employee employee = new EmployeeBuilder().build();
+
+        when(taxPaymentWebServiceMock.doWebserviceCallToTaxService(employee))
+            .thenThrow(new TaxWebServiceException("boe"))
+            .thenReturn(employee);
+
+        assertThat(callWebserviceProcessor.process(employee)).isEqualTo(employee);
+    }
 }
