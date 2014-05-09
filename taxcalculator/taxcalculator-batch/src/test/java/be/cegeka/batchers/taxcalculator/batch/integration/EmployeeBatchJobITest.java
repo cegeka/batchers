@@ -65,6 +65,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
                 .andRespond(withSuccess("OK", MediaType.TEXT_PLAIN));
 
         JobExecution jobExecution = jobLauncherTestUtils.launchJob();
+        System.out.println(jobExecution.getAllFailureExceptions());
         assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
 
         Employee reloadedEmployee = employeeRepository.getBy(employee.getId());
