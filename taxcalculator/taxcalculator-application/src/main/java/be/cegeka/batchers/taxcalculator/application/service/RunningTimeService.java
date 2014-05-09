@@ -15,12 +15,19 @@ public class RunningTimeService {
 
     public void sleep() {
         if (minimumTime > 0 && maximumTime >= minimumTime) {
-            long sleepTime = minimumTime + new Random().nextInt((int) (maximumTime - minimumTime));
             try {
-                Thread.sleep(sleepTime);
+                actuallySleep(calculateSleepTime());
             } catch (InterruptedException e) {
             }
         }
+    }
+
+    protected void actuallySleep(long sleepTime) throws InterruptedException {
+        Thread.sleep(sleepTime);
+    }
+
+    protected long calculateSleepTime() {
+        return minimumTime + new Random().nextInt(maximumTime - minimumTime);
     }
 
     public void setMinimumTime(int minimumTime) {
