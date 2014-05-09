@@ -101,6 +101,20 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         mockServer.verify();
     }
 
+    @Test
+    public void jobRetriesIfWebserviceFails() throws Exception {
+        haveOneEmployee();
+
+        mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
+                .andRespond(withBadRequest());
+        mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
+                .andRespond(withSuccess("OK", MediaType.TEXT_PLAIN));
+
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob();
+        assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
+        mockServer.verify();
+    }
+
     private Employee haveOneEmployee() {
         Employee employee = new EmployeeBuilder()
                 .withFirstName("Monica")
