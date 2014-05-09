@@ -16,6 +16,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManagerFactory;
@@ -39,6 +40,9 @@ public class EmployeeJobConfig {
 
     @Autowired
     protected JobRepository repository;
+
+    @Autowired
+    TaskExecutor taskExecutor;
 
     @Bean
     public JpaPagingItemReader<Employee> employeeItemReader() {
@@ -66,7 +70,7 @@ public class EmployeeJobConfig {
     public SimpleJobLauncher jobLauncher(){
         SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
         jobLauncher.setJobRepository(repository);
-        jobLauncher.setTaskExecutor(new SimpleAsyncTaskExecutor());
+        jobLauncher.setTaskExecutor(taskExecutor);
 
         return  jobLauncher;
     }
