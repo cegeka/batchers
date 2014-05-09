@@ -26,6 +26,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 
 public class EmployeeBatchJobITest extends AbstractIntegrationTest {
+    public static final String STATUS_OK = "{\"status\": \"OK\" }";
     @Autowired
     String taxServiceUrl;
 
@@ -62,7 +63,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         Employee employee = haveOneEmployee();
 
         mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
-                .andRespond(withSuccess("{ \"status\": \"OK\" }", MediaType.APPLICATION_JSON));
+                .andRespond(withSuccess(STATUS_OK, MediaType.APPLICATION_JSON));
 
         JobExecution jobExecution = jobLauncherTestUtils.launchJob();
         System.out.println(jobExecution.getAllFailureExceptions());
@@ -93,7 +94,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         haveOneEmployee();
 
         mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
-                .andRespond(withSuccess("{\"status\" : \"OK\"}", MediaType.APPLICATION_JSON));
+                .andRespond(withSuccess(STATUS_OK, MediaType.APPLICATION_JSON));
         mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
                 .andRespond(withBadRequest());
 
@@ -109,7 +110,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
                 .andRespond(withBadRequest());
         mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
-                .andRespond(withSuccess("{\"status\": \"OK\" }", MediaType.APPLICATION_JSON));
+                .andRespond(withSuccess(STATUS_OK, MediaType.APPLICATION_JSON));
 
         JobExecution jobExecution = jobLauncherTestUtils.launchJob();
         assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
