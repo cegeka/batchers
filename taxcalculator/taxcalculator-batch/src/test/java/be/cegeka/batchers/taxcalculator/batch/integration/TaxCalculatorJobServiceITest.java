@@ -50,7 +50,7 @@ public class TaxCalculatorJobServiceITest extends AbstractIntegrationTest {
     public void testJobService() {
 
         mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
-                .andRespond(withSuccess("OK", MediaType.TEXT_PLAIN));
+                .andRespond(withSuccess("{ \"status\": \"OK\" }", MediaType.APPLICATION_JSON));
 
         Employee employee = new EmployeeBuilder()
                 .withFirstName("Monica")

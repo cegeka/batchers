@@ -1,8 +1,11 @@
 package be.cegeka.batchers.taxservice.stubwebservice;
 
+import be.cegeka.batchers.taxcalculator.to.TaxServiceResponse;
 import be.cegeka.batchers.taxcalculator.to.TaxTo;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,22 +25,16 @@ public class TaxController {
     @Autowired
     SpecialEmployeesService specialEmployeesService;
 
-    @RequestMapping(value = "/taxservice", method = POST)
+    @RequestMapping(value = "/taxservice", method = POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<String> submitTaxForm(@RequestBody @Valid TaxTo taxTo) {
-        ResponseEntity<String> response;
-
+    public ResponseEntity<TaxServiceResponse> submitTaxForm(@RequestBody @Valid TaxTo taxTo) throws JsonProcessingException {
         if (specialEmployeesService.isEmployeeBlacklisted(taxTo.getEmployeeId())) {
-            response = new ResponseEntity<String>(RESPONSE_BODY_FAIL, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new TaxServiceResponse(RESPONSE_BODY_FAIL), HttpStatus.BAD_REQUEST);
         } else {
             String okStatus = "OK";
             specialEmployeesService.sleepIfNecessary(taxTo.getEmployeeId());
             taxLogger.log(taxTo, okStatus);
-            response = new ResponseEntity<String>(okStatus, HttpStatus.OK);
+            return new ResponseEntity<>(new TaxServiceResponse(okStatus), HttpStatus.OK);
         }
-
-        return response;
-
     }
-
 }

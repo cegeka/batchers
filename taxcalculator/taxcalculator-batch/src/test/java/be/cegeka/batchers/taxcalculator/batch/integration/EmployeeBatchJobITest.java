@@ -62,9 +62,10 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         Employee employee = haveOneEmployee();
 
         mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
-                .andRespond(withSuccess("OK", MediaType.TEXT_PLAIN));
+                .andRespond(withSuccess("{ \"status\": \"OK\" }", MediaType.APPLICATION_JSON));
 
         JobExecution jobExecution = jobLauncherTestUtils.launchJob();
+        System.out.println(jobExecution.getAllFailureExceptions());
         assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
 
         Employee reloadedEmployee = employeeRepository.getBy(employee.getId());
@@ -92,7 +93,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         haveOneEmployee();
 
         mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
-                .andRespond(withSuccess("OK", MediaType.TEXT_PLAIN));
+                .andRespond(withSuccess("{\"status\" : \"OK\"}", MediaType.APPLICATION_JSON));
         mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
                 .andRespond(withBadRequest());
 
