@@ -21,10 +21,6 @@
         </dependency>
         <dependency>
             <groupId>be.cegeka.batchers</groupId>
-            <artifactId>taxcalculator-to</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>be.cegeka.batchers</groupId>
             <artifactId>taxcalculator-application</artifactId>
             <type>test-jar</type>
         </dependency>
@@ -45,15 +41,6 @@
         <dependency>
             <groupId>org.springframework.batch</groupId>
             <artifactId>spring-batch-infrastructure</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
         </dependency>
 
         <!-- Spring Batch unit test -->
