@@ -29,6 +29,7 @@ public class Employee {
     @Type(type = "org.jadira.usertype.moneyandcurrency.joda.PersistentMoneyAmount",
             parameters = {@Parameter(name = "currencyCode", value = "EUR")})
     private Money taxTotal = Money.zero(CurrencyUnit.EUR);
+    private String email;
 
     public void setIncome(int income) {
         this.income = income;
@@ -139,5 +140,13 @@ public class Employee {
         result = 31 * result + (calculationDate != null ? calculationDate.hashCode() : 0);
         result = 31 * result + (taxTotal != null ? taxTotal.hashCode() : 0);
         return result;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getEmail() {
+        return email;
     }
 }

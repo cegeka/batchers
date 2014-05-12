@@ -6,6 +6,7 @@
         <tr>
             <th>First name</th>
             <th>Last name</th>
+            <th>Email</th>
             <th>Amount</th>
             <th>Tax</th>
             <th>Date Calculated</th>
@@ -15,6 +16,7 @@
         <tr ng-repeat="employee in employees | filter:searchQuery">
             <td>{{employee.firstName}}</td>
             <td>{{employee.lastName}}</td>
+            <td>{{employee.email}}</td>
             <td>{{employee.income}}</td>
             <td>{{employee.taxTotal.amount}} {{employee.taxTotal.currencyUnit.symbol}}</td>
             <td>{{employee.calculationDate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
