@@ -22,7 +22,7 @@ public class TaxControllerIntegrationTest extends WebAppConfigurationAware {
     @Test
     public void testOK() throws Exception {
         mockMvc.perform(post("/taxservice").contentType(MediaType.APPLICATION_JSON)
-                .content(convertObjectToJsonBytes(new TaxTo("1233454354", 222.3)))
+                .content(convertObjectToJsonBytes(new TaxTo(1233454354L, 222.3)))
         ).andExpect(status().isOk());
     }
 
@@ -43,7 +43,7 @@ public class TaxControllerIntegrationTest extends WebAppConfigurationAware {
     @Test
     public void testMissingAmount() throws Exception {
         mockMvc.perform(post("/taxservice").contentType(MediaType.APPLICATION_JSON)
-                .content(convertObjectToJsonBytes(new TaxTo("1234455667", null)))
+                .content(convertObjectToJsonBytes(new TaxTo(1234455667L, null)))
         ).andExpect(status().isBadRequest());
     }
 
@@ -51,7 +51,7 @@ public class TaxControllerIntegrationTest extends WebAppConfigurationAware {
     @Test
     public void testUnluckEmployeesGetFailureResponse() throws Exception {
         mockMvc.perform(post("/taxservice").contentType(MediaType.APPLICATION_JSON)
-                .content(convertObjectToJsonBytes(new TaxTo("radu", 222.3)))
+                .content(convertObjectToJsonBytes(new TaxTo(123L, 222.3)))
         ).andExpect(status().is4xxClientError());
     }
 

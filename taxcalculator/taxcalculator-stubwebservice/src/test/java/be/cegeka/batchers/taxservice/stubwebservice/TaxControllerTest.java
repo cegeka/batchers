@@ -28,11 +28,11 @@ public class TaxControllerTest {
     private TaxController taxController;
 
     private TaxTo taxTo;
-    private String employeeId;
+    private Long employeeId;
 
     @Before
     public void setup() {
-        employeeId = "1";
+        employeeId = 1L;
         taxTo = new TaxTo(employeeId, 123.0);
     }
 
