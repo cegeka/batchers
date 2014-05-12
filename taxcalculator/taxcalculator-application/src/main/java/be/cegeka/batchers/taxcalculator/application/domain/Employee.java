@@ -102,20 +102,32 @@ public class Employee {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Employee)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Employee)) {
+            return false;
+        }
 
         Employee employee = (Employee) o;
 
-        if (calculationDate != null ? !calculationDate.equals(employee.calculationDate) : employee.calculationDate != null)
+        if (isNotEqual(calculationDate, employee.calculationDate) ||
+                isNotEqual(firstName, employee.firstName) ||
+                isNotEqual(id, employee.id) ||
+                isNotEqual(income, employee.income) ||
+                isNotEqual(lastName, employee.lastName) ||
+                isNotEqual(taxTotal, employee.taxTotal)) {
             return false;
-        if (firstName != null ? !firstName.equals(employee.firstName) : employee.firstName != null) return false;
-        if (id != null ? !id.equals(employee.id) : employee.id != null) return false;
-        if (income != null ? !income.equals(employee.income) : employee.income != null) return false;
-        if (lastName != null ? !lastName.equals(employee.lastName) : employee.lastName != null) return false;
-        if (taxTotal != null ? !taxTotal.equals(employee.taxTotal) : employee.taxTotal != null) return false;
-
+        }
         return true;
+    }
+
+    private boolean isNotEqual(Object self, Object other) {
+        if (self != null) {
+            return !self.equals(other);
+        } else {
+            return other != null;
+        }
     }
 
     @Override

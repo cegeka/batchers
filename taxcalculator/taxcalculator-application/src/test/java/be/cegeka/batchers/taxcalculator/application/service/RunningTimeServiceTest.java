@@ -1,62 +1,67 @@
 package be.cegeka.batchers.taxcalculator.application.service;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Mockito.*;
 
 public class RunningTimeServiceTest {
 
     public static final int MINIMUM_TIME = 100;
     public static final int MAXIMUM_TIME = 500;
     RunningTimeService runningTimeService = new RunningTimeService();
-    private long counter;
 
-    @Test
-    public void testNoSleepTimeWhenMinimumAndMaximumNotSet() throws Exception {
-        startCounter();
-        runningTimeService.sleep();
-        stopCounter();
-
-        assertThat(counter).isZero();
+    @Before
+    public void setup() {
+        runningTimeService = spy(runningTimeService);
     }
 
     @Test
-    public void testSleepForTimeBetweenMinimumAndMaximum() throws Exception {
+    public void testNoSleepTimeWhenMinimumAndMaximumNotSet() throws Exception {
+        runningTimeService.sleep();
+
+        verify(runningTimeService, times(0)).actuallySleep(anyLong());
+    }
+
+    @Test
+    public void testSleepWhenMinimumAndMaximumAreSet() throws Exception {
         runningTimeService.setMinimumTime(MINIMUM_TIME);
         runningTimeService.setMaximumTime(MAXIMUM_TIME);
 
-        startCounter();
+        doReturn(300L).when(runningTimeService).calculateSleepTime();
         runningTimeService.sleep();
-        stopCounter();
 
-        assertThat(counter).isGreaterThanOrEqualTo(MINIMUM_TIME).isLessThanOrEqualTo(500L);
+        verify(runningTimeService, times(1)).actuallySleep(300L);
     }
 
     @Test
     public void testNoSleepWhenMaximumMissing() throws Exception {
         runningTimeService.setMinimumTime(MINIMUM_TIME);
-        startCounter();
         runningTimeService.sleep();
-        stopCounter();
+        verify(runningTimeService, times(0)).actuallySleep(anyLong());
 
-        assertThat(counter).isZero();
     }
 
     @Test
     public void testNoSleepWhenMinimumMissing() throws Exception {
         runningTimeService.setMaximumTime(MAXIMUM_TIME);
-        startCounter();
         runningTimeService.sleep();
-        stopCounter();
 
-        assertThat(counter).isZero();
+        verify(runningTimeService, times(0)).actuallySleep(anyLong());
     }
 
-    private void stopCounter() {
-        counter = System.currentTimeMillis() - counter;
-    }
+    @Test
+    public void givenMaximumAndMinimum_whenCalculateSleepTime_thenSleepTimeIsRandomlyBetweenMinimumAndMaximum() {
+        runningTimeService.setMinimumTime(MINIMUM_TIME);
+        runningTimeService.setMaximumTime(MAXIMUM_TIME);
 
-    private void startCounter() {
-        counter = System.currentTimeMillis();
+        long sleepTime = runningTimeService.calculateSleepTime();
+
+        assertThat(sleepTime).isGreaterThanOrEqualTo(MINIMUM_TIME).isLessThanOrEqualTo(MAXIMUM_TIME);
+
+        long sleepTimeSecond = runningTimeService.calculateSleepTime();
+        assertThat(sleepTimeSecond).isNotEqualTo(sleepTime);
     }
 }
