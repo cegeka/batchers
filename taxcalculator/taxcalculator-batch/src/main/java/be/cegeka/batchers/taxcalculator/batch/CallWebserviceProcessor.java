@@ -25,8 +25,8 @@ public class CallWebserviceProcessor implements ItemProcessor<Employee, Employee
         TaxTo taxTo = new TaxTo();
         taxTo.setAmount(employee.getIncomeTax());
         taxTo.setEmployeeId(String.valueOf(employee.getId()));
-        ResponseEntity<TaxServiceResponse> stringResponseEntity = restTemplate.postForEntity(URI.create(taxServiceUrl), taxTo, TaxServiceResponse.class);
-        if ("OK".equals(stringResponseEntity.getBody().status))
+        ResponseEntity<TaxServiceResponse> responseEntity = restTemplate.postForEntity(URI.create(taxServiceUrl), taxTo, TaxServiceResponse.class);
+        if ("OK".equals(responseEntity.getBody().status))
             return employee;
         throw new RuntimeException("Woops");
     }
