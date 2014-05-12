@@ -20,6 +20,8 @@ import java.net.URI;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.util.reflection.Whitebox.setInternalState;
 
@@ -59,5 +61,22 @@ public class CallWebserviceProcessorTest {
             .thenReturn(employee);
 
         assertThat(callWebserviceProcessor.process(employee)).isEqualTo(employee);
+    }
+
+    @Test
+    public void testProcessExponential_RetryAndEmployeeIsReturned() throws Exception {
+        long start = System.currentTimeMillis();
+        Employee employee = new EmployeeBuilder().build();
+        when(taxPaymentWebServiceMock.doWebserviceCallToTaxService(employee))
+            .thenThrow(new TaxWebServiceException("boe"))
+            .thenThrow(new TaxWebServiceException("boe"))
+            .thenReturn(employee);
+
+        Employee processed = callWebserviceProcessor.process(employee);
+        assertThat(processed).isEqualTo(employee);
+        verify(taxPaymentWebServiceMock, times(3)).doWebserviceCallToTaxService(employee);
+
+        long end = System.currentTimeMillis();
+        assertThat(end-start).isGreaterThanOrEqualTo(3000);
     }
 }
