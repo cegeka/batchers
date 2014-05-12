@@ -34,18 +34,24 @@ public class TaxCalculatorJobService implements JobService {
 
     @Override
     public void runTaxCalculatorJob() {
+        notifyJobStartListeners();
+        startJobs();
+    }
+
+    private void notifyJobStartListeners() {
+        jobStartListeners.stream()
+                .forEach(jobStartListener -> jobStartListener.jobHasBeenStarted(employeeJob.getName()));
+    }
+
+    private void startJobs() {
         try {
-            JobParameters jobParameters  = new JobParameters();
-
-            jobStartListeners.stream()
-                    .forEach(jobStartListener -> jobStartListener.jobHasBeenStarted(employeeJob.getName()));
-
+            JobParameters jobParameters = new JobParameters();
             JobExecution run = jobLauncher.run(employeeJob, jobParameters);
             List<Throwable> allFailureExceptions = run.getAllFailureExceptions();
         } catch (JobExecutionAlreadyRunningException | JobRestartException
                 | JobInstanceAlreadyCompleteException | JobParametersInvalidException e) {
             e.printStackTrace();
-        } finally {
         }
     }
+
 }
