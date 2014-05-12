@@ -33,6 +33,8 @@
         <module>taxcalculator-application</module>
         <module>taxcalculator-batch</module>
         <module>taxcalculator-presentation</module>
+        <module>taxcalculator-to</module>
+        <module>taxcalculator-batch-api</module>
     </modules>
 
     <repositories>
@@ -55,10 +57,20 @@
             </dependency>
             <dependency>
                 <groupId>be.cegeka.batchers</groupId>
+                <artifactId>taxcalculator-to</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>be.cegeka.batchers</groupId>
                 <artifactId>taxcalculator-application</artifactId>
                 <version>1.0-SNAPSHOT</version>
                 <type>test-jar</type>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>be.cegeka.batchers</groupId>
+                <artifactId>taxcalculator-batch-api</artifactId>
+                <version>1.0-SNAPSHOT</version>
             </dependency>
 
             <dependency>

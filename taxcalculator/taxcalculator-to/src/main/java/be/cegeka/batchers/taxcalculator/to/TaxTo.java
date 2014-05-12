@@ -1,4 +1,4 @@
-package be.cegeka.batchers.taxservice.stubwebservice;
+package be.cegeka.batchers.taxcalculator.to;
 
 import javax.validation.constraints.NotNull;
 

@@ -73,6 +73,18 @@ public class EmployeeRepositoryTest extends IntegrationTest {
     }
 
     @Test
+    public void testDeleteAll() throws Exception {
+        Employee first = new EmployeeBuilder().build();
+        Employee second = new EmployeeBuilder().build();
+
+        repository.save(first);
+        repository.save(second);
+
+        repository.deleteAll();
+        assertThat(repository.count()).isEqualTo(0L);
+    }
+
+    @Test
     public void testGetAll() throws Exception {
         Employee first = new EmployeeBuilder().build();
         Employee second = new EmployeeBuilder().build();

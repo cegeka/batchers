@@ -1,5 +1,8 @@
 package be.cegeka.batchers.taxservice.stubwebservice;
 
+import be.cegeka.batchers.taxcalculator.to.TaxServiceResponse;
+import be.cegeka.batchers.taxcalculator.to.TaxTo;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,24 +37,24 @@ public class TaxControllerTest {
     }
 
     @Test
-    public void givenValidTaxTo_whenSubmitTaxForm_ThenALogLineIsCreated() {
+    public void givenValidTaxTo_whenSubmitTaxForm_ThenALogLineIsCreated() throws JsonProcessingException {
         taxController.submitTaxForm(taxTo);
 
         verify(taxLogger, times(1)).log(taxTo, "OK");
     }
 
     @Test
-    public void givenBlacklistEmployee_whenSubmitTaxForm_thenResponseFails() {
+    public void givenBlacklistEmployee_whenSubmitTaxForm_thenResponseFails() throws JsonProcessingException {
         when(specialEmployeesService.isEmployeeBlacklisted(employeeId)).thenReturn(true);
 
-        ResponseEntity<String> response = taxController.submitTaxForm(taxTo);
+        ResponseEntity<TaxServiceResponse> response = taxController.submitTaxForm(taxTo);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response.getBody()).isEqualTo(TaxController.RESPONSE_BODY_FAIL);
+        assertThat(response.getBody().status).isEqualTo(TaxController.RESPONSE_BODY_FAIL);
     }
 
     @Test
-    public void givenEmployeeWithTax_whenSubmitTaxForm_thenItSleepsIfNecessary() throws InterruptedException {
+    public void givenEmployeeWithTax_whenSubmitTaxForm_thenItSleepsIfNecessary() throws InterruptedException, JsonProcessingException {
 
         taxController.submitTaxForm(taxTo);
 
@@ -59,7 +62,7 @@ public class TaxControllerTest {
     }
 
     @Test
-    public void givenBlacklistEmployee_whenSubmitTaxForm_thenDoNotTryToTimeout() {
+    public void givenBlacklistEmployee_whenSubmitTaxForm_thenDoNotTryToTimeout() throws JsonProcessingException {
         when(specialEmployeesService.isEmployeeBlacklisted(employeeId)).thenReturn(true);
 
         taxController.submitTaxForm(taxTo);

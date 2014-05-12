@@ -1,5 +1,6 @@
 package be.cegeka.batchers.taxservice.stubwebservice;
 
+import be.cegeka.batchers.taxcalculator.to.TaxTo;
 import be.cegeka.batchers.taxservice.stubwebservice.config.WebAppConfigurationAware;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
