@@ -1,6 +1,5 @@
 package be.cegeka.batchers.taxcalculator.batch;
 
-import be.cegeka.batchers.taxcalculator.batch.api.JobStartListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,17 +28,8 @@ public class AppConfig {
     }
 
     @Bean
-    public String taxServiceUrl(){
+    public String taxServiceUrl() {
         return taxServiceUrl;
     }
 
-    @Bean
-    public JobStartListener defaultJobStartListener() {
-        return new JobStartListener() {
-            @Override
-            public void jobHasBeenStarted(String jobName) {
-
-            }
-        };
-    }
 }

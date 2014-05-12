@@ -15,6 +15,7 @@ import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -29,8 +30,8 @@ public class TaxCalculatorJobService implements JobService {
     @Autowired
     SimpleJobLauncher jobLauncher;
 
-    @Autowired
-    private Set<JobStartListener> jobStartListeners;
+    @Autowired(required = false)
+    private Set<JobStartListener> jobStartListeners = new HashSet<>();
 
     @Override
     public void runTaxCalculatorJob() {
