@@ -22,10 +22,12 @@ import static org.springframework.batch.core.BatchStatus.COMPLETED;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 
 public class EmployeeBatchJobITest extends AbstractIntegrationTest {
+    public static final String STATUS_OK = "{\"status\": \"OK\" }";
     @Autowired
     String taxServiceUrl;
 
@@ -62,7 +64,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         Employee employee = haveOneEmployee();
 
         mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
-                .andRespond(withSuccess("{ \"status\": \"OK\" }", MediaType.APPLICATION_JSON));
+                .andRespond(withSuccess(STATUS_OK, MediaType.APPLICATION_JSON));
 
         JobExecution jobExecution = jobLauncherTestUtils.launchJob();
         System.out.println(jobExecution.getAllFailureExceptions());
@@ -93,12 +95,26 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         haveOneEmployee();
 
         mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
-                .andRespond(withSuccess("{\"status\" : \"OK\"}", MediaType.APPLICATION_JSON));
+                .andRespond(withSuccess(STATUS_OK, MediaType.APPLICATION_JSON));
         mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
                 .andRespond(withBadRequest());
 
         JobExecution jobExecution = jobLauncherTestUtils.launchJob();
         assertThat(jobExecution.getStatus().isUnsuccessful()).isTrue();
+        mockServer.verify();
+    }
+
+    @Test
+    public void jobRetriesIfWebserviceFails() throws Exception {
+        haveOneEmployee();
+
+        mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
+                .andRespond(withServerError());
+        mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
+                .andRespond(withSuccess(STATUS_OK, MediaType.APPLICATION_JSON));
+
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob();
+        assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
         mockServer.verify();
     }
 
