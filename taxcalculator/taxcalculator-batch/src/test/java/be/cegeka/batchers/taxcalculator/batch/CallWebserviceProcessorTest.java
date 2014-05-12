@@ -73,10 +73,12 @@ public class CallWebserviceProcessorTest {
             .thenReturn(employee);
 
         Employee processed = callWebserviceProcessor.process(employee);
+
         assertThat(processed).isEqualTo(employee);
         verify(taxPaymentWebServiceMock, times(3)).doWebserviceCallToTaxService(employee);
 
         long end = System.currentTimeMillis();
-        assertThat(end-start).isGreaterThanOrEqualTo(3000);
+        long duration = end - start;
+        assertThat(duration).isGreaterThanOrEqualTo(300);
     }
 }

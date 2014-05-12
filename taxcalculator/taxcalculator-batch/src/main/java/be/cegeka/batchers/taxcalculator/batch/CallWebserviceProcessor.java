@@ -20,11 +20,11 @@ public class CallWebserviceProcessor implements ItemProcessor<Employee, Employee
     @Autowired
     private TaxPaymentWebService taxPaymentWebService;
 
-    @Value("${taxProcessor.retry.initialInterval}")
-    private long initialInterval;
+    @Value("${taxProcessor.retry.initialInterval:100}")
+    private long initialInterval = 100;
 
-    @Value("${taxProcessor.retry.maxAtempts}")
-    private int maxAtempts;
+    @Value("${taxProcessor.retry.maxAtempts:3}")
+    private int maxAtempts = 3;
 
     @Override
     public Employee process(Employee employee) throws Exception {
@@ -36,11 +36,11 @@ public class CallWebserviceProcessor implements ItemProcessor<Employee, Employee
         exceptions.put(TaxWebServiceException.class, true);
 
         RetryTemplate template = new RetryTemplate();
-        SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy(maxAtempts!=0?maxAtempts:3, exceptions);
+        SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy(maxAtempts, exceptions);
         template.setRetryPolicy(retryPolicy);
 
         ExponentialBackOffPolicy backOffPolicy = new ExponentialBackOffPolicy();
-        backOffPolicy.setInitialInterval(initialInterval!=0?initialInterval:1000);
+        backOffPolicy.setInitialInterval(initialInterval);
         template.setBackOffPolicy(backOffPolicy);
 
         return template;
