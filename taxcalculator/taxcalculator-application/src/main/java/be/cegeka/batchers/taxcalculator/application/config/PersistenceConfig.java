@@ -1,8 +1,7 @@
 package be.cegeka.batchers.taxcalculator.application.config;
 
 import org.apache.commons.dbcp.BasicDataSource;
-import org.hibernate.ejb.HibernatePersistence;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -55,7 +54,7 @@ public class PersistenceConfig {
     public EntityManagerFactory entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean entityManager = new LocalContainerEntityManagerFactoryBean();
         entityManager.setDataSource(dataSource());
-        entityManager.setPersistenceProviderClass(HibernatePersistence.class);
+        entityManager.setPersistenceProviderClass(HibernatePersistenceProvider.class);
         entityManager.setJpaVendorAdapter(jpaVendorAdapter());
         entityManager.setPackagesToScan("be.cegeka.batchers.taxcalculator");
 

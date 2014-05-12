@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan("be.cegeka.batchers.taxcalculator.rest")
+@ComponentScan("be.cegeka.batchers.taxcalculator")
 @Import(ApplicationContext.class)
 public class WebAppContext {
 }

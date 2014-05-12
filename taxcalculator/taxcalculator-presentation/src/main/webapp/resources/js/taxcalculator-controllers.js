@@ -1,6 +1,6 @@
-var maintenancetoolControllers = angular.module('taxcalculatorControllers', []);
+var taxcalculatorControllers = angular.module('taxcalculatorControllers', []);
 
-maintenancetoolControllers
+taxcalculatorControllers
 
     .controller('EmployeesOverviewCtrl', ['$scope', 'EmployeesOverviewResource',
         function ($scope, EmployeesOverviewResource) {
@@ -9,6 +9,18 @@ maintenancetoolControllers
                 function(successData) {},
                 function(error) {
                     $scope.$emit("alert", {'alertClass': 'alert-danger', 'message': 'Could not retrieve application overview'})
+                }
+            );
+        }
+    ])
+
+    .controller('RunJobCtrl', ['$scope', 'RunJobResource',
+        function ($scope, RunJobResource) {
+            RunJobResource.query(
+                {},
+                function(successData) {},
+                function(error) {
+                    $scope.$emit("alert", {'alertClass': 'alert-danger', 'message': 'Could not start job'})
                 }
             );
         }

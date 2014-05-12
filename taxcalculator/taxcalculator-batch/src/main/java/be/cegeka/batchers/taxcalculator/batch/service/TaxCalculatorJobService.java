@@ -25,6 +25,7 @@ public class TaxCalculatorJobService implements JobService {
     public void runTaxCalculatorJob() {
         try {
             JobParameters jobParameters  = new JobParameters();
+            System.out.println("Running job in jobservice");
             jobLauncher.run(employeeJob, jobParameters);
         } catch (JobExecutionAlreadyRunningException | JobRestartException
                 | JobInstanceAlreadyCompleteException | JobParametersInvalidException e) {
