@@ -86,6 +86,12 @@
 				<artifactId>jetty-maven-plugin</artifactId>
 				<version>8.1.8.v20121106</version>
 				<configuration>
+                    <systemProperties>
+                        <systemProperty>
+                            <name>jetty.port</name>
+                            <value>9090</value>
+                        </systemProperty>
+                    </systemProperties>
 					<scanIntervalSeconds>10</scanIntervalSeconds>
 					<webApp>
 						<war>target/taxservice-${project.version}.war</war>
