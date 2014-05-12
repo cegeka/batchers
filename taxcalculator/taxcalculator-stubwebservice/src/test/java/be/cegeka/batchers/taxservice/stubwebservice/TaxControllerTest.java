@@ -22,7 +22,7 @@ public class TaxControllerTest {
     private TextFileTaxLogger taxLogger;
 
     @Mock
-    private SpecialEmployeesService specialEmployeesService;
+    private SpecialEmployeesService specialEmployeesServiceMock;
 
     @InjectMocks
     private TaxController taxController;
@@ -45,7 +45,7 @@ public class TaxControllerTest {
 
     @Test
     public void givenBlacklistEmployee_whenSubmitTaxForm_thenResponseFails() throws JsonProcessingException {
-        when(specialEmployeesService.isEmployeeBlacklisted(employeeId)).thenReturn(true);
+        when(specialEmployeesServiceMock.isEmployeeBlacklisted(employeeId)).thenReturn(true);
 
         ResponseEntity<TaxServiceResponse> response = taxController.submitTaxForm(taxTo);
 
@@ -58,15 +58,22 @@ public class TaxControllerTest {
 
         taxController.submitTaxForm(taxTo);
 
-        verify(specialEmployeesService).sleepIfNecessary(employeeId);
+        verify(specialEmployeesServiceMock).sleepIfNecessary(employeeId);
     }
 
     @Test
     public void givenBlacklistEmployee_whenSubmitTaxForm_thenDoNotTryToTimeout() throws JsonProcessingException {
-        when(specialEmployeesService.isEmployeeBlacklisted(employeeId)).thenReturn(true);
+        when(specialEmployeesServiceMock.isEmployeeBlacklisted(employeeId)).thenReturn(true);
 
         taxController.submitTaxForm(taxTo);
 
-        verify(specialEmployeesService, times(0)).sleepIfNecessary(employeeId);
+        verify(specialEmployeesServiceMock, times(0)).sleepIfNecessary(employeeId);
+    }
+
+    @Test
+    public void testResetSpecialEmployeesService_isReset() throws Exception {
+        taxController.resetSpecialEmployeesService();
+
+        verify(specialEmployeesServiceMock).reset();
     }
 }

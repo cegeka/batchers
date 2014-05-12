@@ -55,5 +55,8 @@ public class TaxControllerIntegrationTest extends WebAppConfigurationAware {
         ).andExpect(status().is4xxClientError());
     }
 
-
+    @Test
+    public void testResetSpecialEmployeesService() throws Exception {
+        mockMvc.perform(post("/reset")).andExpect(status().isOk());
+    }
 }

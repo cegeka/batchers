@@ -37,4 +37,10 @@ public class TaxController {
             return new ResponseEntity<>(new TaxServiceResponse(okStatus), HttpStatus.OK);
         }
     }
+
+    @RequestMapping(value = "/reset", method = POST)
+    public ResponseEntity<?> resetSpecialEmployeesService() {
+        specialEmployeesService.reset();
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

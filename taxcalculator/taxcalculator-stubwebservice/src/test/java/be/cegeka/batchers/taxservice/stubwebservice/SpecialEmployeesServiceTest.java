@@ -16,7 +16,7 @@ public class SpecialEmployeesServiceTest {
     private SpecialEmployeesService specialEmployeesService = new SpecialEmployeesService();
 
     @Test
-    public void givenBlacklistEmployees_whenEmployeeBlacklistedOneTime_thenReturnTrueFirstTime_FalseSecondTime() {
+    public void givenBlacklistEmployees_whenEmployeeIsBlacklistedOneTime_thenReturnTrueFirstTime_FalseSecondTime() {
         specialEmployeesService.setBlacklistedEmployees("1:1,2:1,3:1");
 
         assertThat(specialEmployeesService.isEmployeeBlacklisted(specialEmployeeID1)).isTrue();
@@ -28,9 +28,23 @@ public class SpecialEmployeesServiceTest {
     }
 
     @Test
-    public void givenBlacklistEmployees_whenEmployeeBlacklistedSeveralTimes_thenReturnCorrectBlacklist() {
+    public void givenBlacklistEmployees_whenEmployeeIsBlacklistedSeveralTimes_thenReturnCorrectBlacklist() {
         specialEmployeesService.setBlacklistedEmployees("1:2");
 
+        assertThat(specialEmployeesService.isEmployeeBlacklisted(specialEmployeeID1)).isTrue();
+        assertThat(specialEmployeesService.isEmployeeBlacklisted(specialEmployeeID1)).isTrue();
+        assertThat(specialEmployeesService.isEmployeeBlacklisted(specialEmployeeID1)).isFalse();
+    }
+
+    @Test
+    public void givenBlacklistEmployees_whenEmployeeIsBlacklisted_AndServiceIsResetted_ItsBlacklistedAgain() {
+        specialEmployeesService.setBlacklistedEmployees("1:2");
+
+        specialEmployeesService.isEmployeeBlacklisted(specialEmployeeID1);
+        specialEmployeesService.isEmployeeBlacklisted(specialEmployeeID1);
+        specialEmployeesService.isEmployeeBlacklisted(specialEmployeeID1);
+
+        specialEmployeesService.reset();
         assertThat(specialEmployeesService.isEmployeeBlacklisted(specialEmployeeID1)).isTrue();
         assertThat(specialEmployeesService.isEmployeeBlacklisted(specialEmployeeID1)).isTrue();
         assertThat(specialEmployeesService.isEmployeeBlacklisted(specialEmployeeID1)).isFalse();
@@ -43,6 +57,19 @@ public class SpecialEmployeesServiceTest {
         assertThat(specialEmployeesService.isEmployeeTimeout(specialEmployeeID1)).isTrue();
         assertThat(specialEmployeesService.isEmployeeTimeout(specialEmployeeID2)).isTrue();
         assertThat(specialEmployeesService.isEmployeeTimeout(specialEmployeeID3)).isTrue();
+    }
+
+    @Test
+    public void givenTimeoutEmployees_whenIsEmployeeTimeout_afterServiceIsReset_ThenItTimeoutsAgain() {
+        specialEmployeesService.setTimeoutEmployees("1:1");
+
+        assertThat(specialEmployeesService.isEmployeeTimeout(specialEmployeeID1)).isTrue();
+        assertThat(specialEmployeesService.isEmployeeTimeout(specialEmployeeID3)).isFalse();
+
+        specialEmployeesService.reset();
+
+        assertThat(specialEmployeesService.isEmployeeTimeout(specialEmployeeID1)).isTrue();
+        assertThat(specialEmployeesService.isEmployeeTimeout(specialEmployeeID3)).isFalse();
     }
 
     @Test
