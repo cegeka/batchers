@@ -22,6 +22,7 @@ import static org.springframework.batch.core.BatchStatus.COMPLETED;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 
@@ -108,7 +109,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         haveOneEmployee();
 
         mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
-                .andRespond(withBadRequest());
+                .andRespond(withServerError());
         mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
                 .andRespond(withSuccess(STATUS_OK, MediaType.APPLICATION_JSON));
 

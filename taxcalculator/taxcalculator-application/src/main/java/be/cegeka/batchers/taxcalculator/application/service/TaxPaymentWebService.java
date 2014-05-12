@@ -6,6 +6,7 @@ import be.cegeka.batchers.taxcalculator.to.TaxTo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
@@ -26,7 +27,7 @@ public class TaxPaymentWebService {
                 return employee;
             }
             throw new TaxWebServiceException("Illegal response from web service");
-        } catch (ResourceAccessException e) {
+        } catch (ResourceAccessException | HttpServerErrorException e) {
             throw new TaxWebServiceException("Could not retrieve response from webservice", e);
         }
     }
