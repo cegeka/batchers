@@ -16,19 +16,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Service
 public class TaxCalculatorJobService implements JobService {
-    @Autowired
-    private JobLocator jobLocator;
 
     @Autowired
-    Job employeeJob;
+    private Job employeeJob;
 
     @Autowired
-    SimpleJobLauncher jobLauncher;
+    private SimpleJobLauncher jobLauncher;
 
     @Autowired(required = false)
     private Set<JobStartListener> jobStartListeners = new HashSet<>();
@@ -47,8 +44,7 @@ public class TaxCalculatorJobService implements JobService {
     private void startJobs() {
         try {
             JobParameters jobParameters = new JobParameters();
-            JobExecution run = jobLauncher.run(employeeJob, jobParameters);
-            List<Throwable> allFailureExceptions = run.getAllFailureExceptions();
+            jobLauncher.run(employeeJob, jobParameters);
         } catch (JobExecutionAlreadyRunningException | JobRestartException
                 | JobInstanceAlreadyCompleteException | JobParametersInvalidException e) {
             e.printStackTrace();
