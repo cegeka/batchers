@@ -17,6 +17,9 @@ public class AppConfig {
     @Value(value = "${taxservice.url:/taxservice}")
     String taxServiceUrl;
 
+    @Value(value = "${reset.url:/reset}")
+    String resetUrl;
+
     @Bean
     public RestTemplate restTemplate() {
         RestTemplate restTemplate = new RestTemplate();
@@ -30,6 +33,11 @@ public class AppConfig {
     @Bean
     public String taxServiceUrl() {
         return taxServiceUrl;
+    }
+
+    @Bean
+    public String resetUrl() {
+        return resetUrl;
     }
 
 }

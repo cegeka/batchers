@@ -52,6 +52,7 @@ public class TaxCalculatorJobService implements JobService {
         } catch (JobExecutionAlreadyRunningException | JobRestartException
                 | JobInstanceAlreadyCompleteException | JobParametersInvalidException e) {
             e.printStackTrace();
+            //TODO shouldn't we handle this differently?
         }
     }
 
