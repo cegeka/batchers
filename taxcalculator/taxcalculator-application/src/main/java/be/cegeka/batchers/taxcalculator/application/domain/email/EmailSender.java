@@ -16,12 +16,11 @@ import java.util.Set;
 
 import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.lang3.StringUtils.isNoneBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Service
 public class EmailSender {
     private static final Logger logger = LoggerFactory.getLogger(EmailSender.class);
-    @Value("${smtp_use_ssl}")
+    @Value("${smtp_use_ssl:true}")
     private boolean smtpUseSsl;
     @Value("${smtp_port:465}")
     private int smtpPort;
@@ -38,7 +37,7 @@ public class EmailSender {
             email.setSSLOnConnect(smtpUseSsl);
             email.setSmtpPort(smtpPort);
             email.setHostName(smtpServer);
-            if(isNoneBlank(smtpUserName, smtpPassword)) {
+            if (isNoneBlank(smtpUserName, smtpPassword)) {
                 email.setAuthenticator(new DefaultAuthenticator(smtpUserName, smtpPassword));
             }
 
