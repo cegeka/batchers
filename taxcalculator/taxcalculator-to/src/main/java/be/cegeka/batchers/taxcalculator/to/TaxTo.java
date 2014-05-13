@@ -5,7 +5,7 @@ import javax.validation.constraints.NotNull;
 public class TaxTo {
 
     @NotNull
-    private String employeeId;
+    private Long employeeId;
 
     @NotNull
     private Double amount;
@@ -13,12 +13,12 @@ public class TaxTo {
     public TaxTo() {
     }
 
-    public TaxTo(String employeeId, Double amount) {
+    public TaxTo(Long employeeId, Double amount) {
         this.employeeId = employeeId;
         this.amount = amount;
     }
 
-    public String getEmployeeId() {
+    public Long getEmployeeId() {
         return employeeId;
     }
 
@@ -26,7 +26,7 @@ public class TaxTo {
         return amount;
     }
 
-    public void setEmployeeId(String employeeId) {
+    public void setEmployeeId(Long employeeId) {
         this.employeeId = employeeId;
     }
 
