@@ -37,10 +37,19 @@ public class TaxControllerTest {
     }
 
     @Test
-    public void givenValidTaxTo_whenSubmitTaxForm_ThenALogLineIsCreated() throws JsonProcessingException {
+    public void givenValidTaxTo_whenSubmitTaxForm_ThenALogLineIsCreatedWithStatusOk() throws JsonProcessingException {
         taxController.submitTaxForm(taxTo);
 
         verify(taxLogger, times(1)).log(taxTo, "OK");
+    }
+
+    @Test
+    public void givenBlacklistedEmployee_whenSubmitTaxForm_ThenALogLineIsCreatedWithStatusNotOk() throws JsonProcessingException {
+        when(specialEmployeesServiceMock.isEmployeeBlacklisted(1L)).thenReturn(true);
+
+        taxController.submitTaxForm(taxTo);
+
+        verify(taxLogger, times(1)).log(taxTo, "FAILURE");
     }
 
     @Test
