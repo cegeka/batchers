@@ -16,7 +16,7 @@ public class WebAppInitializer implements WebApplicationInitializer {
     public static final String DISPATCHER_SERVLET_NAME = "dispatcher";
     public static final String DISPATCHER_SERVLET_MAPPING = "/rest/*";
 
-    private static Logger LOG = LoggerFactory.getLogger(WebAppInitializer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WebAppInitializer.class);
 
     @Override
     public void onStartup(ServletContext servletContext) {
