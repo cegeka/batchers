@@ -27,7 +27,7 @@ import java.util.Arrays;
 public class EmployeeJobConfig {
 
     @Autowired
-    private JobRepository repository;
+    JobRepository repository;
     @Autowired
     private JobBuilderFactory jobBuilders;
     @Autowired
