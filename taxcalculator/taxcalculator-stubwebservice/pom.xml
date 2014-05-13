@@ -89,7 +89,7 @@
                     <systemProperties>
                         <systemProperty>
                             <name>jetty.port</name>
-                            <value>9090</value>
+                            <value>9091</value>
                         </systemProperty>
                     </systemProperties>
 					<scanIntervalSeconds>10</scanIntervalSeconds>
