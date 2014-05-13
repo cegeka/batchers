@@ -44,7 +44,7 @@ public class TaxPaymentWebService {
     private TaxTo createWebserviceInput(Employee employee) {
         TaxTo taxTo = new TaxTo();
         taxTo.setAmount(employee.getIncomeTax());
-        taxTo.setEmployeeId(String.valueOf(employee.getId()));
+        taxTo.setEmployeeId(employee.getId());
         return taxTo;
     }
 }
