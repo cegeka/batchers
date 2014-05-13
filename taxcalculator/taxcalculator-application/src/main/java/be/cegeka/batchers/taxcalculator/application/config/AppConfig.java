@@ -1,4 +1,4 @@
-package be.cegeka.batchers.taxcalculator.batch;
+package be.cegeka.batchers.taxcalculator.application.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

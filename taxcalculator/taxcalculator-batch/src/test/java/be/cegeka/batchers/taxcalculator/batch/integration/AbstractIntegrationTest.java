@@ -2,7 +2,7 @@ package be.cegeka.batchers.taxcalculator.batch.integration;
 
 import be.cegeka.batchers.taxcalculator.application.config.ApplicationTestContext;
 import be.cegeka.batchers.taxcalculator.application.config.PropertyPlaceHolderConfig;
-import be.cegeka.batchers.taxcalculator.batch.AppConfig;
+import be.cegeka.batchers.taxcalculator.application.config.AppConfig;
 import be.cegeka.batchers.taxcalculator.batch.EmployeeJobConfig;
 import org.joda.time.DateTimeUtils;
 import org.junit.AfterClass;
