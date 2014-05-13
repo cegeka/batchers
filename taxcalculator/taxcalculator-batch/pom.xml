@@ -17,6 +17,16 @@
     <dependencies>
         <dependency>
             <groupId>be.cegeka.batchers</groupId>
+            <artifactId>taxcalculator-infrastructure</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>be.cegeka.batchers</groupId>
+            <artifactId>taxcalculator-infrastructure</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>be.cegeka.batchers</groupId>
             <artifactId>taxcalculator-application</artifactId>
         </dependency>
         <dependency>

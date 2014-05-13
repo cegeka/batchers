@@ -1,5 +1,6 @@
 package be.cegeka.batchers.taxcalculator.application.config;
 
+import be.cegeka.batchers.taxcalculator.infrastructure.config.PropertyPlaceHolderConfig;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.springframework.beans.factory.annotation.Value;
