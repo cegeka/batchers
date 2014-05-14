@@ -25,7 +25,7 @@ public class PDFGeneratorService {
         final IContext context = report.createContext();
         context.putMap(contextMap);
 
-        final ByteArrayOutputStream byteArrayOutputStream =  new ByteArrayOutputStream();
+        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         final Options options = Options.getTo(PDF).via(XWPF);
         report.convert(context, options, byteArrayOutputStream);
 
