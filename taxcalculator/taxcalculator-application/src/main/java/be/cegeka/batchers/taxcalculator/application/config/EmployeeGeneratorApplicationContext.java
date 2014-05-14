@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 @Import(PersistenceConfig.class)
 @ComponentScan(basePackages = "be.cegeka.batchers.taxcalculator.application")
-public class ApplicationContext {
+public class EmployeeGeneratorApplicationContext {
 
     @Autowired
     protected EmployeeGenerator employeeGenerator;

@@ -10,5 +10,5 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableWebMvc
 @ComponentScan(basePackages = "be.cegeka.batchers.taxservice")
 @Import(PropertyPlaceHolderConfig.class)
-public class AppConfig {
+public class StubWebserviceApplicationContext {
 }

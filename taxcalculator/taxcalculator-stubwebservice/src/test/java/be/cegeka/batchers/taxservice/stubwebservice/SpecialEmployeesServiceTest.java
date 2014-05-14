@@ -2,33 +2,57 @@ package be.cegeka.batchers.taxservice.stubwebservice;
 
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class SpecialEmployeesServiceTest {
 
     public static final int TIMEOUT = 20;
-    private String specialEmployeeID1 = "1";
-    private String specialEmployeeID2 = "2";
-    private String specialEmployeeID3 = "3";
+    private Long specialEmployeeID1 = 1L;
+    private Long specialEmployeeID2 = 2L;
+    private Long specialEmployeeID3 = 3L;
 
     private SpecialEmployeesService specialEmployeesService = new SpecialEmployeesService();
 
     @Test
-    public void givenBlacklistEmployees_whenIsEmployeeBlacklisted_thenReturnTrue() {
-        specialEmployeesService.setBlacklistedEmployees(new HashSet<String>(Arrays.asList(specialEmployeeID1, specialEmployeeID2, specialEmployeeID3)));
+    public void givenBlacklistEmployees_whenEmployeeIsBlacklistedOneTime_thenReturnTrueFirstTime_FalseSecondTime() {
+        specialEmployeesService.setBlacklistedEmployees("1:1,2:1,3:1");
 
         assertThat(specialEmployeesService.isEmployeeBlacklisted(specialEmployeeID1)).isTrue();
+        assertThat(specialEmployeesService.isEmployeeBlacklisted(specialEmployeeID1)).isFalse();
         assertThat(specialEmployeesService.isEmployeeBlacklisted(specialEmployeeID2)).isTrue();
+        assertThat(specialEmployeesService.isEmployeeBlacklisted(specialEmployeeID2)).isFalse();
         assertThat(specialEmployeesService.isEmployeeBlacklisted(specialEmployeeID3)).isTrue();
+        assertThat(specialEmployeesService.isEmployeeBlacklisted(specialEmployeeID3)).isFalse();
+    }
+
+    @Test
+    public void givenBlacklistEmployees_whenEmployeeIsBlacklistedSeveralTimes_thenReturnCorrectBlacklist() {
+        specialEmployeesService.setBlacklistedEmployees("1:2");
+
+        assertThat(specialEmployeesService.isEmployeeBlacklisted(specialEmployeeID1)).isTrue();
+        assertThat(specialEmployeesService.isEmployeeBlacklisted(specialEmployeeID1)).isTrue();
+        assertThat(specialEmployeesService.isEmployeeBlacklisted(specialEmployeeID1)).isFalse();
+    }
+
+    @Test
+    public void givenBlacklistEmployees_whenEmployeeIsBlacklisted_AndServiceIsResetted_ItsBlacklistedAgain() {
+        specialEmployeesService.setBlacklistedEmployees("1:2");
+
+        specialEmployeesService.isEmployeeBlacklisted(specialEmployeeID1);
+        specialEmployeesService.isEmployeeBlacklisted(specialEmployeeID1);
+        specialEmployeesService.isEmployeeBlacklisted(specialEmployeeID1);
+
+        specialEmployeesService.reset();
+        assertThat(specialEmployeesService.isEmployeeBlacklisted(specialEmployeeID1)).isTrue();
+        assertThat(specialEmployeesService.isEmployeeBlacklisted(specialEmployeeID1)).isTrue();
+        assertThat(specialEmployeesService.isEmployeeBlacklisted(specialEmployeeID1)).isFalse();
     }
 
     @Test
     public void givenTimeoutEmployees_whenIsEmployeeTimeout_thenReturnTrue() {
-        specialEmployeesService.setTimeoutEmployees(new HashSet<String>(Arrays.asList(specialEmployeeID1, specialEmployeeID2, specialEmployeeID3)));
+        specialEmployeesService.setTimeoutEmployees("1:1,2:1,3:1");
 
         assertThat(specialEmployeesService.isEmployeeTimeout(specialEmployeeID1)).isTrue();
         assertThat(specialEmployeesService.isEmployeeTimeout(specialEmployeeID2)).isTrue();
@@ -36,8 +60,21 @@ public class SpecialEmployeesServiceTest {
     }
 
     @Test
+    public void givenTimeoutEmployees_whenIsEmployeeTimeout_afterServiceIsReset_ThenItTimeoutsAgain() {
+        specialEmployeesService.setTimeoutEmployees("1:1");
+
+        assertThat(specialEmployeesService.isEmployeeTimeout(specialEmployeeID1)).isTrue();
+        assertThat(specialEmployeesService.isEmployeeTimeout(specialEmployeeID3)).isFalse();
+
+        specialEmployeesService.reset();
+
+        assertThat(specialEmployeesService.isEmployeeTimeout(specialEmployeeID1)).isTrue();
+        assertThat(specialEmployeesService.isEmployeeTimeout(specialEmployeeID3)).isFalse();
+    }
+
+    @Test
     public void givenTimeoutEmployee_whenSleepIfNecessary_thenSleepForTimeoutMilliseconds() throws InterruptedException {
-        specialEmployeesService.setTimeoutEmployees(new HashSet<String>(Arrays.asList(specialEmployeeID1)));
+        specialEmployeesService.setTimeoutEmployees("1:1");
         specialEmployeesService.setTimeout(TIMEOUT);
         long initialMillis = new Date().getTime();
 
@@ -51,7 +88,7 @@ public class SpecialEmployeesServiceTest {
         specialEmployeesService.setTimeout(TIMEOUT);
         long initialMillis = new Date().getTime();
 
-        specialEmployeesService.sleepIfNecessary(specialEmployeeID1);
+        specialEmployeesService.sleepIfNecessary(1L);
 
         assertThat(new Date().getTime() - initialMillis).isLessThan(TIMEOUT);
     }

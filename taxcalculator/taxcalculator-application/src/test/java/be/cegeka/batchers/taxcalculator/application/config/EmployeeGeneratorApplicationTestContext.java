@@ -3,7 +3,7 @@ package be.cegeka.batchers.taxcalculator.application.config;
 import be.cegeka.batchers.taxcalculator.application.ApplicationInitializer;
 import org.springframework.context.annotation.Bean;
 
-public class ApplicationTestContext extends ApplicationContext {
+public class EmployeeGeneratorApplicationTestContext extends EmployeeGeneratorApplicationContext {
 
     @Bean
     @Override

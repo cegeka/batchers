@@ -18,21 +18,22 @@
         <dependency>
             <groupId>be.cegeka.batchers</groupId>
             <artifactId>taxcalculator-infrastructure</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>be.cegeka.batchers</groupId>
             <artifactId>taxcalculator-infrastructure</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>be.cegeka.batchers</groupId>
+            <artifactId>taxcalculator-application</artifactId>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>be.cegeka.batchers</groupId>
             <artifactId>taxcalculator-application</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>be.cegeka.batchers</groupId>
-            <artifactId>taxcalculator-application</artifactId>
-            <type>test-jar</type>
         </dependency>
         <dependency>
             <groupId>be.cegeka.batchers</groupId>
@@ -57,7 +58,6 @@
         <dependency>
             <groupId>org.springframework.batch</groupId>
             <artifactId>spring-batch-test</artifactId>
-            <version>3.0.0.M3</version>
         </dependency>
     </dependencies>
 

@@ -70,6 +70,7 @@ public class PersistenceConfig {
         return entityManager.getNativeEntityManagerFactory();
     }
 
+    @Bean
     public JpaTransactionManager transactionManager() {
         if (platformTransactionManager == null) {
             platformTransactionManager = new JpaTransactionManager(entityManagerFactory());

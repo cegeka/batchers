@@ -7,7 +7,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 @Configuration
-@PropertySource("classpath:be/cegeka/batchers/taxcalculator/infrastructure/config/taxcalculator.properties")
+@PropertySource("classpath:taxcalculator.properties")
 public class PropertyPlaceHolderConfig {
 
     @Bean
