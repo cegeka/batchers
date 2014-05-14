@@ -1,22 +1,20 @@
 package be.cegeka.batchers.taxcalculator.application.domain.pdf;
 
-import be.cegeka.batchers.taxcalculator.application.domain.Employee;
-import fr.opensagres.xdocreport.converter.ConverterTypeTo;
-import fr.opensagres.xdocreport.converter.ConverterTypeVia;
 import fr.opensagres.xdocreport.converter.Options;
 import fr.opensagres.xdocreport.core.XDocReportException;
 import fr.opensagres.xdocreport.document.IXDocReport;
 import fr.opensagres.xdocreport.document.registry.XDocReportRegistry;
 import fr.opensagres.xdocreport.template.IContext;
 import fr.opensagres.xdocreport.template.TemplateEngineKind;
+import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.util.List;
 import java.util.Map;
 
 import static fr.opensagres.xdocreport.converter.ConverterTypeTo.PDF;
 import static fr.opensagres.xdocreport.converter.ConverterTypeVia.XWPF;
 
+@Service
 public class PDFGeneratorService {
 
     public byte[] generatePdfAsByteArray(File template, Map<String, Object> contextMap) throws IOException, XDocReportException {

@@ -3,6 +3,7 @@ package be.cegeka.batchers.taxcalculator.batch.integration;
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeBuilder;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeRepository;
+import be.cegeka.batchers.taxcalculator.application.domain.email.SmtpServerStub;
 import be.cegeka.batchers.taxcalculator.batch.service.TaxCalculatorJobService;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
@@ -41,11 +42,13 @@ public class TaxCalculatorJobServiceITest extends AbstractIntegrationTest {
     @Before
     public void setUp() {
         mockServer = MockRestServiceServer.createServer(restTemplate);
+        SmtpServerStub.start();
     }
 
     @After
     public void tearDown() {
         employeeRepository.deleteAll();
+        SmtpServerStub.stop();
     }
 
     @Test
@@ -58,6 +61,7 @@ public class TaxCalculatorJobServiceITest extends AbstractIntegrationTest {
         Employee employee = new EmployeeBuilder()
                 .withFirstName("Monica")
                 .withIncome(1000)
+                .withEmailAddress("email@address.com")
                 .build();
 
         employeeRepository.save(employee);
