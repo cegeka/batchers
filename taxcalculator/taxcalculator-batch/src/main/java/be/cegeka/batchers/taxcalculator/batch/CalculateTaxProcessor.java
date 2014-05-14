@@ -14,7 +14,7 @@ public class CalculateTaxProcessor implements ItemProcessor<Employee, Employee> 
 
     @Override
     public Employee process(Employee item) {
-        System.out.println(item);
+        System.out.println("--------> EMPLOYEE: " + item);
         taxCalculatorService.calculateTax(item);
         return item;
     }

@@ -31,9 +31,6 @@ public class TaxCalculatorJobService implements JobService {
     @Autowired
     private JobLauncher jobLauncher;
 
-    @Autowired
-    private ApplicationContext applicationContext;
-
     @Autowired(required = false)
     private Set<JobStartListener> jobStartListeners = new HashSet<>();
 

@@ -66,23 +66,24 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
     }
 
-//    @Test
-//    public void jobLaunched_oneEmployee_taxIsCalculatedAndWebserviceIsCalled() throws Exception {
-//        Employee employee = haveOneEmployee();
-//
-//        mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
-//                .andRespond(withSuccess(STATUS_OK, MediaType.APPLICATION_JSON));
-//
-//        JobExecution jobExecution = jobLauncherTestUtils.launchJob();
-//        System.out.println(jobExecution.getAllFailureExceptions());
-//        assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
-//
-//        Employee reloadedEmployee = employeeRepository.getBy(employee.getId());
-//        assertThat(reloadedEmployee.getTaxTotal()).isEqualTo(Money.of(CurrencyUnit.EUR, 100));
-//        assertThat(reloadedEmployee.getCalculationDate()).isEqualTo(DateTime.now());
-//
-//        mockServer.verify();
-//    }
+    @Test
+    public void jobLaunched_oneEmployee_taxIsCalculatedAndWebserviceIsCalled() throws Exception {
+        Employee employee = haveOneEmployee();
+
+        mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
+                .andRespond(withSuccess(STATUS_OK, MediaType.APPLICATION_JSON));
+
+        JobExecution jobExecution = jobLauncher.run(employeeJob, new JobParameters());
+        System.out.println(jobExecution.getAllFailureExceptions());
+        assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
+
+        Employee reloadedEmployee = employeeRepository.getBy(employee.getId());
+        System.out.println("RELOADDED: " + reloadedEmployee);
+        assertThat(reloadedEmployee.getTaxTotal()).isEqualTo(Money.of(CurrencyUnit.EUR, 100));
+        assertThat(reloadedEmployee.getCalculationDate()).isEqualTo(DateTime.now());
+
+        mockServer.verify();
+    }
 //
 //    @Test
 //    public void jobFailsWhenWebserviceResponseFails() throws Exception {
