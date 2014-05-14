@@ -17,6 +17,7 @@
         <slf4j.version>1.7.2</slf4j.version>
         <junit.version>4.11</junit.version>
         <commons.dbcp.version>1.4</commons.dbcp.version>
+        <mysql.connector.version>5.1.6</mysql.connector.version>
         <commons.io.version>2.4</commons.io.version>
         <hsqldb.version>2.3.2</hsqldb.version>
         <log4j.version>1.2.17</log4j.version>
@@ -141,6 +142,11 @@
                 <groupId>commons-dbcp</groupId>
                 <artifactId>commons-dbcp</artifactId>
                 <version>${commons.dbcp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.connector.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
