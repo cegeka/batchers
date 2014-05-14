@@ -59,6 +59,10 @@ public class Employee {
         this.lastName = lastName;
     }
 
+    public String fullName() {
+        return getFirstName() + " " + getLastName();
+    }
+
     public String getLastName() {
         return lastName;
     }
@@ -148,5 +152,17 @@ public class Employee {
 
     public String getEmail() {
         return email;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Employee{");
+        sb.append("income=").append(income);
+        sb.append(", firstName='").append(firstName).append('\'');
+        sb.append(", lastName='").append(lastName).append('\'');
+        sb.append(", calculationDate=").append(calculationDate);
+        sb.append(", taxTotal=").append(taxTotal);
+        sb.append('}');
+        return sb.toString();
     }
 }

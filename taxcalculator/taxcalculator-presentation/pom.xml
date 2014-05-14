@@ -23,6 +23,15 @@
             <groupId>be.cegeka.batchers</groupId>
             <artifactId>taxcalculator-application</artifactId>
             <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>be.cegeka.batchers</groupId>
+            <artifactId>taxcalculator-batch-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>be.cegeka.batchers</groupId>
+            <artifactId>taxcalculator-batch</artifactId>
         </dependency>
 
         <dependency>
@@ -66,7 +75,6 @@
                             <singleRun>true</singleRun>
                             <browsers>${browsers}</browsers>
                             <configFile>src/test/js/karma/config/karma.conf.js</configFile>
-                            <logLevel>LOG_DEBUG</logLevel>
                             <reporters>dots,junit</reporters>
                         </configuration>
                     </execution>
@@ -92,6 +100,7 @@
                 <version>2.2</version>
                 <configuration>
                     <path>/taxcalculator</path>
+                    <port>9090</port>
                 </configuration>
             </plugin>
             <plugin>

@@ -28,6 +28,7 @@ public class CallWebserviceProcessor implements ItemProcessor<Employee, Employee
 
     @Override
     public Employee process(Employee employee) throws Exception {
+        System.out.println("Web service process: " + employee);
         return createRetryTemplate().execute(retryContext -> taxPaymentWebService.doWebserviceCallToTaxService(employee));
     }
 

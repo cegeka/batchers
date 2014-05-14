@@ -11,16 +11,17 @@ import static be.cegeka.batchers.taxcalculator.application.ApplicationAssertions
 
 public class EmailSenderITest extends IntegrationTest {
 
+    public static final String TEST_BODY = "test body";
     @Autowired
     private EmailSender emailSender;
 
     @Before
-    public void setUpDumbster() {
+    public void setUpWiser() {
         SmtpServerStub.start();
     }
 
     @After
-    public void tearDownDumbster() {
+    public void tearDownWiser() {
         SmtpServerStub.stop();
     }
 
@@ -40,7 +41,7 @@ public class EmailSenderITest extends IntegrationTest {
         emailTO.addTo("radu.cirstoiu@cegeka.com");
         emailTO.setFrom("seagulls.cgk@gmail.com");
         emailTO.setSubject("test subject");
-        emailTO.setBody("test body");
+        emailTO.setBody(TEST_BODY);
         emailTO.addAttachment(attachmentTO1);
         emailTO.addAttachment(attachmentTO2);
 
@@ -48,7 +49,7 @@ public class EmailSenderITest extends IntegrationTest {
 
         assertThat(SmtpServerStub.wiser())
                 .hasReceivedMessages(1)
-                .hasReceivedMessageContaining("test body");
+                .hasReceivedMessageContaining(TEST_BODY);
 
     }
 }

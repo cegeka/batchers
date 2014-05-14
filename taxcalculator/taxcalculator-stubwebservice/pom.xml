@@ -17,6 +17,16 @@
 	<dependencies>
         <dependency>
             <groupId>be.cegeka.batchers</groupId>
+            <artifactId>taxcalculator-infrastructure</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>be.cegeka.batchers</groupId>
+            <artifactId>taxcalculator-infrastructure</artifactId>
+            <scope>test</scope>
+            <type>test-jar</type>
+        </dependency>
+        <dependency>
+            <groupId>be.cegeka.batchers</groupId>
             <artifactId>taxcalculator-to</artifactId>
         </dependency>
 
@@ -86,6 +96,12 @@
 				<artifactId>jetty-maven-plugin</artifactId>
 				<version>8.1.8.v20121106</version>
 				<configuration>
+                    <systemProperties>
+                        <systemProperty>
+                            <name>jetty.port</name>
+                            <value>9091</value>
+                        </systemProperty>
+                    </systemProperties>
 					<scanIntervalSeconds>10</scanIntervalSeconds>
 					<webApp>
 						<war>target/taxservice-${project.version}.war</war>
