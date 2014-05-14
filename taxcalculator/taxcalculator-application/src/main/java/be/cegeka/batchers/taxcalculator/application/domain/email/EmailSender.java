@@ -63,7 +63,6 @@ public class EmailSender {
         public Email mapFromEmailTO(EmailTO emailTO) throws EmailException, AddressException, IOException {
             HtmlEmail email = new HtmlEmail();
             email.setFrom(emailTO.getFrom());
-            List<InternetAddress> addresses = new ArrayList<InternetAddress>();
             email.setTo(convertToInternetAddress(emailTO.getTos()));
             email.setSubject(emailTO.getSubject());
             email.setMsg(emailTO.getBody());
@@ -81,7 +80,6 @@ public class EmailSender {
                 email.attach(new ByteArrayDataSource(attachmentTO.getBytes(), attachmentTO.getMimeType()),
                         attachmentTO.getName(), attachmentTO.getDescription(),
                         EmailAttachment.ATTACHMENT);
-                ;
             }
         }
 
