@@ -92,6 +92,7 @@
                 <version>2.2</version>
                 <configuration>
                     <path>/taxcalculator</path>
+                    <port>9090</port>
                 </configuration>
             </plugin>
             <plugin>
