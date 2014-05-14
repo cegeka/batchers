@@ -18,10 +18,10 @@ import java.util.List;
 @Service
 public class TaxCalculatorJobService implements JobService {
     @Autowired
-    Job employeeJob;
+    private Job employeeJob;
 
     @Autowired
-    SimpleJobLauncher jobLauncher;
+    private SimpleJobLauncher jobLauncher;
 
 
     @Override

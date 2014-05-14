@@ -117,6 +117,12 @@
                 <groupId>org.springframework.batch</groupId>
                 <artifactId>spring-batch-core</artifactId>
                 <version>${spring.batch.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-tx</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.springframework.batch</groupId>

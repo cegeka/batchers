@@ -11,6 +11,7 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -32,6 +33,8 @@ public class PersistenceConfig {
 
     @Value("${jdbc.password}")
     private String password;
+
+    private JpaTransactionManager platformTransactionManager;
 
     @Bean
     public DataSource dataSource() {
@@ -69,8 +72,11 @@ public class PersistenceConfig {
         return entityManager.getNativeEntityManagerFactory();
     }
 
-    @Bean(name = "transactionManager")
     public JpaTransactionManager transactionManager() {
-        return new JpaTransactionManager(entityManagerFactory());
+        if (platformTransactionManager == null) {
+            platformTransactionManager = new JpaTransactionManager(entityManagerFactory());
+        }
+        return platformTransactionManager;
+
     }
 }
