@@ -2,7 +2,7 @@ package be.cegeka.batchers.taxcalculator.application.domain.email;
 
 public class EmailAttachmentTO {
 
-    private byte [] bytes;
+    private byte[] bytes;
     private String mimeType = "application/octet-stream";
     private String name;
     private String description = "";

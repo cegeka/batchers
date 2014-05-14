@@ -28,7 +28,7 @@ public class MockResetter implements BeanPostProcessor {
     }
 
     private void registerMockIfNecessary(Object bean) {
-        if(bean.getClass().getName().contains("Mockito")) {
+        if (bean.getClass().getName().contains("Mockito")) {
             mocks.add(bean);
         }
     }

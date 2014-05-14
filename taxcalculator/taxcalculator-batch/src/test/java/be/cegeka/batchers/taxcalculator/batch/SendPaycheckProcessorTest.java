@@ -44,7 +44,7 @@ public class SendPaycheckProcessorTest {
         employee.setEmail(EMPLOYEE_EMAIL);
         employee.setFirstName("FirstName");
         employee.setIncome(2000);
-        DateTime calculationDate = new DateTime().withDate(2000,5,1);
+        DateTime calculationDate = new DateTime().withDate(2000, 5, 1);
 
         employee.setCalculationDate(calculationDate);
 
