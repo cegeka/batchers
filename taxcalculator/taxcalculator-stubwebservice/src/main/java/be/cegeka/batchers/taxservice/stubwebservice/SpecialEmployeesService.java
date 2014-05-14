@@ -3,47 +3,43 @@ package be.cegeka.batchers.taxservice.stubwebservice;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
+
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toMap;
 
 @Service
 public class SpecialEmployeesService {
 
-    @Value("${stubwebservice.blacklistemployees}")
-    private String blacklistEmployeesProperty;
+    private Map<Long, Integer> blacklistedEmployees = new HashMap<>();
+    private Map<Long, Integer> timeoutEmployees = new HashMap<>();
 
-    @Value("${stubwebservice.timeoutemployees}")
-    private String timeoutEmployeesProperty;
+    private String blacklistedEmployeesBackup;
+    private String timeoutEmployeesBackup;
 
     @Value("${stubwebservice.timeout}")
     private int timeout;
 
-    private Set<String> blacklistedEmployees = new HashSet<String>();
-    private Set<String> timeoutEmployees = new HashSet<String>();
-
-    public boolean isEmployeeBlacklisted(String employeeId) {
-        return blacklistedEmployees.contains(employeeId);
+    @Value("${stubwebservice.blacklistemployees}")
+    public void setBlacklistedEmployees(String blacklistedEmployees) {
+        this.blacklistedEmployeesBackup = blacklistedEmployees;
+        this.blacklistedEmployees = parseEmployeeIdWithFailureRateString(blacklistedEmployees);
     }
 
-    public boolean isEmployeeTimeout(String employeeID) {
-        return timeoutEmployees.contains(employeeID);
+    @Value("${stubwebservice.timeoutemployees}")
+    public void setTimeoutEmployees(String timeoutEmployees) {
+        this.timeoutEmployeesBackup = timeoutEmployees;
+        this.timeoutEmployees = parseEmployeeIdWithFailureRateString(timeoutEmployees);
     }
 
-    @PostConstruct
-    public void parseSpecialEmployees() {
-        if (blacklistEmployeesProperty != null) {
-            blacklistedEmployees = new HashSet<String>(Arrays.asList(blacklistEmployeesProperty.split(",")));
-        }
-
-        if (timeoutEmployeesProperty != null) {
-            timeoutEmployees = new HashSet<String>(Arrays.asList(timeoutEmployeesProperty.split(",")));
-        }
+    public boolean isEmployeeBlacklisted(Long employeeId) {
+        return hasEmployeeRemainingRetriesAndDecreaseRetries(blacklistedEmployees, employeeId);
     }
 
-    public void sleepIfNecessary(String employeeID) {
-        if (isEmployeeTimeout(employeeID)) {
+    public void sleepIfNecessary(Long employeeId) {
+        if (isEmployeeTimeout(employeeId)) {
             try {
                 Thread.sleep(timeout);
             } catch (InterruptedException e) {
@@ -51,15 +47,41 @@ public class SpecialEmployeesService {
         }
     }
 
-    public void setBlacklistedEmployees(Set<String> blacklistedEmployees) {
-        this.blacklistedEmployees = blacklistedEmployees;
-    }
-
-    public void setTimeoutEmployees(Set<String> timeoutEmployees) {
-        this.timeoutEmployees = timeoutEmployees;
-    }
-
     public void setTimeout(int timeout) {
         this.timeout = timeout;
+    }
+
+
+    boolean isEmployeeTimeout(Long employeeId) {
+        return hasEmployeeRemainingRetriesAndDecreaseRetries(timeoutEmployees, employeeId);
+    }
+
+    private boolean hasEmployeeRemainingRetriesAndDecreaseRetries(Map<Long, Integer> containerMap, Long employeeId) {
+        Integer retryCounter = containerMap.getOrDefault(employeeId, 0);
+
+        if (retryCounter < 1) {
+            return false;
+        } else {
+            containerMap.put(employeeId, --retryCounter);
+            return true;
+        }
+    }
+
+    private Map<Long, Integer> parseEmployeeIdWithFailureRateString(String employeeIdWithFailureRateString) {
+        if (employeeIdWithFailureRateString == null) {
+            return new HashMap<>();
+        }
+
+        return asList(employeeIdWithFailureRateString.split(","))
+                .stream()
+                .collect(toMap(employeeId, failureRate));
+    }
+
+    private Function<String, Integer> failureRate = employeeId -> Integer.valueOf(employeeId.split(":")[1]);
+    private Function<String, Long> employeeId = employeeId -> Long.valueOf(employeeId.split(":")[0]);
+
+    public void reset() {
+        setBlacklistedEmployees(blacklistedEmployeesBackup);
+        setTimeoutEmployees(timeoutEmployeesBackup);
     }
 }

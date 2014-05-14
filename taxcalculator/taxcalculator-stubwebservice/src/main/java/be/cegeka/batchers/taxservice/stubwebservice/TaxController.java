@@ -19,6 +19,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @Controller
 public class TaxController {
 
+    public static final String RESPONSE_BODY_SUCCESS = "OK";
     public static final String RESPONSE_BODY_FAIL = "FAILURE";
     @Autowired
     TextFileTaxLogger taxLogger;
@@ -29,12 +30,18 @@ public class TaxController {
     @ResponseBody
     public ResponseEntity<TaxServiceResponse> submitTaxForm(@RequestBody @Valid TaxTo taxTo) throws JsonProcessingException {
         if (specialEmployeesService.isEmployeeBlacklisted(taxTo.getEmployeeId())) {
+            taxLogger.log(taxTo, RESPONSE_BODY_FAIL);
             return new ResponseEntity<>(new TaxServiceResponse(RESPONSE_BODY_FAIL), HttpStatus.BAD_REQUEST);
         } else {
-            String okStatus = "OK";
             specialEmployeesService.sleepIfNecessary(taxTo.getEmployeeId());
-            taxLogger.log(taxTo, okStatus);
-            return new ResponseEntity<>(new TaxServiceResponse(okStatus), HttpStatus.OK);
+            taxLogger.log(taxTo, RESPONSE_BODY_SUCCESS);
+            return new ResponseEntity<>(new TaxServiceResponse(RESPONSE_BODY_SUCCESS), HttpStatus.OK);
         }
+    }
+
+    @RequestMapping(value = "/reset", method = POST)
+    public ResponseEntity<?> resetSpecialEmployeesService() {
+        specialEmployeesService.reset();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

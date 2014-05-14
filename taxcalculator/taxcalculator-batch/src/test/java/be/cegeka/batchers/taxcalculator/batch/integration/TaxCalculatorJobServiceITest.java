@@ -35,6 +35,8 @@ public class TaxCalculatorJobServiceITest extends AbstractIntegrationTest {
 
     @Autowired
     private String taxServiceUrl;
+    @Autowired
+    private String resetUrl;
 
     @Before
     public void setUp() {
@@ -48,7 +50,8 @@ public class TaxCalculatorJobServiceITest extends AbstractIntegrationTest {
 
     @Test
     public void testJobService() {
-
+        mockServer.expect(requestTo(resetUrl)).andExpect(method(HttpMethod.POST))
+                .andRespond(withSuccess());
         mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
                 .andRespond(withSuccess("{ \"status\": \"OK\" }", MediaType.APPLICATION_JSON));
 
