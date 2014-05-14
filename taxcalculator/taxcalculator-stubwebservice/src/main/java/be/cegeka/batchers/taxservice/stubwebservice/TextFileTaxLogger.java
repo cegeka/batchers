@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class TextFileTaxLogger {
 
-    static Logger LOGGER = LoggerFactory.getLogger(TextFileTaxLogger.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TextFileTaxLogger.class);
 
     public void log(TaxTo taxTo, String status) {
         LOGGER.info("Received tax request:" + taxTo + " completed with status: " + status);

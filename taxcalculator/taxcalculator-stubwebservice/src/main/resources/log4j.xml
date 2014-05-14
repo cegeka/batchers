@@ -18,13 +18,12 @@
         </layout>
     </appender>
 
-    <logger additivity="false">
+    <logger name="com" additivity="false">
         <level value="info"/>
         <appender-ref ref="console"/>
     </logger>
 
-    <logger name="be.cegeka.batchers.taxservice.stubwebservice.TextFileTaxLogger"
-            additivity="false">
+    <logger name="be.cegeka.batchers.taxservice.stubwebservice.TextFileTaxLogger" additivity="false">
         <level value="info"/>
         <appender-ref ref="FILE"/>
     </logger>

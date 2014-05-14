@@ -44,6 +44,7 @@ public class EmployeeGeneratorTest extends IntegrationTest {
         for (Employee employee : all) {
             assertThat(employee.getLastName()).isNotNull();
             assertThat(employee.getFirstName()).isNotNull();
+            assertThat(employee.getEmail()).isNotNull();
             assertThat(employee.getIncome()).isGreaterThanOrEqualTo(500);
             assertThat(employee.getIncome()).isLessThanOrEqualTo(5000);
             assertThat(employee.getTaxTotal()).isEqualTo(Money.zero(CurrencyUnit.EUR));
