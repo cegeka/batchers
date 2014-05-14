@@ -8,6 +8,7 @@ import org.joda.time.DateTime;
 import org.joda.time.Interval;
 
 import javax.persistence.*;
+import java.math.RoundingMode;
 
 @NamedQueries({
         @NamedQuery(name = Employee.GET_ALL_NAME, query = Employee.GET_ALL_QUERY)
@@ -75,7 +76,7 @@ public class Employee {
         if (!taxWasCalculatedThisMonth(calculationDate)) {
             double amount = getIncomeTax();
             CurrencyUnit currency = taxTotal.getCurrencyUnit();
-            this.taxTotal = Money.total(taxTotal, Money.of(currency, amount));
+            this.taxTotal = Money.total(taxTotal, Money.of(currency, amount, RoundingMode.HALF_DOWN));
             this.calculationDate = new DateTime();
         }
     }
