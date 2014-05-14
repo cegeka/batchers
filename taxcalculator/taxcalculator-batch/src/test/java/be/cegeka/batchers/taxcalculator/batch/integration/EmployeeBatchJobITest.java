@@ -11,7 +11,9 @@ import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
@@ -29,6 +31,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     public static final String STATUS_OK = "{\"status\": \"OK\" }";
     public static final String EMAIL_ADDRESS = "employee@email.com";
+
     @Autowired
     String taxServiceUrl;
     @Autowired
@@ -37,6 +40,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     private EmployeeRepository employeeRepository;
     @Autowired
     private RestTemplate restTemplate;
+
     private MockRestServiceServer mockServer;
 
     @Before
@@ -70,6 +74,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
 
         Employee reloadedEmployee = employeeRepository.getBy(employee.getId());
+        System.out.println("RELOADDED: " + reloadedEmployee);
         assertThat(reloadedEmployee.getTaxTotal()).isEqualTo(Money.of(CurrencyUnit.EUR, 100));
         assertThat(reloadedEmployee.getCalculationDate()).isEqualTo(DateTime.now());
 
