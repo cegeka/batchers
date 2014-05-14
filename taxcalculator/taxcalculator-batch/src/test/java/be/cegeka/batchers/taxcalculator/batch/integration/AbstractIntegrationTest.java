@@ -16,6 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ActiveProfiles("test")
 @ContextConfiguration(classes = {EmployeeJobTestConfig.class, EmployeeJobConfig.class, EmployeeGeneratorApplicationTestContext.class, WebserviceCallApplicationContext.class, PropertyPlaceHolderConfig.class})
 public abstract class AbstractIntegrationTest {
+
     @BeforeClass
     public static void fixDateTimeToWhenJesusWasBorn() {
         DateTimeUtils.setCurrentMillisFixed(100L);

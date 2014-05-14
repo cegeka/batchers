@@ -28,6 +28,7 @@ import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import javax.persistence.EntityManagerFactory;
 import java.util.Arrays;
 
 @Configuration
@@ -37,21 +38,16 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
 
     @Autowired
     private JobBuilderFactory jobBuilders;
-
     @Autowired
     private StepBuilderFactory stepBuilders;
-
     @Autowired
     private CalculateTaxProcessor calculateTaxProcessor;
-
     @Autowired
     private CallWebserviceProcessor callWebserviceProcessor;
-
+    @Autowired
+    private SendPaycheckProcessor sendPaycheckProcessor;
     @Autowired
     private PersistenceConfig persistenceConfig;
-
-    @Autowired
-    TaskExecutor taskExecutor;
 
     @Bean
     public JpaPagingItemReader<Employee> employeeItemReader() {
@@ -69,8 +65,8 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
     }
 
     @Bean
-    public Job employeeJob(){
-         return jobBuilders.get("employeeJob")
+    public Job employeeJob() {
+        return jobBuilders.get("employeeJob")
                 .start(step())
                 .build();
     }
@@ -80,15 +76,16 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
         CompositeItemProcessor<Employee, Employee> employeeEmployeeCompositeItemProcessor = new CompositeItemProcessor<>();
         employeeEmployeeCompositeItemProcessor.setDelegates(Arrays.asList(
                 calculateTaxProcessor,
-                callWebserviceProcessor
+                callWebserviceProcessor,
+                sendPaycheckProcessor
         ));
         return employeeEmployeeCompositeItemProcessor;
     }
 
     @Bean
-    public Step step(){
+    public Step step() {
         return stepBuilders.get("step")
-                .<Employee,Employee>chunk(1)
+                .<Employee, Employee>chunk(1)
                 .reader(employeeItemReader())
                 .processor(processor())
                 .writer(employeeItemWriter())

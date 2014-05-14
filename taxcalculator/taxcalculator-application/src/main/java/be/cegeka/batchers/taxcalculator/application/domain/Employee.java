@@ -59,6 +59,10 @@ public class Employee {
         this.lastName = lastName;
     }
 
+    public String fullName() {
+        return getFirstName() + " " + getLastName();
+    }
+
     public String getLastName() {
         return lastName;
     }
