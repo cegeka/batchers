@@ -37,6 +37,9 @@ public class EmployeeJobConfig {
     @Autowired
     private CallWebserviceProcessor callWebserviceProcessor;
     @Autowired
+    SendPaycheckProcessor sendPaycheckProcessor;
+
+    @Autowired
     private EntityManagerFactory entityManagerFactory;
 
     @Bean
@@ -75,7 +78,8 @@ public class EmployeeJobConfig {
         CompositeItemProcessor<Employee, Employee> employeeEmployeeCompositeItemProcessor = new CompositeItemProcessor<>();
         employeeEmployeeCompositeItemProcessor.setDelegates(Arrays.asList(
                 calculateTaxProcessor,
-                callWebserviceProcessor
+                callWebserviceProcessor,
+                sendPaycheckProcessor
         ));
         return employeeEmployeeCompositeItemProcessor;
     }

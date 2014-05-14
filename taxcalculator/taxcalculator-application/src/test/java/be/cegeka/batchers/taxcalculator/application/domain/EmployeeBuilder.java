@@ -11,6 +11,7 @@ public class EmployeeBuilder {
     private String lastName;
     private DateTime calculationDate;
     private Money taxTotal;
+    private String emailAddress;
 
     public Employee build() {
         Employee employee = new Employee();
@@ -19,6 +20,7 @@ public class EmployeeBuilder {
         employee.setLastName(lastName);
         employee.setIncome(income);
         employee.setCalculationDate(calculationDate);
+        employee.setEmail(emailAddress);
         return employee;
     }
 
@@ -51,6 +53,11 @@ public class EmployeeBuilder {
 
     public EmployeeBuilder withId(long employeeId) {
         this.employeeId = employeeId;
+        return this;
+    }
+
+    public EmployeeBuilder withEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
         return this;
     }
 }
