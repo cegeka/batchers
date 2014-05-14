@@ -42,6 +42,9 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     private Job employeeJob;
 
     @Autowired
+    private JobLauncherTestUtils jobLauncherTestUtils;
+
+    @Autowired
     private EmployeeRepository employeeRepository;
 
     @Autowired
@@ -61,7 +64,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
 
     @Test
     public void jobLaunched_NoEmployees_EmployeeRepositoryIsCalled_NoInteractionWithTheTaxCalculatorService() throws Exception {
-        JobExecution jobExecution = jobLauncher.run(employeeJob, new JobParameters());
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob();
 
         assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
     }
@@ -73,7 +76,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
                 .andRespond(withSuccess(STATUS_OK, MediaType.APPLICATION_JSON));
 
-        JobExecution jobExecution = jobLauncher.run(employeeJob, new JobParameters());
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob();
         System.out.println(jobExecution.getAllFailureExceptions());
         assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
 
@@ -84,47 +87,47 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
 
         mockServer.verify();
     }
-//
-//    @Test
-//    public void jobFailsWhenWebserviceResponseFails() throws Exception {
-//        haveOneEmployee();
-//
-//        mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
-//                .andRespond(withBadRequest());
-//
-//        JobExecution jobExecution = jobLauncherTestUtils.launchJob();
-//        assertThat(jobExecution.getStatus().isUnsuccessful()).isTrue();
-//        mockServer.verify();
-//    }
-//
-//    @Test
-//    public void jobFailsWhenTwoEmployeesAndOneWebserviceResponseFails() throws Exception {
-//        haveOneEmployee();
-//        haveOneEmployee();
-//
-//        mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
-//                .andRespond(withSuccess(STATUS_OK, MediaType.APPLICATION_JSON));
-//        mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
-//                .andRespond(withBadRequest());
-//
-//        JobExecution jobExecution = jobLauncherTestUtils.launchJob();
-//        assertThat(jobExecution.getStatus().isUnsuccessful()).isTrue();
-//        mockServer.verify();
-//    }
-//
-//    @Test
-//    public void jobRetriesIfWebserviceFails() throws Exception {
-//        haveOneEmployee();
-//
-//        mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
-//                .andRespond(withServerError());
-//        mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
-//                .andRespond(withSuccess(STATUS_OK, MediaType.APPLICATION_JSON));
-//
-//        JobExecution jobExecution = jobLauncherTestUtils.launchJob();
-//        assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
-//        mockServer.verify();
-//    }
+
+    @Test
+    public void jobFailsWhenWebserviceResponseFails() throws Exception {
+        haveOneEmployee();
+
+        mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
+                .andRespond(withBadRequest());
+
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob();
+        assertThat(jobExecution.getStatus().isUnsuccessful()).isTrue();
+        mockServer.verify();
+    }
+
+    @Test
+    public void jobFailsWhenTwoEmployeesAndOneWebserviceResponseFails() throws Exception {
+        haveOneEmployee();
+        haveOneEmployee();
+
+        mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
+                .andRespond(withSuccess(STATUS_OK, MediaType.APPLICATION_JSON));
+        mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
+                .andRespond(withBadRequest());
+
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob();
+        assertThat(jobExecution.getStatus().isUnsuccessful()).isTrue();
+        mockServer.verify();
+    }
+
+    @Test
+    public void jobRetriesIfWebserviceFails() throws Exception {
+        haveOneEmployee();
+
+        mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
+                .andRespond(withServerError());
+        mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
+                .andRespond(withSuccess(STATUS_OK, MediaType.APPLICATION_JSON));
+
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob();
+        assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
+        mockServer.verify();
+    }
 
     private Employee haveOneEmployee() {
         Employee employee = new EmployeeBuilder()
