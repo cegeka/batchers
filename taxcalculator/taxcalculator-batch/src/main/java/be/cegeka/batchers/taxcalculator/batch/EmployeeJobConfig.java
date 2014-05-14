@@ -5,10 +5,7 @@ import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.BatchConfigurer;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.*;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.job.builder.SimpleJobBuilder;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
@@ -36,7 +33,7 @@ import java.util.Arrays;
 @Configuration
 @EnableBatchProcessing
 @ComponentScan(basePackages = "be.cegeka.batchers.taxcalculator.batch")
-public class EmployeeJobConfig implements BatchConfigurer {
+public class EmployeeJobConfig extends DefaultBatchConfigurer {
 
     @Autowired
     private JobBuilderFactory jobBuilders;
@@ -55,29 +52,6 @@ public class EmployeeJobConfig implements BatchConfigurer {
 
     @Autowired
     TaskExecutor taskExecutor;
-
-    @Override
-    public JobRepository getJobRepository() throws Exception {
-        JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();
-        factory.setDataSource(persistenceConfig.dataSource());
-        factory.setTransactionManager(persistenceConfig.transactionManager());
-        factory.setIsolationLevelForCreate("ISOLATION_DEFAULT");
-        factory.afterPropertiesSet();
-        return  (JobRepository) factory.getObject();
-    }
-
-    @Override
-    public PlatformTransactionManager getTransactionManager() throws Exception {
-        return persistenceConfig.transactionManager();
-    }
-
-    @Override
-    public SimpleJobLauncher getJobLauncher() throws Exception {
-        SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
-        jobLauncher.setJobRepository(getJobRepository());
-        jobLauncher.setTaskExecutor(taskExecutor);
-        return jobLauncher;
-    }
 
     @Bean
     public JpaPagingItemReader<Employee> employeeItemReader() {

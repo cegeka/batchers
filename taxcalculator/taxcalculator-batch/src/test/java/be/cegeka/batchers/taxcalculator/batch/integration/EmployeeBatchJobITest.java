@@ -30,7 +30,6 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 
-@Ignore
 public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     public static final String STATUS_OK = "{\"status\": \"OK\" }";
     @Autowired
