@@ -6,7 +6,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.fest.assertions.api.Assertions;
 import org.subethamail.wiser.Wiser;
 
-public class ApplicationAssertions  extends Assertions {
+public class ApplicationAssertions extends Assertions {
 
     public static SmtpAssertions assertThat(Wiser actual) {
         return new SmtpAssertions(actual);
