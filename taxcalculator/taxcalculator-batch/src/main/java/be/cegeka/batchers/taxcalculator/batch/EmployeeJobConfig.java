@@ -57,7 +57,6 @@ public class EmployeeJobConfig implements BatchConfigurer {
     TaskExecutor taskExecutor;
 
     @Override
-    @Bean
     public JobRepository getJobRepository() throws Exception {
         JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();
         factory.setDataSource(persistenceConfig.dataSource());
@@ -73,7 +72,6 @@ public class EmployeeJobConfig implements BatchConfigurer {
     }
 
     @Override
-    @Bean
     public SimpleJobLauncher getJobLauncher() throws Exception {
         SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
         jobLauncher.setJobRepository(getJobRepository());

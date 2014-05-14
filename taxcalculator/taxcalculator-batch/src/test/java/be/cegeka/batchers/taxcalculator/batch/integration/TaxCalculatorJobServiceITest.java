@@ -22,6 +22,7 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
+@Ignore
 public class TaxCalculatorJobServiceITest extends AbstractIntegrationTest {
     @Autowired
     TaxCalculatorJobService taxCalculatorJobService;

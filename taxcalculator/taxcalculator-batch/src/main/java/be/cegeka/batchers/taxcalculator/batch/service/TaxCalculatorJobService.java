@@ -8,6 +8,7 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.configuration.JobLocator;
+import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
@@ -15,6 +16,7 @@ import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteExcep
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +29,10 @@ public class TaxCalculatorJobService implements JobService {
     private Job employeeJob;
 
     @Autowired
-    private SimpleJobLauncher jobLauncher;
+    private JobLauncher jobLauncher;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @Autowired(required = false)
     private Set<JobStartListener> jobStartListeners = new HashSet<>();
