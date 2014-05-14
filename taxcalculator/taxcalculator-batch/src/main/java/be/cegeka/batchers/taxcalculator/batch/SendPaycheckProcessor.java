@@ -8,6 +8,7 @@ import be.cegeka.batchers.taxcalculator.application.domain.pdf.PDFGeneratorServi
 import org.joda.time.DateTime;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -25,6 +26,9 @@ public class SendPaycheckProcessor implements ItemProcessor<Employee, Employee> 
     PDFGeneratorService pdfGeneratorService;
     @Autowired
     EmailSender emailSender;
+
+    @Value(value = "${paycheck.from.email:finance@email.com}")
+    String payCheckFrom;
 
     @Override
     public Employee process(Employee employee) throws Exception {
@@ -68,7 +72,7 @@ public class SendPaycheckProcessor implements ItemProcessor<Employee, Employee> 
         emailTo.addTo(employee.getEmail());
         emailTo.setSubject("Paycheck");
         emailTo.setBody(getEmailBodyForEmployee(employee));
-        emailTo.setFrom("finance@email.com");
+        emailTo.setFrom(payCheckFrom);
 
         EmailAttachmentTO attachmentTO = new EmailAttachmentTO();
         attachmentTO.setBytes(pdfBytes);
@@ -77,9 +81,9 @@ public class SendPaycheckProcessor implements ItemProcessor<Employee, Employee> 
         return emailTo;
     }
 
-    private String getLongMonthName(DateTime dateTime){
+    private String getLongMonthName(DateTime dateTime) {
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.MONTH, dateTime.getMonthOfYear() -1);
+        calendar.set(Calendar.MONTH, dateTime.getMonthOfYear() - 1);
 
         return calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault());
     }
