@@ -76,7 +76,7 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
     @Bean
     public Step step() {
         return stepBuilders.get("step")
-                .<Employee, Employee>chunk(1)
+                .<Employee, Employee>chunk(10)
                 .reader(employeeItemReader())
                 .processor(processor())
                 .writer(employeeItemWriter())
