@@ -3,6 +3,8 @@ package be.cegeka.batchers.taxcalculator.batch.service;
 
 import be.cegeka.batchers.taxcalculator.batch.api.JobService;
 import be.cegeka.batchers.taxcalculator.batch.api.JobStartListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
@@ -20,6 +22,8 @@ import java.util.Set;
 
 @Service
 public class TaxCalculatorJobService implements JobService {
+    private static final Logger LOG = LoggerFactory.getLogger(TaxCalculatorJobService.class);
+
     @Autowired
     private Job employeeJob;
 
@@ -47,7 +51,7 @@ public class TaxCalculatorJobService implements JobService {
             jobLauncher.run(employeeJob, jobParameters);
         } catch (JobExecutionAlreadyRunningException | JobRestartException
                 | JobInstanceAlreadyCompleteException | JobParametersInvalidException e) {
-            e.printStackTrace();
+            LOG.error("Job running failed", e);
             //TODO shouldn't we handle this differently?
         }
     }

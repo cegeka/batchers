@@ -19,7 +19,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Service
 public class EmailSender {
-    private static final Logger logger = LoggerFactory.getLogger(EmailSender.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EmailSender.class);
     @Value("${smtp_use_ssl:true}")
     private boolean smtpUseSsl;
     @Value("${smtp_port:465}")
@@ -45,10 +45,10 @@ public class EmailSender {
                 email.send();
             }
         } catch (IllegalArgumentException e) {
-            logger.error("Errors occurred while sending the email ", e);
+            LOG.error("Errors occurred while sending the email ", e);
             throw e;
         } catch (EmailException | AddressException | IOException e) {
-            logger.error("Errors occurred while sending the email ", e);
+            LOG.error("Errors occurred while sending the email ", e);
             throw new IllegalStateException(e);
         }
     }
@@ -84,7 +84,5 @@ public class EmailSender {
                         EmailAttachment.ATTACHMENT);
             }
         }
-
-
     }
 }
