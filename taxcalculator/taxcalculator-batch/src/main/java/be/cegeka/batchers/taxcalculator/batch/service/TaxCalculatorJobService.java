@@ -5,6 +5,7 @@ import be.cegeka.batchers.taxcalculator.batch.api.JobService;
 import be.cegeka.batchers.taxcalculator.batch.api.JobStartListener;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
@@ -13,6 +14,7 @@ import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,9 +40,9 @@ public class TaxCalculatorJobService implements JobService {
                 .forEach(jobStartListener -> jobStartListener.jobHasBeenStarted(employeeJob.getName()));
     }
 
-    private void startJobs() {
+    protected void startJobs() {
         try {
-            JobParameters jobParameters = new JobParameters();
+            JobParameters jobParameters = getNewJobParameters();
             System.out.println("Running job in jobservice");
             jobLauncher.run(employeeJob, jobParameters);
         } catch (JobExecutionAlreadyRunningException | JobRestartException
@@ -48,5 +50,9 @@ public class TaxCalculatorJobService implements JobService {
             e.printStackTrace();
             //TODO shouldn't we handle this differently?
         }
+    }
+
+    protected JobParameters getNewJobParameters() {
+        return new JobParametersBuilder().addLong("uniqueIdentifier", new Date().getTime()).toJobParameters();
     }
 }
