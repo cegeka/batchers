@@ -105,7 +105,7 @@
                     <scanIntervalSeconds>10</scanIntervalSeconds>
                     <webApp>
                         <war>target/taxservice-${project.version}.war</war>
-                        <contextPath>/taxservice</contextPath>
+                        <contextPath>/stubwebservice</contextPath>
                     </webApp>
                 </configuration>
             </plugin>
