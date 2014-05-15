@@ -9,10 +9,10 @@ import org.joda.time.DateTime;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.net.URL;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
@@ -21,38 +21,36 @@ import java.util.Map;
 @Component
 public class SendPaycheckProcessor implements ItemProcessor<Employee, Employee> {
 
-    public static final String PAYCHECK_TEMPLATE_FILE_NAME = "paycheck-template.docx";
+    @Value(value = "${paycheck.template:classpath:/paycheck-template.docx}")
+    private String paycheckTemplateFileName = "classpath:/paycheck-template.docx";
     @Autowired
-    PDFGeneratorService pdfGeneratorService;
+    private ResourceLoader resourceLoader;
     @Autowired
-    EmailSender emailSender;
+    private PDFGeneratorService pdfGeneratorService;
+    @Autowired
+    private EmailSender emailSender;
 
     @Value(value = "${paycheck.from.email:finance@email.com}")
     String payCheckFrom;
 
     @Override
     public Employee process(Employee employee) throws Exception {
-        URL resource = getClass().getClassLoader().getResource(PAYCHECK_TEMPLATE_FILE_NAME);
+        Resource resource = resourceLoader.getResource(paycheckTemplateFileName);
 
-        File paycheckTemplateFile = new File(resource.toURI());
-
-        byte[] pdfBytes = pdfGeneratorService.generatePdfAsByteArray(paycheckTemplateFile, getPayCheckPdfContext(employee));
+        byte[] pdfBytes = pdfGeneratorService.generatePdfAsByteArray(resource, getPayCheckPdfContext(employee));
         emailSender.send(getEmailTO(employee, pdfBytes));
 
         return employee;
     }
 
     public String getEmailBodyForEmployee(Employee employee) {
-        StringBuilder sb = new StringBuilder();
-
-        sb
+        StringBuilder sb = new StringBuilder()
                 .append("Dear employee,")
                 .append("\n\n")
                 .append("Please find enclosed the paycheck for " + getLongMonthName(employee.getCalculationDate()) + " " + employee.getCalculationDate().getYear() + ".")
                 .append("\n\n")
                 .append("Regards,")
-                .append("The Finance department")
-        ;
+                .append("The Finance department");
         return sb.toString();
     }
 
