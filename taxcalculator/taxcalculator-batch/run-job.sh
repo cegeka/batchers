@@ -1,0 +1,2 @@
+#!/bin/sh
+java -cp target/taxcalculator-batch-1.0-SNAPSHOT-jar-with-dependencies.jar org.springframework.batch.core.launch.support.CommandLineJobRunner be.cegeka.batchers.taxcalculator.batch.EmployeeJobConfig employeeJob

@@ -1,6 +1,5 @@
 package be.cegeka.batchers.taxcalculator.application.domain;
 
-import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import org.joda.money.Money;
 import org.joda.time.DateTime;
 
@@ -48,7 +47,6 @@ public class EmployeeBuilder {
         this.taxTotal = taxTotal;
         return this;
     }
-
 
 
     public EmployeeBuilder withId(long employeeId) {
