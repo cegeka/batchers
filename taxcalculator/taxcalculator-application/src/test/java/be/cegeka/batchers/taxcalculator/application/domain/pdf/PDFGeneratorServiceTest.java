@@ -3,9 +3,9 @@ package be.cegeka.batchers.taxcalculator.application.domain.pdf;
 import fr.opensagres.xdocreport.core.XDocReportException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.junit.Test;
+import org.springframework.core.io.FileSystemResource;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +23,7 @@ public class PDFGeneratorServiceTest {
         Map<String, Object> context = new HashMap<>();
         context.put("test", "cegeka-batchers");
 
-        byte[] actual = pdfGeneratorService.generatePdfAsByteArray(new File("src/test/resources/test_template.docx"), context);
+        byte[] actual = pdfGeneratorService.generatePdfAsByteArray(new FileSystemResource("src/test/resources/test_template.docx"), context);
 
         assertThat(PDDocument.load(new ByteArrayInputStream(actual)))
                 .containsText("cegeka-batchers is working");

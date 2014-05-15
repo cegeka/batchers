@@ -1,5 +1,7 @@
 package be.cegeka.batchers.taxcalculator.application.domain;
 
+import be.cegeka.batchers.taxcalculator.application.util.jackson.JodaDateTimeSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.joda.money.CurrencyUnit;
@@ -8,6 +10,7 @@ import org.joda.time.DateTime;
 import org.joda.time.Interval;
 
 import javax.persistence.*;
+import java.math.RoundingMode;
 
 @NamedQueries({
         @NamedQuery(name = Employee.GET_ALL_NAME, query = Employee.GET_ALL_QUERY)
@@ -24,6 +27,7 @@ public class Employee {
     private Long id;
     private String firstName;
     private String lastName;
+    @JsonSerialize(using = JodaDateTimeSerializer.class)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime calculationDate;
     @Type(type = "org.jadira.usertype.moneyandcurrency.joda.PersistentMoneyAmount",
@@ -75,7 +79,7 @@ public class Employee {
         if (!taxWasCalculatedThisMonth(calculationDate)) {
             double amount = getIncomeTax();
             CurrencyUnit currency = taxTotal.getCurrencyUnit();
-            this.taxTotal = Money.total(taxTotal, Money.of(currency, amount));
+            this.taxTotal = Money.total(taxTotal, Money.of(currency, amount, RoundingMode.HALF_DOWN));
             this.calculationDate = new DateTime();
         }
     }
@@ -152,5 +156,17 @@ public class Employee {
 
     public String getEmail() {
         return email;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Employee{");
+        sb.append("income=").append(income);
+        sb.append(", firstName='").append(firstName).append('\'');
+        sb.append(", lastName='").append(lastName).append('\'');
+        sb.append(", calculationDate=").append(calculationDate);
+        sb.append(", taxTotal=").append(taxTotal);
+        sb.append('}');
+        return sb.toString();
     }
 }

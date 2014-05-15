@@ -4,26 +4,14 @@ import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeBuilder;
 import be.cegeka.batchers.taxcalculator.application.service.TaxPaymentWebService;
 import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceException;
-import be.cegeka.batchers.taxcalculator.to.TaxTo;
-import org.fest.assertions.api.Assertions;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
-
-import java.net.URI;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.internal.util.reflection.Whitebox.setInternalState;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CallWebserviceProcessorTest {
@@ -57,8 +45,8 @@ public class CallWebserviceProcessorTest {
         Employee employee = new EmployeeBuilder().build();
 
         when(taxPaymentWebServiceMock.doWebserviceCallToTaxService(employee))
-            .thenThrow(new TaxWebServiceException("boe"))
-            .thenReturn(employee);
+                .thenThrow(new TaxWebServiceException("boe"))
+                .thenReturn(employee);
 
         assertThat(callWebserviceProcessor.process(employee)).isEqualTo(employee);
     }
@@ -68,9 +56,9 @@ public class CallWebserviceProcessorTest {
         long start = System.currentTimeMillis();
         Employee employee = new EmployeeBuilder().build();
         when(taxPaymentWebServiceMock.doWebserviceCallToTaxService(employee))
-            .thenThrow(new TaxWebServiceException("boe"))
-            .thenThrow(new TaxWebServiceException("boe"))
-            .thenReturn(employee);
+                .thenThrow(new TaxWebServiceException("boe"))
+                .thenThrow(new TaxWebServiceException("boe"))
+                .thenReturn(employee);
 
         Employee processed = callWebserviceProcessor.process(employee);
 

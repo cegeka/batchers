@@ -1,13 +1,13 @@
 package be.cegeka.batchers.taxcalculator.batch;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
+import be.cegeka.batchers.taxcalculator.infrastructure.config.PersistenceConfig;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.DefaultBatchConfigurer;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.launch.support.SimpleJobLauncher;
-import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.batch.item.support.CompositeItemProcessor;
@@ -15,19 +15,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.task.SyncTaskExecutor;
-import org.springframework.core.task.TaskExecutor;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.datasource.init.DataSourceInitializer;
+import org.springframework.jdbc.datasource.init.DatabasePopulator;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
-import javax.persistence.EntityManagerFactory;
 import java.util.Arrays;
 
 @Configuration
 @EnableBatchProcessing
 @ComponentScan(basePackages = "be.cegeka.batchers.taxcalculator.batch")
-public class EmployeeJobConfig {
+public class EmployeeJobConfig extends DefaultBatchConfigurer {
 
-    @Autowired
-    JobRepository repository;
     @Autowired
     private JobBuilderFactory jobBuilders;
     @Autowired
@@ -37,15 +36,14 @@ public class EmployeeJobConfig {
     @Autowired
     private CallWebserviceProcessor callWebserviceProcessor;
     @Autowired
-    SendPaycheckProcessor sendPaycheckProcessor;
-
+    private SendPaycheckProcessor sendPaycheckProcessor;
     @Autowired
-    private EntityManagerFactory entityManagerFactory;
+    private PersistenceConfig persistenceConfig;
 
     @Bean
     public JpaPagingItemReader<Employee> employeeItemReader() {
         JpaPagingItemReader<Employee> employeeItemReader = new JpaPagingItemReader<>();
-        employeeItemReader.setEntityManagerFactory(entityManagerFactory);
+        employeeItemReader.setEntityManagerFactory(persistenceConfig.entityManagerFactory());
         employeeItemReader.setQueryString(Employee.GET_ALL_QUERY);
         return employeeItemReader;
     }
@@ -53,7 +51,7 @@ public class EmployeeJobConfig {
     @Bean
     public JpaItemWriter<Employee> employeeItemWriter() {
         JpaItemWriter<Employee> employeeJpaItemWriter = new JpaItemWriter<>();
-        employeeJpaItemWriter.setEntityManagerFactory(entityManagerFactory);
+        employeeJpaItemWriter.setEntityManagerFactory(persistenceConfig.entityManagerFactory());
         return employeeJpaItemWriter;
     }
 
@@ -62,15 +60,6 @@ public class EmployeeJobConfig {
         return jobBuilders.get("employeeJob")
                 .start(step())
                 .build();
-    }
-
-    @Bean
-    public SimpleJobLauncher jobLauncher() {
-        SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
-        jobLauncher.setJobRepository(repository);
-        TaskExecutor syncTaskExecutor = new SyncTaskExecutor();
-        jobLauncher.setTaskExecutor(syncTaskExecutor);
-        return jobLauncher;
     }
 
     @Bean
@@ -92,5 +81,22 @@ public class EmployeeJobConfig {
                 .processor(processor())
                 .writer(employeeItemWriter())
                 .build();
+    }
+
+    @Bean
+    public DataSourceInitializer dataSourceInitializer() {
+        DataSourceInitializer dataSourceInitializer = new DataSourceInitializer();
+        dataSourceInitializer.setDataSource(persistenceConfig.dataSource());
+        dataSourceInitializer.setDatabasePopulator(dataSourcePopulator());
+        return dataSourceInitializer;
+    }
+
+    private DatabasePopulator dataSourcePopulator() {
+        ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator();
+        databasePopulator.setScripts(
+                new ClassPathResource("org/springframework/batch/core/schema-drop-hsqldb.sql"),
+                new ClassPathResource("org/springframework/batch/core/schema-hsqldb.sql")
+        );
+        return databasePopulator;
     }
 }

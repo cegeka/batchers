@@ -17,12 +17,23 @@
     <dependencies>
         <dependency>
             <groupId>be.cegeka.batchers</groupId>
-            <artifactId>taxcalculator-application</artifactId>
+            <artifactId>taxcalculator-infrastructure</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>be.cegeka.batchers</groupId>
+            <artifactId>taxcalculator-infrastructure</artifactId>
         </dependency>
         <dependency>
             <groupId>be.cegeka.batchers</groupId>
             <artifactId>taxcalculator-application</artifactId>
             <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>be.cegeka.batchers</groupId>
+            <artifactId>taxcalculator-application</artifactId>
         </dependency>
         <dependency>
             <groupId>be.cegeka.batchers</groupId>
@@ -67,5 +78,49 @@
     <!--
     mvn compile exec:java -Dexec.mainClass=org.springframework.batch.core.launch.support.CommandLineJobRunner -Dexec.args="be.cegeka.batchers.taxcalculator.EmployeeJobTest employeeJobTest"
     -->
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <index>true</index>
+                        <manifest>
+                            <mainClass>org.springframework.batch.core.launch.support.CommandLineJobRunner</mainClass>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                        </manifest>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>generating batch jar with dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attached</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

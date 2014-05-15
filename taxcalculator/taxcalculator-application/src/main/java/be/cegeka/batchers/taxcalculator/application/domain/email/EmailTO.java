@@ -41,10 +41,12 @@ public class EmailTO {
     public void setSubject(String subject) {
         this.subject = subject;
     }
+
     public List<EmailAttachmentTO> getAttachments() {
         return attachments;
     }
-    public void addAttachment(EmailAttachmentTO attachmentTO){
+
+    public void addAttachment(EmailAttachmentTO attachmentTO) {
         attachments.add(attachmentTO);
     }
 }

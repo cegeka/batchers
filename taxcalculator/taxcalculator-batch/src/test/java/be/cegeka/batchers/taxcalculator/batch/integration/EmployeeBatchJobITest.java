@@ -29,6 +29,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     public static final String STATUS_OK = "{\"status\": \"OK\" }";
     public static final String EMAIL_ADDRESS = "employee@email.com";
+
     @Autowired
     String taxServiceUrl;
     @Autowired
@@ -37,6 +38,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     private EmployeeRepository employeeRepository;
     @Autowired
     private RestTemplate restTemplate;
+
     private MockRestServiceServer mockServer;
 
     @Before
@@ -70,6 +72,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
 
         Employee reloadedEmployee = employeeRepository.getBy(employee.getId());
+        System.out.println("RELOADDED: " + reloadedEmployee);
         assertThat(reloadedEmployee.getTaxTotal()).isEqualTo(Money.of(CurrencyUnit.EUR, 100));
         assertThat(reloadedEmployee.getCalculationDate()).isEqualTo(DateTime.now());
 

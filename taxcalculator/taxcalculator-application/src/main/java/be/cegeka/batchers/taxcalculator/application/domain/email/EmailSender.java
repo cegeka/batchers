@@ -10,12 +10,12 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.util.ByteArrayDataSource;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.lang3.StringUtils.isNoneBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Service
 public class EmailSender {
@@ -33,15 +33,17 @@ public class EmailSender {
 
     public void send(EmailTO emailTO) {
         try {
-            Email email = new EmailMapper().mapFromEmailTO(emailTO);
-            email.setSSLOnConnect(smtpUseSsl);
-            email.setSmtpPort(smtpPort);
-            email.setHostName(smtpServer);
-            if (isNoneBlank(smtpUserName, smtpPassword)) {
-                email.setAuthenticator(new DefaultAuthenticator(smtpUserName, smtpPassword));
-            }
+            if(isNotBlank(smtpServer)) {
+                Email email = new EmailMapper().mapFromEmailTO(emailTO);
+                email.setSSLOnConnect(smtpUseSsl);
+                email.setSmtpPort(smtpPort);
+                email.setHostName(smtpServer);
+                if (isNoneBlank(smtpUserName, smtpPassword)) {
+                    email.setAuthenticator(new DefaultAuthenticator(smtpUserName, smtpPassword));
+                }
 
-            email.send();
+                email.send();
+            }
         } catch (IllegalArgumentException e) {
             logger.error("Errors occurred while sending the email ", e);
             throw e;
