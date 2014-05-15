@@ -22,7 +22,7 @@ public class SmtpAssertions extends AbstractAssert<SmtpAssertions, Wiser> {
     public SmtpAssertions hasReceivedMessageContaining(String text) {
         List<WiserMessage> messages = actual.getMessages();
         for (WiserMessage message : messages) {
-            if(new String(message.getData()).contains(text)) {
+            if (new String(message.getData()).contains(text)) {
                 return this;
             }
         }
@@ -33,7 +33,7 @@ public class SmtpAssertions extends AbstractAssert<SmtpAssertions, Wiser> {
     public SmtpAssertions hasReceivedMessageSentTo(String receiver) {
         List<WiserMessage> messages = actual.getMessages();
         for (WiserMessage message : messages) {
-            if(message.getEnvelopeReceiver().equals(receiver)) {
+            if (message.getEnvelopeReceiver().equals(receiver)) {
                 return this;
             }
         }
@@ -44,7 +44,7 @@ public class SmtpAssertions extends AbstractAssert<SmtpAssertions, Wiser> {
     public SmtpAssertions hasReceivedMessageSentFrom(String sender) {
         List<WiserMessage> messages = actual.getMessages();
         for (WiserMessage message : messages) {
-            if(message.getEnvelopeSender().equals(sender)) {
+            if (message.getEnvelopeSender().equals(sender)) {
                 return this;
             }
         }

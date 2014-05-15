@@ -52,7 +52,7 @@ public class TaxControllerIntegrationTest extends WebAppConfigurationAware {
     public void testUnluckEmployeesGetFailureResponse() throws Exception {
         mockMvc.perform(post("/taxservice").contentType(MediaType.APPLICATION_JSON)
                 .content(convertObjectToJsonBytes(new TaxTo(123L, 222.3)))
-        ).andExpect(status().is4xxClientError());
+        ).andExpect(status().is5xxServerError());
     }
 
     @Test
