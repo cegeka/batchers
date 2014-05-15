@@ -3,6 +3,8 @@ package be.cegeka.batchers.taxcalculator.batch;
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.service.TaxPaymentWebService;
 import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +18,7 @@ import java.util.Map;
 
 @Component
 public class CallWebserviceProcessor implements ItemProcessor<Employee, Employee> {
+    private static final Logger LOG = LoggerFactory.getLogger(CallWebserviceProcessor.class);
 
     @Autowired
     private TaxPaymentWebService taxPaymentWebService;
@@ -28,7 +31,7 @@ public class CallWebserviceProcessor implements ItemProcessor<Employee, Employee
 
     @Override
     public Employee process(Employee employee) throws Exception {
-        System.out.println("Web service process: " + employee);
+        LOG.info("Web service process: " + employee);
         return createRetryTemplate().execute(retryContext -> taxPaymentWebService.doWebserviceCallToTaxService(employee));
     }
 
