@@ -1,11 +1,9 @@
 package be.cegeka.batchers.taxcalculator.batch.service;
 
 import be.cegeka.batchers.taxcalculator.batch.api.JobStartListener;
-import be.cegeka.batchers.taxcalculator.to.TaxServiceResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -28,7 +26,7 @@ public class ResetStubWebserviceService implements JobStartListener {
         try {
             restTemplate.postForEntity(getUri(), null, Void.class);
             LOG.info("Resetted the StubWebservice successful on restart");
-        } catch(RestClientException e) {
+        } catch (RestClientException e) {
             LOG.info("Failed to reset the StubWebservice on restart");
             throw new IllegalStateException("Error resetting the StubWebservice... results may be unpredictable.", e);
         }

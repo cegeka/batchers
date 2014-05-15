@@ -24,7 +24,7 @@ public class EmployeeGenerator {
             Employee employee = new Employee();
             employee.setFirstName(faker.firstName());
             employee.setLastName(faker.lastName());
-            employee.setEmail(employee.getFirstName()+"." + employee.getLastName()+"@mailinator.com");
+            employee.setEmail(employee.getFirstName() + "." + employee.getLastName() + "@mailinator.com");
             employee.setIncome(500 + (new Random(currentTimeMillis()).nextInt(4501)));
             employeeRepository.save(employee);
         }

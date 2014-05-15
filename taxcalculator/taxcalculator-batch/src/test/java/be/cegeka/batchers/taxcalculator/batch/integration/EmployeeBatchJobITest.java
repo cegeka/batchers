@@ -1,8 +1,10 @@
 package be.cegeka.batchers.taxcalculator.batch.integration;
 
+import be.cegeka.batchers.taxcalculator.application.ApplicationAssertions;
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeBuilder;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeRepository;
+import be.cegeka.batchers.taxcalculator.application.domain.email.SmtpServerStub;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.joda.time.DateTime;
@@ -21,22 +23,19 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.springframework.batch.core.BatchStatus.COMPLETED;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
 
 
 public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     public static final String STATUS_OK = "{\"status\": \"OK\" }";
+    public static final String EMAIL_ADDRESS = "employee@email.com";
+
     @Autowired
     String taxServiceUrl;
-
     @Autowired
     private JobLauncherTestUtils jobLauncherTestUtils;
-
     @Autowired
     private EmployeeRepository employeeRepository;
-
     @Autowired
     private RestTemplate restTemplate;
 
@@ -45,11 +44,13 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     @Before
     public void setUp() {
         mockServer = MockRestServiceServer.createServer(restTemplate);
+        SmtpServerStub.start();
     }
 
     @After
     public void tearDown() {
         employeeRepository.deleteAll();
+        SmtpServerStub.stop();
     }
 
     @Test
@@ -71,6 +72,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
 
         Employee reloadedEmployee = employeeRepository.getBy(employee.getId());
+        System.out.println("RELOADDED: " + reloadedEmployee);
         assertThat(reloadedEmployee.getTaxTotal()).isEqualTo(Money.of(CurrencyUnit.EUR, 100));
         assertThat(reloadedEmployee.getCalculationDate()).isEqualTo(DateTime.now());
 
@@ -118,10 +120,34 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         mockServer.verify();
     }
 
+    @Test
+    public void whenTaxServiceReturnsSuccess_thenPaycheckIsSent() throws Exception {
+        haveOneEmployee();
+        mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
+                .andRespond(withSuccess(STATUS_OK, MediaType.APPLICATION_JSON));
+
+        jobLauncherTestUtils.launchJob();
+
+        ApplicationAssertions.assertThat(SmtpServerStub.wiser()).hasReceivedMessageSentTo(EMAIL_ADDRESS);
+    }
+
+    @Test
+    public void whenTaxServiceReturnsFail_thenPaycheckIsNotSent() throws Exception {
+        haveOneEmployee();
+        mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
+                .andRespond(withBadRequest());
+
+        jobLauncherTestUtils.launchJob();
+
+        ApplicationAssertions.assertThat(SmtpServerStub.wiser()).hasNoReceivedMessages();
+    }
+
     private Employee haveOneEmployee() {
         Employee employee = new EmployeeBuilder()
                 .withFirstName("Monica")
+                .withLastName("Dev")
                 .withIncome(1000)
+                .withEmailAddress(EMAIL_ADDRESS)
                 .build();
 
         employeeRepository.save(employee);

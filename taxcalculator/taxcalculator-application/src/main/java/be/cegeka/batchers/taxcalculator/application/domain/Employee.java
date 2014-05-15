@@ -8,6 +8,7 @@ import org.joda.time.DateTime;
 import org.joda.time.Interval;
 
 import javax.persistence.*;
+import java.math.RoundingMode;
 
 @NamedQueries({
         @NamedQuery(name = Employee.GET_ALL_NAME, query = Employee.GET_ALL_QUERY)
@@ -59,6 +60,10 @@ public class Employee {
         this.lastName = lastName;
     }
 
+    public String fullName() {
+        return getFirstName() + " " + getLastName();
+    }
+
     public String getLastName() {
         return lastName;
     }
@@ -71,7 +76,7 @@ public class Employee {
         if (!taxWasCalculatedThisMonth(calculationDate)) {
             double amount = getIncomeTax();
             CurrencyUnit currency = taxTotal.getCurrencyUnit();
-            this.taxTotal = Money.total(taxTotal, Money.of(currency, amount));
+            this.taxTotal = Money.total(taxTotal, Money.of(currency, amount, RoundingMode.HALF_DOWN));
             this.calculationDate = new DateTime();
         }
     }
@@ -148,5 +153,17 @@ public class Employee {
 
     public String getEmail() {
         return email;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Employee{");
+        sb.append("income=").append(income);
+        sb.append(", firstName='").append(firstName).append('\'');
+        sb.append(", lastName='").append(lastName).append('\'');
+        sb.append(", calculationDate=").append(calculationDate);
+        sb.append(", taxTotal=").append(taxTotal);
+        sb.append('}');
+        return sb.toString();
     }
 }

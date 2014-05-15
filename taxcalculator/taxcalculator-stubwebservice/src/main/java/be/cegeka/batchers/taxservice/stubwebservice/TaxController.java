@@ -31,7 +31,7 @@ public class TaxController {
     public ResponseEntity<TaxServiceResponse> submitTaxForm(@RequestBody @Valid TaxTo taxTo) throws JsonProcessingException {
         if (specialEmployeesService.isEmployeeBlacklisted(taxTo.getEmployeeId())) {
             taxLogger.log(taxTo, RESPONSE_BODY_FAIL);
-            return new ResponseEntity<>(new TaxServiceResponse(RESPONSE_BODY_FAIL), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new TaxServiceResponse(RESPONSE_BODY_FAIL), HttpStatus.INTERNAL_SERVER_ERROR);
         } else {
             specialEmployeesService.sleepIfNecessary(taxTo.getEmployeeId());
             taxLogger.log(taxTo, RESPONSE_BODY_SUCCESS);

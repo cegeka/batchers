@@ -12,7 +12,7 @@
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>be.cegeka.batchers.taxservice.stubwebservice.config.AppConfig</param-value>
+        <param-value>be.cegeka.batchers.taxservice.stubwebservice.config.StubWebserviceApplicationContext</param-value>
     </context-param>
 
     <listener>
@@ -32,7 +32,7 @@
         <init-param>
             <param-name>contextConfigLocation</param-name>
             <param-value>
-                be.cegeka.batchers.taxservice.stubwebservice.config.AppConfig
+                be.cegeka.batchers.taxservice.stubwebservice.config.StubWebserviceApplicationContext
             </param-value>
         </init-param>
         <init-param>
