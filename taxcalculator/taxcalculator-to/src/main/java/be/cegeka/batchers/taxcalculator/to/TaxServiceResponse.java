@@ -1,7 +1,7 @@
 package be.cegeka.batchers.taxcalculator.to;
 
 public class TaxServiceResponse {
-    public String status;
+    private String status;
 
     public TaxServiceResponse() {
 
@@ -11,14 +11,28 @@ public class TaxServiceResponse {
         this.status = status;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof TaxServiceResponse)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof TaxServiceResponse)) {
+            return false;
+        }
 
         TaxServiceResponse that = (TaxServiceResponse) o;
 
-        if (status != null ? !status.equals(that.status) : that.status != null) return false;
+        if (status != null ? !status.equals(that.status) : that.status != null) {
+            return false;
+        }
 
         return true;
     }

@@ -59,7 +59,7 @@ public class TaxControllerTest {
         ResponseEntity<TaxServiceResponse> response = taxController.submitTaxForm(taxTo);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-        assertThat(response.getBody().status).isEqualTo(TaxController.RESPONSE_BODY_FAIL);
+        assertThat(response.getBody().getStatus()).isEqualTo(TaxController.RESPONSE_BODY_FAIL);
     }
 
     @Test
