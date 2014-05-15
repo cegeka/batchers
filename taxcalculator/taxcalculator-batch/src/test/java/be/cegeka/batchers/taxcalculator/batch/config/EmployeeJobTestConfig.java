@@ -1,5 +1,6 @@
-package be.cegeka.batchers.taxcalculator.batch.integration;
+package be.cegeka.batchers.taxcalculator.batch.config;
 
+import be.cegeka.batchers.taxcalculator.batch.integration.MockResetter;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

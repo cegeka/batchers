@@ -1,7 +1,7 @@
 package be.cegeka.batchers.taxservice.stubwebservice;
 
 import be.cegeka.batchers.taxcalculator.to.TaxTo;
-import be.cegeka.batchers.taxservice.stubwebservice.config.WebAppConfigurationAware;
+import be.cegeka.batchers.taxservice.stubwebservice.config.WebAppTestConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.springframework.http.MediaType;
@@ -11,7 +11,7 @@ import java.io.IOException;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class TaxControllerIntegrationTest extends WebAppConfigurationAware {
+public class TaxControllerIntegrationTest extends WebAppTestConfig {
 
     public static byte[] convertObjectToJsonBytes(Object object)
             throws IOException {

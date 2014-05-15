@@ -33,7 +33,7 @@ public class EmailSender {
 
     public void send(EmailTO emailTO) {
         try {
-            if(isNotBlank(smtpServer)) {
+            if (isNotBlank(smtpServer)) {
                 Email email = new EmailMapper().mapFromEmailTO(emailTO);
                 email.setSSLOnConnect(smtpUseSsl);
                 email.setSmtpPort(smtpPort);

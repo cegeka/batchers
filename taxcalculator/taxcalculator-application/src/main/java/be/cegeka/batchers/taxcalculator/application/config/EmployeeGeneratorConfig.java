@@ -3,18 +3,17 @@ package be.cegeka.batchers.taxcalculator.application.config;
 import be.cegeka.batchers.taxcalculator.application.ApplicationInitializer;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeGenerator;
 import be.cegeka.batchers.taxcalculator.infrastructure.config.PersistenceConfig;
+import be.cegeka.batchers.taxcalculator.infrastructure.config.PropertyPlaceHolderConfig;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.*;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableTransactionManagement
-@Import(PersistenceConfig.class)
+@Import({PersistenceConfig.class, PropertyPlaceHolderConfig.class})
 @ComponentScan(basePackages = "be.cegeka.batchers.taxcalculator.application")
-public class EmployeeGeneratorApplicationContext {
+@PropertySource("classpath:taxcalculator-application.properties")
+public class EmployeeGeneratorConfig {
 
     @Autowired
     protected EmployeeGenerator employeeGenerator;
