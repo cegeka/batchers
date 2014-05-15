@@ -34,7 +34,7 @@ public class TaxPaymentWebService {
 
     private String getWebserviceResult(Employee employee) {
         ResponseEntity<TaxServiceResponse> stringResponseEntity = restTemplate.postForEntity(getUri(), createWebserviceInput(employee), TaxServiceResponse.class);
-        return stringResponseEntity.getBody().status;
+        return stringResponseEntity.getBody().getStatus();
     }
 
     private URI getUri() {
