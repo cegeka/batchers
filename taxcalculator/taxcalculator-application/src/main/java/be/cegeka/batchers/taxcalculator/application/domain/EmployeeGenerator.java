@@ -2,6 +2,7 @@ package be.cegeka.batchers.taxcalculator.application.domain;
 
 import com.github.javafaker.Faker;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Random;
@@ -10,9 +11,11 @@ import static java.lang.System.currentTimeMillis;
 
 @Component
 public class EmployeeGenerator {
-    public static final Long GENERATED_COUNT = 300L;
+    public static final Long GENERATED_COUNT = 21L;
 
-    private Long size = GENERATED_COUNT;
+
+    @Value("${number.of.employees:21}")
+    Long numberOfEmployees;
 
     Faker faker = new Faker();
 
@@ -20,25 +23,21 @@ public class EmployeeGenerator {
     private EmployeeRepository employeeRepository;
 
     public void generateAll() {
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < numberOfEmployees; i++) {
             Employee employee = new Employee();
             employee.setFirstName(faker.firstName());
             employee.setLastName(faker.lastName());
-            employee.setEmail(employee.getFirstName()+"." + employee.getLastName()+"@mailinator.com");
+            employee.setEmail(employee.getFirstName() + "." + employee.getLastName() + "@mailinator.com");
             employee.setIncome(500 + (new Random(currentTimeMillis()).nextInt(4501)));
             employeeRepository.save(employee);
         }
     }
 
-    public void setSize(Long size) {
-        this.size = size;
+    public void setNumberOfEmployees(Long numberOfEmployees) {
+        this.numberOfEmployees = numberOfEmployees;
     }
 
-    public Long getSize() {
-        return size;
-    }
-
-    public void resetSize() {
-        size = GENERATED_COUNT;
+    void resetSize() {
+        numberOfEmployees = GENERATED_COUNT;
     }
 }
