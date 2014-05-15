@@ -4,18 +4,18 @@
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
     <appender name="consoleAppender" class="org.apache.log4j.ConsoleAppender">
-        <param name="Threshold" value="INFO" />
+        <param name="Threshold" value="INFO"/>
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d %-5p  [%c{1}] %m %n" />
+            <param name="ConversionPattern" value="%d %-5p  [%c{1}] %m %n"/>
         </layout>
     </appender>
 
     <appender name="fileAppender" class="org.apache.log4j.FileAppender">
-        <param name="file" value="${rootPath}WEB-INF/logs/taxcalculator.log" />
-        <param name="append" value="false" />
-        <param name="threshold" value="debug" />
+        <param name="file" value="${rootPath}WEB-INF/logs/taxcalculator.log"/>
+        <param name="append" value="false"/>
+        <param name="threshold" value="debug"/>
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d{ISO8601} %-5p [%c{1}] - %m%n" />
+            <param name="ConversionPattern" value="%d{ISO8601} %-5p [%c{1}] - %m%n"/>
         </layout>
     </appender>
 
@@ -28,7 +28,7 @@
     <root>
         <priority value="INFO"/>
         <appender-ref ref="consoleAppender"/>
-        <appender-ref ref="fileAppender" />
+        <appender-ref ref="fileAppender"/>
     </root>
 
 </log4j:configuration>

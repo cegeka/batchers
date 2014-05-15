@@ -15,8 +15,8 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("test")
 @WebAppConfiguration
-@ContextConfiguration(classes = StubWebserviceApplicationContext.class)
-public abstract class WebAppConfigurationAware {
+@ContextConfiguration(classes = StubWebserviceConfig.class)
+public abstract class WebAppTestConfig {
 
     @Resource
     protected org.springframework.web.context.WebApplicationContext wac;
