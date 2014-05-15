@@ -1,5 +1,7 @@
 package be.cegeka.batchers.taxcalculator.application.domain;
 
+import be.cegeka.batchers.taxcalculator.application.util.jackson.JodaDateTimeSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.joda.money.CurrencyUnit;
@@ -25,6 +27,7 @@ public class Employee {
     private Long id;
     private String firstName;
     private String lastName;
+    @JsonSerialize(using = JodaDateTimeSerializer.class)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime calculationDate;
     @Type(type = "org.jadira.usertype.moneyandcurrency.joda.PersistentMoneyAmount",

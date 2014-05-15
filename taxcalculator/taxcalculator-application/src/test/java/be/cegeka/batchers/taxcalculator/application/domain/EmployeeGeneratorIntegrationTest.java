@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class EmployeeGeneratorTest extends IntegrationTest {
+public class EmployeeGeneratorIntegrationTest extends IntegrationTest {
     public static final long SIZE = 7L;
 
     @Autowired
@@ -20,14 +20,10 @@ public class EmployeeGeneratorTest extends IntegrationTest {
     @Autowired
     private EmployeeGenerator employeeGenerator;
 
-    @Test
-    public void testDefaultSize() throws Exception {
-        assertThat(employeeGenerator.getSize()).isEqualTo(EmployeeGenerator.GENERATED_COUNT);
-    }
 
     @Test
     public void testEmployeeGenerator() {
-        employeeGenerator.setSize(SIZE);
+        employeeGenerator.setNumberOfEmployees(SIZE);
         employeeGenerator.generateAll();
 
         Long count = employeeRepository.count();
@@ -36,8 +32,13 @@ public class EmployeeGeneratorTest extends IntegrationTest {
     }
 
     @Test
+    public void testNumberOfEmployeesIsReadFromPropertyFile() throws Exception {
+        assertThat(employeeGenerator.numberOfEmployees).isEqualTo(12);
+    }
+
+    @Test
     public void testEmployeeGeneratorSetsNameAndIncome() {
-        employeeGenerator.setSize(2L);
+        employeeGenerator.setNumberOfEmployees(2L);
         employeeGenerator.generateAll();
 
         List<Employee> all = employeeRepository.getAll();
