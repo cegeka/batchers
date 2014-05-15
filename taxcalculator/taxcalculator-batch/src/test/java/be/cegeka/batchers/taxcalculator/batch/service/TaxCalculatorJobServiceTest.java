@@ -7,16 +7,19 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
+import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
+import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
+import org.springframework.batch.core.repository.JobRestartException;
+
+import java.util.Date;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toSet;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
 import static org.mockito.internal.util.reflection.Whitebox.setInternalState;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -54,5 +57,15 @@ public class TaxCalculatorJobServiceTest {
 
         verify(jobStartListenerMock1).jobHasBeenStarted(A_JOBS_NAME);
         verify(jobStartListenerMock2).jobHasBeenStarted(A_JOBS_NAME);
+    }
+
+    @Test
+    public void givenJob_whenCalculatingParameters_thenAUniqueIdentifierIsUsed() throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
+        taxCalculatorJobService = spy(taxCalculatorJobService);
+        JobParameters jobParameters = new JobParametersBuilder().addLong("uniqueIdentifier", new Date().getTime()).toJobParameters();
+        doReturn(jobParameters).when(taxCalculatorJobService).getNewJobParameters();
+        taxCalculatorJobService.startJobs();
+
+        verify(jobLauncherMock).run(any(Job.class), eq(jobParameters));
     }
 }
