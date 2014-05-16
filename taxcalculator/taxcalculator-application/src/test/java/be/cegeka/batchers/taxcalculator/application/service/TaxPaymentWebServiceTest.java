@@ -70,7 +70,7 @@ public class TaxPaymentWebServiceTest {
         taxPaymentWebService.doWebserviceCallToTaxService(new EmployeeBuilder().build());
     }
 
-    @Test(expected = HttpClientErrorException.class)
+    @Test(expected = TaxWebServiceException.class)
     public void testProcess_UnexpectedExceptionOccurs_ExceptionIsRethrown() throws Exception {
         whenCallingTheWebservice().thenThrow(aMethodNotAllowedException());
 
