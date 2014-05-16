@@ -20,7 +20,7 @@ import java.util.Properties;
 @Configuration
 @Import(PropertyPlaceHolderConfig.class)
 @PropertySource({
-        "classpath:taxcalculator-infrastructure.${APP_ENV}.properties"
+        "classpath:conf/taxcalculator-infrastructure.${APP_ENV}.properties"
 })
 public class PersistenceConfig {
 
