@@ -2,17 +2,19 @@ package be.cegeka.batchers.taxcalculator.batch.config;
 
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-
 @Component
 public class SumOfTaxes {
-    private double sumOfTaxes;
+    private double successSum;
 
-    public void addToSumOfTaxes(double tax) {
-        sumOfTaxes += tax;
+    public void addToSuccessSum(double tax) {
+        successSum += tax;
     }
 
-    public double getSum() {
-        return sumOfTaxes;
+    public double getSuccessSum() {
+        return successSum;
+    }
+
+    public void reset() {
+        successSum = 0;
     }
 }

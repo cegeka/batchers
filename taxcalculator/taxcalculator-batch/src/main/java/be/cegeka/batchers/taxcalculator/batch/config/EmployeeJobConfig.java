@@ -2,7 +2,6 @@ package be.cegeka.batchers.taxcalculator.batch.config;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.infrastructure.config.PropertyPlaceHolderConfig;
-import org.springframework.batch.core.ItemProcessListener;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.DefaultBatchConfigurer;
@@ -31,29 +30,27 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
     @Autowired
     private ItemReaderWriterConfig itemReaderWriterConfig;
 
-//    @Autowired
-//    private SumOfTaxesItemProcessListener sumOfTaxesItemProcessListener;
+    @Autowired
+    private SumOfTaxesItemProcessListener sumOfTaxesItemProcessListener;
 
     @Autowired
-    SumOfTaxes sumOfTaxes;
+    private EmployeeJobExecutionListener employeeJobExecutionListener;
 
     @Bean
     public Job employeeJob() {
-        EmployeeJobExecutionListener listener = new EmployeeJobExecutionListener(sumOfTaxes);
-
         return jobBuilders.get("employeeJob")
-                .start(step()).listener(listener)
+                .start(step()).listener(employeeJobExecutionListener)
                 .build();
     }
 
     @Bean
     public Step step() {
         return stepBuilders.get("step")
-                .<Employee, Employee>chunk(10)
+                .<Employee, Employee>chunk(1)
                 .reader(itemReaderWriterConfig.employeeItemReader())
                 .processor(processorConfig.processor())
                 .writer(itemReaderWriterConfig.employeeItemWriter())
-                .listener(new SumOfTaxesItemProcessListener(sumOfTaxes))
+                .listener(sumOfTaxesItemProcessListener)
                 .build();
     }
 

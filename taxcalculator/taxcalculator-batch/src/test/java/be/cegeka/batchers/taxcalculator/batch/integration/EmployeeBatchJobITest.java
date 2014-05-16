@@ -5,6 +5,7 @@ import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeBuilder;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeRepository;
 import be.cegeka.batchers.taxcalculator.application.domain.email.SmtpServerStub;
+import be.cegeka.batchers.taxcalculator.batch.config.SumOfTaxes;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.joda.time.DateTime;
@@ -38,6 +39,8 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     private EmployeeRepository employeeRepository;
     @Autowired
     private RestTemplate restTemplate;
+    @Autowired
+    SumOfTaxes sumOfTaxes;
 
     private MockRestServiceServer mockServer;
 
@@ -64,8 +67,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     public void jobLaunched_oneEmployee_taxIsCalculatedAndWebserviceIsCalled() throws Exception {
         Employee employee = haveOneEmployee();
 
-        mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
-                .andRespond(withSuccess(STATUS_OK, MediaType.APPLICATION_JSON));
+        respondOneTimeWithSuccess();
 
         JobExecution jobExecution = jobLauncherTestUtils.launchJob();
         System.out.println(jobExecution.getAllFailureExceptions());
@@ -83,8 +85,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     public void jobFailsWhenWebserviceResponseFails() throws Exception {
         haveOneEmployee();
 
-        mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
-                .andRespond(withBadRequest());
+        respondOneTimeWithBadRequest();
 
         JobExecution jobExecution = jobLauncherTestUtils.launchJob();
         assertThat(jobExecution.getStatus().isUnsuccessful()).isTrue();
@@ -96,10 +97,8 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         haveOneEmployee();
         haveOneEmployee();
 
-        mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
-                .andRespond(withSuccess(STATUS_OK, MediaType.APPLICATION_JSON));
-        mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
-                .andRespond(withBadRequest());
+        respondOneTimeWithSuccess();
+        respondOneTimeWithBadRequest();
 
         JobExecution jobExecution = jobLauncherTestUtils.launchJob();
         assertThat(jobExecution.getStatus().isUnsuccessful()).isTrue();
@@ -112,8 +111,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
 
         mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
                 .andRespond(withServerError());
-        mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
-                .andRespond(withSuccess(STATUS_OK, MediaType.APPLICATION_JSON));
+        respondOneTimeWithSuccess();
 
         JobExecution jobExecution = jobLauncherTestUtils.launchJob();
         assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
@@ -123,8 +121,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     @Test
     public void whenTaxServiceReturnsSuccess_thenPaycheckIsSent() throws Exception {
         haveOneEmployee();
-        mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
-                .andRespond(withSuccess(STATUS_OK, MediaType.APPLICATION_JSON));
+        respondOneTimeWithSuccess();
 
         jobLauncherTestUtils.launchJob();
 
@@ -134,12 +131,39 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     @Test
     public void whenTaxServiceReturnsFail_thenPaycheckIsNotSent() throws Exception {
         haveOneEmployee();
-        mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
-                .andRespond(withBadRequest());
+        respondOneTimeWithBadRequest();
 
         jobLauncherTestUtils.launchJob();
 
         ApplicationAssertions.assertThat(SmtpServerStub.wiser()).hasNoReceivedMessages();
+    }
+
+    @Test
+    public void testSumOfSuccessTaxesIsCalculated() throws Exception {
+        haveOneEmployee();
+        haveOneEmployee();
+
+        respondOneTimeWithSuccess();
+        respondOneTimeWithSuccess();
+
+        jobLauncherTestUtils.launchJob();
+
+        assertThat(sumOfTaxes.getSuccessSum()).isEqualTo(200D);
+    }
+
+    @Test
+    public void whenWebServiceFailsForOneEmployee_thenSumOfTaxes_isCalculatedOnlyForSuccessfulCalls() throws Exception {
+        haveOneEmployee();
+        haveOneEmployee();
+        haveOneEmployee();
+
+        respondOneTimeWithSuccess();
+        respondOneTimeWithSuccess();
+        respondOneTimeWithBadRequest();
+
+        jobLauncherTestUtils.launchJob();
+
+        assertThat(sumOfTaxes.getSuccessSum()).isEqualTo(200D);
     }
 
     private Employee haveOneEmployee() {
@@ -152,6 +176,16 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
 
         employeeRepository.save(employee);
         return employee;
+    }
+
+    private void respondOneTimeWithSuccess() {
+        mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
+                .andRespond(withSuccess(STATUS_OK, MediaType.APPLICATION_JSON));
+    }
+
+    private void respondOneTimeWithBadRequest() {
+        mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
+                .andRespond(withBadRequest());
     }
 
 }
