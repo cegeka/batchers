@@ -68,7 +68,7 @@ public class EmailSender {
             email.setFrom(emailTO.getFrom());
             email.setTo(convertToInternetAddress(emailTO.getTos()));
             email.setSubject(emailTO.getSubject());
-            email.setMsg(emailTO.getBody());
+            //email.setMsg(emailTO.getBody());
             email.setHtmlMsg(emailTO.getBody());
             attachEmailAttachmentTOs(email, emailTO.getAttachments());
             return email;
