@@ -23,6 +23,11 @@ public abstract class AbstractIntegrationTest {
         DateTimeUtils.setCurrentMillisFixed(100L);
     }
 
+    @BeforeClass
+    public static void setUpTestAppEnv() {
+        System.setProperty("APP_ENV", "default");
+    }
+
     @AfterClass
     public static void resetDateTime() {
         DateTimeUtils.currentTimeMillis();

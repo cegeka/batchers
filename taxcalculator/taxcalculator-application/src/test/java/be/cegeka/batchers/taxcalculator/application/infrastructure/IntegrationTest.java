@@ -1,6 +1,7 @@
 package be.cegeka.batchers.taxcalculator.application.infrastructure;
 
 import be.cegeka.batchers.taxcalculator.application.config.EmployeeGeneratorTestConfig;
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -13,4 +14,9 @@ import javax.transaction.Transactional;
 @TransactionConfiguration(defaultRollback = true)
 @Transactional
 public abstract class IntegrationTest {
+
+    @BeforeClass
+    public static void setUpTestAppEnv() {
+        System.setProperty("APP_ENV", "default");
+    }
 }

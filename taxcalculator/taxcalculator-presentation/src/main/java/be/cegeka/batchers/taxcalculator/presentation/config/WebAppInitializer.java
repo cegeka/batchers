@@ -1,6 +1,7 @@
 package be.cegeka.batchers.taxcalculator.presentation.config;
 
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.WebApplicationInitializer;
@@ -11,6 +12,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 import java.util.Set;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 public class WebAppInitializer implements WebApplicationInitializer {
 
     public static final String DISPATCHER_SERVLET_NAME = "dispatcher";
@@ -20,6 +23,8 @@ public class WebAppInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(ServletContext servletContext) {
+        setUpAppEnvToDefaultIfNotProvided();
+
         AnnotationConfigWebApplicationContext ctx = new AnnotationConfigWebApplicationContext();
         ctx.register(WebAppContext.class);
 
@@ -31,6 +36,12 @@ public class WebAppInitializer implements WebApplicationInitializer {
                 LOG.error("Mapping conflict: " + s);
             }
             throw new IllegalStateException("'webservice' cannot be mapped to '/'");
+        }
+    }
+
+    private void setUpAppEnvToDefaultIfNotProvided() {
+        if(isBlank(System.getProperty("APP_ENV"))) {
+            System.setProperty("APP_ENV", "default");
         }
     }
 }
