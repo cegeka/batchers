@@ -45,7 +45,7 @@ public class SendPaycheckProcessor implements ItemProcessor<Employee, Employee> 
 
     public String getEmailBodyForEmployee(Employee employee) {
 
-        String ENDL = System.getProperty("line.separator");
+        String ENDL = "<br/>";
         StringBuilder sb = new StringBuilder()
                 .append("Dear employee,")
                 .append(ENDL)
