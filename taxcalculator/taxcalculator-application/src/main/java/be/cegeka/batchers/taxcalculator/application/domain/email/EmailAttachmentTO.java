@@ -38,4 +38,13 @@ public class EmailAttachmentTO {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    @Override
+    public String toString() {
+        return "EmailAttachmentTO{" +
+                "mimeType='" + mimeType + '\'' +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }

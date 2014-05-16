@@ -42,6 +42,7 @@ public class EmailSender {
                     email.setAuthenticator(new DefaultAuthenticator(smtpUserName, smtpPassword));
                 }
 
+                LOG.info("Sending email: " + emailTO);
                 email.send();
             }
         } catch (IllegalArgumentException e) {
