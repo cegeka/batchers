@@ -44,12 +44,15 @@ public class SendPaycheckProcessor implements ItemProcessor<Employee, Employee> 
     }
 
     public String getEmailBodyForEmployee(Employee employee) {
+
+        String ENDL = "<br/>";
         StringBuilder sb = new StringBuilder()
                 .append("Dear employee,")
-                .append("\n\n")
+                .append(ENDL)
                 .append("Please find enclosed the paycheck for " + getLongMonthName(employee.getCalculationDate()) + " " + employee.getCalculationDate().getYear() + ".")
-                .append("\n\n")
+                .append(ENDL)
                 .append("Regards,")
+                .append(ENDL)
                 .append("The Finance department");
         return sb.toString();
     }

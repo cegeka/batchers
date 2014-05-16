@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -18,6 +19,9 @@ import java.util.Properties;
 
 @Configuration
 @Import(PropertyPlaceHolderConfig.class)
+@PropertySource({
+        "classpath:conf/taxcalculator-infrastructure.${APP_ENV}.properties"
+})
 public class PersistenceConfig {
 
     @Value("${jdbc.driver}")
@@ -31,6 +35,9 @@ public class PersistenceConfig {
 
     @Value("${jdbc.password}")
     private String password;
+
+    @Value("${hibernate.dialect:org.hibernate.dialect.HSQLDialect}")
+    private String hibernateDialect = "org.hibernate.dialect.HSQLDialect";
 
     private JpaTransactionManager platformTransactionManager;
 
@@ -48,7 +55,7 @@ public class PersistenceConfig {
     @Bean
     public JpaVendorAdapter jpaVendorAdapter() {
         HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
-        jpaVendorAdapter.setDatabasePlatform("org.hibernate.dialect.HSQLDialect");
+        jpaVendorAdapter.setDatabasePlatform(hibernateDialect);
         return jpaVendorAdapter;
     }
 

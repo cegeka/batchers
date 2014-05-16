@@ -2,9 +2,7 @@ package be.cegeka.batchers.taxcalculator.application.domain.email;
 
 
 import be.cegeka.batchers.taxcalculator.application.infrastructure.IntegrationTest;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static be.cegeka.batchers.taxcalculator.application.ApplicationAssertions.assertThat;
@@ -15,14 +13,20 @@ public class EmailSenderITest extends IntegrationTest {
     @Autowired
     private EmailSender emailSender;
 
-    @Before
-    public void setUpWiser() {
+    @BeforeClass
+    public static void setUpWiser() {
         SmtpServerStub.start();
     }
 
-    @After
-    public void tearDownWiser() {
+    @AfterClass
+    public static void tearDownWiser() {
         SmtpServerStub.stop();
+    }
+
+    @After
+    public void resetSendMessages() {
+        SmtpServerStub.clearMessages();
+        emailSender.jobHasBeenStarted("a string");
     }
 
     @Test
@@ -50,6 +54,22 @@ public class EmailSenderITest extends IntegrationTest {
         assertThat(SmtpServerStub.wiser())
                 .hasReceivedMessages(1)
                 .hasReceivedMessageContaining(TEST_BODY);
+    }
 
+    @Test
+    public void onlyOneEmailIsSentAtAllTime() {
+        EmailTO emailTO = new EmailTO();
+
+        emailTO.addTo("radu.cirstoiu@cegeka.com");
+        emailTO.setFrom("seagulls.cgk@gmail.com");
+        emailTO.setSubject("test subject");
+        emailTO.setBody(TEST_BODY);
+
+        emailSender.send(emailTO);
+        emailSender.send(emailTO);
+
+        assertThat(SmtpServerStub.wiser())
+                .hasReceivedMessages(1)
+                .hasReceivedMessageContaining(TEST_BODY);
     }
 }

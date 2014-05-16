@@ -278,7 +278,7 @@
             <dependency>
                 <groupId>org.springframework.batch</groupId>
                 <artifactId>spring-batch-test</artifactId>
-                <version>3.0.0.M3</version>
+                <version>${spring.batch.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -293,8 +293,6 @@
                 <version>1.8.5</version>
                 <scope>test</scope>
             </dependency>
-
-
         </dependencies>
     </dependencyManagement>
 
