@@ -22,7 +22,6 @@ public class SumOfTaxesItemListener implements ItemProcessListener<Employee, Emp
 
     @Override
     public void onProcessError(Employee item, Exception e) {
-
     }
 
     @Override

@@ -22,5 +22,6 @@ public class EmployeeJobExecutionListener implements org.springframework.batch.c
     @Override
     public void afterJob(JobExecution jobExecution) {
         LOG.info("\n\nSum of success taxes = {} \n\n ", sumOfTaxes.getSuccessSum());
+        LOG.info("\n\nSum of failure taxes = {} \n\n ", sumOfTaxes.getSuccessSum());
     }
 }
