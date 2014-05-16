@@ -5,6 +5,7 @@ import be.cegeka.batchers.taxcalculator.infrastructure.config.PersistenceConfig;
 import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -33,22 +34,7 @@ public class ItemReaderWriterConfig {
         return employeeJpaItemWriter;
     }
 
-    @Bean
-    public DataSourceInitializer dataSourceInitializer() {
-        DataSourceInitializer dataSourceInitializer = new DataSourceInitializer();
-        dataSourceInitializer.setDataSource(persistenceConfig.dataSource());
-        dataSourceInitializer.setDatabasePopulator(dataSourcePopulator());
-        return dataSourceInitializer;
-    }
 
-    private DatabasePopulator dataSourcePopulator() {
-        ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator();
-        databasePopulator.setScripts(
-                new ClassPathResource("org/springframework/batch/core/schema-drop-hsqldb.sql"),
-                new ClassPathResource("org/springframework/batch/core/schema-hsqldb.sql")
-        );
-        return databasePopulator;
-    }
 }
 
 

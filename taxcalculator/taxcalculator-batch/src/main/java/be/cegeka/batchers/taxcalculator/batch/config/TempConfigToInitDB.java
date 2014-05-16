@@ -1,30 +1,30 @@
 package be.cegeka.batchers.taxcalculator.batch.config;
 
-import be.cegeka.batchers.taxcalculator.batch.integration.MockResetter;
-import org.springframework.batch.test.JobLauncherTestUtils;
+import be.cegeka.batchers.taxcalculator.infrastructure.config.PersistenceConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
-import javax.sql.DataSource;
-
-@Profile("test")
 @Configuration
-public class EmployeeJobTestConfig {
+public class TempConfigToInitDB {
 
     @Autowired
-    private DataSource dataSource;
+    private PersistenceConfig persistenceConfig;
+
+    @Value(value = "${drop.script:org/springframework/batch/core/schema-drop-hsqldb.sql}")
+    private String dropScript;
+    @Value(value = "${schema.script:org/springframework/batch/core/schema-hsqldb.sql}")
+    private String schemaScript;
 
     @Bean
     public DataSourceInitializer dataSourceInitializer() {
         DataSourceInitializer dataSourceInitializer = new DataSourceInitializer();
-        dataSourceInitializer.setDataSource(dataSource);
+        dataSourceInitializer.setDataSource(persistenceConfig.dataSource());
         dataSourceInitializer.setDatabasePopulator(dataSourcePopulator());
         return dataSourceInitializer;
     }
@@ -32,20 +32,9 @@ public class EmployeeJobTestConfig {
     private DatabasePopulator dataSourcePopulator() {
         ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator();
         databasePopulator.setScripts(
-                new ClassPathResource("org/springframework/batch/core/schema-drop-hsqldb.sql"),
-                new ClassPathResource("org/springframework/batch/core/schema-hsqldb.sql")
+                new ClassPathResource(dropScript),
+                new ClassPathResource(schemaScript)
         );
         return databasePopulator;
     }
-
-    @Bean
-    public JobLauncherTestUtils jobLauncherTestUtils() {
-        return new JobLauncherTestUtils();
-    }
-
-    @Bean
-    public MockResetter mockResetter() {
-        return new MockResetter();
-    }
-
 }

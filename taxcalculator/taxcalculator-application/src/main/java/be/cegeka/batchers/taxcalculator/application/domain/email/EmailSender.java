@@ -1,5 +1,6 @@
 package be.cegeka.batchers.taxcalculator.application.domain.email;
 
+import be.cegeka.batchers.taxcalculator.batch.api.JobStartListener;
 import org.apache.commons.mail.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,8 +19,11 @@ import static org.apache.commons.lang3.StringUtils.isNoneBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Service
-public class EmailSender {
+public class EmailSender implements JobStartListener {
     private static final Logger LOG = LoggerFactory.getLogger(EmailSender.class);
+
+    private static final int MAX_EMAILS_TO_BE_SEND = 1;
+
     @Value("${smtp_use_ssl:true}")
     private boolean smtpUseSsl;
     @Value("${smtp_port:465}")
@@ -31,9 +35,11 @@ public class EmailSender {
     @Value("${smtp_user_password}")
     private String smtpPassword;
 
+    private int emailSendCounter;
+
     public void send(EmailTO emailTO) {
         try {
-            if (isNotBlank(smtpServer)) {
+            if (isNotBlank(smtpServer) && emailSendCounter < MAX_EMAILS_TO_BE_SEND) {
                 Email email = new EmailMapper().mapFromEmailTO(emailTO);
                 email.setSSLOnConnect(smtpUseSsl);
                 email.setSmtpPort(smtpPort);
@@ -44,6 +50,7 @@ public class EmailSender {
 
                 LOG.info("Sending email: " + emailTO);
                 email.send();
+                emailSendCounter++;
             }
         } catch (IllegalArgumentException e) {
             LOG.error("Errors occurred while sending the email ", e);
@@ -52,6 +59,11 @@ public class EmailSender {
             LOG.error("Errors occurred while sending the email ", e);
             throw new IllegalStateException(e);
         }
+    }
+
+    @Override
+    public void jobHasBeenStarted(String jobName) {
+        emailSendCounter = 0;
     }
 
     static class EmailMapper {

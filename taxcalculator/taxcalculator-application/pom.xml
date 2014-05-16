@@ -27,6 +27,10 @@
         </dependency>
         <dependency>
             <groupId>be.cegeka.batchers</groupId>
+            <artifactId>taxcalculator-batch-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>be.cegeka.batchers</groupId>
             <artifactId>taxcalculator-to</artifactId>
         </dependency>
         <dependency>

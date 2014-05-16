@@ -11,7 +11,7 @@
     </appender>
 
     <appender name="fileAppender" class="org.apache.log4j.FileAppender">
-        <param name="file" value="${rootPath}WEB-INF/logs/taxcalculator.log"/>
+        <param name="file" value="${log_dir}taxcalculator.log"/>
         <param name="append" value="false"/>
         <param name="threshold" value="debug"/>
         <layout class="org.apache.log4j.PatternLayout">
