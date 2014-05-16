@@ -49,4 +49,15 @@ public class EmailTO {
     public void addAttachment(EmailAttachmentTO attachmentTO) {
         attachments.add(attachmentTO);
     }
+
+    @Override
+    public String toString() {
+        return "EmailTO{" +
+                "tos=" + tos +
+                ", attachments=" + attachments +
+                ", body='" + body + '\'' +
+                ", subject='" + subject + '\'' +
+                ", from='" + from + '\'' +
+                '}';
+    }
 }
