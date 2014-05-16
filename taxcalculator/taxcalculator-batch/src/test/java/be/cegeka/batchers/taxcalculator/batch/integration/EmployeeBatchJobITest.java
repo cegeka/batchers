@@ -4,7 +4,9 @@ import be.cegeka.batchers.taxcalculator.application.ApplicationAssertions;
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeBuilder;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeRepository;
+import be.cegeka.batchers.taxcalculator.application.domain.email.EmailSender;
 import be.cegeka.batchers.taxcalculator.application.domain.email.SmtpServerStub;
+import be.cegeka.batchers.taxcalculator.batch.CallWebserviceProcessor;
 import be.cegeka.batchers.taxcalculator.batch.config.SumOfTaxes;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
@@ -13,6 +15,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.internal.util.reflection.Whitebox;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,12 +46,20 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     @Autowired
     SumOfTaxes sumOfTaxes;
 
+    @Autowired
+    CallWebserviceProcessor callWebserviceProcessor;
+
+    @Autowired
+    private EmailSender emailSender;
+
     private MockRestServiceServer mockServer;
 
     @Before
     public void setUp() {
         mockServer = MockRestServiceServer.createServer(restTemplate);
         SmtpServerStub.start();
+
+        Whitebox.setInternalState(emailSender, "emailSendCounter", 0);
     }
 
     @After
@@ -156,6 +167,9 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
 
     @Test
     public void whenWebServiceFailsForOneEmployee_thenSumOfTaxes_isCalculatedOnlyForSuccessfulCalls() throws Exception {
+
+        Whitebox.setInternalState(callWebserviceProcessor, "maxAtempts", 1);
+
         haveOneEmployee();
         haveOneEmployee();
         haveOneEmployee();
@@ -167,23 +181,25 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         jobLauncherTestUtils.launchJob();
 
         assertThat(sumOfTaxes.getSuccessSum()).isEqualTo(200D);
+        Whitebox.setInternalState(callWebserviceProcessor, "maxAtempts", 3);
     }
 
     @Test
     public void whenWebServiceFailsForOneEmployee_thenSumOfTaxes_isCalculatedForFailedCalls() throws Exception {
+
+        Whitebox.setInternalState(callWebserviceProcessor, "maxAtempts", 1);
         haveOneEmployee();
         haveOneEmployee();
         haveOneEmployee();
 
         respondOneTimeWithBadRequest();
-        respondOneTimeWithBadRequest();
-        respondOneTimeWithBadRequest();//3 times to exhaust the retry, hopefully is in sequence
         respondOneTimeWithSuccess();
         respondOneTimeWithSuccess();
 
         jobLauncherTestUtils.launchJob();
 
         assertThat(sumOfTaxes.getFailedSum()).isEqualTo(100D);
+        Whitebox.setInternalState(callWebserviceProcessor, "maxAtempts", 3);
     }
 
     private Employee haveOneEmployee() {
