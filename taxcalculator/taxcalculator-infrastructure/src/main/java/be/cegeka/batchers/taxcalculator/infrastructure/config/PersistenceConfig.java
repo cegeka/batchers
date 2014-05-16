@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -18,6 +19,10 @@ import java.util.Properties;
 
 @Configuration
 @Import(PropertyPlaceHolderConfig.class)
+@PropertySource({
+        "classpath:taxcalculator-infrastructure.default.properties",
+        "classpath:taxcalculator-infrastructure.${APP_ENV}.properties"
+})
 public class PersistenceConfig {
 
     @Value("${jdbc.driver}")
