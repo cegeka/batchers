@@ -43,5 +43,8 @@ public class WebAppInitializer implements WebApplicationInitializer {
         if(isBlank(System.getProperty("APP_ENV"))) {
             System.setProperty("APP_ENV", "default");
         }
+        if(isBlank(System.getProperty("log_dir"))) {
+            System.setProperty("log_dir", "target/logs/");
+        }
     }
 }

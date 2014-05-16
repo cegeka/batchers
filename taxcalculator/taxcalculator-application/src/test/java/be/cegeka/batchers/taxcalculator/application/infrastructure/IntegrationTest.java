@@ -18,5 +18,6 @@ public abstract class IntegrationTest {
     @BeforeClass
     public static void setUpTestAppEnv() {
         System.setProperty("APP_ENV", "default");
+        System.setProperty("log_dir", "target/logs/");
     }
 }
