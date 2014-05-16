@@ -3,11 +3,14 @@ package be.cegeka.batchers.taxcalculator.batch.config;
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.infrastructure.config.PropertyPlaceHolderConfig;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.SkipListener;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.DefaultBatchConfigurer;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.step.builder.FaultTolerantStepBuilder;
+import org.springframework.batch.core.step.skip.AlwaysSkipItemSkipPolicy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 
@@ -31,7 +34,7 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
     private ItemReaderWriterConfig itemReaderWriterConfig;
 
     @Autowired
-    private SumOfTaxesItemProcessListener sumOfTaxesItemProcessListener;
+    private SumOfTaxesItemListener sumOfTaxesItemListener;
 
     @Autowired
     private EmployeeJobExecutionListener employeeJobExecutionListener;
@@ -39,21 +42,25 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
     @Bean
     public Job employeeJob() {
         return jobBuilders.get("employeeJob")
-                .start(step()).listener(employeeJobExecutionListener)
+                .start(step())
+                .listener(employeeJobExecutionListener)
                 .build();
     }
 
     @Bean
     public Step step() {
-        return stepBuilders.get("step")
+        FaultTolerantStepBuilder<Employee, Employee> faultTolerantStepBuilder = stepBuilders.get("step")
                 .<Employee, Employee>chunk(1)
+                .faultTolerant();
+
+        faultTolerantStepBuilder.listener((SkipListener) sumOfTaxesItemListener);
+        faultTolerantStepBuilder.skipPolicy(new AlwaysSkipItemSkipPolicy());
+
+        return faultTolerantStepBuilder
                 .reader(itemReaderWriterConfig.employeeItemReader())
                 .processor(processorConfig.processor())
                 .writer(itemReaderWriterConfig.employeeItemWriter())
-                .listener(sumOfTaxesItemProcessListener)
+                .listener(sumOfTaxesItemListener)
                 .build();
     }
-
 }
-
-
