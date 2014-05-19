@@ -1,4 +1,4 @@
-package be.cegeka.batchers.taxcalculator.batch.config;
+package be.cegeka.batchers.taxcalculator.batch.service.reporting;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
