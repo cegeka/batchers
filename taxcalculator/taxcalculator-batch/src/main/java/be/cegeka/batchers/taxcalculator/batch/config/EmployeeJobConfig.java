@@ -1,6 +1,8 @@
 package be.cegeka.batchers.taxcalculator.batch.config;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
+import be.cegeka.batchers.taxcalculator.batch.service.reporting.EmployeeJobExecutionListener;
+import be.cegeka.batchers.taxcalculator.batch.service.reporting.SumOfTaxesItemListener;
 import be.cegeka.batchers.taxcalculator.infrastructure.config.PropertyPlaceHolderConfig;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.SkipListener;
