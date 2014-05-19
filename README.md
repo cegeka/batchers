@@ -14,7 +14,6 @@ Install Karma, Jasmine and browser launchers by running the following commands:
 
 Set CHROME\_BIN and FIREFOX\_BIN as environment variables, pointing to the executables themselves.
 
-
 Import the maven projects in IntelliJ/Eclipse and run:
 * mvn clean install
 
@@ -25,7 +24,17 @@ Import the maven projects in IntelliJ/Eclipse and run:
 * start both servers and connect to [http://localhost:9090/taxcalculator/](http://localhost:9090/taxcalculator/)
 
 # Spring Batch Configuration
+We started from the idea that we will have a list of employees for which we:
+* calculate taxes
+* call a webservice to send the tax
+* generate a PDF
 
+At the end of the job we create a new PDF with results from the job (like sum of taxes).
+
+Our main configuration class for the job is __EmployeeJobConfig__.
+There should be just one transaction manager, shared between JPA and Spring, therefore our Job config extends __DefaultBatchConfigurer__. This provides a default job repository and job launcher.
+
+The __ProcessorConfig__ class defines defines the processors of the item (employee).
 
 # Deployment configuration
 
@@ -35,5 +44,4 @@ There are two system properties that need to be set:
 
 You can set these at tomcat startup: -DAPP\_ENV=... -Dlog\_dir=...
 
-# Code gotchas
 
