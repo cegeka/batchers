@@ -1,4 +1,4 @@
-package be.cegeka.batchers.taxcalculator.batch.config;
+package be.cegeka.batchers.taxcalculator.batch.service.reporting;
 
 import org.springframework.stereotype.Component;
 
