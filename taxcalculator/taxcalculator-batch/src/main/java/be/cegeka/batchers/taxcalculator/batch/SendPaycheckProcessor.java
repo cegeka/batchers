@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import static be.cegeka.batchers.taxcalculator.infrastructure.utils.DateUtils.longMonthAndYearOf;
+
 @Component
 public class SendPaycheckProcessor implements ItemProcessor<Employee, Employee> {
 
@@ -49,7 +51,7 @@ public class SendPaycheckProcessor implements ItemProcessor<Employee, Employee> 
         StringBuilder sb = new StringBuilder()
                 .append("Dear employee,")
                 .append(ENDL)
-                .append("Please find enclosed the paycheck for " + getLongMonthName(employee.getCalculationDate()) + " " + employee.getCalculationDate().getYear() + ".")
+                .append("Please find enclosed the paycheck for " + longMonthAndYearOf(employee.getCalculationDate()) + ".")
                 .append(ENDL)
                 .append("Regards,")
                 .append(ENDL)
