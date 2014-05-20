@@ -48,18 +48,22 @@ You can set these at tomcat startup: -DAPP\_ENV=... -Dlog\_dir=...
 
 # Project structure
 
-1. application 
+1.application
 * domain + business logic + send email + generate PDFs
-2. batch 
+
+2.batch
 * SpringBatch implementation + EmployeeJobConfig
-3. infrastructure
+
+3.infrastructure
 * PersistenceConfig + PropertyPlaceHolderConfig
-4. stubwebservice
-* tax service 
+
+4.stubwebservice
+* tax service
 * listen for calls
 * configure for timeout
 * configure for fail
-5. presentation
+
+5.presentation
 * one page - employees table
 * run job functions
 
