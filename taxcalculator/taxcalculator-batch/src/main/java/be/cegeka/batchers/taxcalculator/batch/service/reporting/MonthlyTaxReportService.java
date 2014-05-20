@@ -11,6 +11,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static be.cegeka.batchers.taxcalculator.infrastructure.utils.DateUtils.longMonthAndYearOf;
+import static org.joda.time.DateTime.now;
+
 @Service
 public class MonthlyTaxReportService {
     @Autowired
@@ -23,6 +26,7 @@ public class MonthlyTaxReportService {
         Map<String, Object> contextMap = new HashMap<>();
         contextMap.put("success_sum", sumOfTaxes.getSuccessSum());
         contextMap.put("failed_sum", sumOfTaxes.getFailedSum());
+        contextMap.put("date", longMonthAndYearOf(now()));
         return pdfGeneratorService.generatePdfAsByteArray(monthlyReportTemplate, contextMap);
     }
 

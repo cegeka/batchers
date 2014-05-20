@@ -1,6 +1,7 @@
 package be.cegeka.batchers.taxcalculator.batch.service.reporting;
 
 import be.cegeka.batchers.taxcalculator.application.domain.pdf.PDFGeneratorService;
+import be.cegeka.batchers.taxcalculator.infrastructure.utils.DateUtils;
 import fr.opensagres.xdocreport.core.XDocReportException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.junit.Before;
@@ -15,6 +16,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import static be.cegeka.batchers.taxcalculator.application.ApplicationAssertions.assertThat;
+import static org.joda.time.DateTime.now;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MonthlyTaxReportServiceTest {
@@ -48,5 +50,9 @@ public class MonthlyTaxReportServiceTest {
         pdfDocument = PDDocument.load(new ByteArrayInputStream(pdfBytes));
         assertThat(pdfDocument)
                 .containsText("WEBSERVICE RETURNS FAILURE " + FAILED_AMOUNT + " euro");
+
+        pdfDocument = PDDocument.load(new ByteArrayInputStream(pdfBytes));
+        assertThat(pdfDocument)
+                .containsText("PERIOD: " + DateUtils.longMonthAndYearOf(now()));
     }
 }
