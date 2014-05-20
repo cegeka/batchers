@@ -20,7 +20,9 @@ Import the maven projects in IntelliJ/Eclipse and run:
 # Running the app
 
 * create one Run/Debug configuration for stubwebservice-war exploded on port 9091. Context path: /stubwebservice
+* alternative : cd taxcalculator-stubwebservice && mvn jetty:run
 * create one Run/Debug configuration for presentation-war exploded (different port, preferably 9090). Context path: /taxcalculator
+* alternative (does not pre-populate database with employees) : cd taxcalculator-presentation && mvn tomcat7:run
 * start both servers and connect to [http://localhost:9090/taxcalculator/](http://localhost:9090/taxcalculator/)
 
 # Spring Batch Configuration
