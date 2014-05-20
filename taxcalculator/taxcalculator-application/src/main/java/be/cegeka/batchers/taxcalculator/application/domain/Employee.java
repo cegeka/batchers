@@ -21,6 +21,7 @@ import java.math.RoundingMode;
 public class Employee {
     public static final String GET_ALL_NAME = "Employee.getAll";
     public static final String GET_ALL_QUERY = "SELECT e FROM Employee e";
+
     private Integer income;
 
     @Id
