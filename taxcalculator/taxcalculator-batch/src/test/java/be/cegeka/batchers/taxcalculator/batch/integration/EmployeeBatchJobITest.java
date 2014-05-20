@@ -7,7 +7,7 @@ import be.cegeka.batchers.taxcalculator.application.domain.EmployeeRepository;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailSender;
 import be.cegeka.batchers.taxcalculator.application.domain.email.SmtpServerStub;
 import be.cegeka.batchers.taxcalculator.batch.CallWebserviceProcessor;
-import be.cegeka.batchers.taxcalculator.batch.config.SumOfTaxes;
+import be.cegeka.batchers.taxcalculator.batch.service.reporting.SumOfTaxes;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.joda.time.DateTime;
