@@ -46,22 +46,22 @@ There are two system properties that need to be set:
 
 You can set these at tomcat startup: -DAPP\_ENV=... -Dlog\_dir=...
 
-Project structure
+# Project structure
 
 1. application 
-	- domain + business logic + send email + generate PDFs
+* domain + business logic + send email + generate PDFs
 2. batch 
-	- SpringBatch implementation + EmployeeJobConfig
+* SpringBatch implementation + EmployeeJobConfig
 3. infrastructure
-	- PersistenceConfig + PropertyPlaceHolderConfig
+* PersistenceConfig + PropertyPlaceHolderConfig
 4. stubwebservice
-	- tax service 
-	- listen for calls
-	- configure for timeout
-	- configure for fail
+* tax service 
+* listen for calls
+* configure for timeout
+* configure for fail
 5. presentation
-	- one page - employees table
-	- run job functions
+* one page - employees table
+* run job functions
 
 
 
