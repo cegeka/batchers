@@ -1,6 +1,7 @@
 package be.cegeka.batchers.taxcalculator.batch.config;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
+import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResult;
 import be.cegeka.batchers.taxcalculator.batch.CalculateTaxProcessor;
 import be.cegeka.batchers.taxcalculator.batch.CallWebserviceProcessor;
 import be.cegeka.batchers.taxcalculator.batch.SendPaycheckProcessor;
@@ -16,8 +17,11 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.step.builder.FaultTolerantStepBuilder;
 import org.springframework.batch.core.step.skip.AlwaysSkipItemSkipPolicy;
+import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableBatchProcessing
@@ -53,7 +57,6 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
         return jobBuilders.get("employeeJob")
                 .start(taxCalculationStep())
                 .next(wsCallStep())
-                .next(generatePDFStep())
                 .listener(employeeJobExecutionListener)
                 .build();
     }
@@ -80,24 +83,19 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
         faultTolerantStepBuilder.listener((SkipListener) sumOfTaxesItemListener);
         faultTolerantStepBuilder.skipPolicy(new AlwaysSkipItemSkipPolicy());
 
+
+        CompositeItemProcessor<Employee, Employee> compositeItemProcessor = new CompositeItemProcessor<>();
+        compositeItemProcessor.setDelegates(Arrays.asList(
+                callWebserviceProcessor,
+                sendPaycheckProcessor
+        ));
+
         return faultTolerantStepBuilder
                 .reader(itemReaderWriterConfig.wsCallItemReader())
-                .processor(callWebserviceProcessor)
+                .processor(compositeItemProcessor)
                 .writer(itemReaderWriterConfig.wsCallItemWriter())
                 .listener(sumOfTaxesItemListener)
                 .build();
     }
 
-    @Bean
-    public Step generatePDFStep() {
-        FaultTolerantStepBuilder<Employee, Employee> faultTolerantStepBuilder = stepBuilders.get("generatePDFStep")
-                .<Employee, Employee>chunk(1)
-                .faultTolerant();
-
-        return faultTolerantStepBuilder
-                .reader(itemReaderWriterConfig.generatePDFItemReader())
-                .processor(sendPaycheckProcessor)
-                .writer(itemReaderWriterConfig.generatePDFItemWriter())
-                .build();
-    }
 }
