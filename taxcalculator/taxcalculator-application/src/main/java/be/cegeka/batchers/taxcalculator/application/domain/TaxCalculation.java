@@ -66,6 +66,10 @@ public class TaxCalculation {
         return taxCalculation;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public Employee getEmployee() {
         return employee;
     }
