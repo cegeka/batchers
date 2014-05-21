@@ -16,7 +16,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import java.util.List;
 
 @Repository
-@Transactional(isolation = Isolation.DEFAULT)
+@Transactional(readOnly = true, isolation = Isolation.DEFAULT)
 public class EmployeeRepository {
 
     @PersistenceContext
@@ -25,6 +25,7 @@ public class EmployeeRepository {
     @Autowired
     private EntityManagerFactory entityManagerFactory;
 
+    @Transactional
     public void save(Employee employee) {
         entityManager.persist(employee);
     }

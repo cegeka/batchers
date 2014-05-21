@@ -15,7 +15,7 @@ import javax.persistence.criteria.CriteriaDelete;
 import java.util.List;
 
 @Repository
-@Transactional(isolation = Isolation.DEFAULT)
+@Transactional(readOnly = true, isolation = Isolation.DEFAULT)
 public class TaxCalculationRepository {
 
     @PersistenceContext
@@ -24,6 +24,7 @@ public class TaxCalculationRepository {
     @Autowired
     private EntityManagerFactory entityManagerFactory;
 
+    @Transactional
     public void save(TaxCalculation taxCalculation) {
         entityManager.persist(taxCalculation);
     }

@@ -1,6 +1,7 @@
 package be.cegeka.batchers.taxcalculator.batch.config;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
+import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
 import be.cegeka.batchers.taxcalculator.infrastructure.config.PersistenceConfig;
 import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.JpaPagingItemReader;
@@ -23,8 +24,8 @@ public class ItemReaderWriterConfig {
     }
 
     @Bean
-    public JpaItemWriter<Employee> taxCalculatorItemWriter() {
-        JpaItemWriter<Employee> employeeJpaItemWriter = new JpaItemWriter<>();
+    public JpaItemWriter<TaxCalculation> taxCalculatorItemWriter() {
+        JpaItemWriter<TaxCalculation> employeeJpaItemWriter = new JpaItemWriter<>();
         employeeJpaItemWriter.setEntityManagerFactory(persistenceConfig.entityManagerFactory());
         return employeeJpaItemWriter;
     }

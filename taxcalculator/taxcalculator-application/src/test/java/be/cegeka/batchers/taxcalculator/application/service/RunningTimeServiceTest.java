@@ -60,8 +60,5 @@ public class RunningTimeServiceTest {
         long sleepTime = runningTimeService.calculateSleepTime();
 
         assertThat(sleepTime).isGreaterThanOrEqualTo(MINIMUM_TIME).isLessThanOrEqualTo(MAXIMUM_TIME);
-
-        long sleepTimeSecond = runningTimeService.calculateSleepTime();
-        assertThat(sleepTimeSecond).isNotEqualTo(sleepTime);
     }
 }

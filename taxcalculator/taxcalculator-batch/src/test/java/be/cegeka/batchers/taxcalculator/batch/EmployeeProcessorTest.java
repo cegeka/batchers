@@ -2,8 +2,11 @@ package be.cegeka.batchers.taxcalculator.batch;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeBuilder;
+import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
 import be.cegeka.batchers.taxcalculator.application.service.RunningTimeService;
 import be.cegeka.batchers.taxcalculator.application.service.TaxCalculatorService;
+import org.joda.money.CurrencyUnit;
+import org.joda.money.Money;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
@@ -13,9 +16,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.math.BigDecimal;
-
-import static org.junit.Assert.*;
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -45,66 +46,16 @@ public class EmployeeProcessorTest {
                 .withIncome(1500)
                 .build();
 
-        assertNull("employee should have empty calculation date", employee1.getCalculationDate());
-        assertNull("employee should have empty calculation date", employee2.getCalculationDate());
+        TaxCalculation taxCalculation1 = calculateTaxProcessor.process(employee1);
+        TaxCalculation taxCalculation2 = calculateTaxProcessor.process(employee2);
 
-        employee1 = calculateTaxProcessor.process(employee1);
-        employee2 = calculateTaxProcessor.process(employee2);
+        assertThat(taxCalculation1.getTax()).isEqualTo(Money.of(CurrencyUnit.EUR, 100));
+        assertThat(taxCalculation1.getCalculationDate()).isNotNull();
 
-        assertEquals("processed employee tax is not equal to given one", employee1.getIncomeTax(), employee1.getTaxTotal().getAmount().doubleValue(), DELTA);
-        DateTime calculationDate1 = employee1.getCalculationDate();
-        assertTrue("tax calculation date is wrong", interval.contains(calculationDate1));
-
-        assertEquals("processed employee tax is not equal to given one", employee2.getIncomeTax(), employee2.getTaxTotal().getAmount().doubleValue(), DELTA);
-        DateTime calculationDate2 = employee2.getCalculationDate();
-        assertTrue("tax calculation date is wrong", interval.contains(calculationDate2));
+        assertThat(taxCalculation2.getTax()).isEqualTo(Money.of(CurrencyUnit.EUR, 150));
+        assertThat(taxCalculation2.getCalculationDate()).isNotNull();
     }
 
-    @Test
-    public void whenAnEmployeeWithPreviousTax_isProcessed_thenTaxOnCurrentIncomeIsAddedToTotalTax() throws Exception {
-
-        Employee employee = new EmployeeBuilder()
-                .withIncome(1000)
-                .build();
-
-        employee.addTax();
-        employee.setCalculationDate(DateTime.now().minusMonths(1));
-
-        employee = calculateTaxProcessor.process(employee);
-
-        double totalComputedTax = BigDecimal.valueOf(employee.getIncomeTax() * 2).doubleValue();
-        assertEquals("processed employee tax is not correct", totalComputedTax,
-                employee.getTaxTotal().getAmount().doubleValue(), DELTA);
-        DateTime calculationDate = employee.getCalculationDate();
-        assertTrue("tax calculation date is wrong", interval.contains(calculationDate));
-    }
-
-    @Test
-    public void whenAnAlreadyProcessedEmployee_isProcessed_thenTaxIsSame() {
-        Employee employee = new EmployeeBuilder()
-                .withIncome(2000)
-                .build();
-
-        employee.addTax();
-        DateTime calculationDate = employee.getCalculationDate();
-
-        employee = calculateTaxProcessor.process(employee);
-
-        assertEquals("tax should not change", employee.getIncomeTax(), employee.getTaxTotal().getAmount().doubleValue(), DELTA);
-        assertEquals("calculation date should not change", calculationDate, employee.getCalculationDate());
-
-    }
-
-    @Test
-    public void givenIncome_whenGetIncomeTax_thenReturnCorrectIncome() {
-        Employee employee = new EmployeeBuilder()
-                .withIncome(2000)
-                .build();
-
-        double incomeTax = employee.getIncomeTax();
-
-        assertEquals("incomeTax is wrong", 200d, incomeTax, DELTA);
-    }
 
     public TaxCalculatorService createTaxCalculatorService() {
         TaxCalculatorService taxCalculatorService = new TaxCalculatorService();
