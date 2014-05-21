@@ -5,13 +5,8 @@ import be.cegeka.batchers.taxcalculator.infrastructure.config.PersistenceConfig;
 import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.jdbc.datasource.init.DataSourceInitializer;
-import org.springframework.jdbc.datasource.init.DatabasePopulator;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
 @Configuration
 public class ItemReaderWriterConfig {
@@ -20,7 +15,7 @@ public class ItemReaderWriterConfig {
     private PersistenceConfig persistenceConfig;
 
     @Bean
-    public JpaPagingItemReader<Employee> employeeItemReader() {
+    public JpaPagingItemReader<Employee> taxCalculatorItemReader() {
         JpaPagingItemReader<Employee> employeeItemReader = new JpaPagingItemReader<>();
         employeeItemReader.setEntityManagerFactory(persistenceConfig.entityManagerFactory());
         employeeItemReader.setQueryString(Employee.GET_ALL_QUERY);
@@ -28,7 +23,37 @@ public class ItemReaderWriterConfig {
     }
 
     @Bean
-    public JpaItemWriter<Employee> employeeItemWriter() {
+    public JpaItemWriter<Employee> taxCalculatorItemWriter() {
+        JpaItemWriter<Employee> employeeJpaItemWriter = new JpaItemWriter<>();
+        employeeJpaItemWriter.setEntityManagerFactory(persistenceConfig.entityManagerFactory());
+        return employeeJpaItemWriter;
+    }
+
+    @Bean
+    public JpaPagingItemReader<Employee> wsCallItemReader() {
+        JpaPagingItemReader<Employee> employeeItemReader = new JpaPagingItemReader<>();
+        employeeItemReader.setEntityManagerFactory(persistenceConfig.entityManagerFactory());
+        employeeItemReader.setQueryString(Employee.GET_ALL_QUERY);
+        return employeeItemReader;
+    }
+
+    @Bean
+    public JpaItemWriter<Employee> wsCallItemWriter() {
+        JpaItemWriter<Employee> employeeJpaItemWriter = new JpaItemWriter<>();
+        employeeJpaItemWriter.setEntityManagerFactory(persistenceConfig.entityManagerFactory());
+        return employeeJpaItemWriter;
+    }
+
+    @Bean
+    public JpaPagingItemReader<Employee> generatePDFItemReader() {
+        JpaPagingItemReader<Employee> employeeItemReader = new JpaPagingItemReader<>();
+        employeeItemReader.setEntityManagerFactory(persistenceConfig.entityManagerFactory());
+        employeeItemReader.setQueryString(Employee.GET_ALL_QUERY);
+        return employeeItemReader;
+    }
+
+    @Bean
+    public JpaItemWriter<Employee> generatePDFItemWriter() {
         JpaItemWriter<Employee> employeeJpaItemWriter = new JpaItemWriter<>();
         employeeJpaItemWriter.setEntityManagerFactory(persistenceConfig.entityManagerFactory());
         return employeeJpaItemWriter;

@@ -1,7 +1,7 @@
 package be.cegeka.batchers.taxcalculator.batch.service;
 
 import be.cegeka.batchers.taxcalculator.batch.api.JobStartListener;
-import org.fest.assertions.api.Assertions;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,9 +14,7 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toSet;
@@ -89,10 +87,10 @@ public class TaxCalculatorJobServiceTest {
         assertThat(jobParameters.getParameters().get("uniqueIdentifier").getValue()).isNotNull();
         assertThat(jobParameters.getParameters().get("uniqueIdentifier").isIdentifying()).isTrue();
 
-        assertThat((Long)jobParameters.getParameters().get("month").getValue()).isEqualTo(Calendar.getInstance().get(Calendar.MONTH));
+        assertThat((Long)jobParameters.getParameters().get("month").getValue()).isEqualTo(new DateTime().getMonthOfYear());
         assertThat(jobParameters.getParameters().get("month").isIdentifying()).isFalse();
 
-        assertThat((Long)jobParameters.getParameters().get("year").getValue()).isEqualTo(Calendar.getInstance().get(Calendar.YEAR));
+        assertThat((Long)jobParameters.getParameters().get("year").getValue()).isEqualTo(new DateTime().getYear());
         assertThat(jobParameters.getParameters().get("year").isIdentifying()).isFalse();
     }
 }
