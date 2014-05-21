@@ -33,7 +33,7 @@ public class TaxCalculationRepository {
     }
 
     public List<TaxCalculation> findByYearAndMonth(int year, int month) {
-        TypedQuery<TaxCalculation> byMonthAndYear = entityManager.createNamedQuery(TaxCalculation.FIND_BY_MONTH_AND_YEAR, TaxCalculation.class);
+        TypedQuery<TaxCalculation> byMonthAndYear = entityManager.createNamedQuery(TaxCalculation.FIND_BY_YEAR_AND_MONTH, TaxCalculation.class);
 
         byMonthAndYear.setParameter("year", year);
         byMonthAndYear.setParameter("month", month);

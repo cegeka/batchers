@@ -1,0 +1,27 @@
+package be.cegeka.batchers.taxcalculator.application.domain;
+
+import org.springframework.stereotype.Repository;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+
+@Repository
+public class MonthlyReportRepository {
+
+    @PersistenceContext
+    EntityManager entityManager;
+
+    public void save(MonthlyReport monthlyReport) {
+        entityManager.persist(monthlyReport);
+    }
+
+    public MonthlyReport findByYearAndMonth(int year, int month) {
+        TypedQuery<MonthlyReport> typedQuery = entityManager.createNamedQuery(MonthlyReport.FIND_BY_YEAR_AND_MONTH, MonthlyReport.class);
+
+        typedQuery.setParameter("year", year);
+        typedQuery.setParameter("month", month);
+
+        return typedQuery.getSingleResult();
+    }
+}

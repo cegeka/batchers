@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.persistence.PersistenceException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -64,6 +65,12 @@ public class TaxCalculationRepositoryTest extends IntegrationTest {
 
         //ASSERT
         assertThat(byEmployee).containsOnly(ionelJanuary, ionelFebruary);
+    }
+
+    @Test(expected = PersistenceException.class)
+    public void cannotHaveDuplicateCalculation() {
+        TaxCalculation gigelJanuary2 = TaxCalculation.from(gigel, 2014, 1, Money.of(CurrencyUnit.EUR, 15.0), new DateTime());
+        taxCalculationRepository.save(gigelJanuary2);
     }
 
 }

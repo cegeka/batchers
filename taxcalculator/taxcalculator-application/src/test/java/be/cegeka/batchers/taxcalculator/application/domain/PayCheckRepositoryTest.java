@@ -15,20 +15,20 @@ import static be.cegeka.batchers.taxcalculator.application.domain.EmployeeTestFi
 import static org.fest.assertions.api.Assertions.assertThat;
 
 
-public class PayCheckPdfRepositoryTest extends IntegrationTest {
+public class PayCheckRepositoryTest extends IntegrationTest {
     public static final int SIZE_10_MB = 10_000_000;
     @Autowired
     EmployeeRepository employeeRepository;
     @Autowired
     TaxCalculationRepository taxCalculationRepository;
     @Autowired
-    PayCheckPdfRepository payCheckPdfRepository;
+    PayCheckRepository payCheckRepository;
 
 
     private Employee employee;
     private TaxCalculation january;
     private TaxCalculation february;
-    private PayCheckPdf payCheckPdf;
+    private PayCheck payCheck;
 
     @Before
     public void setUp() throws Exception {
@@ -42,8 +42,8 @@ public class PayCheckPdfRepositoryTest extends IntegrationTest {
         List<TaxCalculation> taxCalculations = Arrays.asList(january, february);
         taxCalculations.forEach(tax -> taxCalculationRepository.save(tax));
         byte[] content = getLargeByteArray();
-        payCheckPdf = PayCheckPdf.from(january, content);
-        payCheckPdfRepository.save(payCheckPdf);
+        payCheck = PayCheck.from(january, content);
+        payCheckRepository.save(payCheck);
     }
 
     private byte[] getLargeByteArray() {
@@ -52,9 +52,9 @@ public class PayCheckPdfRepositoryTest extends IntegrationTest {
 
     @Test
     public void testFindByTaxCalculation() throws Exception {
-        PayCheckPdf byTaxCalculation = payCheckPdfRepository.findByTaxCalculation(january);
+        PayCheck byTaxCalculation = payCheckRepository.findByTaxCalculation(january);
 
-        assertThat(byTaxCalculation).isEqualTo(payCheckPdf);
-        assertThat(payCheckPdf.getContent().length).isEqualTo(SIZE_10_MB);
+        assertThat(byTaxCalculation).isEqualTo(payCheck);
+        assertThat(payCheck.getPayCheckPdf().length).isEqualTo(SIZE_10_MB);
     }
 }

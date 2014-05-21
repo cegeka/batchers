@@ -14,20 +14,28 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @NamedQueries({
-        @NamedQuery(name = TaxCalculation.FIND_BY_MONTH_AND_YEAR, query = TaxCalculation.FIND_BY_MONTH_AND_YEAR_QUERY),
+        @NamedQuery(name = TaxCalculation.FIND_BY_YEAR_AND_MONTH, query = TaxCalculation.FIND_BY_YEAR_AND_MONTH_QUERY),
         @NamedQuery(name = TaxCalculation.FIND_BY_EMPLOYEE, query = TaxCalculation.FIND_BY_EMPLOYEE_QUERY)
 })
+
+@Table(
+        uniqueConstraints = @UniqueConstraint(columnNames = {TaxCalculation.EMPLOYEE, TaxCalculation.YEAR, TaxCalculation.MONTH})
+)
 
 @Entity
 public class TaxCalculation {
 
-    public static final String FIND_BY_MONTH_AND_YEAR = "TaxCalculation.FIND_BY_MONTH_AND_YEAR";
-    public static final String FIND_BY_MONTH_AND_YEAR_QUERY = "SELECT tc FROM TaxCalculation tc " +
+    public static final String FIND_BY_YEAR_AND_MONTH = "TaxCalculation.FIND_BY_YEAR_AND_MONTH";
+    public static final String FIND_BY_YEAR_AND_MONTH_QUERY = "SELECT tc FROM TaxCalculation tc " +
             " WHERE tc.month = :month AND tc.year = :year";
 
     public static final String FIND_BY_EMPLOYEE = "TaxCalculation.FIND_BY_EMPLOYEE";
     public static final String FIND_BY_EMPLOYEE_QUERY = "SELECT tc FROM TaxCalculation tc " +
             " WHERE tc.employee.id = :employeeId";
+
+    public static final String EMPLOYEE = "employee_id";
+    public static final String MONTH = "month";
+    public static final String YEAR = "year";
 
     @Id
     @GeneratedValue
@@ -35,14 +43,17 @@ public class TaxCalculation {
 
     @ManyToOne
     @NotNull
+    @JoinColumn(name = TaxCalculation.EMPLOYEE)
     private Employee employee;
 
     @Min(1)
     @Max(12)
     @NotNull
+    @Column(name = TaxCalculation.MONTH)
     private int month;
 
     @NotNull
+    @Column(name = TaxCalculation.YEAR)
     private int year;
 
     @JsonSerialize(using = JodaMoneySerializer.class)
