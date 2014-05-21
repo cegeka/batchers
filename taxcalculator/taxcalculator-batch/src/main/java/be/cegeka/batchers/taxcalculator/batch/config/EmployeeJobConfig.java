@@ -22,7 +22,7 @@ import org.springframework.context.annotation.*;
 @Configuration
 @EnableBatchProcessing
 @ComponentScan(basePackages = "be.cegeka.batchers.taxcalculator.batch")
-@Import({PropertyPlaceHolderConfig.class, TempConfigToInitDB.class, ItemReaderWriterConfig.class, ProcessorConfig.class})
+@Import({PropertyPlaceHolderConfig.class, TempConfigToInitDB.class, ItemReaderWriterConfig.class})
 @PropertySource("classpath:taxcalculator-batch.properties")
 public class EmployeeJobConfig extends DefaultBatchConfigurer {
 
