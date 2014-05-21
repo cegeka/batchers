@@ -1,6 +1,9 @@
 package be.cegeka.batchers.taxcalculator.batch.config;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
+import be.cegeka.batchers.taxcalculator.batch.CalculateTaxProcessor;
+import be.cegeka.batchers.taxcalculator.batch.CallWebserviceProcessor;
+import be.cegeka.batchers.taxcalculator.batch.SendPaycheckProcessor;
 import be.cegeka.batchers.taxcalculator.batch.service.reporting.EmployeeJobExecutionListener;
 import be.cegeka.batchers.taxcalculator.batch.service.reporting.SumOfTaxesItemListener;
 import be.cegeka.batchers.taxcalculator.infrastructure.config.PropertyPlaceHolderConfig;
@@ -30,9 +33,6 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
     private StepBuilderFactory stepBuilders;
 
     @Autowired
-    private ProcessorConfig processorConfig;
-
-    @Autowired
     private ItemReaderWriterConfig itemReaderWriterConfig;
 
     @Autowired
@@ -41,16 +41,38 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
     @Autowired
     private EmployeeJobExecutionListener employeeJobExecutionListener;
 
+    @Autowired
+    private CalculateTaxProcessor calculateTaxProcessor;
+    @Autowired
+    private CallWebserviceProcessor callWebserviceProcessor;
+    @Autowired
+    private SendPaycheckProcessor sendPaycheckProcessor;
+
     @Bean
     public Job employeeJob() {
         return jobBuilders.get("employeeJob")
-                .start(step())
+                .start(taxCalculationStep())
+                .next(wsCallStep())
+                .next(generatePDFStep())
                 .listener(employeeJobExecutionListener)
                 .build();
     }
 
     @Bean
-    public Step step() {
+    public Step taxCalculationStep() {
+        FaultTolerantStepBuilder<Employee, Employee> faultTolerantStepBuilder = stepBuilders.get("step")
+                .<Employee, Employee>chunk(1)
+                .faultTolerant();
+
+        return faultTolerantStepBuilder
+                .reader(itemReaderWriterConfig.employeeItemReader())
+                .processor(calculateTaxProcessor)
+                .writer(itemReaderWriterConfig.employeeItemWriter())
+                .build();
+    }
+
+    @Bean
+    public Step wsCallStep() {
         FaultTolerantStepBuilder<Employee, Employee> faultTolerantStepBuilder = stepBuilders.get("step")
                 .<Employee, Employee>chunk(1)
                 .faultTolerant();
@@ -60,9 +82,22 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
 
         return faultTolerantStepBuilder
                 .reader(itemReaderWriterConfig.employeeItemReader())
-                .processor(processorConfig.processor())
+                .processor(callWebserviceProcessor)
                 .writer(itemReaderWriterConfig.employeeItemWriter())
                 .listener(sumOfTaxesItemListener)
+                .build();
+    }
+
+    @Bean
+    public Step generatePDFStep() {
+        FaultTolerantStepBuilder<Employee, Employee> faultTolerantStepBuilder = stepBuilders.get("step")
+                .<Employee, Employee>chunk(1)
+                .faultTolerant();
+
+        return faultTolerantStepBuilder
+                .reader(itemReaderWriterConfig.employeeItemReader())
+                .processor(sendPaycheckProcessor)
+                .writer(itemReaderWriterConfig.employeeItemWriter())
                 .build();
     }
 }
