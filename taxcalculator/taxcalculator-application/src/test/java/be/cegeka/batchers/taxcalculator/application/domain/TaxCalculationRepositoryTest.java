@@ -24,10 +24,10 @@ public class TaxCalculationRepositoryTest extends IntegrationTest {
 
     private Employee gigel;
     private Employee ionel;
-    private TaxCalculation gigel_january;
-    private TaxCalculation gigel_february;
-    private TaxCalculation ionel_january;
-    private TaxCalculation ionel_february;
+    private TaxCalculation gigelJanuary;
+    private TaxCalculation gigelFebruary;
+    private TaxCalculation ionelJanuary;
+    private TaxCalculation ionelFebruary;
 
     @Before
     public void setup() {
@@ -37,13 +37,13 @@ public class TaxCalculationRepositoryTest extends IntegrationTest {
         employeeRepository.save(gigel);
         employeeRepository.save(ionel);
 
-        gigel_january = TaxCalculation.from(gigel, 2014, 1, Money.of(CurrencyUnit.EUR, 10.0), new DateTime());
-        gigel_february = TaxCalculation.from(gigel, 2014, 2, Money.of(CurrencyUnit.EUR, 10.0), new DateTime());
+        gigelJanuary = TaxCalculation.from(gigel, 2014, 1, Money.of(CurrencyUnit.EUR, 10.0), new DateTime());
+        gigelFebruary = TaxCalculation.from(gigel, 2014, 2, Money.of(CurrencyUnit.EUR, 10.0), new DateTime());
 
-        ionel_january = TaxCalculation.from(ionel, 2014, 1, Money.of(CurrencyUnit.EUR, 12.0), new DateTime());
-        ionel_february = TaxCalculation.from(ionel, 2014, 2, Money.of(CurrencyUnit.EUR, 13.0), new DateTime());
+        ionelJanuary = TaxCalculation.from(ionel, 2014, 1, Money.of(CurrencyUnit.EUR, 12.0), new DateTime());
+        ionelFebruary = TaxCalculation.from(ionel, 2014, 2, Money.of(CurrencyUnit.EUR, 13.0), new DateTime());
 
-        List<TaxCalculation> taxes = Arrays.asList(gigel_january, gigel_february, ionel_january, ionel_february);
+        List<TaxCalculation> taxes = Arrays.asList(gigelJanuary, gigelFebruary, ionelJanuary, ionelFebruary);
         taxes.forEach(tax -> taxCalculationRepository.save(tax));
 
     }
@@ -54,7 +54,7 @@ public class TaxCalculationRepositoryTest extends IntegrationTest {
         List<TaxCalculation> byYearAndMonth = taxCalculationRepository.findByYearAndMonth(2014, 1);
 
         //ASSERT
-        assertThat(byYearAndMonth).containsOnly(gigel_january, ionel_january);
+        assertThat(byYearAndMonth).containsOnly(gigelJanuary, ionelJanuary);
     }
 
     @Test
@@ -63,7 +63,7 @@ public class TaxCalculationRepositoryTest extends IntegrationTest {
         List<TaxCalculation> byEmployee = taxCalculationRepository.findByEmployee(ionel);
 
         //ASSERT
-        assertThat(byEmployee).containsOnly(ionel_january, ionel_february);
+        assertThat(byEmployee).containsOnly(ionelJanuary, ionelFebruary);
     }
 
 }
