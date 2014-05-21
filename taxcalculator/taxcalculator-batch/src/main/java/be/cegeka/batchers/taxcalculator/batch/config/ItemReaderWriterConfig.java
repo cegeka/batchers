@@ -1,8 +1,6 @@
 package be.cegeka.batchers.taxcalculator.batch.config;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
-import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
-import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResult;
 import be.cegeka.batchers.taxcalculator.infrastructure.config.PersistenceConfig;
 import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.JpaPagingItemReader;
@@ -32,16 +30,16 @@ public class ItemReaderWriterConfig {
     }
 
     @Bean
-    public JpaPagingItemReader<TaxCalculation> wsCallItemReader() {
-        JpaPagingItemReader<TaxCalculation> wsCallItemReader = new JpaPagingItemReader<>();
-        wsCallItemReader.setEntityManagerFactory(persistenceConfig.entityManagerFactory());
-        wsCallItemReader.setQueryString(TaxCalculation.FIND_BY_YEAR_AND_MONTH_QUERY);
-        return wsCallItemReader;
+    public JpaPagingItemReader<Employee> wsCallItemReader() {
+        JpaPagingItemReader<Employee> employeeItemReader = new JpaPagingItemReader<>();
+        employeeItemReader.setEntityManagerFactory(persistenceConfig.entityManagerFactory());
+        employeeItemReader.setQueryString(Employee.GET_ALL_QUERY);
+        return employeeItemReader;
     }
 
     @Bean
-    public JpaItemWriter<TaxServiceCallResult> wsCallItemWriter() {
-        JpaItemWriter<TaxServiceCallResult> employeeJpaItemWriter = new JpaItemWriter<>();
+    public JpaItemWriter<Employee> wsCallItemWriter() {
+        JpaItemWriter<Employee> employeeJpaItemWriter = new JpaItemWriter<>();
         employeeJpaItemWriter.setEntityManagerFactory(persistenceConfig.entityManagerFactory());
         return employeeJpaItemWriter;
     }
