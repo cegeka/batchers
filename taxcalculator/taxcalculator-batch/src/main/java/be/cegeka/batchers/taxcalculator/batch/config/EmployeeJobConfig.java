@@ -60,20 +60,20 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
 
     @Bean
     public Step taxCalculationStep() {
-        FaultTolerantStepBuilder<Employee, Employee> faultTolerantStepBuilder = stepBuilders.get("step")
+        FaultTolerantStepBuilder<Employee, Employee> faultTolerantStepBuilder = stepBuilders.get("taxCalculationStep")
                 .<Employee, Employee>chunk(1)
                 .faultTolerant();
 
         return faultTolerantStepBuilder
-                .reader(itemReaderWriterConfig.employeeItemReader())
+                .reader(itemReaderWriterConfig.taxCalculatorItemReader())
                 .processor(calculateTaxProcessor)
-                .writer(itemReaderWriterConfig.employeeItemWriter())
+                .writer(itemReaderWriterConfig.taxCalculatorItemWriter())
                 .build();
     }
 
     @Bean
     public Step wsCallStep() {
-        FaultTolerantStepBuilder<Employee, Employee> faultTolerantStepBuilder = stepBuilders.get("step")
+        FaultTolerantStepBuilder<Employee, Employee> faultTolerantStepBuilder = stepBuilders.get("wsCallStep")
                 .<Employee, Employee>chunk(1)
                 .faultTolerant();
 
@@ -81,23 +81,23 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
         faultTolerantStepBuilder.skipPolicy(new AlwaysSkipItemSkipPolicy());
 
         return faultTolerantStepBuilder
-                .reader(itemReaderWriterConfig.employeeItemReader())
+                .reader(itemReaderWriterConfig.wsCallItemReader())
                 .processor(callWebserviceProcessor)
-                .writer(itemReaderWriterConfig.employeeItemWriter())
+                .writer(itemReaderWriterConfig.wsCallItemWriter())
                 .listener(sumOfTaxesItemListener)
                 .build();
     }
 
     @Bean
     public Step generatePDFStep() {
-        FaultTolerantStepBuilder<Employee, Employee> faultTolerantStepBuilder = stepBuilders.get("step")
+        FaultTolerantStepBuilder<Employee, Employee> faultTolerantStepBuilder = stepBuilders.get("generatePDFStep")
                 .<Employee, Employee>chunk(1)
                 .faultTolerant();
 
         return faultTolerantStepBuilder
-                .reader(itemReaderWriterConfig.employeeItemReader())
+                .reader(itemReaderWriterConfig.generatePDFItemReader())
                 .processor(sendPaycheckProcessor)
-                .writer(itemReaderWriterConfig.employeeItemWriter())
+                .writer(itemReaderWriterConfig.generatePDFItemWriter())
                 .build();
     }
 }
