@@ -20,7 +20,9 @@ Import the maven projects in IntelliJ/Eclipse and run:
 # Running the app
 
 * create one Run/Debug configuration for stubwebservice-war exploded on port 9091. Context path: /stubwebservice
+* alternative : cd taxcalculator-stubwebservice && mvn jetty:run
 * create one Run/Debug configuration for presentation-war exploded (different port, preferably 9090). Context path: /taxcalculator
+* alternative (does not pre-populate database with employees) : cd taxcalculator-presentation && mvn tomcat7:run
 * start both servers and connect to [http://localhost:9090/taxcalculator/](http://localhost:9090/taxcalculator/)
 
 # Spring Batch Configuration
@@ -43,5 +45,28 @@ There are two system properties that need to be set:
 * log_dir - having "target/logs" as default
 
 You can set these at tomcat startup: -DAPP\_ENV=... -Dlog\_dir=...
+
+# Project structure
+
+1.application
+* domain + business logic + send email + generate PDFs
+
+2.batch
+* SpringBatch implementation + EmployeeJobConfig
+
+3.infrastructure
+* PersistenceConfig + PropertyPlaceHolderConfig
+
+4.stubwebservice
+* tax service
+* listen for calls
+* configure for timeout
+* configure for fail
+
+5.presentation
+* one page - employees table
+* run job functions
+
+
 
 
