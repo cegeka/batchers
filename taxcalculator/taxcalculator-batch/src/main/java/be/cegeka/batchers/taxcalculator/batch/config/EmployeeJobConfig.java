@@ -1,6 +1,9 @@
 package be.cegeka.batchers.taxcalculator.batch.config;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
+import be.cegeka.batchers.taxcalculator.batch.CalculateTaxProcessor;
+import be.cegeka.batchers.taxcalculator.batch.CallWebserviceProcessor;
+import be.cegeka.batchers.taxcalculator.batch.SendPaycheckProcessor;
 import be.cegeka.batchers.taxcalculator.batch.service.reporting.EmployeeJobExecutionListener;
 import be.cegeka.batchers.taxcalculator.batch.service.reporting.SumOfTaxesItemListener;
 import be.cegeka.batchers.taxcalculator.infrastructure.config.PropertyPlaceHolderConfig;
@@ -19,7 +22,7 @@ import org.springframework.context.annotation.*;
 @Configuration
 @EnableBatchProcessing
 @ComponentScan(basePackages = "be.cegeka.batchers.taxcalculator.batch")
-@Import({PropertyPlaceHolderConfig.class, TempConfigToInitDB.class, ItemReaderWriterConfig.class, ProcessorConfig.class})
+@Import({PropertyPlaceHolderConfig.class, TempConfigToInitDB.class, ItemReaderWriterConfig.class})
 @PropertySource("classpath:taxcalculator-batch.properties")
 public class EmployeeJobConfig extends DefaultBatchConfigurer {
 
@@ -30,9 +33,6 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
     private StepBuilderFactory stepBuilders;
 
     @Autowired
-    private ProcessorConfig processorConfig;
-
-    @Autowired
     private ItemReaderWriterConfig itemReaderWriterConfig;
 
     @Autowired
@@ -41,17 +41,39 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
     @Autowired
     private EmployeeJobExecutionListener employeeJobExecutionListener;
 
+    @Autowired
+    private CalculateTaxProcessor calculateTaxProcessor;
+    @Autowired
+    private CallWebserviceProcessor callWebserviceProcessor;
+    @Autowired
+    private SendPaycheckProcessor sendPaycheckProcessor;
+
     @Bean
     public Job employeeJob() {
         return jobBuilders.get("employeeJob")
-                .start(step())
+                .start(taxCalculationStep())
+                .next(wsCallStep())
+                .next(generatePDFStep())
                 .listener(employeeJobExecutionListener)
                 .build();
     }
 
     @Bean
-    public Step step() {
-        FaultTolerantStepBuilder<Employee, Employee> faultTolerantStepBuilder = stepBuilders.get("step")
+    public Step taxCalculationStep() {
+        FaultTolerantStepBuilder<Employee, Employee> faultTolerantStepBuilder = stepBuilders.get("taxCalculationStep")
+                .<Employee, Employee>chunk(1)
+                .faultTolerant();
+
+        return faultTolerantStepBuilder
+                .reader(itemReaderWriterConfig.taxCalculatorItemReader())
+                .processor(calculateTaxProcessor)
+                .writer(itemReaderWriterConfig.taxCalculatorItemWriter())
+                .build();
+    }
+
+    @Bean
+    public Step wsCallStep() {
+        FaultTolerantStepBuilder<Employee, Employee> faultTolerantStepBuilder = stepBuilders.get("wsCallStep")
                 .<Employee, Employee>chunk(1)
                 .faultTolerant();
 
@@ -59,10 +81,23 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
         faultTolerantStepBuilder.skipPolicy(new AlwaysSkipItemSkipPolicy());
 
         return faultTolerantStepBuilder
-                .reader(itemReaderWriterConfig.employeeItemReader())
-                .processor(processorConfig.processor())
-                .writer(itemReaderWriterConfig.employeeItemWriter())
+                .reader(itemReaderWriterConfig.wsCallItemReader())
+                .processor(callWebserviceProcessor)
+                .writer(itemReaderWriterConfig.wsCallItemWriter())
                 .listener(sumOfTaxesItemListener)
+                .build();
+    }
+
+    @Bean
+    public Step generatePDFStep() {
+        FaultTolerantStepBuilder<Employee, Employee> faultTolerantStepBuilder = stepBuilders.get("generatePDFStep")
+                .<Employee, Employee>chunk(1)
+                .faultTolerant();
+
+        return faultTolerantStepBuilder
+                .reader(itemReaderWriterConfig.generatePDFItemReader())
+                .processor(sendPaycheckProcessor)
+                .writer(itemReaderWriterConfig.generatePDFItemWriter())
                 .build();
     }
 }
