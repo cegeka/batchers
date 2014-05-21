@@ -16,6 +16,7 @@ import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -57,6 +58,9 @@ public class TaxCalculatorJobService implements JobService {
     }
 
     protected JobParameters getNewJobParameters() {
-        return new JobParametersBuilder().addLong("uniqueIdentifier", new Date().getTime()).toJobParameters();
+        return new JobParametersBuilder().addLong("uniqueIdentifier", new Date().getTime())
+                .addLong("month", new Long(Calendar.getInstance().get(Calendar.MONTH)), false)
+                .addLong("year", new Long(Calendar.getInstance().get(Calendar.YEAR)), false)
+                .toJobParameters();
     }
 }
