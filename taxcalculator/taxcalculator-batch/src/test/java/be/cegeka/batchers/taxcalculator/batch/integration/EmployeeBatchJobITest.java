@@ -1,16 +1,11 @@
 package be.cegeka.batchers.taxcalculator.batch.integration;
 
 import be.cegeka.batchers.taxcalculator.application.ApplicationAssertions;
-import be.cegeka.batchers.taxcalculator.application.domain.Employee;
-import be.cegeka.batchers.taxcalculator.application.domain.EmployeeBuilder;
-import be.cegeka.batchers.taxcalculator.application.domain.EmployeeRepository;
+import be.cegeka.batchers.taxcalculator.application.domain.*;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailSender;
 import be.cegeka.batchers.taxcalculator.application.domain.email.SmtpServerStub;
 import be.cegeka.batchers.taxcalculator.batch.CallWebserviceProcessor;
 import be.cegeka.batchers.taxcalculator.batch.service.reporting.SumOfTaxes;
-import org.joda.money.CurrencyUnit;
-import org.joda.money.Money;
-import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -54,25 +49,40 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     @Autowired
     private EmailSender emailSender;
 
+    @Autowired
+    PayCheckRepository payCheckRepository;
+
+    @Autowired
+    TaxCalculationRepository taxCalculationRepository;
+
     private MockRestServiceServer mockServer;
+    private JobParameters jobParams;
 
     @Before
     public void setUp() {
         mockServer = MockRestServiceServer.createServer(restTemplate);
         SmtpServerStub.start();
 
+        Map<String, JobParameter> jobParamsMap = new HashMap<>();
+        jobParamsMap.put("month", new JobParameter(Long.valueOf(1), false));
+        jobParamsMap.put("year", new JobParameter(Long.valueOf(2014), false));
+
+        jobParams = new JobParameters(jobParamsMap);
+
         Whitebox.setInternalState(emailSender, "emailSendCounter", 0);
     }
 
     @After
     public void tearDown() {
-        employeeRepository.deleteAll();
         SmtpServerStub.stop();
+        payCheckRepository.deleteAll();
+        taxCalculationRepository.deleteAll();
+        employeeRepository.deleteAll();
     }
 
     @Test
     public void jobLaunched_NoEmployees_EmployeeRepositoryIsCalled_NoInteractionWithTheTaxCalculatorService() throws Exception {
-        JobExecution jobExecution = jobLauncherTestUtils.launchJob();
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
 
         assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
     }
@@ -83,7 +93,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
 
         respondOneTimeWithSuccess();
 
-        JobExecution jobExecution = jobLauncherTestUtils.launchJob();
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
         System.out.println(jobExecution.getAllFailureExceptions());
         assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
 
@@ -100,7 +110,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
 
         respondOneTimeWithBadRequest();
 
-        JobExecution jobExecution = jobLauncherTestUtils.launchJob();
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
         assertThat(jobExecution.getStatus().isUnsuccessful()).isTrue();
         mockServer.verify();
     }
@@ -114,7 +124,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         respondOneTimeWithSuccess();
         respondOneTimeWithBadRequest();
 
-        JobExecution jobExecution = jobLauncherTestUtils.launchJob();
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
         assertThat(jobExecution.getStatus().isUnsuccessful()).isTrue();
         mockServer.verify();
     }
@@ -127,7 +137,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
                 .andRespond(withServerError());
         respondOneTimeWithSuccess();
 
-        JobExecution jobExecution = jobLauncherTestUtils.launchJob();
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
         assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
         mockServer.verify();
     }
@@ -137,7 +147,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         haveOneEmployee();
         respondOneTimeWithSuccess();
 
-        jobLauncherTestUtils.launchJob();
+        jobLauncherTestUtils.launchJob(jobParams);
 
         ApplicationAssertions.assertThat(SmtpServerStub.wiser()).hasReceivedMessageSentTo(EMAIL_ADDRESS);
     }
@@ -147,11 +157,6 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         haveOneEmployee();
         respondOneTimeWithBadRequest();
 
-        Map<String, JobParameter> jobParamsMap = new HashMap<>();
-        jobParamsMap.put("month", new JobParameter(Long.valueOf(1), false));
-        jobParamsMap.put("year", new JobParameter(Long.valueOf(2014), false));
-
-        JobParameters jobParams = new JobParameters(jobParamsMap);
         jobLauncherTestUtils.launchJob(jobParams);
 
         ApplicationAssertions.assertThat(SmtpServerStub.wiser()).hasNoReceivedMessages();
@@ -165,7 +170,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         respondOneTimeWithSuccess();
         respondOneTimeWithSuccess();
 
-        jobLauncherTestUtils.launchJob();
+        jobLauncherTestUtils.launchJob(jobParams);
 
         assertThat(sumOfTaxes.getSuccessSum()).isEqualTo(200D);
     }
@@ -205,7 +210,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         respondOneTimeWithSuccess();
         respondOneTimeWithSuccess();
 
-        jobLauncherTestUtils.launchJob();
+        jobLauncherTestUtils.launchJob(jobParams);
 
         assertThat(sumOfTaxes.getFailedSum()).isEqualTo(100D);
         Whitebox.setInternalState(callWebserviceProcessor, "maxAtempts", 3);

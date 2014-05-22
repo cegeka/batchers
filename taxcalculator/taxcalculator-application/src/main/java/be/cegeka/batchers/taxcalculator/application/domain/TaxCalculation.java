@@ -36,14 +36,14 @@ public class TaxCalculation {
     public static final String MONTH = "month";
     public static final String YEAR = "year";
 
-    @Id
-    @GeneratedValue
-    private Long id;
-
     @ManyToOne
     @NotNull
     @JoinColumn(name = TaxCalculation.EMPLOYEE)
     private Employee employee;
+
+    @Id
+    @GeneratedValue
+    private Long id;
 
     @Min(1)
     @Max(12)
