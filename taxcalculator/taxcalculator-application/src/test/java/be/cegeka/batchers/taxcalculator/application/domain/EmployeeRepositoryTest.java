@@ -121,4 +121,19 @@ public class EmployeeRepositoryTest extends IntegrationTest {
         List<EmployeeTo> first20 = employeeRepository.getFirst20();
         assertThat(first20).hasSize(20);
     }
+
+    @Test
+    public void givenEmployeesWithoutCalculatedTaxes_whenGetFirst20_thenAllEmployeesAreReturnedWithTaxZero() {
+        for (int i = 0; i < 30; i++) {
+            Employee employee = new EmployeeBuilder()
+                    .withFirstName("John" + i)
+                    .withLastName("Smith" + i)
+                    .withEmailAddress("john.smith" + i + "@gmail.com")
+                    .build();
+            employeeRepository.save(employee);
+        }
+
+        List<EmployeeTo> first20 = employeeRepository.getFirst20();
+        assertThat(first20).hasSize(20);
+    }
 }

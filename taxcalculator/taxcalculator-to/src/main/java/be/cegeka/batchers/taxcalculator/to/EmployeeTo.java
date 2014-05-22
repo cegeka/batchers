@@ -1,5 +1,7 @@
 package be.cegeka.batchers.taxcalculator.to;
 
+import be.cegeka.batchers.taxcalculator.utils.JodaMoneySerializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.joda.money.CurrencyUnit;
@@ -12,6 +14,7 @@ public class EmployeeTo {
     private String email;
     private Integer income;
 
+    @JsonSerialize(using = JodaMoneySerializer.class)
     @Type(type = "org.jadira.usertype.moneyandcurrency.joda.PersistentMoneyAmount",
             parameters = {@Parameter(name = "currencyCode", value = "EUR")})
     private Money taxTotal = Money.zero(CurrencyUnit.EUR);

@@ -1,7 +1,6 @@
 package be.cegeka.batchers.taxcalculator.application.domain;
 
 import be.cegeka.batchers.taxcalculator.application.util.jackson.JodaDateTimeSerializer;
-import be.cegeka.batchers.taxcalculator.application.util.jackson.JodaMoneySerializer;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -11,7 +10,9 @@ import org.joda.time.DateTime;
 import org.joda.time.Interval;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.math.RoundingMode;
+import java.util.List;
 
 @NamedQueries({
         @NamedQuery(name = Employee.GET_ALL_NAME, query = Employee.GET_ALL_QUERY),
@@ -24,8 +25,8 @@ public class Employee {
     public static final String GET_ALL_QUERY = "SELECT e FROM Employee e";
 
     public static final String GET_EMPLOYEES_TOTAL_TAX_NAME = "Employee.getWithTotalTax";
-    public static final String GET_EMPLOYEES_TOTAL_TAX_QUERY = "SELECT NEW be.cegeka.batchers.taxcalculator.to.EmployeeTo(t.employee.firstName, t.employee.lastName, t.employee.email, t.employee.income, sum(t.tax)) " +
-            "FROM TaxCalculation t GROUP BY t.employee.firstName, t.employee.lastName, t.employee.email, t.employee.income";
+    public static final String GET_EMPLOYEES_TOTAL_TAX_QUERY = "SELECT NEW be.cegeka.batchers.taxcalculator.to.EmployeeTo(e.firstName, e.lastName, e.email, e.income, sum(t.tax)) " +
+            "FROM Employee e LEFT JOIN e.taxCalculations t GROUP BY e.firstName, e.lastName, e.email, e.income";
 
     private Integer income;
 
@@ -37,11 +38,14 @@ public class Employee {
     @JsonSerialize(using = JodaDateTimeSerializer.class)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime calculationDate;
-    @JsonSerialize(using = JodaMoneySerializer.class)
     @Type(type = "org.jadira.usertype.moneyandcurrency.joda.PersistentMoneyAmount",
             parameters = {@Parameter(name = "currencyCode", value = "EUR")})
     private Money taxTotal = Money.zero(CurrencyUnit.EUR);
     private String email;
+
+    @OneToMany
+    @JoinColumn(name = TaxCalculation.EMPLOYEE)
+    private List<TaxCalculation> taxCalculations;
 
     public Integer getIncome() {
         return income;
@@ -123,6 +127,14 @@ public class Employee {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public List<TaxCalculation> getTaxCalculations() {
+        return taxCalculations;
+    }
+
+    public void setTaxCalculations(List<TaxCalculation> taxCalculations) {
+        this.taxCalculations = taxCalculations;
     }
 
     @Override

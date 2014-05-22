@@ -1,4 +1,5 @@
-package be.cegeka.batchers.taxcalculator.application.util.jackson;
+package be.cegeka.batchers.taxcalculator.utils;
+
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
