@@ -15,7 +15,7 @@ import org.springframework.util.ResourceUtils;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.springframework.batch.repeat.RepeatStatus.CONTINUABLE;
+import static org.springframework.batch.repeat.RepeatStatus.FINISHED;
 
 @Component
 public class JobResultsTasklet implements Tasklet {
@@ -35,7 +35,13 @@ public class JobResultsTasklet implements Tasklet {
         Map<String, Object> contextMap = new HashMap<>();
         contextMap.put("success_sum", sumOfTaxes.getSuccessSum());
         contextMap.put("failed_sum", sumOfTaxes.getFailedSum());
+        contextMap.put("period", sumOfTaxes.getFailedSum());
+        contextMap.put("name", sumOfTaxes.getFailedSum());
+        contextMap.put("monthly_income", sumOfTaxes.getFailedSum());
+        contextMap.put("monthly_tax", sumOfTaxes.getFailedSum());
+        contextMap.put("tax_total", sumOfTaxes.getFailedSum());
+        contextMap.put("employee_id", sumOfTaxes.getFailedSum());
         pdfGeneratorService.generatePdfAsByteArray(resource, contextMap);
-        return CONTINUABLE;
+        return FINISHED;
     }
 }

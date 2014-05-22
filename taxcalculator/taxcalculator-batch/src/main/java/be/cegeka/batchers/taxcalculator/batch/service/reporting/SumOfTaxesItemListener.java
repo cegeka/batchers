@@ -1,27 +1,28 @@
 package be.cegeka.batchers.taxcalculator.batch.service.reporting;
 
-import be.cegeka.batchers.taxcalculator.application.domain.Employee;
+import be.cegeka.batchers.taxcalculator.application.domain.PayCheck;
+import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
 import org.springframework.batch.core.ItemProcessListener;
 import org.springframework.batch.core.SkipListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SumOfTaxesItemListener implements ItemProcessListener<Employee, Employee>, SkipListener<Employee, Employee> {
+public class SumOfTaxesItemListener implements ItemProcessListener<TaxCalculation, PayCheck>, SkipListener<TaxCalculation, PayCheck> {
     @Autowired
     private SumOfTaxes sumOfTaxes;
 
     @Override
-    public void beforeProcess(Employee item) {
+    public void beforeProcess(TaxCalculation item) {
     }
 
     @Override
-    public void afterProcess(Employee item, Employee result) {
-        sumOfTaxes.addToSuccessSum(result.getIncomeTax());
+    public void afterProcess(TaxCalculation item, PayCheck result) {
+        sumOfTaxes.addToSuccessSum(item.getEmployee().getIncomeTax());
     }
 
     @Override
-    public void onProcessError(Employee item, Exception e) {
+    public void onProcessError(TaxCalculation item, Exception e) {
     }
 
     @Override
@@ -29,11 +30,11 @@ public class SumOfTaxesItemListener implements ItemProcessListener<Employee, Emp
     }
 
     @Override
-    public void onSkipInWrite(Employee item, Throwable t) {
+    public void onSkipInWrite(PayCheck item, Throwable t) {
     }
 
     @Override
-    public void onSkipInProcess(Employee item, Throwable t) {
-        sumOfTaxes.addToFailingSum(item.getIncomeTax());
+    public void onSkipInProcess(TaxCalculation item, Throwable t) {
+        sumOfTaxes.addToFailingSum(item.getEmployee().getIncomeTax());
     }
 }

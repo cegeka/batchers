@@ -35,7 +35,6 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
 
-@Ignore("Implementation change. Rewrite.")
 public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     public static final String STATUS_OK = "{\"status\": \"OK\" }";
     public static final String EMAIL_ADDRESS = "employee@email.com";
@@ -183,7 +182,13 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         respondOneTimeWithSuccess();
         respondOneTimeWithSuccess();
 
-        jobLauncherTestUtils.launchJob();
+        Map<String, JobParameter> jobParamsMap = new HashMap<>();
+        jobParamsMap.put("month", new JobParameter(Long.valueOf(1), false));
+        jobParamsMap.put("year", new JobParameter(Long.valueOf(2014), false));
+
+        JobParameters jobParams = new JobParameters(jobParamsMap);
+
+        jobLauncherTestUtils.launchJob(jobParams);
 
         assertThat(sumOfTaxes.getSuccessSum()).isEqualTo(200D);
         Whitebox.setInternalState(callWebserviceProcessor, "maxAtempts", 3);

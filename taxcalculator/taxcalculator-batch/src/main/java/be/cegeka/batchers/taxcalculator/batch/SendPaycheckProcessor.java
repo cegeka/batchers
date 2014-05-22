@@ -1,9 +1,6 @@
 package be.cegeka.batchers.taxcalculator.batch;
 
-import be.cegeka.batchers.taxcalculator.application.domain.Employee;
-import be.cegeka.batchers.taxcalculator.application.domain.PayCheck;
-import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
-import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResult;
+import be.cegeka.batchers.taxcalculator.application.domain.*;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailAttachmentTO;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailSender;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailTO;
@@ -16,10 +13,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class SendPaycheckProcessor implements ItemProcessor<TaxServiceCallResult, PayCheck> {
@@ -32,6 +26,9 @@ public class SendPaycheckProcessor implements ItemProcessor<TaxServiceCallResult
     private PDFGeneratorService pdfGeneratorService;
     @Autowired
     private EmailSender emailSender;
+
+    @Autowired
+    private TaxCalculationRepository taxCalculationRepository;
 
     @Value(value = "${paycheck.from.email:finance@email.com}")
     String payCheckFrom;
@@ -71,10 +68,18 @@ public class SendPaycheckProcessor implements ItemProcessor<TaxServiceCallResult
         context.put("name", employee.fullName());
         context.put("monthly_income", employee.getIncome());
         context.put("monthly_tax", employee.getIncomeTax());
-//        context.put("tax_total", employee.getTaxTotal());
+        context.put("tax_total", getTaxTotal(employee));
         // TODO IN STEP 3
         context.put("employee_id", employee.getId());
         return context;
+    }
+
+    private double getTaxTotal(Employee employee) {
+        List<TaxCalculation> taxCalculationsForEmployee = taxCalculationRepository.findByEmployee(employee);
+        double taxTotal = taxCalculationsForEmployee.parallelStream()
+                .mapToDouble((taxCalculation) -> taxCalculation.getTax().getAmount().doubleValue()).sum();
+
+        return taxTotal;
     }
 
     private EmailTO getEmailTO(Employee employee, byte[] pdfBytes) {
