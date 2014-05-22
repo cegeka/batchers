@@ -7,6 +7,7 @@ import be.cegeka.batchers.taxcalculator.batch.CallWebserviceProcessor;
 import be.cegeka.batchers.taxcalculator.batch.SendPaycheckProcessor;
 import be.cegeka.batchers.taxcalculator.batch.service.reporting.EmployeeJobExecutionListener;
 import be.cegeka.batchers.taxcalculator.batch.service.reporting.SumOfTaxesItemListener;
+import be.cegeka.batchers.taxcalculator.batch.tasklet.JobResultsTasklet;
 import be.cegeka.batchers.taxcalculator.infrastructure.config.PropertyPlaceHolderConfig;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.SkipListener;
@@ -54,6 +55,8 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
     private CallWebserviceProcessor callWebserviceProcessor;
     @Autowired
     private SendPaycheckProcessor sendPaycheckProcessor;
+    @Autowired
+    private JobResultsTasklet jobResultsTasklet;
 
     @Bean
     public Job employeeJob() {
@@ -61,6 +64,7 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
                 .start(taxCalculationStep())
                 .next(wsCallStep())
                 .next(generatePDFStep())
+                .next(jobResultsPdf())
                 .listener(employeeJobExecutionListener)
                 .build();
     }
@@ -106,6 +110,13 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
                 .reader(itemReaderWriterConfig.generatePDFItemReader())
                 .processor(sendPaycheckProcessor)
                 .writer(itemReaderWriterConfig.generatePDFItemWriter())
+                .build();
+    }
+
+    @Bean
+    public Step jobResultsPdf() {
+        return stepBuilders.get("JOB_RESULTS_PDF")
+                .tasklet(jobResultsTasklet)
                 .build();
     }
 }
