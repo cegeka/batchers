@@ -1,5 +1,6 @@
 package be.cegeka.batchers.taxcalculator.application.domain;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -24,4 +25,6 @@ public class EmployeeServiceTest {
 
         verify(employeeRepositoryMock).getFirst20();
     }
+
+
 }

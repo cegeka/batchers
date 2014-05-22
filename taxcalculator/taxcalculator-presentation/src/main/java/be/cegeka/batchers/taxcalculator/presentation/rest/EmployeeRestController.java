@@ -2,6 +2,7 @@ package be.cegeka.batchers.taxcalculator.presentation.rest;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeService;
+import be.cegeka.batchers.taxcalculator.to.EmployeeTo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +19,7 @@ public class EmployeeRestController {
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public List<Employee> getFirst20Employees() {
+    public List<EmployeeTo> getFirst20Employees() {
         return employeeService.getFirst20();
     }
 }

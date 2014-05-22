@@ -56,7 +56,8 @@ public class SendPaycheckProcessor implements ItemProcessor<TaxServiceCallResult
         StringBuilder sb = new StringBuilder()
                 .append("Dear employee,")
                 .append(ENDL)
-                .append("Please find enclosed the paycheck for " + getLongMonthName(employee.getCalculationDate()) + " " + employee.getCalculationDate().getYear() + ".")
+                        // TODO IN STEP 3
+//                .append("Please find enclosed the paycheck for " + getLongMonthName(employee.getCalculationDate()) + " " + employee.getCalculationDate().getYear() + ".")
                 .append(ENDL)
                 .append("Regards,")
                 .append(ENDL)
@@ -70,7 +71,8 @@ public class SendPaycheckProcessor implements ItemProcessor<TaxServiceCallResult
         context.put("name", employee.fullName());
         context.put("monthly_income", employee.getIncome());
         context.put("monthly_tax", employee.getIncomeTax());
-        context.put("tax_total", employee.getTaxTotal());
+//        context.put("tax_total", employee.getTaxTotal());
+        // TODO IN STEP 3
         context.put("employee_id", employee.getId());
         return context;
     }

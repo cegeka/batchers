@@ -30,8 +30,8 @@ public class ItemReaderWriterConfig {
     }
 
     @Bean
-    public JpaItemWriter<Employee> taxCalculatorItemWriter() {
-        JpaItemWriter<Employee> employeeJpaItemWriter = new JpaItemWriter<>();
+    public JpaItemWriter<TaxCalculation> taxCalculatorItemWriter() {
+        JpaItemWriter<TaxCalculation> employeeJpaItemWriter = new JpaItemWriter<>();
         employeeJpaItemWriter.setEntityManagerFactory(persistenceConfig.entityManagerFactory());
         return employeeJpaItemWriter;
     }

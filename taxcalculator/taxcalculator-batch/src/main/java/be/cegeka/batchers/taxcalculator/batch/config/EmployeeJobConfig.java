@@ -3,12 +3,12 @@ package be.cegeka.batchers.taxcalculator.batch.config;
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.PayCheck;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
-import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResult;
 import be.cegeka.batchers.taxcalculator.batch.CalculateTaxProcessor;
 import be.cegeka.batchers.taxcalculator.batch.CallWebserviceProcessor;
 import be.cegeka.batchers.taxcalculator.batch.SendPaycheckProcessor;
 import be.cegeka.batchers.taxcalculator.batch.service.reporting.EmployeeJobExecutionListener;
 import be.cegeka.batchers.taxcalculator.batch.service.reporting.SumOfTaxesItemListener;
+import be.cegeka.batchers.taxcalculator.batch.tasklet.JobResultsTasklet;
 import be.cegeka.batchers.taxcalculator.infrastructure.config.PropertyPlaceHolderConfig;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.SkipListener;
@@ -31,6 +31,12 @@ import java.util.Arrays;
 @Import({PropertyPlaceHolderConfig.class, TempConfigToInitDB.class, ItemReaderWriterConfig.class})
 @PropertySource("classpath:taxcalculator-batch.properties")
 public class EmployeeJobConfig extends DefaultBatchConfigurer {
+
+    public static final String EMPLOYEE_JOB = "employeeJob";
+
+    public static final String TAX_CALCULATION_STEP = "taxCalculationStep";
+    public static final String WS_CALL_STEP = "wsCallStep";
+    public static final String GENERATE_PDF_STEP = "generatePDFStep";
 
     @Autowired
     private JobBuilderFactory jobBuilders;
@@ -55,22 +61,26 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
 
     @Autowired
     private SendPaycheckProcessor sendPaycheckProcessor;
+    @Autowired
+    private JobResultsTasklet jobResultsTasklet;
 
     private static Integer OVERRIDDEN_BY_EXPRESSION = null;
 
     @Bean
     public Job employeeJob() {
-        return jobBuilders.get("employeeJob")
+        return jobBuilders.get(EMPLOYEE_JOB)
                 .start(taxCalculationStep())
                 .next(wsCallStep())
+                .next(jobResultsPdf())
                 .listener(employeeJobExecutionListener)
                 .build();
     }
 
     @Bean
     public Step taxCalculationStep() {
-        FaultTolerantStepBuilder<Employee, Employee> faultTolerantStepBuilder = stepBuilders.get("taxCalculationStep")
-                .<Employee, Employee>chunk(1)
+        FaultTolerantStepBuilder<Employee, TaxCalculation> faultTolerantStepBuilder = stepBuilders
+                .get(TAX_CALCULATION_STEP)
+                .<Employee, TaxCalculation>chunk(1)
                 .faultTolerant();
 
         return faultTolerantStepBuilder
@@ -82,7 +92,7 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
 
     @Bean
     public Step wsCallStep() {
-        FaultTolerantStepBuilder<TaxCalculation, PayCheck> faultTolerantStepBuilder = stepBuilders.get("wsCallStep")
+        FaultTolerantStepBuilder<TaxCalculation, PayCheck> faultTolerantStepBuilder = stepBuilders.get(WS_CALL_STEP)
                 .<TaxCalculation, PayCheck>chunk(1)
                 .faultTolerant();
 
@@ -104,4 +114,10 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
                 .build();
     }
 
+    @Bean
+    public Step jobResultsPdf() {
+        return stepBuilders.get("JOB_RESULTS_PDF")
+                .tasklet(jobResultsTasklet)
+                .build();
+    }
 }

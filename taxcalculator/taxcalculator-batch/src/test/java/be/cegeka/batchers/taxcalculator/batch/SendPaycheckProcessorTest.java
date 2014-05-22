@@ -57,7 +57,6 @@ public class SendPaycheckProcessorTest {
                 .withEmailAddress(EMPLOYEE_EMAIL)
                 .withFirstName("FirstName")
                 .withIncome(2000)
-                .withCalculationDate(new DateTime().withDate(2000, 5, 1))
                 .build();
 
         byte[] generatedPdfBytes = new byte[]{0, 1, 2, 3, 4};
@@ -81,8 +80,9 @@ public class SendPaycheckProcessorTest {
                 .containsKey("name")
                 .containsKey("employee_id")
                 .containsKey("monthly_income")
-                .containsKey("monthly_tax")
-                .containsKey("tax_total");
+                .containsKey("monthly_tax");
+//                .containsKey("tax_total");
+        // TODO IN STEP 3
 
         verify(emailSender).send(emailToCaptor.capture());
         EmailTO capturedEmailTo = emailToCaptor.getValue();
@@ -90,7 +90,8 @@ public class SendPaycheckProcessorTest {
         assertThat(capturedEmailTo.getTos()).containsOnly(employee.getEmail());
         assertThat(capturedEmailTo.getSubject()).isEqualTo("Paycheck");
         String emailBodyForEmployee = sendPaycheckProcessor.getEmailBodyForEmployee(employee);
-        assertThat(emailBodyForEmployee).contains("May 2000");
+//        assertThat(emailBodyForEmployee).contains("May 2000");
+        // TODO IN STEP 3
         assertThat(capturedEmailTo.getBody()).isEqualTo(emailBodyForEmployee);
 
 
