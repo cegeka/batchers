@@ -1,6 +1,7 @@
 package be.cegeka.batchers.taxcalculator.batch.config;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
+import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
 import be.cegeka.batchers.taxcalculator.batch.CalculateTaxProcessor;
 import be.cegeka.batchers.taxcalculator.batch.CallWebserviceProcessor;
 import be.cegeka.batchers.taxcalculator.batch.SendPaycheckProcessor;
@@ -26,6 +27,12 @@ import org.springframework.context.annotation.*;
 @PropertySource("classpath:taxcalculator-batch.properties")
 public class EmployeeJobConfig extends DefaultBatchConfigurer {
 
+    public static final String EMPLOYEE_JOB = "employeeJob";
+
+    public static final String TAX_CALCULATION_STEP = "taxCalculationStep";
+    public static final String WS_CALL_STEP = "wsCallStep";
+    public static final String GENERATE_PDF_STEP = "generatePDFStep";
+
     @Autowired
     private JobBuilderFactory jobBuilders;
 
@@ -50,7 +57,7 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
 
     @Bean
     public Job employeeJob() {
-        return jobBuilders.get("employeeJob")
+        return jobBuilders.get(EMPLOYEE_JOB)
                 .start(taxCalculationStep())
                 .next(wsCallStep())
                 .next(generatePDFStep())
@@ -60,8 +67,9 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
 
     @Bean
     public Step taxCalculationStep() {
-        FaultTolerantStepBuilder<Employee, Employee> faultTolerantStepBuilder = stepBuilders.get("taxCalculationStep")
-                .<Employee, Employee>chunk(1)
+        FaultTolerantStepBuilder<Employee, TaxCalculation> faultTolerantStepBuilder = stepBuilders
+                .get(TAX_CALCULATION_STEP)
+                .<Employee, TaxCalculation>chunk(1)
                 .faultTolerant();
 
         return faultTolerantStepBuilder
@@ -73,7 +81,7 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
 
     @Bean
     public Step wsCallStep() {
-        FaultTolerantStepBuilder<Employee, Employee> faultTolerantStepBuilder = stepBuilders.get("wsCallStep")
+        FaultTolerantStepBuilder<Employee, Employee> faultTolerantStepBuilder = stepBuilders.get(WS_CALL_STEP)
                 .<Employee, Employee>chunk(1)
                 .faultTolerant();
 
@@ -90,7 +98,7 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
 
     @Bean
     public Step generatePDFStep() {
-        FaultTolerantStepBuilder<Employee, Employee> faultTolerantStepBuilder = stepBuilders.get("generatePDFStep")
+        FaultTolerantStepBuilder<Employee, Employee> faultTolerantStepBuilder = stepBuilders.get(GENERATE_PDF_STEP)
                 .<Employee, Employee>chunk(1)
                 .faultTolerant();
 
