@@ -35,12 +35,6 @@ public class Employee {
     private Long id;
     private String firstName;
     private String lastName;
-    @JsonSerialize(using = JodaDateTimeSerializer.class)
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime calculationDate;
-    @Type(type = "org.jadira.usertype.moneyandcurrency.joda.PersistentMoneyAmount",
-            parameters = {@Parameter(name = "currencyCode", value = "EUR")})
-    private Money taxTotal = Money.zero(CurrencyUnit.EUR);
     private String email;
 
     @OneToMany
@@ -83,27 +77,6 @@ public class Employee {
         this.lastName = lastName;
     }
 
-    public DateTime getCalculationDate() {
-        return calculationDate;
-    }
-
-    /**
-     * used only in testing
-     *
-     * @param calculationDate the date when it was calculated
-     */
-    public void setCalculationDate(DateTime calculationDate) {
-        this.calculationDate = calculationDate;
-    }
-
-    public void addTax() {
-        if (!taxWasCalculatedThisMonth(calculationDate)) {
-            double amount = getIncomeTax();
-            CurrencyUnit currency = taxTotal.getCurrencyUnit();
-            this.taxTotal = Money.total(taxTotal, Money.of(currency, amount, RoundingMode.HALF_DOWN));
-            this.calculationDate = new DateTime();
-        }
-    }
 
     public double getIncomeTax() {
         return income * 0.1;
@@ -115,10 +88,6 @@ public class Employee {
 
     private Interval getCurrentMonthInterval() {
         return DateTime.now().monthOfYear().toInterval();
-    }
-
-    public Money getTaxTotal() {
-        return taxTotal;
     }
 
     public String getEmail() {
@@ -143,8 +112,6 @@ public class Employee {
         sb.append("income=").append(income);
         sb.append(", firstName='").append(firstName).append('\'');
         sb.append(", lastName='").append(lastName).append('\'');
-        sb.append(", calculationDate=").append(calculationDate);
-        sb.append(", taxTotal=").append(taxTotal);
         sb.append('}');
         return sb.toString();
     }

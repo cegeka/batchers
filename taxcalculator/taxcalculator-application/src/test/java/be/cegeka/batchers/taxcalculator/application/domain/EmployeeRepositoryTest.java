@@ -52,19 +52,6 @@ public class EmployeeRepositoryTest extends IntegrationTest {
         assertThat(savedEmployee.getIncome()).isEqualTo(INCOME);
         assertThat(savedEmployee.getFirstName()).isEqualTo(FIRST_NAME);
         assertThat(savedEmployee.getLastName()).isEqualTo(LAST_NAME);
-        assertThat(savedEmployee.getTaxTotal()).isEqualTo(Money.zero(CurrencyUnit.EUR));
-    }
-
-    @Test
-    public void testWhenSettingRetirementSavingsTheCalculationDateIsCurrentDate() throws Exception {
-        Employee employee = new EmployeeBuilder()
-                .withIncome(100)
-                .build();
-        employee.addTax();
-        employeeRepository.save(employee);
-
-        Employee saved = employeeRepository.getBy(employee.getId());
-        assertThat(saved.getCalculationDate().isBeforeNow()).isTrue();
     }
 
     @Test
