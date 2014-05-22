@@ -1,6 +1,8 @@
 package be.cegeka.batchers.taxcalculator.batch.config;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
+import be.cegeka.batchers.taxcalculator.application.domain.PayCheck;
+import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResult;
 import be.cegeka.batchers.taxcalculator.batch.CalculateTaxProcessor;
 import be.cegeka.batchers.taxcalculator.batch.CallWebserviceProcessor;
@@ -47,10 +49,14 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
 
     @Autowired
     private CalculateTaxProcessor calculateTaxProcessor;
+
     @Autowired
     private CallWebserviceProcessor callWebserviceProcessor;
+
     @Autowired
     private SendPaycheckProcessor sendPaycheckProcessor;
+
+    private static Integer OVERRIDDEN_BY_EXPRESSION = null;
 
     @Bean
     public Job employeeJob() {
@@ -76,22 +82,22 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
 
     @Bean
     public Step wsCallStep() {
-        FaultTolerantStepBuilder<Employee, Employee> faultTolerantStepBuilder = stepBuilders.get("wsCallStep")
-                .<Employee, Employee>chunk(1)
+        FaultTolerantStepBuilder<TaxCalculation, PayCheck> faultTolerantStepBuilder = stepBuilders.get("wsCallStep")
+                .<TaxCalculation, PayCheck>chunk(1)
                 .faultTolerant();
 
         faultTolerantStepBuilder.listener((SkipListener) sumOfTaxesItemListener);
         faultTolerantStepBuilder.skipPolicy(new AlwaysSkipItemSkipPolicy());
 
 
-        CompositeItemProcessor<Employee, Employee> compositeItemProcessor = new CompositeItemProcessor<>();
+        CompositeItemProcessor<TaxCalculation, PayCheck> compositeItemProcessor = new CompositeItemProcessor<>();
         compositeItemProcessor.setDelegates(Arrays.asList(
                 callWebserviceProcessor,
                 sendPaycheckProcessor
         ));
 
         return faultTolerantStepBuilder
-                .reader(itemReaderWriterConfig.wsCallItemReader())
+                .reader(itemReaderWriterConfig.wsCallItemReader(OVERRIDDEN_BY_EXPRESSION, OVERRIDDEN_BY_EXPRESSION))
                 .processor(compositeItemProcessor)
                 .writer(itemReaderWriterConfig.wsCallItemWriter())
                 .listener(sumOfTaxesItemListener)

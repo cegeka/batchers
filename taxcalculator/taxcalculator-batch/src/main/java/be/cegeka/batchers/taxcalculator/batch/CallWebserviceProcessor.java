@@ -1,6 +1,8 @@
 package be.cegeka.batchers.taxcalculator.batch;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
+import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
+import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResult;
 import be.cegeka.batchers.taxcalculator.application.service.TaxPaymentWebService;
 import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceException;
 import org.slf4j.Logger;
@@ -17,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class CallWebserviceProcessor implements ItemProcessor<Employee, Employee> {
+public class CallWebserviceProcessor implements ItemProcessor<TaxCalculation, TaxServiceCallResult> {
     private static final Logger LOG = LoggerFactory.getLogger(CallWebserviceProcessor.class);
 
     @Autowired
@@ -30,9 +32,9 @@ public class CallWebserviceProcessor implements ItemProcessor<Employee, Employee
     private int maxAtempts = 3;
 
     @Override
-    public Employee process(Employee employee) throws Exception {
-        LOG.info("Web service process: " + employee);
-        return createRetryTemplate().execute(retryContext -> taxPaymentWebService.doWebserviceCallToTaxService(employee));
+    public TaxServiceCallResult process(TaxCalculation taxCalculation) throws Exception {
+        LOG.info("Web service process: " + taxCalculation);
+        return createRetryTemplate().execute(retryContext -> taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation));
     }
 
     private RetryTemplate createRetryTemplate() {

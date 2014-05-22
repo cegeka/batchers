@@ -17,12 +17,17 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.internal.util.reflection.Whitebox;
 import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobParameter;
+import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.springframework.batch.core.BatchStatus.COMPLETED;
@@ -70,6 +75,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
 
     @Test
     public void jobLaunched_NoEmployees_EmployeeRepositoryIsCalled_NoInteractionWithTheTaxCalculatorService() throws Exception {
+        System.out.println("\n\n---------------------" + Thread.currentThread().getStackTrace()[1].getMethodName());
         JobExecution jobExecution = jobLauncherTestUtils.launchJob();
 
         assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
@@ -77,6 +83,8 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
 
     @Test
     public void jobLaunched_oneEmployee_taxIsCalculatedAndWebserviceIsCalled() throws Exception {
+        System.out.println("\n\n---------------------" + Thread.currentThread().getStackTrace()[1].getMethodName());
+
         Employee employee = haveOneEmployee();
 
         respondOneTimeWithSuccess();
@@ -96,6 +104,8 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     @Test
     @Ignore("job won't fail when the call to web service is failing")
     public void jobFailsWhenWebserviceResponseFails() throws Exception {
+        System.out.println("\n\n---------------------" + Thread.currentThread().getStackTrace()[1].getMethodName());
+
         haveOneEmployee();
 
         respondOneTimeWithBadRequest();
@@ -108,6 +118,8 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     @Test
     @Ignore("job won't fail when the call to web service is failing")
     public void jobFailsWhenTwoEmployeesAndOneWebserviceResponseFails() throws Exception {
+        System.out.println("\n\n---------------------" + Thread.currentThread().getStackTrace()[1].getMethodName());
+
         haveOneEmployee();
         haveOneEmployee();
 
@@ -121,6 +133,8 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
 
     @Test
     public void jobRetriesIfWebserviceFails() throws Exception {
+        System.out.println("\n\n---------------------" + Thread.currentThread().getStackTrace()[1].getMethodName());
+
         haveOneEmployee();
 
         mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
@@ -134,6 +148,8 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
 
     @Test
     public void whenTaxServiceReturnsSuccess_thenPaycheckIsSent() throws Exception {
+        System.out.println("\n\n---------------------" + Thread.currentThread().getStackTrace()[1].getMethodName());
+
         haveOneEmployee();
         respondOneTimeWithSuccess();
 
@@ -144,16 +160,25 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
 
     @Test
     public void whenTaxServiceReturnsFail_thenPaycheckIsNotSent() throws Exception {
+        System.out.println("\n\n---------------------" + Thread.currentThread().getStackTrace()[1].getMethodName());
+
         haveOneEmployee();
         respondOneTimeWithBadRequest();
 
-        jobLauncherTestUtils.launchJob();
+        Map<String, JobParameter> jobParamsMap = new HashMap<>();
+        jobParamsMap.put("month", new JobParameter(Long.valueOf(1), false));
+        jobParamsMap.put("year", new JobParameter(Long.valueOf(2014), false));
+
+        JobParameters jobParams = new JobParameters(jobParamsMap);
+        jobLauncherTestUtils.launchJob(jobParams);
 
         ApplicationAssertions.assertThat(SmtpServerStub.wiser()).hasNoReceivedMessages();
     }
 
     @Test
     public void testSumOfSuccessTaxesIsCalculated() throws Exception {
+        System.out.println("\n\n---------------------" + Thread.currentThread().getStackTrace()[1].getMethodName());
+
         haveOneEmployee();
         haveOneEmployee();
 
@@ -167,6 +192,8 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
 
     @Test
     public void whenWebServiceFailsForOneEmployee_thenSumOfTaxes_isCalculatedOnlyForSuccessfulCalls() throws Exception {
+        System.out.println("\n\n---------------------" + Thread.currentThread().getStackTrace()[1].getMethodName());
+
 
         Whitebox.setInternalState(callWebserviceProcessor, "maxAtempts", 1);
 
@@ -186,6 +213,8 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
 
     @Test
     public void whenWebServiceFailsForOneEmployee_thenSumOfTaxes_isCalculatedForFailedCalls() throws Exception {
+        System.out.println("\n\n---------------------" + Thread.currentThread().getStackTrace()[1].getMethodName());
+
 
         Whitebox.setInternalState(callWebserviceProcessor, "maxAtempts", 1);
         haveOneEmployee();

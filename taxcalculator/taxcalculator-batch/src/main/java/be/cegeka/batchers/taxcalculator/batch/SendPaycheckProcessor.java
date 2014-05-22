@@ -1,6 +1,9 @@
 package be.cegeka.batchers.taxcalculator.batch;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
+import be.cegeka.batchers.taxcalculator.application.domain.PayCheck;
+import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
+import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResult;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailAttachmentTO;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailSender;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailTO;
@@ -19,7 +22,7 @@ import java.util.Locale;
 import java.util.Map;
 
 @Component
-public class SendPaycheckProcessor implements ItemProcessor<Employee, Employee> {
+public class SendPaycheckProcessor implements ItemProcessor<TaxServiceCallResult, PayCheck> {
 
     @Value(value = "${paycheck.template:classpath:/paycheck-template.docx}")
     private String paycheckTemplateFileName = "classpath:/paycheck-template.docx";
@@ -34,13 +37,17 @@ public class SendPaycheckProcessor implements ItemProcessor<Employee, Employee> 
     String payCheckFrom;
 
     @Override
-    public Employee process(Employee employee) throws Exception {
+    public PayCheck process(TaxServiceCallResult taxServiceCallResult) throws Exception {
         Resource resource = resourceLoader.getResource(paycheckTemplateFileName);
 
+        TaxCalculation taxCalculation = taxServiceCallResult.getTaxCalculation();
+        Employee employee = taxCalculation.getEmployee();
         byte[] pdfBytes = pdfGeneratorService.generatePdfAsByteArray(resource, getPayCheckPdfContext(employee));
         emailSender.send(getEmailTO(employee, pdfBytes));
 
-        return employee;
+        PayCheck payCheck = PayCheck.from(taxCalculation, pdfBytes);
+
+        return payCheck;
     }
 
     public String getEmailBodyForEmployee(Employee employee) {
