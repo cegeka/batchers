@@ -1,5 +1,6 @@
 package be.cegeka.batchers.taxcalculator.application.domain;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -10,6 +11,7 @@ import static org.mockito.Mockito.verify;
 
 
 @RunWith(MockitoJUnitRunner.class)
+@Ignore
 public class EmployeeServiceTest {
 
     @InjectMocks

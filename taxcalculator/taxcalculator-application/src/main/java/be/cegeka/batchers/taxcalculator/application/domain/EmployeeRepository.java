@@ -1,6 +1,7 @@
 package be.cegeka.batchers.taxcalculator.application.domain;
 
 
+import be.cegeka.batchers.taxcalculator.to.EmployeeTo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
@@ -58,6 +59,13 @@ public class EmployeeRepository {
 
     public List<Employee> getFirst20() {
         TypedQuery<Employee> first20 = entityManager.createNamedQuery(Employee.GET_ALL_NAME, Employee.class);
+        first20.setMaxResults(20);
+
+        return first20.getResultList();
+    }
+
+    public List<EmployeeTo> getFirst20WithTax() {
+        TypedQuery<EmployeeTo> first20 = entityManager.createNamedQuery(Employee.GET_EMPLOYEES_TOTAL_TAX_NAME, EmployeeTo.class);
         first20.setMaxResults(20);
 
         return first20.getResultList();

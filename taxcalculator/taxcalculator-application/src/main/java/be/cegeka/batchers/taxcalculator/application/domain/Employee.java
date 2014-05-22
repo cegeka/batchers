@@ -14,13 +14,18 @@ import javax.persistence.*;
 import java.math.RoundingMode;
 
 @NamedQueries({
-        @NamedQuery(name = Employee.GET_ALL_NAME, query = Employee.GET_ALL_QUERY)
+        @NamedQuery(name = Employee.GET_ALL_NAME, query = Employee.GET_ALL_QUERY),
+        @NamedQuery(name = Employee.GET_EMPLOYEES_TOTAL_TAX_NAME, query = Employee.GET_EMPLOYEES_TOTAL_TAX_QUERY)
 })
 
 @Entity
 public class Employee {
     public static final String GET_ALL_NAME = "Employee.getAll";
     public static final String GET_ALL_QUERY = "SELECT e FROM Employee e";
+
+    public static final String GET_EMPLOYEES_TOTAL_TAX_NAME = "Employee.getWithTax";
+    public static final String GET_EMPLOYEES_TOTAL_TAX_QUERY = "SELECT NEW be.cegeka.batchers.taxcalculator.to.EmployeeTo(t.employee.firstName, t.employee.lastName, t.employee.email, t.employee.income, sum(t.tax)) " +
+            "FROM TaxCalculation t GROUP BY t.employee.firstName, t.employee.lastName, t.employee.email, t.employee.income";
 
     private Integer income;
 
