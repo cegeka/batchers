@@ -57,6 +57,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
 
     private MockRestServiceServer mockServer;
     private JobParameters jobParams;
+    private static Long counter = 0L;
 
     @Before
     public void setUp() {
@@ -66,6 +67,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         Map<String, JobParameter> jobParamsMap = new HashMap<>();
         jobParamsMap.put("month", new JobParameter(Long.valueOf(1), false));
         jobParamsMap.put("year", new JobParameter(Long.valueOf(2014), false));
+        jobParamsMap.put("job-id-just-for-testing-shit-up", new JobParameter(counter++, true));
 
         jobParams = new JobParameters(jobParamsMap);
 

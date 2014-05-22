@@ -45,6 +45,9 @@ public class SendPaycheckProcessorTest {
     ArgumentCaptor<Map<String, Object>> contextCaptor;
     @Captor
     ArgumentCaptor<EmailTO> emailToCaptor;
+    @Mock
+    private TaxCalculationRepository taxCalculationRepository;
+
 
     @Before
     public void setUp() {
