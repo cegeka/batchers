@@ -1,7 +1,6 @@
 package be.cegeka.batchers.taxcalculator.batch.service.reporting;
 
 import be.cegeka.batchers.taxcalculator.application.domain.pdf.PDFGeneratorService;
-import be.cegeka.batchers.taxcalculator.infrastructure.utils.DateUtils;
 import fr.opensagres.xdocreport.core.XDocReportException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.junit.Before;
@@ -16,7 +15,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import static be.cegeka.batchers.taxcalculator.application.ApplicationAssertions.assertThat;
-import static org.joda.time.DateTime.now;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MonthlyTaxReportServiceTest {
@@ -40,7 +38,9 @@ public class MonthlyTaxReportServiceTest {
         Mockito.when(sumOfTaxes.getFailedSum()).thenReturn(FAILED_AMOUNT);
         Mockito.when(sumOfTaxes.getSuccessSum()).thenReturn(SUCCESS_AMOUNT);
 
-        byte[] pdfBytes = monthlyTaxReportService.generateReport();
+        int year = 2014;
+        int month = 5;
+        byte[] pdfBytes = monthlyTaxReportService.generateReport(month, year);
 
         PDDocument pdfDocument = PDDocument.load(new ByteArrayInputStream(pdfBytes));
         assertThat(pdfDocument)
@@ -53,6 +53,6 @@ public class MonthlyTaxReportServiceTest {
 
         pdfDocument = PDDocument.load(new ByteArrayInputStream(pdfBytes));
         assertThat(pdfDocument)
-                .containsText("PERIOD: " + DateUtils.longMonthAndYearOf(now()));
+                .containsText("PERIOD: " + 5 + " " + year);
     }
 }
