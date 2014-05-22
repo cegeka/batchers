@@ -58,7 +58,8 @@ public class TaxCalculatorJobService implements JobService {
     }
 
     protected JobParameters getNewJobParameters() {
-        return new JobParametersBuilder().addLong("uniqueIdentifier", new Date().getTime())
+        return new JobParametersBuilder()
+                .addLong("uniqueIdentifier", new Date().getTime())
                 .addLong("month", new Long(new DateTime().getMonthOfYear()), false)
                 .addLong("year", new Long(new DateTime().getYear()), false)
                 .toJobParameters();
