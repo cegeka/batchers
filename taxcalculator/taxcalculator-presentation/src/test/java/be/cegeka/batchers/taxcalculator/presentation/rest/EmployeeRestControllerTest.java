@@ -3,8 +3,11 @@ package be.cegeka.batchers.taxcalculator.presentation.rest;
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeBuilder;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeService;
+import be.cegeka.batchers.taxcalculator.to.EmployeeTo;
 import org.fest.util.Lists;
+import org.joda.money.Money;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -23,6 +26,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -51,9 +55,10 @@ public class EmployeeRestControllerTest {
                 .withIncome(200)
                 .withFirstName("firstName")
                 .build();
-        String expectedJSON = new Jackson2JsonObjectMapper().toJson(asList(employee));
 
-        when(employeeServiceMock.getFirst20()).thenReturn(asList(employee));
+        EmployeeTo employeeTo = new EmployeeTo(employee.getFirstName(), employee.getLastName(), employee.getEmail(), employee.getIncome(), Money.parse("EUR 200"));
+        String expectedJSON = new Jackson2JsonObjectMapper().toJson(asList(employeeTo));
+        when(employeeServiceMock.getFirst20()).thenReturn(asList(employeeTo));
 
         MvcResult mvcResult = mockMvc.perform(get("/employees").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

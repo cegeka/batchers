@@ -1,4 +1,4 @@
-package be.cegeka.batchers.taxcalculator.application.util.jackson;
+package be.cegeka.batchers.taxcalculator.utils;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import org.joda.money.CurrencyUnit;
@@ -25,9 +25,6 @@ public class JodaMoneySerializerTest {
         jodaMoneySerializer.serialize(value, jsonGenerator, null);
 
         verify(jsonGenerator).writeString("234.56 €");
-
-
-
     }
 
 }

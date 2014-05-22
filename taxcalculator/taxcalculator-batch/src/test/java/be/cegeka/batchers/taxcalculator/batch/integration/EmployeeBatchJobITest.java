@@ -85,8 +85,6 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
 
         Employee reloadedEmployee = employeeRepository.getBy(employee.getId());
         System.out.println("RELOADDED: " + reloadedEmployee);
-        assertThat(reloadedEmployee.getTaxTotal()).isEqualTo(Money.of(CurrencyUnit.EUR, 100));
-        assertThat(reloadedEmployee.getCalculationDate()).isEqualTo(DateTime.now());
 
         mockServer.verify();
     }
