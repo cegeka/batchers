@@ -20,6 +20,6 @@ public class EmployeeRestController {
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public List<EmployeeTo> getFirst20Employees() {
-        return employeeService.getFirst20WithTax();
+        return employeeService.getFirst20();
     }
 }

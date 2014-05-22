@@ -58,14 +58,7 @@ public class EmployeeRepository {
 
     }
 
-    public List<Employee> getFirst20() {
-        TypedQuery<Employee> first20 = entityManager.createNamedQuery(Employee.GET_ALL_NAME, Employee.class);
-        first20.setMaxResults(20);
-
-        return first20.getResultList();
-    }
-
-    public List<EmployeeTo> getFirst20WithTax() {
+    public List<EmployeeTo> getFirst20() {
         TypedQuery<EmployeeTo> first20 = entityManager.createNamedQuery(Employee.GET_EMPLOYEES_TOTAL_TAX_NAME, EmployeeTo.class);
         first20.setMaxResults(20);
 

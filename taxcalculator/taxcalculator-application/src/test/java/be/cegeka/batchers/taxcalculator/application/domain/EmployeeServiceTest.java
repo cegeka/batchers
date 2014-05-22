@@ -11,7 +11,6 @@ import static org.mockito.Mockito.verify;
 
 
 @RunWith(MockitoJUnitRunner.class)
-@Ignore
 public class EmployeeServiceTest {
 
     @InjectMocks
@@ -26,4 +25,6 @@ public class EmployeeServiceTest {
 
         verify(employeeRepositoryMock).getFirst20();
     }
+
+
 }
