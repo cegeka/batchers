@@ -1,9 +1,13 @@
 package be.cegeka.batchers.taxcalculator.application.service;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
+import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
+import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResult;
 import be.cegeka.batchers.taxcalculator.to.TaxServiceResponse;
 import be.cegeka.batchers.taxcalculator.to.TaxTo;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -22,10 +26,19 @@ public class TaxPaymentWebService {
     @Autowired
     private RestTemplate restTemplate;
 
-    public Employee doWebserviceCallToTaxService(Employee employee) {
+    public TaxServiceCallResult doWebserviceCallToTaxService(TaxCalculation taxCalculation) {
         try {
-            if ("OK".equals(getWebserviceResult(employee))) {
-                return employee;
+            ResponseEntity<TaxServiceResponse> webserviceResult = getWebserviceResult(taxCalculation.getEmployee());
+            String status = webserviceResult.getBody().getStatus();
+            if ("OK".equals(status)) {
+                TaxTo taxTo = new TaxTo();
+                taxTo.setAmount(taxCalculation.getEmployee().getIncomeTax());
+                taxTo.setEmployeeId(taxCalculation.getEmployee().getId());
+
+                TaxServiceCallResult taxServiceCallResult = TaxServiceCallResult.from(taxCalculation, taxTo.toString(),
+                        HttpStatus.OK.value(), webserviceResult.toString(), DateTime.now());
+
+                return taxServiceCallResult;
             }
             throw new TaxWebServiceException("Illegal response from web service");
         } catch (ResourceAccessException | HttpServerErrorException | HttpClientErrorException e) {
@@ -33,9 +46,9 @@ public class TaxPaymentWebService {
         }
     }
 
-    private String getWebserviceResult(Employee employee) {
+    private ResponseEntity<TaxServiceResponse> getWebserviceResult(Employee employee) {
         ResponseEntity<TaxServiceResponse> stringResponseEntity = restTemplate.postForEntity(getUri(), createWebserviceInput(employee), TaxServiceResponse.class);
-        return stringResponseEntity.getBody().getStatus();
+        return stringResponseEntity;
     }
 
     private URI getUri() {

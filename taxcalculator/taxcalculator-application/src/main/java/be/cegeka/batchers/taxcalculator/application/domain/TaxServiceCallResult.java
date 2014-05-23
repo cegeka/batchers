@@ -11,7 +11,8 @@ import javax.validation.constraints.NotNull;
 @NamedQueries({
         @NamedQuery(name = TaxServiceCallResult.FIND_BY_TAXCALCULATION, query = TaxServiceCallResult.FIND_BY_TAXCALCULATION_QUERY),
         @NamedQuery(name = TaxServiceCallResult.GET_SUCCESS_SUM, query = TaxServiceCallResult.GET_SUCCESS_SUM_QUERY),
-        @NamedQuery(name = TaxServiceCallResult.GET_FAILED_SUM, query = TaxServiceCallResult.GET_FAILED_SUM_QUERY)
+        @NamedQuery(name = TaxServiceCallResult.GET_FAILED_SUM, query = TaxServiceCallResult.GET_FAILED_SUM_QUERY),
+        @NamedQuery(name = TaxServiceCallResult.FIND_LAST_BY_TAXCALCULATION, query = TaxServiceCallResult.FIND_LAST_BY_TAXCALCULATION_QUERY)
 })
 
 @Entity
@@ -31,6 +32,10 @@ public class TaxServiceCallResult {
     public static final String GET_FAILED_SUM_QUERY = "SELECT SUM(tc.tax) FROM TaxServiceCallResult tscr" +
             " JOIN tscr.taxCalculation as tc " +
             " where tscr.responseStatus <> " + HTTP_OK + " and tc.month = :month and tc.year = :year";
+
+    public static final String FIND_LAST_BY_TAXCALCULATION = "TaxServiceCallResult.FIND_LAST_BY_TAXCALCULATION";
+    public static final String FIND_LAST_BY_TAXCALCULATION_QUERY = "SELECT tscr FROM TaxServiceCallResult tscr " +
+            " WHERE tscr.taxCalculation.id = :taxCalculationId ORDER BY tscr.callDate DESC";
 
     @Id
     @GeneratedValue

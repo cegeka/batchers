@@ -2,8 +2,12 @@ package be.cegeka.batchers.taxcalculator.application.service;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeBuilder;
+import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
+import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResult;
 import be.cegeka.batchers.taxcalculator.to.TaxServiceResponse;
 import be.cegeka.batchers.taxcalculator.to.TaxTo;
+import org.joda.money.CurrencyUnit;
+import org.joda.money.Money;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,8 +55,12 @@ public class TaxPaymentWebServiceTest {
         when(mockedResponse.getBody()).thenReturn(new TaxServiceResponse("OK"));
 
         Employee employee = new EmployeeBuilder().build();
+        TaxCalculation taxCalculation = TaxCalculation.from(1L, employee, 2014, 1, Money.of(CurrencyUnit.EUR, 2000.0));
 
-        assertThat(taxPaymentWebService.doWebserviceCallToTaxService(employee)).isEqualTo(employee);
+        TaxServiceCallResult taxServiceCallResult = taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
+
+        //todo change assert to check tax service call  result object, not only employee
+        assertThat(taxServiceCallResult.getTaxCalculation()).isEqualTo(taxCalculation);
     }
 
     @Test(expected = TaxWebServiceException.class)
@@ -60,21 +68,30 @@ public class TaxPaymentWebServiceTest {
         whenCallingTheWebservice().thenReturn(mockedResponse);
         when(mockedResponse.getBody()).thenReturn(new TaxServiceResponse("ERROR"));
 
-        taxPaymentWebService.doWebserviceCallToTaxService(new EmployeeBuilder().build());
+        Employee employee = new EmployeeBuilder().build();
+        TaxCalculation taxCalculation = TaxCalculation.from(1L, employee, 2014, 1, Money.of(CurrencyUnit.EUR, 2000.0));
+
+        taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
     }
 
     @Test(expected = TaxWebServiceException.class)
     public void testProcessTimeoutResponse_ExceptionHasBeenThrownForever() throws Exception {
         whenCallingTheWebservice().thenThrow(aWrappedTimeOutException());
 
-        taxPaymentWebService.doWebserviceCallToTaxService(new EmployeeBuilder().build());
+        Employee employee = new EmployeeBuilder().build();
+        TaxCalculation taxCalculation = TaxCalculation.from(1L, employee, 2014, 1, Money.of(CurrencyUnit.EUR, 2000.0));
+
+        taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
     }
 
     @Test(expected = TaxWebServiceException.class)
     public void testProcess_UnexpectedExceptionOccurs_ExceptionIsRethrown() throws Exception {
         whenCallingTheWebservice().thenThrow(aMethodNotAllowedException());
 
-        taxPaymentWebService.doWebserviceCallToTaxService(new EmployeeBuilder().build());
+        Employee employee = new EmployeeBuilder().build();
+        TaxCalculation taxCalculation = TaxCalculation.from(1L, employee, 2014, 1, Money.of(CurrencyUnit.EUR, 2000.0));
+
+        taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
     }
 
     private OngoingStubbing<ResponseEntity<TaxServiceResponse>> whenCallingTheWebservice() {

@@ -1,6 +1,6 @@
 package be.cegeka.batchers.taxcalculator.batch;
 
-import be.cegeka.batchers.taxcalculator.application.domain.Employee;
+import be.cegeka.batchers.taxcalculator.application.domain.*;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailAttachmentTO;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailSender;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailTO;
@@ -13,13 +13,10 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 @Component
-public class SendPaycheckProcessor implements ItemProcessor<Employee, Employee> {
+public class SendPaycheckProcessor implements ItemProcessor<TaxServiceCallResult, PayCheck> {
 
     @Value(value = "${paycheck.template:classpath:/paycheck-template.docx}")
     private String paycheckTemplateFileName = "classpath:/paycheck-template.docx";
@@ -30,17 +27,24 @@ public class SendPaycheckProcessor implements ItemProcessor<Employee, Employee> 
     @Autowired
     private EmailSender emailSender;
 
+    @Autowired
+    private TaxCalculationRepository taxCalculationRepository;
+
     @Value(value = "${paycheck.from.email:finance@email.com}")
     String payCheckFrom;
 
     @Override
-    public Employee process(Employee employee) throws Exception {
+    public PayCheck process(TaxServiceCallResult taxServiceCallResult) throws Exception {
         Resource resource = resourceLoader.getResource(paycheckTemplateFileName);
 
+        TaxCalculation taxCalculation = taxServiceCallResult.getTaxCalculation();
+        Employee employee = taxCalculation.getEmployee();
         byte[] pdfBytes = pdfGeneratorService.generatePdfAsByteArray(resource, getPayCheckPdfContext(employee));
         emailSender.send(getEmailTO(employee, pdfBytes));
 
-        return employee;
+        PayCheck payCheck = PayCheck.from(taxCalculation, pdfBytes);
+
+        return payCheck;
     }
 
     public String getEmailBodyForEmployee(Employee employee) {
@@ -64,10 +68,18 @@ public class SendPaycheckProcessor implements ItemProcessor<Employee, Employee> 
         context.put("name", employee.fullName());
         context.put("monthly_income", employee.getIncome());
         context.put("monthly_tax", employee.getIncomeTax());
-//        context.put("tax_total", employee.getTaxTotal());
+        context.put("tax_total", getTaxTotal(employee));
         // TODO IN STEP 3
         context.put("employee_id", employee.getId());
         return context;
+    }
+
+    private double getTaxTotal(Employee employee) {
+        List<TaxCalculation> taxCalculationsForEmployee = taxCalculationRepository.findByEmployee(employee);
+        double taxTotal = taxCalculationsForEmployee.parallelStream()
+                .mapToDouble((taxCalculation) -> taxCalculation.getTax().getAmount().doubleValue()).sum();
+
+        return taxTotal;
     }
 
     private EmailTO getEmailTO(Employee employee, byte[] pdfBytes) {
