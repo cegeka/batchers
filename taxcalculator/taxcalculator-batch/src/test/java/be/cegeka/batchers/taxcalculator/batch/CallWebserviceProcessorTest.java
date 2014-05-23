@@ -5,6 +5,7 @@ import be.cegeka.batchers.taxcalculator.application.domain.EmployeeBuilder;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResult;
 import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceException;
+import be.cegeka.batchers.taxcalculator.batch.config.RetryConfig;
 import be.cegeka.batchers.taxcalculator.batch.service.TaxPaymentWebServiceFacade;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
@@ -31,6 +32,9 @@ public class CallWebserviceProcessorTest {
 
     @Mock
     private TaxPaymentWebServiceFacade taxPaymentWebServiceFacade;
+
+    @Mock
+    private RetryConfig retryConfig;
 
     private Employee employee;
     private TaxCalculation taxCalculation;
@@ -61,26 +65,6 @@ public class CallWebserviceProcessorTest {
                 .thenThrow(new TaxWebServiceException("boe"));
 
         callWebserviceProcessor.process(taxCalculation);
-    }
-
-    @Test
-    @Ignore("to be moved in RetryTemplateTest")
-    public void testProcessExponential_RetryAndEmployeeIsReturned() throws Exception {
-        long start = System.currentTimeMillis();
-
-        when(taxPaymentWebServiceFacade.callTaxService(eq(taxCalculation), any(Callable.class)))
-                .thenThrow(new TaxWebServiceException("boe"))
-                .thenThrow(new TaxWebServiceException("boe"))
-                .thenReturn(taxServiceCallResult);
-
-        TaxServiceCallResult processed = callWebserviceProcessor.process(taxCalculation);
-
-        assertThat(processed).isEqualTo(taxServiceCallResult);
-        verify(taxPaymentWebServiceFacade, times(3)).callTaxService(eq(taxCalculation), any(Callable.class));
-
-        long end = System.currentTimeMillis();
-        long duration = end - start;
-        assertThat(duration).isGreaterThanOrEqualTo(300);
     }
 
 }
