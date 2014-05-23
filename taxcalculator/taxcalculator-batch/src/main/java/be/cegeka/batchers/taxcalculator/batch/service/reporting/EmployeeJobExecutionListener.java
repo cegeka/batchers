@@ -16,7 +16,6 @@ public class EmployeeJobExecutionListener implements org.springframework.batch.c
 
     @Override
     public void beforeJob(JobExecution jobExecution) {
-        sumOfTaxes.reset();
     }
 
     @Override
