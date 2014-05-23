@@ -39,22 +39,20 @@ public class TaxServiceCallResultRepositoryTest extends IntegrationTest {
     public void setup() {
         employee = anEmployee();
         employeeRepository.save(employee);
-        Employee anotherEmployee = anEmployee();
-        employeeRepository.save(anotherEmployee);
+
 
         january = TaxCalculation.from(employee, 2014, 1, Money.of(CurrencyUnit.EUR, 10.0), new DateTime());
-        TaxCalculation january2 = TaxCalculation.from(anotherEmployee, 2014, 1, Money.of(CurrencyUnit.EUR, 10.0), new DateTime());
+
         february = TaxCalculation.from(employee, 2014, 2, Money.of(CurrencyUnit.EUR, 10.0), new DateTime());
 
-        List<TaxCalculation> taxCalculations = Arrays.asList(january, february, january2);
+        List<TaxCalculation> taxCalculations = Arrays.asList(january, february);
         taxCalculations.forEach(tax -> taxCalculationRepository.save(tax));
 
         januaryTry1 = TaxServiceCallResult.from(january, "", HttpStatus.INTERNAL_SERVER_ERROR.value(), null, DateTime.now());
         januaryTry2 = TaxServiceCallResult.from(january, "", HttpStatus.OK.value(), "", DateTime.now());
-        TaxServiceCallResult januaryTry3 = TaxServiceCallResult.from(january2, "", HttpStatus.OK.value(), "", DateTime.now());
         februaryTry1 = TaxServiceCallResult.from(february, "", HttpStatus.OK.value(), "", DateTime.now());
 
-        List<TaxServiceCallResult> taxServiceCallResults = Arrays.asList(januaryTry1, januaryTry2, januaryTry3, februaryTry1);
+        List<TaxServiceCallResult> taxServiceCallResults = Arrays.asList(januaryTry1, januaryTry2, februaryTry1);
         taxServiceCallResults.forEach(taxServiceCallResult -> taxServiceCallResultRepository.save(taxServiceCallResult));
     }
 
@@ -71,9 +69,33 @@ public class TaxServiceCallResultRepositoryTest extends IntegrationTest {
 
     @Test
     public void testSuccess_Sum() throws Exception {
+        Employee anotherEmployee = anEmployee();
+        employeeRepository.save(anotherEmployee);
+        TaxCalculation january2 = TaxCalculation.from(anotherEmployee, 2014, 1, Money.of(CurrencyUnit.EUR, 10.0), new DateTime());
+        taxCalculationRepository.save(january2);
+        TaxServiceCallResult januaryTry2 = TaxServiceCallResult.from(january2, "", HttpStatus.OK.value(), "", DateTime.now());
+        taxServiceCallResultRepository.save(januaryTry2);
+
+
         Money expectedMoney = Money.of(CurrencyUnit.EUR, 20.0);
 
         Money actualMoney = taxServiceCallResultRepository.getSuccessSum(2014, 1);
+
+        assertThat(actualMoney).isEqualTo(expectedMoney);
+    }
+
+    @Test
+    public void testFailed_Sum() {
+        Employee anotherEmployee = anEmployee();
+        employeeRepository.save(anotherEmployee);
+        TaxCalculation january2 = TaxCalculation.from(anotherEmployee, 2014, 1, Money.of(CurrencyUnit.EUR, 10.0), new DateTime());
+        taxCalculationRepository.save(january2);
+        TaxServiceCallResult januaryTry2 = TaxServiceCallResult.from(january2, "", HttpStatus.BAD_REQUEST.value(), "", DateTime.now());
+        taxServiceCallResultRepository.save(januaryTry2);
+
+        Money expectedMoney = Money.of(CurrencyUnit.EUR, 20.0);
+
+        Money actualMoney = taxServiceCallResultRepository.getFailedSum(2014, 1);
 
         assertThat(actualMoney).isEqualTo(expectedMoney);
     }
