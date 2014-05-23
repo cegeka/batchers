@@ -17,7 +17,7 @@ public class MonthlyReportRepository {
         return monthlyReport;
     }
 
-    public MonthlyReport findByYearAndMonth(int year, int month) {
+    public MonthlyReport findByYearAndMonth(long year, long month) {
         TypedQuery<MonthlyReport> typedQuery = entityManager.createNamedQuery(MonthlyReport.FIND_BY_YEAR_AND_MONTH, MonthlyReport.class);
 
         typedQuery.setParameter("year", year);

@@ -61,13 +61,14 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
     @Autowired
     private JobResultsTasklet jobResultsTasklet;
 
-    private static Integer OVERRIDDEN_BY_EXPRESSION = null;
+    private static Long OVERRIDDEN_BY_EXPRESSION = null;
 
     @Bean
     public Job employeeJob() {
         return jobBuilders.get(EMPLOYEE_JOB)
                 .start(taxCalculationStep())
                 .next(wsCallStep())
+
                 .next(jobResultsPdf())
                 .build();
     }

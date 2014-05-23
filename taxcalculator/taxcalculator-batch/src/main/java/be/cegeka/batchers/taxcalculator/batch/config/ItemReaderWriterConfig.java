@@ -16,8 +16,6 @@ import org.springframework.context.annotation.Configuration;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.lang.Integer.parseInt;
-
 @Configuration
 public class ItemReaderWriterConfig {
 
@@ -31,8 +29,8 @@ public class ItemReaderWriterConfig {
         employeeItemReader.setEntityManagerFactory(persistenceConfig.entityManagerFactory());
         employeeItemReader.setQueryString(Employee.GET_UNPROCESSED_EMPLOYEES_BY_YEAR_AND_MONTH_QUERY);
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("year", parseInt(stepExecution.getJobParameters().getString("year")));
-        parameters.put("month", parseInt(stepExecution.getJobParameters().getString("month")));
+        parameters.put("year", stepExecution.getJobParameters().getLong("year"));
+        parameters.put("month", stepExecution.getJobParameters().getLong("month"));
         parameters.put("jobExecutionId", stepExecution.getJobExecutionId());
         employeeItemReader.setParameterValues(parameters);
         return employeeItemReader;
@@ -47,8 +45,8 @@ public class ItemReaderWriterConfig {
 
     @Bean
     @StepScope
-    public JpaPagingItemReader<TaxCalculation> wsCallItemReader(@Value("#{jobParameters[year]}") Integer year,
-                                                                @Value("#{jobParameters[month]}") Integer month) {
+    public JpaPagingItemReader<TaxCalculation> wsCallItemReader(@Value("#{jobParameters[year]}") Long year,
+                                                                @Value("#{jobParameters[month]}") Long month) {
         JpaPagingItemReader<TaxCalculation> employeeItemReader = new JpaPagingItemReader<>();
         employeeItemReader.setEntityManagerFactory(persistenceConfig.entityManagerFactory());
         employeeItemReader.setQueryString(TaxCalculation.FIND_BY_YEAR_AND_MONTH_QUERY);

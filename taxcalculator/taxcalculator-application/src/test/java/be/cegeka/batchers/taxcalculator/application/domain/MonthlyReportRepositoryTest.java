@@ -24,8 +24,8 @@ public class MonthlyReportRepositoryTest extends IntegrationTest {
         monthlyReportRepository.save(march);
         monthlyReportRepository.save(april);
 
-        MonthlyReport foundMarch = monthlyReportRepository.findByYearAndMonth(2014, 3);
-        MonthlyReport foundApril = monthlyReportRepository.findByYearAndMonth(2014, 4);
+        MonthlyReport foundMarch = monthlyReportRepository.findByYearAndMonth(2014L, 3L);
+        MonthlyReport foundApril = monthlyReportRepository.findByYearAndMonth(2014L, 4L);
 
         assertThat(foundMarch).isEqualTo(march);
         assertThat(foundMarch.getMontlyReportPdf().length).isEqualTo(SIZE_10MB);

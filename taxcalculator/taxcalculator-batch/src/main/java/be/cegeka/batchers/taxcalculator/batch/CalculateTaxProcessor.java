@@ -21,9 +21,9 @@ public class CalculateTaxProcessor extends StepExecutionListenerSupport implemen
     @Autowired
     TaxCalculatorService taxCalculatorService;
     @Value("#{jobParameters[year]}")
-    private int year;
+    private long year;
     @Value("#{jobParameters[month]}")
-    private int month;
+    private long month;
 
     private StepExecution stepExecution;
 

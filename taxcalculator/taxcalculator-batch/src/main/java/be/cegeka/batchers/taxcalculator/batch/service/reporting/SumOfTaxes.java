@@ -7,21 +7,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-@StepScope
 public class SumOfTaxes {
-    @Value("#{jobParameters[year]}")
-    private int year;
-    @Value("#{jobParameters[month]}")
-    private int month;
-
     @Autowired
     TaxServiceCallResultRepository taxServiceCallResultRepository;
 
-    public double getSuccessSum() {
+    public double getSuccessSum(long year, long month) {
         return taxServiceCallResultRepository.getSuccessSum(year, month).getAmount().doubleValue();
     }
 
-    public double getFailedSum() {
+    public double getFailedSum(long year, long month) {
         return taxServiceCallResultRepository.getFailedSum(year, month).getAmount().doubleValue();
     }
 }

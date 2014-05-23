@@ -20,7 +20,6 @@ public class RetryConfig {
     @Value("${taxProcessor.retry.maxAtempts:3}")
     private int maxAtempts = 3;
 
-    @Bean
     public RetryTemplate createRetryTemplate() {
         Map<Class<? extends Throwable>, Boolean> exceptions = new HashMap<>();
         exceptions.put(TaxWebServiceException.class, true);
