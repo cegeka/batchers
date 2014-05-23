@@ -36,8 +36,8 @@ public class PayCheckRepositoryTest extends IntegrationTest {
 
         employeeRepository.save(employee);
 
-        january = TaxCalculation.from(employee, 2014, 1, Money.of(CurrencyUnit.EUR, 10.0), new DateTime());
-        february = TaxCalculation.from(employee, 2014, 2, Money.of(CurrencyUnit.EUR, 10.0), new DateTime());
+        january = TaxCalculation.from(1L, employee, 2014, 1, Money.of(CurrencyUnit.EUR, 10.0));
+        february = TaxCalculation.from(1L, employee, 2014, 2, Money.of(CurrencyUnit.EUR, 10.0));
 
         List<TaxCalculation> taxCalculations = Arrays.asList(january, february);
         taxCalculations.forEach(tax -> taxCalculationRepository.save(tax));

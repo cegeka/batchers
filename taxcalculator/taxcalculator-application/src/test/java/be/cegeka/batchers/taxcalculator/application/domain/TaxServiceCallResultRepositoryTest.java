@@ -41,9 +41,9 @@ public class TaxServiceCallResultRepositoryTest extends IntegrationTest {
         employeeRepository.save(employee);
 
 
-        january = TaxCalculation.from(employee, 2014, 1, Money.of(CurrencyUnit.EUR, 10.0), new DateTime());
+        january = TaxCalculation.from(1L, employee, 2014, 1, Money.of(CurrencyUnit.EUR, 10.0));
 
-        february = TaxCalculation.from(employee, 2014, 2, Money.of(CurrencyUnit.EUR, 10.0), new DateTime());
+        february = TaxCalculation.from(1L, employee, 2014, 2, Money.of(CurrencyUnit.EUR, 10.0));
 
         List<TaxCalculation> taxCalculations = Arrays.asList(january, february);
         taxCalculations.forEach(tax -> taxCalculationRepository.save(tax));
@@ -71,7 +71,7 @@ public class TaxServiceCallResultRepositoryTest extends IntegrationTest {
     public void testSuccess_Sum() throws Exception {
         Employee anotherEmployee = anEmployee();
         employeeRepository.save(anotherEmployee);
-        TaxCalculation january2 = TaxCalculation.from(anotherEmployee, 2014, 1, Money.of(CurrencyUnit.EUR, 10.0), new DateTime());
+        TaxCalculation january2 = TaxCalculation.from(1L, anotherEmployee, 2014, 1, Money.of(CurrencyUnit.EUR, 10.0));
         taxCalculationRepository.save(january2);
         TaxServiceCallResult januaryTry2 = TaxServiceCallResult.from(january2, "", HttpStatus.OK.value(), "", DateTime.now());
         taxServiceCallResultRepository.save(januaryTry2);
@@ -88,7 +88,7 @@ public class TaxServiceCallResultRepositoryTest extends IntegrationTest {
     public void testFailed_Sum() {
         Employee anotherEmployee = anEmployee();
         employeeRepository.save(anotherEmployee);
-        TaxCalculation january2 = TaxCalculation.from(anotherEmployee, 2014, 1, Money.of(CurrencyUnit.EUR, 10.0), new DateTime());
+        TaxCalculation january2 = TaxCalculation.from(1L, anotherEmployee, 2014, 1, Money.of(CurrencyUnit.EUR, 10.0));
         taxCalculationRepository.save(january2);
         TaxServiceCallResult januaryTry2 = TaxServiceCallResult.from(january2, "", HttpStatus.BAD_REQUEST.value(), "", DateTime.now());
         taxServiceCallResultRepository.save(januaryTry2);
