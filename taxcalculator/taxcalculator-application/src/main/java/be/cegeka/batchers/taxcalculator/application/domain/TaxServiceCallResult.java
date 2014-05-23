@@ -20,7 +20,7 @@ public class TaxServiceCallResult {
     public static final String FIND_BY_TAXCALCULATION_QUERY = "SELECT tscr FROM TaxServiceCallResult tscr " +
             " WHERE tscr.taxCalculation.id = :taxCalculationId";
     public static final String GET_SUCCESS_SUM = "TaxServiceCallResult.GET_SUCCESS_SUM";
-    public static final String GET_SUCCESS_SUM_QUERY = "SELECT tscr FROM TaxServiceCallResult tscr";
+    public static final String GET_SUCCESS_SUM_QUERY = "SELECT SUM(tc.tax) FROM TaxServiceCallResult tscr JOIN tscr.taxCalculation as tc where tscr.responseStatus = 200 and tc.month = :month and tc.year = :year";
 
     @Id
     @GeneratedValue
