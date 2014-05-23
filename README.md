@@ -1,4 +1,4 @@
-# Setup
+## Setup
 
 Install the following:
 * Java 8, maven 3, tomcat 7
@@ -17,7 +17,7 @@ Set CHROME\_BIN and FIREFOX\_BIN as environment variables, pointing to the execu
 Import the maven projects in IntelliJ/Eclipse and run:
 * mvn clean install
 
-# Running the app
+## Running the app
 
 * create one Run/Debug configuration for stubwebservice-war exploded on port 9091. Context path: /stubwebservice
 * alternative : cd taxcalculator-stubwebservice && mvn jetty:run
@@ -25,7 +25,7 @@ Import the maven projects in IntelliJ/Eclipse and run:
 * alternative (does not pre-populate database with employees) : cd taxcalculator-presentation && mvn tomcat7:run
 * start both servers and connect to [http://localhost:9090/taxcalculator/](http://localhost:9090/taxcalculator/)
 
-# Deployment configuration
+## Deployment configuration
 
 There are two system properties that need to be set:
 * APP_ENV - either "default" (this is the default setting, using in-memory HSQLDB) or "staging" (using MySQL)
@@ -33,36 +33,36 @@ There are two system properties that need to be set:
 
 You can set these at tomcat startup: -DAPP\_ENV=... -Dlog\_dir=...
 
-# Project structure
+## Project structure
 
 1. application
-* contains the domain + business logic, services for sending email + generate PDFs
+contains the domain + business logic, services for sending email + generate PDFs
 
-2. batch
-* SpringBatch configuration (Jobs/Steps/Reader/Writers/Processors/Listeners definitions)
+* batch
+SpringBatch configuration (Jobs/Steps/Reader/Writers/Processors/Listeners definitions)
 
-3. infrastructure
-* PersistenceConfig + PropertyPlaceHolderConfig
+* infrastructure
+PersistenceConfig + PropertyPlaceHolderConfig
 
-4. stubwebservice
-* simulates an external service (eg: payments)
-* it can be configured to timeout&fail for specific employees: taxcalculator-stubwebservice.properties
+* stubwebservice
+simulates an external service (eg: payments)
+it can be configured to timeout&fail for specific employees: taxcalculator-stubwebservice.properties
 stubwebservice.blacklistemployees - employee ids for which the server responds with a 500 internal server error, and how many times
 stubwebservice.timeoutemployees - employee ids for which the server times out
 
-5. presentation
-* one page - employees table
-* run job functions
+* presentation
+one page - employees table
+run job functions
 
 
-# Spring Batch Configuration
+## Spring Batch Configuration
 We started from the idea that we will have a list of employees for which we run a __job__ with the following __steps__:
-* Step1: calculate taxes
-* Step2: A __composite item processor__ with these processors:
+* Step1: A regular step that calculate taxes (read an Employee, calculates the Tax, writes a TaxCalculation)
+* Step2: A step with a __composite item processor__ with 3 processors:
     call a webservice to send the tax
     generate a PDF
     email it to the employee
-* Step3: (__tasklet__) generate a report with the sum of all the taxes calculated in the previous step
+* Step3: A __tasklet__ that generates a report with the sum of all the taxes calculated in the previous step
 
 Our main configuration class for the job is __EmployeeJobConfig__.
 
@@ -79,9 +79,8 @@ Our main configuration class for the job is __EmployeeJobConfig__.
         }
 ```
 
-A step consists of an item reader, item processor and an item writer.
 
-# HOW TOs
+## HOW TOs
 
 - Attempt to process all items, despite running into exceptions (eg: external services)
 Use a unique identifier for each job (eg: current time), and make all other parameter non-identifiable
@@ -89,7 +88,7 @@ Use a "always skip policy"
 Track execution results in the DB
 Write the query *carefully* :)
 
-# Lessons learned (so you don't have to!)
+## Lessons learned (so you don't have to!)
 
 - There should be just one transaction manager, shared between JPA and Spring, therefore our Job config extends __DefaultBatchConfigurer__. This provides a default job repository and job launcher.
 
@@ -107,4 +106,4 @@ No-Rollback - if the exception is configured not to trigger a roll-back, the pro
 
 - When using paging item readers, the item reader query MUST NOT change size during the step execution.
 
-# Relevant links
+## Relevant links
