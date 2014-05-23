@@ -90,10 +90,14 @@ Our main configuration class for the job is __EmployeeJobConfig__.
 
 ## How Tos
 
-- Attempt to process all items, despite running into exceptions (eg: external services)
+#### Attempt to process all items, despite running into exceptions (eg: external services)
+
 Use a unique identifier for each job (eg: current time), and make all other parameter non-identifiable
+
 Use a "always skip policy"
+
 Track execution results in the DB
+
 Write the query *carefully* :)
 
 ## Lessons learned (so you don't have to!)
@@ -108,7 +112,7 @@ Spring Batch provites some utility classes for testing, such as JobLauncherTestU
 
 - Using retry templates: see __CallWebserviceProcessor__ for configuring retry within a step
 
-- Exception handling during processing
+- __Exception handling__ during processing
 
 Default/No Skip Policy - the processing does not continue, the job execution is failed
 
