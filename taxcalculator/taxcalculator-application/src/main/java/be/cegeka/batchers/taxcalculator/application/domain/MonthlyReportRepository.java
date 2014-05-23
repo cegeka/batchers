@@ -12,8 +12,9 @@ public class MonthlyReportRepository {
     @PersistenceContext
     EntityManager entityManager;
 
-    public void save(MonthlyReport monthlyReport) {
+    public MonthlyReport save(MonthlyReport monthlyReport) {
         entityManager.persist(monthlyReport);
+        return monthlyReport;
     }
 
     public MonthlyReport findByYearAndMonth(int year, int month) {

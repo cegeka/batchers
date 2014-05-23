@@ -65,13 +65,17 @@ public class TaxCalculation {
     @NotNull
     private DateTime calculationDate;
 
-    public static TaxCalculation from(Employee employee, int year, int month, Money tax, DateTime calculationDate) {
+    @NotNull
+    private Long jobExecutionId;
+
+    public static TaxCalculation from(Long jobExecutionId, Employee employee, int year, int month, Money tax) {
         TaxCalculation taxCalculation = new TaxCalculation();
+        taxCalculation.jobExecutionId = jobExecutionId;
         taxCalculation.employee = employee;
         taxCalculation.year = year;
         taxCalculation.month = month;
         taxCalculation.tax = tax;
-        taxCalculation.calculationDate = calculationDate;
+        taxCalculation.calculationDate = DateTime.now();
         return taxCalculation;
     }
 
@@ -97,5 +101,9 @@ public class TaxCalculation {
 
     public DateTime getCalculationDate() {
         return calculationDate;
+    }
+
+    public Long getJobExecutionId() {
+        return jobExecutionId;
     }
 }
