@@ -24,16 +24,16 @@ Import the maven projects in IntelliJ/Eclipse and run:
 
 ## Running the app
 
-1. Create one Run/Debug configuration for stubwebservice-war exploded on port 9091. Context path: /stubwebservice or use cd taxcalculator-stubwebservice && mvn jetty:run
-2. Create one Run/Debug configuration for presentation-war exploded (different port, preferably 9090). Context path: /taxcalculator or (does not pre-populate database with employees) : cd taxcalculator-presentation && mvn tomcat7:run
+1. Create one Run/Debug configuration for stubwebservice-war exploded on port 9091, context path: /stubwebservice. Or, use cd taxcalculator-stubwebservice && mvn jetty:run
+2. Create one Run/Debug configuration for presentation-war exploded (different port, preferably 9090), context path: /taxcalculator.  Or, (does not pre-populate database with employees) : cd taxcalculator-presentation && mvn tomcat7:run
 3. Start both servers and connect to [http://localhost:9090/taxcalculator/](http://localhost:9090/taxcalculator/)
 
 ## Deployment configuration
 
 There are two system properties that need to be set:
-> APP_ENV - either "default" (this is the default setting, using in-memory HSQLDB) or "staging" (using MySQL)
+> __APP_ENV__ - either "default" (this is the default setting, using in-memory HSQLDB) or "staging" (using MySQL)
 
-> log_dir - having "target/logs" as default
+> __log_dir__ - having "target/logs" as default
 
 You can set these at tomcat startup: -DAPP\_ENV=... -Dlog\_dir=...
 
@@ -41,6 +41,7 @@ You can set these at tomcat startup: -DAPP\_ENV=... -Dlog\_dir=...
 
 #### 1. Presentation
 Shows the employee table and allows the job to be run manually.
+Contains the AngularJs files and rest controllers (for retrieving employees/starting job).
 
 #### 2. Application
 Domain and business logic, services for sending email and generate PDFs
@@ -54,7 +55,7 @@ PersistenceConfig and PropertyPlaceHolderConfig
 #### 5. Stubwebservice
 Simulates an external service (eg: payments).
 
-It can be configured to timeout&fail for specific employees: __taxcalculator-stubwebservice.properties__
+It can be configured to timeout and/or fail for specific employees: __taxcalculator-stubwebservice.properties__
 
 __stubwebservice.blacklistemployees__ - employee ids for which the server responds with a 500 internal server error, and how many times
 
@@ -100,15 +101,19 @@ Write the query *carefully* :)
 - There should be just one transaction manager, shared between JPA and Spring, therefore our Job config extends __DefaultBatchConfigurer__. This provides a default job repository and job launcher.
 
 - Integration testing (see __AbstractIntegrationTest__)
+
 Spring Batch provites some utility classes for testing, such as JobLauncherTestUtils (allows running jobs or steps) and JobRepositoryTestUtils (allows removing job executions from the JobRepository)
 
 - Idempotent operations make retry/failure scenarios a lot easier. When an operation is not idempotent you can create a wrapper for that action that is idempotent
 
 - Using retry templates: see __CallWebserviceProcessor__ for configuring retry within a step
 
-- So, an exception occurs in processing an item...
+- Exception handling during processing
+
 Default/No Skip Policy - the processing does not continue, the job execution is failed
+
 Skip Policy - if the exception can be skipped, then the current chunk is rolled back and reexecuted without the item w/ exception
+
 No-Rollback - if the exception is configured not to trigger a roll-back, the processing of the current chunk continues
 
 - When using paging item readers, the item reader query MUST NOT change size during the step execution.
