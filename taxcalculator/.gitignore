@@ -4,3 +4,5 @@ target/
 taxcalculator-presentation/node_modules/*
 node_modules/
 
+/.settings
+/.project
