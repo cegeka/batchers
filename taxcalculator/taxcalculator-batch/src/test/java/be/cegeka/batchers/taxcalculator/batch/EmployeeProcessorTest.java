@@ -14,10 +14,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.internal.util.reflection.Whitebox;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import org.springframework.batch.core.StepExecution;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EmployeeProcessorTest {
@@ -28,6 +33,9 @@ public class EmployeeProcessorTest {
     @InjectMocks
     private CalculateTaxProcessor calculateTaxProcessor;
 
+    @Mock
+    private StepExecution stepExecution;
+
     @Before
     public void setUp() {
         calculateTaxProcessor.taxCalculatorService = createTaxCalculatorService();
@@ -35,15 +43,19 @@ public class EmployeeProcessorTest {
         LocalDate today = now.toLocalDate();
         LocalDate tomorrow = today.plusDays(1);
         interval = new Interval(today.toDateTimeAtStartOfDay(), tomorrow.toDateTimeAtStartOfDay());
+
+        when(stepExecution.getJobExecutionId()).thenReturn(1L);
     }
 
     @Test
     public void whenAnEmployeeWithoutCalculatedTax_isProcessed_thenTaxIsOnlyPercentOfCurrentIncome() throws Exception {
         Employee employee1 = new EmployeeBuilder()
                 .withIncome(1000)
+                .withId(1L)
                 .build();
         Employee employee2 = new EmployeeBuilder()
                 .withIncome(1500)
+                .withId(1L)
                 .build();
 
         TaxCalculation taxCalculation1 = calculateTaxProcessor.process(employee1);

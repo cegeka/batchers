@@ -30,6 +30,6 @@ public class JobResultsTaskletTest {
 
         jobResultsTasklet.execute(stepContributionMock, chunkContextMock);
 
-        verify(monthlyTaxReportServiceMock).generateReport(2, 2015);
+        verify(monthlyTaxReportServiceMock).generateReport(2015, 2);
     }
 }

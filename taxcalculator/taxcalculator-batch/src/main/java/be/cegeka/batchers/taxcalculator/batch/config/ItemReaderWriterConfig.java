@@ -3,11 +3,19 @@ package be.cegeka.batchers.taxcalculator.batch.config;
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
 import be.cegeka.batchers.taxcalculator.infrastructure.config.PersistenceConfig;
+import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static java.lang.Integer.parseInt;
 
 @Configuration
 public class ItemReaderWriterConfig {
@@ -15,11 +23,17 @@ public class ItemReaderWriterConfig {
     @Autowired
     private PersistenceConfig persistenceConfig;
 
-    @Bean
-    public JpaPagingItemReader<Employee> taxCalculatorItemReader() {
+    @Bean(destroyMethod = "")
+    @StepScope
+    public JpaPagingItemReader<Employee> taxCalculatorItemReader(@Value("#{stepExecution}") StepExecution stepExecution) {
         JpaPagingItemReader<Employee> employeeItemReader = new JpaPagingItemReader<>();
         employeeItemReader.setEntityManagerFactory(persistenceConfig.entityManagerFactory());
-        employeeItemReader.setQueryString(Employee.GET_ALL_QUERY);
+        employeeItemReader.setQueryString(Employee.GET_UNPROCESSED_EMPLOYEES_BY_YEAR_AND_MONTH_QUERY);
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("year", parseInt(stepExecution.getJobParameters().getString("year")));
+        parameters.put("month", parseInt(stepExecution.getJobParameters().getString("month")));
+        parameters.put("jobExecutionId", stepExecution.getJobExecutionId());
+        employeeItemReader.setParameterValues(parameters);
         return employeeItemReader;
     }
 

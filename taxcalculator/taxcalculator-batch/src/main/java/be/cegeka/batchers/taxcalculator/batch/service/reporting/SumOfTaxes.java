@@ -24,5 +24,4 @@ public class SumOfTaxes {
     public double getFailedSum() {
         return taxServiceCallResultRepository.getFailedSum(year, month).getAmount().doubleValue();
     }
-
 }
