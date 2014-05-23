@@ -1,8 +1,9 @@
 ## Setup
 
 Install the following:
-* Java 8, maven 3, tomcat 7
-* NodeJS v0.10+ (tested on v0.10.28)
+> Java 8, Maven 3, Tomcat 7
+
+> NodeJS v0.10+ (tested on v0.10.28)
 
  
 Install Karma, Jasmine and browser launchers by running the following commands:
@@ -19,46 +20,47 @@ Install Karma, Jasmine and browser launchers by running the following commands:
 Set CHROME\_BIN and FIREFOX\_BIN as environment variables, pointing to the executables themselves.
 
 Import the maven projects in IntelliJ/Eclipse and run:
-* mvn clean install
+> mvn clean install
 
 ## Running the app
 
-* create one Run/Debug configuration for stubwebservice-war exploded on port 9091. Context path: /stubwebservice
-* alternative : cd taxcalculator-stubwebservice && mvn jetty:run
-* create one Run/Debug configuration for presentation-war exploded (different port, preferably 9090). Context path: /taxcalculator
-* alternative (does not pre-populate database with employees) : cd taxcalculator-presentation && mvn tomcat7:run
-* start both servers and connect to [http://localhost:9090/taxcalculator/](http://localhost:9090/taxcalculator/)
+1. Create one Run/Debug configuration for stubwebservice-war exploded on port 9091. Context path: /stubwebservice or use cd taxcalculator-stubwebservice && mvn jetty:run
+2. Create one Run/Debug configuration for presentation-war exploded (different port, preferably 9090). Context path: /taxcalculator or (does not pre-populate database with employees) : cd taxcalculator-presentation && mvn tomcat7:run
+3. Start both servers and connect to [http://localhost:9090/taxcalculator/](http://localhost:9090/taxcalculator/)
 
 ## Deployment configuration
 
 There are two system properties that need to be set:
-* APP_ENV - either "default" (this is the default setting, using in-memory HSQLDB) or "staging" (using MySQL)
-* log_dir - having "target/logs" as default
+> APP_ENV - either "default" (this is the default setting, using in-memory HSQLDB) or "staging" (using MySQL)
+
+> log_dir - having "target/logs" as default
 
 You can set these at tomcat startup: -DAPP\_ENV=... -Dlog\_dir=...
 
 ## Project structure
 
-### 1. application
-contains the domain + business logic, services for sending email + generate PDFs
+#### 1. Presentation
+Shows the employee table and allows the job to be run manually.
 
-### 2. batch
+#### 2. Application
+Domain and business logic, services for sending email and generate PDFs
+
+#### 3. Batch
 SpringBatch configuration (Jobs/Steps/Reader/Writers/Processors/Listeners definitions)
 
-### 3. infrastructure
-PersistenceConfig + PropertyPlaceHolderConfig
+#### 4. Infrastructure
+PersistenceConfig and PropertyPlaceHolderConfig
 
-### 4. stubwebservice
+#### 5. Stubwebservice
 Simulates an external service (eg: payments).
 
-It can be configured to timeout&fail for specific employees: taxcalculator-stubwebservice.properties
+It can be configured to timeout&fail for specific employees: __taxcalculator-stubwebservice.properties__
 
-stubwebservice.blacklistemployees - employee ids for which the server responds with a 500 internal server error, and how many times
+__stubwebservice.blacklistemployees__ - employee ids for which the server responds with a 500 internal server error, and how many times
 
-stubwebservice.timeoutemployees - employee ids for which the server times out
+__stubwebservice.timeoutemployees__ - employee ids for which the server times out
 
-### 5. presentation
-Shows the employee table and allows the job to be run manually.
+
 
 ## Spring Batch Configuration
 We started from the idea that we will have a list of employees for which we run a __job__ with the following __steps__:
@@ -85,7 +87,7 @@ Our main configuration class for the job is __EmployeeJobConfig__.
 ```
 
 
-## HOW TOs
+## How Tos
 
 - Attempt to process all items, despite running into exceptions (eg: external services)
 Use a unique identifier for each job (eg: current time), and make all other parameter non-identifiable
@@ -100,7 +102,7 @@ Write the query *carefully* :)
 - Integration testing (see __AbstractIntegrationTest__)
 Spring Batch provites some utility classes for testing, such as JobLauncherTestUtils (allows running jobs or steps) and JobRepositoryTestUtils (allows removing job executions from the JobRepository)
 
-- Idempotent operations make reasoning about retry/failure scenarios a lot easier. When an operation is not idempotent you can create a wrapper for that action that is idempotent
+- Idempotent operations make retry/failure scenarios a lot easier. When an operation is not idempotent you can create a wrapper for that action that is idempotent
 
 - Using retry templates: see __CallWebserviceProcessor__ for configuring retry within a step
 
