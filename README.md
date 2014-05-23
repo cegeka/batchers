@@ -111,11 +111,15 @@ There should be just one transaction manager, shared between JPA and Spring, the
 
 #### 2. Exception handling during processing
 
-- Default/No Skip Policy - the processing does not continue, the job execution is failed
-- Skip Policy - if the exception can be skipped, then the current chunk is rolled back and reexecuted without the item w/ exception
-- No-Rollback - if the exception is configured not to trigger a roll-back, the processing of the current chunk continues
+- __Default/No Skip Policy__ - the processing does not continue, the job execution is failed
+- __Skip Policy__ - if the exception can be skipped, then the current chunk is rolled back and reexecuted without the item w/ exception
+- __No-Rollback__ - if the exception is configured not to trigger a roll-back, the processing of the current chunk continues
 
 #### 3. Paging paging item readers
 The item reader query MUST NOT change size during the step execution.
 
 ## Relevant links
+
+- Spring Batch Reference Documentation: http://docs.spring.io/spring-batch/reference/html/
+- Spring Batch presentation at Java Users Group by Michael Minella: https://www.youtube.com/watch?v=CYTj5YT7CZU
+- Spring Batch with Java Config: https://blog.codecentric.de/en/2013/06/spring-batch-2-2-javaconfig-part-1-a-comparison-to-xml/
