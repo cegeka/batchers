@@ -25,19 +25,6 @@ Import the maven projects in IntelliJ/Eclipse and run:
 * alternative (does not pre-populate database with employees) : cd taxcalculator-presentation && mvn tomcat7:run
 * start both servers and connect to [http://localhost:9090/taxcalculator/](http://localhost:9090/taxcalculator/)
 
-# Spring Batch Configuration
-We started from the idea that we will have a list of employees for which we:
-* calculate taxes
-* call a webservice to send the tax
-* generate a PDF
-
-At the end of the job we create a new PDF with results from the job (like sum of taxes).
-
-Our main configuration class for the job is __EmployeeJobConfig__.
-There should be just one transaction manager, shared between JPA and Spring, therefore our Job config extends __DefaultBatchConfigurer__. This provides a default job repository and job launcher.
-
-The __ProcessorConfig__ class defines defines the processors of the item (employee).
-
 # Deployment configuration
 
 There are two system properties that need to be set:
@@ -48,25 +35,76 @@ You can set these at tomcat startup: -DAPP\_ENV=... -Dlog\_dir=...
 
 # Project structure
 
-1.application
-* domain + business logic + send email + generate PDFs
+1. application
+* contains the domain + business logic, services for sending email + generate PDFs
 
-2.batch
-* SpringBatch implementation + EmployeeJobConfig
+2. batch
+* SpringBatch configuration (Jobs/Steps/Reader/Writers/Processors/Listeners definitions)
 
-3.infrastructure
+3. infrastructure
 * PersistenceConfig + PropertyPlaceHolderConfig
 
-4.stubwebservice
-* tax service
-* listen for calls
-* configure for timeout
-* configure for fail
+4. stubwebservice
+* simulates an external service (eg: payments)
+* it can be configured to timeout&fail for specific employees: taxcalculator-stubwebservice.properties
+stubwebservice.blacklistemployees - employee ids for which the server responds with a 500 internal server error, and how many times
+stubwebservice.timeoutemployees - employee ids for which the server times out
 
-5.presentation
+5. presentation
 * one page - employees table
 * run job functions
 
 
+# Spring Batch Configuration
+We started from the idea that we will have a list of employees for which we run a __job__ with the following __steps__:
+* Step1: calculate taxes
+* Step2: A __composite item processor__ with these processors:
+    call a webservice to send the tax
+    generate a PDF
+    email it to the employee
+* Step3: (__tasklet__) generate a report with the sum of all the taxes calculated in the previous step
 
+Our main configuration class for the job is __EmployeeJobConfig__.
 
+```java
+        @Bean
+        public Job employeeJob() {
+                return jobBuilders.get(EMPLOYEE_JOB)
+                        .start(taxCalculationStep())
+                        .next(wsCallStep())
+                        .next(generatePDFStep())
+                        .next(jobResultsPdf())
+                        .listener(employeeJobExecutionListener)
+                        .build();
+        }
+```
+
+A step consists of an item reader, item processor and an item writer.
+
+# HOW TOs
+
+- Attempt to process all items, despite running into exceptions (eg: external services)
+Use a unique identifier for each job (eg: current time), and make all other parameter non-identifiable
+Use a "always skip policy"
+Track execution results in the DB
+Write the query *carefully* :)
+
+# Lessons learned (so you don't have to!)
+
+- There should be just one transaction manager, shared between JPA and Spring, therefore our Job config extends __DefaultBatchConfigurer__. This provides a default job repository and job launcher.
+
+- Integration testing (see __AbstractIntegrationTest__)
+Spring Batch provites some utility classes for testing, such as JobLauncherTestUtils (allows running jobs or steps) and JobRepositoryTestUtils (allows removing job executions from the JobRepository)
+
+- Idempotent operations make reasoning about retry/failure scenarios a lot easier. When an operation is not idempotent you can create a wrapper for that action that is idempotent
+
+- Using retry templates: see __CallWebserviceProcessor__ for configuring retry within a step
+
+- So, an exception occurs in processing an item...
+Default/No Skip Policy - the processing does not continue, the job execution is failed
+Skip Policy - if the exception can be skipped, then the current chunk is rolled back and reexecuted without the item w/ exception
+No-Rollback - if the exception is configured not to trigger a roll-back, the processing of the current chunk continues
+
+- When using paging item readers, the item reader query MUST NOT change size during the step execution.
+
+# Relevant links
