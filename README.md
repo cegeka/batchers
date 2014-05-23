@@ -97,26 +97,25 @@ Our main configuration class for the job is __EmployeeJobConfig__.
 Idempotent operations make retry/failure scenarios a lot easier. When an operation is not idempotent you can create a wrapper for that action that is idempotent
 
 #### 3. Integration testing
-see __AbstractIntegrationTest__
+> see __AbstractIntegrationTest__
 
 Spring Batch provides utility classes for testing, such as JobLauncherTestUtils (allows running jobs or steps) and JobRepositoryTestUtils (allows removing job executions from the JobRepository)
 
 #### 4. Using retry
-see __CallWebserviceProcessor__ for configuring retry within a step
+> see __CallWebserviceProcessor__ for configuring retry within a step
 
 ## 4. Lessons learned (so you don't have to!)
 
-#### Transaction Management
+#### 1. Transaction Management
 There should be just one transaction manager, shared between JPA and Spring, therefore our Job config extends __DefaultBatchConfigurer__. This provides a default job repository and job launcher.
 
-
-#### Exception handling during processing
+#### 2. Exception handling during processing
 
 - Default/No Skip Policy - the processing does not continue, the job execution is failed
 - Skip Policy - if the exception can be skipped, then the current chunk is rolled back and reexecuted without the item w/ exception
 - No-Rollback - if the exception is configured not to trigger a roll-back, the processing of the current chunk continues
 
-#### Paging paging item readers
+#### 3. Paging paging item readers
 The item reader query MUST NOT change size during the step execution.
 
 ## Relevant links
