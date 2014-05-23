@@ -11,6 +11,7 @@ Install Karma, Jasmine and browser launchers by running the following commands:
 * npm install karma-firefox-launcher --save-dev
 * npm install -g karma-jasmine
 * npm install karma-jasmine --save-dev
+* npm install -g karma-cli
 
 Set CHROME\_BIN and FIREFOX\_BIN as environment variables, pointing to the executables themselves.
 
