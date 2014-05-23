@@ -2,6 +2,7 @@ package be.cegeka.batchers.taxcalculator.batch.config;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
+import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceException;
 import be.cegeka.batchers.taxcalculator.batch.CalculateTaxProcessor;
 import be.cegeka.batchers.taxcalculator.batch.CallWebserviceProcessor;
 import be.cegeka.batchers.taxcalculator.batch.SendPaycheckProcessor;
@@ -18,6 +19,7 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.step.builder.FaultTolerantStepBuilder;
 import org.springframework.batch.core.step.skip.AlwaysSkipItemSkipPolicy;
+import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 
@@ -50,6 +52,9 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
     private EmployeeJobExecutionListener employeeJobExecutionListener;
 
     @Autowired
+    private JpaPagingItemReader<Employee> taxCalculatorItemReader;
+
+    @Autowired
     private CalculateTaxProcessor calculateTaxProcessor;
     @Autowired
     private CallWebserviceProcessor callWebserviceProcessor;
@@ -71,13 +76,10 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
 
     @Bean
     public Step taxCalculationStep() {
-        FaultTolerantStepBuilder<Employee, TaxCalculation> faultTolerantStepBuilder = stepBuilders
+        return stepBuilders
                 .get(TAX_CALCULATION_STEP)
-                .<Employee, TaxCalculation>chunk(1)
-                .faultTolerant();
-
-        return faultTolerantStepBuilder
-                .reader(itemReaderWriterConfig.taxCalculatorItemReader())
+                .<Employee, TaxCalculation>chunk(5)
+                .reader(taxCalculatorItemReader)
                 .processor(calculateTaxProcessor)
                 .writer(itemReaderWriterConfig.taxCalculatorItemWriter())
                 .build();
@@ -85,19 +87,19 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
 
     @Bean
     public Step wsCallStep() {
-        FaultTolerantStepBuilder<Employee, Employee> faultTolerantStepBuilder = stepBuilders.get(WS_CALL_STEP)
-                .<Employee, Employee>chunk(1)
-                .faultTolerant();
-
-        faultTolerantStepBuilder.listener((SkipListener) sumOfTaxesItemListener);
-        faultTolerantStepBuilder.skipPolicy(new AlwaysSkipItemSkipPolicy());
-
-        return faultTolerantStepBuilder
+        return stepBuilders.get(WS_CALL_STEP)
+                .<Employee, Employee>chunk(5)
+                .faultTolerant()
+                .listener((SkipListener) sumOfTaxesItemListener)
+                .skipPolicy(new AlwaysSkipItemSkipPolicy())
+                .noRollback(TaxWebServiceException.class)
                 .reader(itemReaderWriterConfig.wsCallItemReader())
                 .processor(callWebserviceProcessor)
                 .writer(itemReaderWriterConfig.wsCallItemWriter())
                 .listener(sumOfTaxesItemListener)
                 .build();
+
+
     }
 
     @Bean

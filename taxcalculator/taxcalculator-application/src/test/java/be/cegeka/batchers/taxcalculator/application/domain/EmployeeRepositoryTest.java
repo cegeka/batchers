@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.joda.money.CurrencyUnit.EUR;
 
 public class EmployeeRepositoryTest extends IntegrationTest {
     public static final int INCOME = 500;
@@ -102,7 +103,7 @@ public class EmployeeRepositoryTest extends IntegrationTest {
                     .withEmailAddress("john.smith" + i + "@gmail.com")
                     .build();
             employeeRepository.save(employee);
-            taxCalculationRepository.save(TaxCalculation.from(1L, employee, 2014, 5, Money.of(CurrencyUnit.EUR, new BigDecimal(100))));
+            taxCalculationRepository.save(TaxCalculation.from(1L, employee, 2014, 5, Money.of(EUR, new BigDecimal(100))));
         }
 
         List<EmployeeTo> first20 = employeeRepository.getFirst20();
@@ -123,4 +124,5 @@ public class EmployeeRepositoryTest extends IntegrationTest {
         List<EmployeeTo> first20 = employeeRepository.getFirst20();
         assertThat(first20).hasSize(20);
     }
+
 }

@@ -14,7 +14,7 @@ import java.math.RoundingMode;
 public class TaxCalculatorService {
 
     @Autowired
-    RunningTimeService runningTimeService;
+    private RunningTimeService runningTimeService;
 
     public TaxCalculation calculateTax(long jobExecutionId, Employee employee, int year, int month) {
         runningTimeService.sleep();

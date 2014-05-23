@@ -55,7 +55,6 @@ public class EmployeeRepository {
         criteriaQuery.select(criteriaQuery.from(Employee.class));
 
         return entityManager.createQuery(criteriaQuery).getResultList();
-
     }
 
     public List<EmployeeTo> getFirst20() {

@@ -29,6 +29,7 @@ public class TaxCalculatorServiceTest {
     public void setUp() throws Exception {
         employee = new EmployeeBuilder()
                 .withIncome(100)
+                .withId(1L)
                 .build();
     }
 

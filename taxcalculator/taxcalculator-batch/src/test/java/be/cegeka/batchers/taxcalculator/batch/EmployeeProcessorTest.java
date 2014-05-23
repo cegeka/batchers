@@ -51,9 +51,11 @@ public class EmployeeProcessorTest {
     public void whenAnEmployeeWithoutCalculatedTax_isProcessed_thenTaxIsOnlyPercentOfCurrentIncome() throws Exception {
         Employee employee1 = new EmployeeBuilder()
                 .withIncome(1000)
+                .withId(1L)
                 .build();
         Employee employee2 = new EmployeeBuilder()
                 .withIncome(1500)
+                .withId(1L)
                 .build();
 
         TaxCalculation taxCalculation1 = calculateTaxProcessor.process(employee1);
