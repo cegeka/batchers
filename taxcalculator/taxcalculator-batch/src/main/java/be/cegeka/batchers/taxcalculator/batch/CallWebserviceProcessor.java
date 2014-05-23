@@ -1,10 +1,10 @@
 package be.cegeka.batchers.taxcalculator.batch;
 
-import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResult;
 import be.cegeka.batchers.taxcalculator.application.service.TaxPaymentWebService;
 import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceException;
+import be.cegeka.batchers.taxcalculator.batch.service.TaxPaymentWebServiceFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 @Component
 public class CallWebserviceProcessor implements ItemProcessor<TaxCalculation, TaxServiceCallResult> {
@@ -24,6 +25,9 @@ public class CallWebserviceProcessor implements ItemProcessor<TaxCalculation, Ta
 
     @Autowired
     private TaxPaymentWebService taxPaymentWebService;
+
+    @Autowired
+    private TaxPaymentWebServiceFacade taxPaymentWebServiceFacade;
 
     @Value("${taxProcessor.retry.initialInterval:100}")
     private long initialInterval = 100;
@@ -34,7 +38,13 @@ public class CallWebserviceProcessor implements ItemProcessor<TaxCalculation, Ta
     @Override
     public TaxServiceCallResult process(TaxCalculation taxCalculation) throws Exception {
         LOG.info("Web service process: " + taxCalculation);
-        return createRetryTemplate().execute(retryContext -> taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation));
+
+        Callable<TaxServiceCallResult> callable = () -> createRetryTemplate().execute(retryContext ->
+                taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation));
+
+        TaxServiceCallResult taxServiceCallResult = taxPaymentWebServiceFacade.callTaxService(taxCalculation, callable);
+
+        return taxServiceCallResult;
     }
 
     private RetryTemplate createRetryTemplate() {

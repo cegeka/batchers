@@ -61,6 +61,7 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
 
     @Autowired
     private SendPaycheckProcessor sendPaycheckProcessor;
+
     @Autowired
     private JobResultsTasklet jobResultsTasklet;
 

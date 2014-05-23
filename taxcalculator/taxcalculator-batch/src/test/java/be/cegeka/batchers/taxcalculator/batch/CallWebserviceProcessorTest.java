@@ -4,18 +4,21 @@ import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeBuilder;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResult;
-import be.cegeka.batchers.taxcalculator.application.service.TaxPaymentWebService;
 import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceException;
+import be.cegeka.batchers.taxcalculator.batch.service.TaxPaymentWebServiceFacade;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.joda.time.DateTime;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
+
+import java.util.concurrent.Callable;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -27,12 +30,10 @@ public class CallWebserviceProcessorTest {
     private CallWebserviceProcessor callWebserviceProcessor;
 
     @Mock
-    private TaxPaymentWebService taxPaymentWebServiceMock;
+    private TaxPaymentWebServiceFacade taxPaymentWebServiceFacade;
 
     private Employee employee;
-
     private TaxCalculation taxCalculation;
-
     private DateTime now;
     private TaxServiceCallResult taxServiceCallResult;
 
@@ -47,7 +48,8 @@ public class CallWebserviceProcessorTest {
 
     @Test
     public void testProcessHappyPath_NoExceptionHasBeenThrownAndEmployeeIsReturned() throws Exception {
-        when(taxPaymentWebServiceMock.doWebserviceCallToTaxService(taxCalculation)).thenReturn(taxServiceCallResult);
+        when(taxPaymentWebServiceFacade.callTaxService(eq(taxCalculation), any(Callable.class)))
+                .thenReturn(taxServiceCallResult);
 
         TaxServiceCallResult taxServiceCallResult1 = callWebserviceProcessor.process(taxCalculation);
         assertThat(taxServiceCallResult1.getTaxCalculation().getEmployee()).isEqualTo(employee);
@@ -55,26 +57,18 @@ public class CallWebserviceProcessorTest {
 
     @Test(expected = TaxWebServiceException.class)
     public void testProcessBadResponse_ExceptionHasBeenThrownAndEmployeeIsReturned() throws Exception {
-        when(taxPaymentWebServiceMock.doWebserviceCallToTaxService(taxCalculation))
+        when(taxPaymentWebServiceFacade.callTaxService(eq(taxCalculation), any(Callable.class)))
                 .thenThrow(new TaxWebServiceException("boe"));
 
         callWebserviceProcessor.process(taxCalculation);
     }
 
     @Test
-    public void testProcessBadThenGoodResponse_RetryAndEmployeeIsReturned() throws Exception {
-        when(taxPaymentWebServiceMock.doWebserviceCallToTaxService(taxCalculation))
-                .thenThrow(new TaxWebServiceException("boe"))
-                .thenReturn(taxServiceCallResult);
-
-        assertThat(callWebserviceProcessor.process(taxCalculation)).isEqualTo(taxServiceCallResult);
-    }
-
-    @Test
+    @Ignore("to be moved in RetryTemplateTest")
     public void testProcessExponential_RetryAndEmployeeIsReturned() throws Exception {
         long start = System.currentTimeMillis();
 
-        when(taxPaymentWebServiceMock.doWebserviceCallToTaxService(taxCalculation))
+        when(taxPaymentWebServiceFacade.callTaxService(eq(taxCalculation), any(Callable.class)))
                 .thenThrow(new TaxWebServiceException("boe"))
                 .thenThrow(new TaxWebServiceException("boe"))
                 .thenReturn(taxServiceCallResult);
@@ -82,7 +76,7 @@ public class CallWebserviceProcessorTest {
         TaxServiceCallResult processed = callWebserviceProcessor.process(taxCalculation);
 
         assertThat(processed).isEqualTo(taxServiceCallResult);
-        verify(taxPaymentWebServiceMock, times(3)).doWebserviceCallToTaxService(taxCalculation);
+        verify(taxPaymentWebServiceFacade, times(3)).callTaxService(eq(taxCalculation), any(Callable.class));
 
         long end = System.currentTimeMillis();
         long duration = end - start;

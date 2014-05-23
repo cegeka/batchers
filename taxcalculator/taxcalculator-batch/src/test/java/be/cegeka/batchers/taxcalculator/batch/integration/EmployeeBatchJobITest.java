@@ -55,6 +55,9 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     @Autowired
     TaxCalculationRepository taxCalculationRepository;
 
+    @Autowired
+    TaxServiceCallResultRepository taxServiceCallResultRepository;
+
     private MockRestServiceServer mockServer;
     private JobParameters jobParams;
     private static Long counter = 0L;
@@ -78,6 +81,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     public void tearDown() {
         SmtpServerStub.stop();
         payCheckRepository.deleteAll();
+        taxServiceCallResultRepository.deleteAll();
         taxCalculationRepository.deleteAll();
         employeeRepository.deleteAll();
     }
