@@ -145,7 +145,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Ignore
+    @Ignore("If you can read this, then I am lazy and bug me to fix the @Ignore")
     public void jobRetriesIfWebserviceFails() throws Exception {
         haveOneEmployee();
 
@@ -169,7 +169,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Ignore
+    @Ignore("If you can read this, then I am lazy and bug me to fix the @Ignore")
     public void whenTaxServiceReturnsFail_thenPaycheckIsNotSent() throws Exception {
         haveOneEmployee();
         respondOneTimeWithBadRequest();

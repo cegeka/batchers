@@ -29,7 +29,7 @@ public class TaxPaymentWebService {
         taxTo.setEmployeeId(taxCalculation.getEmployee().getId());
 
         TaxServiceCallResult taxServiceCallResult;
-        int httpStatus;
+        Integer httpStatus = null;
         String responseBody;
 
         try {
@@ -39,7 +39,10 @@ public class TaxPaymentWebService {
             if ("OK".equals(status)) {
                 httpStatus = HttpStatus.OK.value();
             } else {
-                httpStatus = webserviceResult.getStatusCode().value();
+                HttpStatus wsResultStatusCode = webserviceResult.getStatusCode();
+                if (wsResultStatusCode != null) {
+                    httpStatus = wsResultStatusCode.value();
+                }
             }
 
             responseBody = webserviceResult.getBody().toString();
@@ -47,8 +50,10 @@ public class TaxPaymentWebService {
             httpStatus = e.getStatusCode().value();
             responseBody = e.getResponseBodyAsString();
         } catch (ResourceAccessException e) {
-            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR.value();
             responseBody = e.getMessage();
+        }
+        if (httpStatus == null) {
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR.value();
         }
 
         taxServiceCallResult = getTaxServiceCallResult(taxCalculation, taxTo,

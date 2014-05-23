@@ -64,8 +64,7 @@ public class TaxPaymentWebServiceTest {
         assertThat(taxServiceCallResult.getTaxCalculation()).isEqualTo(taxCalculation);
     }
 
-    @Test(expected = TaxWebServiceException.class)
-    @Ignore
+    @Test
     public void testProcessBadResponse_ExceptionHasBeenThrownForever() throws Exception {
         whenCallingTheWebservice().thenReturn(mockedResponse);
         when(mockedResponse.getBody()).thenReturn(new TaxServiceResponse("ERROR"));
@@ -73,29 +72,33 @@ public class TaxPaymentWebServiceTest {
         Employee employee = new EmployeeBuilder().build();
         TaxCalculation taxCalculation = TaxCalculation.from(1L, employee, 2014, 1, Money.of(CurrencyUnit.EUR, 2000.0));
 
-        taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
+        TaxServiceCallResult taxServiceCallResult = taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
+
+        assertThat(taxServiceCallResult.getResponseStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 
-    @Test(expected = TaxWebServiceException.class)
-    @Ignore
+    @Test
     public void testProcessTimeoutResponse_ExceptionHasBeenThrownForever() throws Exception {
         whenCallingTheWebservice().thenThrow(aWrappedTimeOutException());
 
         Employee employee = new EmployeeBuilder().build();
         TaxCalculation taxCalculation = TaxCalculation.from(1L, employee, 2014, 1, Money.of(CurrencyUnit.EUR, 2000.0));
 
-        taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
+        TaxServiceCallResult taxServiceCallResult = taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
+
+        assertThat(taxServiceCallResult.getResponseStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 
-    @Test(expected = TaxWebServiceException.class)
-    @Ignore
+    @Test
     public void testProcess_UnexpectedExceptionOccurs_ExceptionIsRethrown() throws Exception {
         whenCallingTheWebservice().thenThrow(aMethodNotAllowedException());
 
         Employee employee = new EmployeeBuilder().build();
         TaxCalculation taxCalculation = TaxCalculation.from(1L, employee, 2014, 1, Money.of(CurrencyUnit.EUR, 2000.0));
 
-        taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
+        TaxServiceCallResult taxServiceCallResult = taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
+
+        assertThat(taxServiceCallResult.getResponseStatus()).isEqualTo(HttpStatus.METHOD_NOT_ALLOWED.value());
     }
 
     private OngoingStubbing<ResponseEntity<TaxServiceResponse>> whenCallingTheWebservice() {
