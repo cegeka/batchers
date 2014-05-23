@@ -35,16 +35,16 @@ You can set these at tomcat startup: -DAPP\_ENV=... -Dlog\_dir=...
 
 ## Project structure
 
-1. application
+### 1. application
 contains the domain + business logic, services for sending email + generate PDFs
 
-2. batch
+### 2. batch
 SpringBatch configuration (Jobs/Steps/Reader/Writers/Processors/Listeners definitions)
 
-3. infrastructure
+### 3. infrastructure
 PersistenceConfig + PropertyPlaceHolderConfig
 
-4. stubwebservice
+### 4. stubwebservice
 Simulates an external service (eg: payments).
 
 It can be configured to timeout&fail for specific employees: taxcalculator-stubwebservice.properties
@@ -53,7 +53,7 @@ stubwebservice.blacklistemployees - employee ids for which the server responds w
 
 stubwebservice.timeoutemployees - employee ids for which the server times out
 
-5. presentation
+### 5. presentation
 Shows the employee table and allows the job to be run manually.
 
 ## Spring Batch Configuration
