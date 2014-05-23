@@ -100,15 +100,18 @@ Track execution results in the DB
 
 Write the query *carefully* :)
 
+#### Simplify retry/restart logic
+Idempotent operations make retry/failure scenarios a lot easier. When an operation is not idempotent you can create a wrapper for that action that is idempotent
+
+#### Integration testing
+see __AbstractIntegrationTest__
+
+Spring Batch provides utility classes for testing, such as JobLauncherTestUtils (allows running jobs or steps) and JobRepositoryTestUtils (allows removing job executions from the JobRepository)
+
+
 ## Lessons learned (so you don't have to!)
 
 - There should be just one transaction manager, shared between JPA and Spring, therefore our Job config extends __DefaultBatchConfigurer__. This provides a default job repository and job launcher.
-
-- Integration testing (see __AbstractIntegrationTest__)
-
-Spring Batch provites some utility classes for testing, such as JobLauncherTestUtils (allows running jobs or steps) and JobRepositoryTestUtils (allows removing job executions from the JobRepository)
-
-- Idempotent operations make retry/failure scenarios a lot easier. When an operation is not idempotent you can create a wrapper for that action that is idempotent
 
 - Using retry templates: see __CallWebserviceProcessor__ for configuring retry within a step
 
