@@ -3,11 +3,14 @@ package be.cegeka.batchers.taxcalculator.batch.service;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResult;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResultRepository;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.Callable;
 
@@ -43,6 +46,7 @@ public class TaxPaymentWebServiceFacade {
         return false;
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     private void saveTaxServiceCallResult(TaxServiceCallResult taxServiceCallResult) {
         taxServiceCallResultRepository.save(taxServiceCallResult);
     }
