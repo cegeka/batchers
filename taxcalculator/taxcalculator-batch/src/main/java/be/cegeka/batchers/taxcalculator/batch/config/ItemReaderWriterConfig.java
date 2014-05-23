@@ -1,9 +1,11 @@
 package be.cegeka.batchers.taxcalculator.batch.config;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
+import be.cegeka.batchers.taxcalculator.application.domain.PayCheck;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
 import be.cegeka.batchers.taxcalculator.infrastructure.config.PersistenceConfig;
 import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.JpaPagingItemReader;
@@ -16,6 +18,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static java.lang.Integer.parseInt;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 public class ItemReaderWriterConfig {
@@ -45,16 +50,22 @@ public class ItemReaderWriterConfig {
     }
 
     @Bean
-    public JpaPagingItemReader<Employee> wsCallItemReader() {
-        JpaPagingItemReader<Employee> employeeItemReader = new JpaPagingItemReader<>();
+    @StepScope
+    public JpaPagingItemReader<TaxCalculation> wsCallItemReader(@Value("#{jobParameters[year]}") Integer year,
+                                                                @Value("#{jobParameters[month]}") Integer month) {
+        JpaPagingItemReader<TaxCalculation> employeeItemReader = new JpaPagingItemReader<>();
         employeeItemReader.setEntityManagerFactory(persistenceConfig.entityManagerFactory());
-        employeeItemReader.setQueryString(Employee.GET_ALL_QUERY);
+        employeeItemReader.setQueryString(TaxCalculation.FIND_BY_YEAR_AND_MONTH_QUERY);
+        Map<String, Object> queryParams = new HashMap<>();
+        queryParams.put("month", month);
+        queryParams.put("year", year);
+        employeeItemReader.setParameterValues(queryParams);
         return employeeItemReader;
     }
 
     @Bean
-    public JpaItemWriter<Employee> wsCallItemWriter() {
-        JpaItemWriter<Employee> employeeJpaItemWriter = new JpaItemWriter<>();
+    public JpaItemWriter<PayCheck> wsCallItemWriter() {
+        JpaItemWriter<PayCheck> employeeJpaItemWriter = new JpaItemWriter<>();
         employeeJpaItemWriter.setEntityManagerFactory(persistenceConfig.entityManagerFactory());
         return employeeJpaItemWriter;
     }
