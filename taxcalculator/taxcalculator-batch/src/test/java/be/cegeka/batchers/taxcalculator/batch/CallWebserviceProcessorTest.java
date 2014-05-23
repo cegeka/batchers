@@ -46,7 +46,7 @@ public class CallWebserviceProcessorTest {
         employee = new EmployeeBuilder().build();
         now = DateTime.now();
         Money money = Money.of(CurrencyUnit.EUR, 2000.0);
-        taxCalculation = TaxCalculation.from(employee, 2014, 1, money, now);
+        taxCalculation = TaxCalculation.from(1L, employee, 2014, 1, money);
         taxServiceCallResult = TaxServiceCallResult.from(taxCalculation, "", HttpStatus.OK.value(), "", now);
     }
 

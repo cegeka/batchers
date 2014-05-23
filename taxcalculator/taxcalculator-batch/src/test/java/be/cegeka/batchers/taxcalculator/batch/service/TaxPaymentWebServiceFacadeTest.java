@@ -41,7 +41,7 @@ public class TaxPaymentWebServiceFacadeTest {
         employee = new EmployeeBuilder().build();
         now = DateTime.now();
         Money money = Money.of(CurrencyUnit.EUR, 2000.0);
-        taxCalculation = TaxCalculation.from(employee, 2014, 1, money, now);
+        taxCalculation = TaxCalculation.from(1L, employee, 2014, 1, money);
         taxServiceCallResultValid = TaxServiceCallResult.from(taxCalculation, "", HttpStatus.OK.value(), "", now);
         taxServiceCallResultFailed = TaxServiceCallResult.from(taxCalculation, "", HttpStatus.NOT_FOUND.value(), "", now);
     }

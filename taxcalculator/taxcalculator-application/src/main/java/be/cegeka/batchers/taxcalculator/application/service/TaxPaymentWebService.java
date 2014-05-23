@@ -5,8 +5,6 @@ import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResult;
 import be.cegeka.batchers.taxcalculator.to.TaxServiceResponse;
 import be.cegeka.batchers.taxcalculator.to.TaxTo;
-import org.joda.money.CurrencyUnit;
-import org.joda.money.Money;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

@@ -7,12 +7,9 @@ import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceExcepti
 import be.cegeka.batchers.taxcalculator.batch.CalculateTaxProcessor;
 import be.cegeka.batchers.taxcalculator.batch.CallWebserviceProcessor;
 import be.cegeka.batchers.taxcalculator.batch.SendPaycheckProcessor;
-import be.cegeka.batchers.taxcalculator.batch.service.reporting.EmployeeJobExecutionListener;
-import be.cegeka.batchers.taxcalculator.batch.service.reporting.SumOfTaxesItemListener;
 import be.cegeka.batchers.taxcalculator.batch.tasklet.JobResultsTasklet;
 import be.cegeka.batchers.taxcalculator.infrastructure.config.PropertyPlaceHolderConfig;
 import org.springframework.batch.core.Job;
-import org.springframework.batch.core.SkipListener;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.DefaultBatchConfigurer;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -50,12 +47,6 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
     private ItemReaderWriterConfig itemReaderWriterConfig;
 
     @Autowired
-    private SumOfTaxesItemListener sumOfTaxesItemListener;
-
-    @Autowired
-    private EmployeeJobExecutionListener employeeJobExecutionListener;
-
-    @Autowired
     private JpaPagingItemReader<Employee> taxCalculatorItemReader;
 
     @Autowired
@@ -78,7 +69,6 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
                 .start(taxCalculationStep())
                 .next(wsCallStep())
                 .next(jobResultsPdf())
-                .listener(employeeJobExecutionListener)
                 .build();
     }
 
@@ -99,7 +89,6 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
                 .<TaxCalculation, PayCheck>chunk(5)
                 .faultTolerant();
 
-        faultTolerantStepBuilder.listener((SkipListener) sumOfTaxesItemListener);
         faultTolerantStepBuilder.skipPolicy(new AlwaysSkipItemSkipPolicy());
         faultTolerantStepBuilder.noRollback(TaxWebServiceException.class);
 
@@ -113,7 +102,6 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
                 .reader(itemReaderWriterConfig.wsCallItemReader(OVERRIDDEN_BY_EXPRESSION, OVERRIDDEN_BY_EXPRESSION))
                 .processor(compositeItemProcessor)
                 .writer(itemReaderWriterConfig.wsCallItemWriter())
-                .listener(sumOfTaxesItemListener)
                 .build();
     }
 

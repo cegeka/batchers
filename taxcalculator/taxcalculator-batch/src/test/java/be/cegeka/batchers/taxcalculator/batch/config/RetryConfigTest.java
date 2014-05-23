@@ -1,6 +1,5 @@
 package be.cegeka.batchers.taxcalculator.batch.config;
 
-import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResult;
 import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceException;
 import org.junit.Before;
 import org.junit.Test;
@@ -8,15 +7,12 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.RetryCallback;
 import org.springframework.retry.RetryContext;
 import org.springframework.retry.support.RetryTemplate;
 
-import java.util.concurrent.Callable;
-
-import static org.fest.assertions.api.Assertions.*;
-import static org.mockito.Matchers.*;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)

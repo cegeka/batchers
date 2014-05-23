@@ -8,7 +8,6 @@ import be.cegeka.batchers.taxcalculator.to.TaxServiceResponse;
 import be.cegeka.batchers.taxcalculator.to.TaxTo;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,8 +55,7 @@ public class TaxPaymentWebServiceTest {
         when(mockedResponse.getBody()).thenReturn(new TaxServiceResponse("OK"));
 
         Employee employee = new EmployeeBuilder().build();
-        TaxCalculation taxCalculation = TaxCalculation.from(employee, 2014, 1, Money.of(CurrencyUnit.EUR, 2000.0),
-                DateTime.now());
+        TaxCalculation taxCalculation = TaxCalculation.from(1L, employee, 2014, 1, Money.of(CurrencyUnit.EUR, 2000.0));
 
         TaxServiceCallResult taxServiceCallResult = taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
 
@@ -71,8 +69,7 @@ public class TaxPaymentWebServiceTest {
         when(mockedResponse.getBody()).thenReturn(new TaxServiceResponse("ERROR"));
 
         Employee employee = new EmployeeBuilder().build();
-        TaxCalculation taxCalculation = TaxCalculation.from(employee, 2014, 1, Money.of(CurrencyUnit.EUR, 2000.0),
-                DateTime.now());
+        TaxCalculation taxCalculation = TaxCalculation.from(1L, employee, 2014, 1, Money.of(CurrencyUnit.EUR, 2000.0));
 
         taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
     }
@@ -82,8 +79,7 @@ public class TaxPaymentWebServiceTest {
         whenCallingTheWebservice().thenThrow(aWrappedTimeOutException());
 
         Employee employee = new EmployeeBuilder().build();
-        TaxCalculation taxCalculation = TaxCalculation.from(employee, 2014, 1, Money.of(CurrencyUnit.EUR, 2000.0),
-                DateTime.now());
+        TaxCalculation taxCalculation = TaxCalculation.from(1L, employee, 2014, 1, Money.of(CurrencyUnit.EUR, 2000.0));
 
         taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
     }
@@ -93,8 +89,7 @@ public class TaxPaymentWebServiceTest {
         whenCallingTheWebservice().thenThrow(aMethodNotAllowedException());
 
         Employee employee = new EmployeeBuilder().build();
-        TaxCalculation taxCalculation = TaxCalculation.from(employee, 2014, 1, Money.of(CurrencyUnit.EUR, 2000.0),
-                DateTime.now());
+        TaxCalculation taxCalculation = TaxCalculation.from(1L, employee, 2014, 1, Money.of(CurrencyUnit.EUR, 2000.0));
 
         taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
     }

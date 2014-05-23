@@ -65,7 +65,7 @@ public class SendPaycheckProcessorTest {
         byte[] generatedPdfBytes = new byte[]{0, 1, 2, 3, 4};
         when(pdfGeneratorService.generatePdfAsByteArray(any(), anyMap())).thenReturn(generatedPdfBytes);
 
-        TaxCalculation taxCalculation = TaxCalculation.from(employee, 2014, 1, Money.of(CurrencyUnit.EUR, 10.0), new DateTime());
+        TaxCalculation taxCalculation = TaxCalculation.from(1L, employee, 2014, 1, Money.of(CurrencyUnit.EUR, 10.0));
 
         TaxServiceCallResult taxServiceCallResult = TaxServiceCallResult.from(taxCalculation, "", HttpStatus.OK.value(), "", DateTime.now());
 

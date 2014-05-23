@@ -11,8 +11,7 @@ import javax.validation.constraints.NotNull;
 @NamedQueries({
         @NamedQuery(name = TaxServiceCallResult.FIND_BY_TAXCALCULATION, query = TaxServiceCallResult.FIND_BY_TAXCALCULATION_QUERY),
         @NamedQuery(name = TaxServiceCallResult.GET_SUCCESS_SUM, query = TaxServiceCallResult.GET_SUCCESS_SUM_QUERY),
-        @NamedQuery(name = TaxServiceCallResult.GET_FAILED_SUM, query = TaxServiceCallResult.GET_FAILED_SUM_QUERY)
-        @NamedQuery(name = TaxServiceCallResult.FIND_BY_TAXCALCULATION, query = TaxServiceCallResult.FIND_BY_TAXCALCULATION_QUERY),
+        @NamedQuery(name = TaxServiceCallResult.GET_FAILED_SUM, query = TaxServiceCallResult.GET_FAILED_SUM_QUERY),
         @NamedQuery(name = TaxServiceCallResult.FIND_LAST_BY_TAXCALCULATION, query = TaxServiceCallResult.FIND_LAST_BY_TAXCALCULATION_QUERY)
 })
 
