@@ -34,7 +34,7 @@ public class TaxCalculatorServiceTest {
 
     @Test
     public void testCalculateTax() throws Exception {
-        TaxCalculation taxCalculation = taxCalculatorService.calculateTax(employee, 2014, 5);
+        TaxCalculation taxCalculation = taxCalculatorService.calculateTax(1L, employee, 2014, 5);
 
         Money expectedMoney = Money.of(CurrencyUnit.EUR, 10);
 
@@ -43,7 +43,7 @@ public class TaxCalculatorServiceTest {
 
     @Test
     public void testCalculateTaxSleeps() throws Exception {
-        taxCalculatorService.calculateTax(employee, 2014, 5);
+        taxCalculatorService.calculateTax(1L, employee, 2014, 5);
 
         verify(runningTimeService).sleep();
     }

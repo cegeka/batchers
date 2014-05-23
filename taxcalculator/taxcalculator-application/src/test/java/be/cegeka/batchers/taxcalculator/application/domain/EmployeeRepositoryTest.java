@@ -102,7 +102,7 @@ public class EmployeeRepositoryTest extends IntegrationTest {
                     .withEmailAddress("john.smith" + i + "@gmail.com")
                     .build();
             employeeRepository.save(employee);
-            taxCalculationRepository.save(TaxCalculation.from(employee, 2014, 5, Money.of(CurrencyUnit.EUR, new BigDecimal(100)), DateTime.now()));
+            taxCalculationRepository.save(TaxCalculation.from(1L, employee, 2014, 5, Money.of(CurrencyUnit.EUR, new BigDecimal(100))));
         }
 
         List<EmployeeTo> first20 = employeeRepository.getFirst20();

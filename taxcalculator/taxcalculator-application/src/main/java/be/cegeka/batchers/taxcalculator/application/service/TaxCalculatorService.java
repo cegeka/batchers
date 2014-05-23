@@ -16,12 +16,12 @@ public class TaxCalculatorService {
     @Autowired
     RunningTimeService runningTimeService;
 
-    public TaxCalculation calculateTax(Employee employee, int year, int month) {
+    public TaxCalculation calculateTax(long jobExecutionId, Employee employee, int year, int month) {
         runningTimeService.sleep();
         double taxAmount = employee.getIncome() * 0.1;
         Money tax = Money.of(CurrencyUnit.EUR, taxAmount, RoundingMode.HALF_DOWN);
 
-        return TaxCalculation.from(employee, year, month, tax, DateTime.now());
+        return TaxCalculation.from(jobExecutionId, employee, year, month, tax);
     }
 
     public void setRunningTimeService(RunningTimeService runningTimeService) {

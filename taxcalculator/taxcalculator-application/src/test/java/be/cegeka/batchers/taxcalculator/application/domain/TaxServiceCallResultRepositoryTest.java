@@ -42,9 +42,9 @@ public class TaxServiceCallResultRepositoryTest extends IntegrationTest {
         Employee anotherEmployee = anEmployee();
         employeeRepository.save(anotherEmployee);
 
-        january = TaxCalculation.from(employee, 2014, 1, Money.of(CurrencyUnit.EUR, 10.0), new DateTime());
-        TaxCalculation january2 = TaxCalculation.from(anotherEmployee, 2014, 1, Money.of(CurrencyUnit.EUR, 10.0), new DateTime());
-        february = TaxCalculation.from(employee, 2014, 2, Money.of(CurrencyUnit.EUR, 10.0), new DateTime());
+        january = TaxCalculation.from(1L, employee, 2014, 1, Money.of(CurrencyUnit.EUR, 10.0));
+        TaxCalculation january2 = TaxCalculation.from(1L, anotherEmployee, 2014, 1, Money.of(CurrencyUnit.EUR, 10.0));
+        february = TaxCalculation.from(1L, employee, 2014, 2, Money.of(CurrencyUnit.EUR, 10.0));
 
         List<TaxCalculation> taxCalculations = Arrays.asList(january, february, january2);
         taxCalculations.forEach(tax -> taxCalculationRepository.save(tax));
