@@ -90,26 +90,23 @@ Our main configuration class for the job is __EmployeeJobConfig__.
 
 ## How Tos
 
-#### Attempt to process all items, despite running into exceptions (eg: external services)
+#### 1. Attempt to process all items, despite running into exceptions (eg: external services)
 
 Use a unique identifier for each job (eg: current time), and make all other parameter non-identifiable
-
 Use a "always skip policy"
-
 Track execution results in the DB
-
 Write the query *carefully* :)
 
-#### Simplify retry/restart logic
+#### 2. Simplify retry/restart logic
 Idempotent operations make retry/failure scenarios a lot easier. When an operation is not idempotent you can create a wrapper for that action that is idempotent
 
-#### Integration testing
+#### 3. Integration testing
 see __AbstractIntegrationTest__
 
 Spring Batch provides utility classes for testing, such as JobLauncherTestUtils (allows running jobs or steps) and JobRepositoryTestUtils (allows removing job executions from the JobRepository)
 
 
-## Lessons learned (so you don't have to!)
+## 4. Lessons learned (so you don't have to!)
 
 - There should be just one transaction manager, shared between JPA and Spring, therefore our Job config extends __DefaultBatchConfigurer__. This provides a default job repository and job launcher.
 
