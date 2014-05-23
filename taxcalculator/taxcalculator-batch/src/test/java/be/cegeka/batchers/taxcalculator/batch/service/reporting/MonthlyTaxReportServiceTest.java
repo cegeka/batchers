@@ -1,46 +1,55 @@
 package be.cegeka.batchers.taxcalculator.batch.service.reporting;
 
+import be.cegeka.batchers.taxcalculator.application.domain.MonthlyReport;
+import be.cegeka.batchers.taxcalculator.application.domain.MonthlyReportRepository;
 import be.cegeka.batchers.taxcalculator.application.domain.pdf.PDFGeneratorService;
 import fr.opensagres.xdocreport.core.XDocReportException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import static be.cegeka.batchers.taxcalculator.application.ApplicationAssertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MonthlyTaxReportServiceTest {
-
     public static final double FAILED_AMOUNT = 450.1D;
     public static final double SUCCESS_AMOUNT = 600.1D;
-    @Mock
-    SumOfTaxes sumOfTaxes;
+    public static final int TEST_YEAR = 2014;
+    public static final int TEST_MONTH = 5;
 
     @InjectMocks
     MonthlyTaxReportService monthlyTaxReportService;
+
+    @Mock
+    SumOfTaxes sumOfTaxes;
+    @Mock
+    MonthlyReportRepository monthlyReportRepository;
+
+    @Captor
+    ArgumentCaptor<MonthlyReport> monthlyReportArgumentCaptor;
 
     @Before
     public void setUp() throws Exception {
         PDFGeneratorService pdfGeneratorService = new PDFGeneratorService();
         monthlyTaxReportService.setPdfGeneratorService(pdfGeneratorService);
+        when(sumOfTaxes.getFailedSum()).thenReturn(FAILED_AMOUNT);
+        when(sumOfTaxes.getSuccessSum()).thenReturn(SUCCESS_AMOUNT);
     }
 
     @Test
     public void generateReportWithCorrectData() throws IOException, XDocReportException {
-        Mockito.when(sumOfTaxes.getFailedSum()).thenReturn(FAILED_AMOUNT);
-        Mockito.when(sumOfTaxes.getSuccessSum()).thenReturn(SUCCESS_AMOUNT);
-
-        int year = 2014;
-        int month = 5;
-        byte[] pdfBytes = monthlyTaxReportService.generateReport(month, year);
+        byte[] pdfBytes = monthlyTaxReportService.generateReport(TEST_YEAR, TEST_MONTH);
 
         PDDocument pdfDocument = PDDocument.load(new ByteArrayInputStream(pdfBytes));
         assertThat(pdfDocument)
@@ -53,6 +62,19 @@ public class MonthlyTaxReportServiceTest {
 
         pdfDocument = PDDocument.load(new ByteArrayInputStream(pdfBytes));
         assertThat(pdfDocument)
-                .containsText("PERIOD: " + 5 + " " + year);
+                .containsText("PERIOD: " + 5 + " " + TEST_YEAR);
+    }
+
+    @Test
+    public void testResultsArePersisted() throws Exception {
+        byte[] expectedPdfBytes = monthlyTaxReportService.generateReport(TEST_YEAR, TEST_MONTH);
+
+        verify(monthlyReportRepository).save(monthlyReportArgumentCaptor.capture());
+
+        MonthlyReport value = monthlyReportArgumentCaptor.getValue();
+        assertThat(value.getMontlyReportPdf()).isEqualTo(expectedPdfBytes);
+        assertThat(value.getYear()).isEqualTo(TEST_YEAR);
+        assertThat(value.getMonth()).isEqualTo(TEST_MONTH);
+        assertThat(value.getCalculationDate()).isNotNull();
     }
 }
