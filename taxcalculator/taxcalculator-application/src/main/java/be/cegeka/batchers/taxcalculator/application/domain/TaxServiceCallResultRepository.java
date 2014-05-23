@@ -1,5 +1,7 @@
 package be.cegeka.batchers.taxcalculator.application.domain;
 
+import org.joda.money.CurrencyUnit;
+import org.joda.money.Money;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -23,5 +25,15 @@ public class TaxServiceCallResultRepository {
         byTaxCalculation.setParameter("taxCalculationId", taxCalculation.getId());
 
         return byTaxCalculation.getResultList();
+    }
+
+    public Money getSuccessSum(int year, int month) {
+
+        Double sum = entityManager.createNamedQuery(TaxServiceCallResult.GET_SUCCESS_SUM, Double.class)
+                .setParameter("month", month)
+                .setParameter("year", year)
+                .getSingleResult();
+
+        return Money.of(CurrencyUnit.EUR, sum);
     }
 }

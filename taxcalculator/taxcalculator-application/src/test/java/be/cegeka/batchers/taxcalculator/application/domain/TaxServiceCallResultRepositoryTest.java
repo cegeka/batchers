@@ -5,6 +5,7 @@ import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.joda.time.DateTime;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -64,5 +65,15 @@ public class TaxServiceCallResultRepositoryTest extends IntegrationTest {
         //ASSERT
         assertThat(forJanuary).containsOnly(januaryTry1, januaryTry2);
         assertThat(forFebruary).containsOnly(februaryTry1);
+    }
+
+    @Test
+    @Ignore("Not yet implemented")
+    public void testSuccess_Sum() throws Exception {
+        Money expectedMoney = Money.of(CurrencyUnit.EUR, 10.0);
+
+        Money actualMoney = taxServiceCallResultRepository.getSuccessSum(2014, 1);
+
+        assertThat(actualMoney).isEqualTo(expectedMoney);
     }
 }
