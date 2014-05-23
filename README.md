@@ -5,7 +5,6 @@ Install the following:
 
 > NodeJS v0.10+ (tested on v0.10.28)
 
- 
 Install Karma, Jasmine and browser launchers by running the following commands:
 > npm install -g karma-ng-scenario karma-junit-reporter
 
@@ -61,8 +60,6 @@ __stubwebservice.blacklistemployees__ - employee ids for which the server respon
 
 __stubwebservice.timeoutemployees__ - employee ids for which the server times out
 
-
-
 ## Spring Batch Configuration
 We started from the idea that we will have a list of employees for which we run a __job__ with the following __steps__:
 * Step1: A regular step that calculate taxes (read an Employee, calculates the Tax, writes a TaxCalculation)
@@ -87,15 +84,14 @@ Our main configuration class for the job is __EmployeeJobConfig__.
         }
 ```
 
-
 ## How Tos
 
 #### 1. Attempt to process all items, despite running into exceptions (eg: external services)
 
-Use a unique identifier for each job (eg: current time), and make all other parameter non-identifiable
-Use a "always skip policy"
-Track execution results in the DB
-Write the query *carefully* :)
+- Use a unique identifier for each job (eg: current time), and make all other parameter non-identifiable.
+- Use a "always skip policy".
+- Track execution results in the DB.
+- Write the query *carefully* :).
 
 #### 2. Simplify retry/restart logic
 Idempotent operations make retry/failure scenarios a lot easier. When an operation is not idempotent you can create a wrapper for that action that is idempotent
@@ -105,21 +101,22 @@ see __AbstractIntegrationTest__
 
 Spring Batch provides utility classes for testing, such as JobLauncherTestUtils (allows running jobs or steps) and JobRepositoryTestUtils (allows removing job executions from the JobRepository)
 
+#### 4. Using retry
+see __CallWebserviceProcessor__ for configuring retry within a step
 
 ## 4. Lessons learned (so you don't have to!)
 
-- There should be just one transaction manager, shared between JPA and Spring, therefore our Job config extends __DefaultBatchConfigurer__. This provides a default job repository and job launcher.
+#### Transaction Management
+There should be just one transaction manager, shared between JPA and Spring, therefore our Job config extends __DefaultBatchConfigurer__. This provides a default job repository and job launcher.
 
-- Using retry templates: see __CallWebserviceProcessor__ for configuring retry within a step
 
-- __Exception handling__ during processing
+#### Exception handling during processing
 
-Default/No Skip Policy - the processing does not continue, the job execution is failed
+- Default/No Skip Policy - the processing does not continue, the job execution is failed
+- Skip Policy - if the exception can be skipped, then the current chunk is rolled back and reexecuted without the item w/ exception
+- No-Rollback - if the exception is configured not to trigger a roll-back, the processing of the current chunk continues
 
-Skip Policy - if the exception can be skipped, then the current chunk is rolled back and reexecuted without the item w/ exception
-
-No-Rollback - if the exception is configured not to trigger a roll-back, the processing of the current chunk continues
-
-- When using paging item readers, the item reader query MUST NOT change size during the step execution.
+#### Paging paging item readers
+The item reader query MUST NOT change size during the step execution.
 
 ## Relevant links
