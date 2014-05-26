@@ -24,41 +24,74 @@ public class TaxPaymentWebService {
     private RestTemplate restTemplate;
 
     public TaxServiceCallResult doWebserviceCallToTaxService(TaxCalculation taxCalculation) {
-        TaxTo taxTo = new TaxTo();
-        taxTo.setAmount(taxCalculation.getEmployee().getIncomeTax());
-        taxTo.setEmployeeId(taxCalculation.getEmployee().getId());
-
         TaxServiceCallResult taxServiceCallResult;
-        Integer httpStatus = null;
-        String responseBody;
 
         try {
             ResponseEntity<TaxServiceResponse> webserviceResult = getWebserviceResult(taxCalculation.getEmployee());
-            String status = webserviceResult.getBody().getStatus();
-
-            if ("OK".equals(status)) {
-                httpStatus = HttpStatus.OK.value();
-            } else {
-                HttpStatus wsResultStatusCode = webserviceResult.getStatusCode();
-                if (wsResultStatusCode != null) {
-                    httpStatus = wsResultStatusCode.value();
-                }
-            }
-
-            responseBody = webserviceResult.getBody().toString();
+            taxServiceCallResult = buildTaxServiceCallResult(webserviceResult, taxCalculation);
         } catch (HttpStatusCodeException e){
-            httpStatus = e.getStatusCode().value();
-            responseBody = e.getResponseBodyAsString();
+            taxServiceCallResult = buildTaxServiceCallResult(e, taxCalculation);
         } catch (ResourceAccessException e) {
-            responseBody = e.getMessage();
-        }
-        if (httpStatus == null) {
-            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR.value();
+            taxServiceCallResult = buildTaxServiceCallResult(e, taxCalculation);
         }
 
-        taxServiceCallResult = getTaxServiceCallResult(taxCalculation, taxTo,
+        if (!taxServiceCallResult.isHttpStatusOk()) {
+            throw new TaxWebServiceException(taxServiceCallResult);
+        } else {
+            return taxServiceCallResult;
+        }
+    }
+
+    private TaxServiceCallResult buildTaxServiceCallResult(ResourceAccessException e, TaxCalculation taxCalculation) {
+        TaxTo taxTo = getTaxTo(taxCalculation);
+        int httpStatus = HttpStatus.INTERNAL_SERVER_ERROR.value();
+
+        String responseBody = e.getMessage();
+        TaxServiceCallResult taxServiceCallResult = getTaxServiceCallResult(taxCalculation, taxTo,
+                httpStatus, responseBody);
+
+        return taxServiceCallResult;
+    }
+
+    private TaxServiceCallResult buildTaxServiceCallResult(HttpStatusCodeException e, TaxCalculation taxCalculation) {
+        TaxTo taxTo = getTaxTo(taxCalculation);
+
+        int httpStatus = e.getStatusCode().value();
+        String responseBody = e.getResponseBodyAsString();
+        TaxServiceCallResult taxServiceCallResult = getTaxServiceCallResult(taxCalculation, taxTo,
+                httpStatus, responseBody);
+
+        return taxServiceCallResult;
+    }
+
+    private TaxServiceCallResult buildTaxServiceCallResult(ResponseEntity<TaxServiceResponse> webserviceResult, TaxCalculation taxCalculation) {
+        String status = webserviceResult.getBody().getStatus();
+        Integer httpStatus;
+
+        if ("OK".equals(status)) {
+            httpStatus = HttpStatus.OK.value();
+        } else {
+            HttpStatus wsResultStatusCode = webserviceResult.getStatusCode();
+            if (wsResultStatusCode != null) {
+                httpStatus = wsResultStatusCode.value();
+            } else {
+                httpStatus = HttpStatus.INTERNAL_SERVER_ERROR.value();
+            }
+        }
+
+        TaxTo taxTo = getTaxTo(taxCalculation);
+
+        String responseBody = webserviceResult.getBody().toString();
+        TaxServiceCallResult taxServiceCallResult = getTaxServiceCallResult(taxCalculation, taxTo,
                 httpStatus, responseBody);
         return taxServiceCallResult;
+    }
+
+    private TaxTo getTaxTo(TaxCalculation taxCalculation) {
+        TaxTo taxTo = new TaxTo();
+        taxTo.setAmount(taxCalculation.getEmployee().getIncomeTax());
+        taxTo.setEmployeeId(taxCalculation.getEmployee().getId());
+        return taxTo;
     }
 
     private TaxServiceCallResult getTaxServiceCallResult(TaxCalculation taxCalculation, TaxTo taxTo, int httpStatusCode, String responseBody) {

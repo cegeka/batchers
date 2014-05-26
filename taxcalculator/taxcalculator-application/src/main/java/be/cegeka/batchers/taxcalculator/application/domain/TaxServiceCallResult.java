@@ -4,6 +4,7 @@ import be.cegeka.batchers.taxcalculator.application.util.jackson.JodaDateTimeSer
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
+import org.springframework.http.HttpStatus;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -90,5 +91,9 @@ public class TaxServiceCallResult {
 
     public DateTime getCallDate() {
         return callDate;
+    }
+
+    public boolean isHttpStatusOk(){
+        return responseStatus == HttpStatus.OK.value();
     }
 }

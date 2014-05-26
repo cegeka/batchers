@@ -64,7 +64,7 @@ public class TaxPaymentWebServiceTest {
         assertThat(taxServiceCallResult.getTaxCalculation()).isEqualTo(taxCalculation);
     }
 
-    @Test
+    @Test(expected = TaxWebServiceException.class)
     public void testProcessBadResponse_ExceptionHasBeenThrownForever() throws Exception {
         whenCallingTheWebservice().thenReturn(mockedResponse);
         when(mockedResponse.getBody()).thenReturn(new TaxServiceResponse("ERROR"));
@@ -77,7 +77,7 @@ public class TaxPaymentWebServiceTest {
         assertThat(taxServiceCallResult.getResponseStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 
-    @Test
+    @Test(expected = TaxWebServiceException.class)
     public void testProcessTimeoutResponse_ExceptionHasBeenThrownForever() throws Exception {
         whenCallingTheWebservice().thenThrow(aWrappedTimeOutException());
 
@@ -89,7 +89,7 @@ public class TaxPaymentWebServiceTest {
         assertThat(taxServiceCallResult.getResponseStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 
-    @Test
+    @Test(expected = TaxWebServiceException.class)
     public void testProcess_UnexpectedExceptionOccurs_ExceptionIsRethrown() throws Exception {
         whenCallingTheWebservice().thenThrow(aMethodNotAllowedException());
 
