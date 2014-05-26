@@ -19,34 +19,22 @@ public class TaxPaymentWebServiceFacade {
 
     public TaxServiceCallResult callTaxService(TaxCalculation taxCalculation, Callable<TaxServiceCallResult> callable)
             throws Exception {
-        TaxServiceCallResult previousResult = getPreviousTaxCalculation(taxCalculation);
-        if (webServiceHasBeenCalledSuccessfully(previousResult)) {
+        TaxServiceCallResult previousResult = taxServiceCallResultRepository.findSuccessfulByTaxCalculation(taxCalculation);
+
+        if (previousResult != null) {
             return previousResult;
-        } else {
-            TaxServiceCallResult taxServiceCallResult;
-            try{
-                taxServiceCallResult = callable.call();
-                saveTaxServiceCallResult(taxServiceCallResult);
-            } catch(TaxWebServiceException e){
-                taxServiceCallResult = e.getTaxServiceCallResult();
-                saveTaxServiceCallResult(taxServiceCallResult);
-                throw new TaxWebServiceException(taxServiceCallResult);
-            }
-            return taxServiceCallResult;
+        }
+
+        try{
+            TaxServiceCallResult successTaxServiceCallResult = callable.call();
+            saveTaxServiceCallResult(successTaxServiceCallResult);
+            return successTaxServiceCallResult;
+        } catch(TaxWebServiceException e){
+            TaxServiceCallResult failedTaxServiceCallResult = e.getTaxServiceCallResult();
+            saveTaxServiceCallResult(failedTaxServiceCallResult);
+            throw e;
         }
     }
-
-	private TaxServiceCallResult getPreviousTaxCalculation(TaxCalculation taxCalculation) {
-		TaxServiceCallResult byTaxCalculation = taxServiceCallResultRepository.findLastByTaxCalculation(taxCalculation);
-		return byTaxCalculation;
-	}
-
-	private boolean webServiceHasBeenCalledSuccessfully(TaxServiceCallResult previousResult) {
-		if (previousResult != null && previousResult.isSuccessfulResponse()) {
-			return true;
-		}
-		return false;
-	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	private void saveTaxServiceCallResult(TaxServiceCallResult taxServiceCallResult) {

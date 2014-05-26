@@ -42,7 +42,6 @@ public class TaxPaymentWebServiceFacadeTest {
     private TaxCalculation taxCalculation;
     private DateTime now;
     private TaxServiceCallResult taxServiceCallResultValid;
-    private TaxServiceCallResult taxServiceCallResultFailed;
 
     @Before
     public void setUp() {
@@ -51,12 +50,11 @@ public class TaxPaymentWebServiceFacadeTest {
         Money money = Money.of(CurrencyUnit.EUR, 2000.0);
         taxCalculation = TaxCalculation.from(1L, employee, 2014, 1, money);
         taxServiceCallResultValid = TaxServiceCallResult.from(taxCalculation, "", HttpStatus.OK.value(), "", now, true);
-        taxServiceCallResultFailed = TaxServiceCallResult.from(taxCalculation, "", HttpStatus.NOT_FOUND.value(), "", now, false);
     }
 
     @Test
     public void testCallGoodResponse_callResultIsReturned() throws Exception {
-        when(taxServiceCallResultRepository.findLastByTaxCalculation(taxCalculation)).thenReturn(null);
+        when(taxServiceCallResultRepository.findSuccessfulByTaxCalculation(taxCalculation)).thenReturn(null);
         when(taxServiceCallResultCallable.call()).thenReturn(taxServiceCallResultValid);
 
         assertThat(taxPaymentWebServiceFacade.callTaxService(taxCalculation, taxServiceCallResultCallable))
@@ -66,7 +64,7 @@ public class TaxPaymentWebServiceFacadeTest {
     @Test
     @Ignore
     public void whenCall_throwsException_exceptionIsReturned() throws Exception {
-        when(taxServiceCallResultRepository.findLastByTaxCalculation(taxCalculation)).thenReturn(null);
+        when(taxServiceCallResultRepository.findSuccessfulByTaxCalculation(taxCalculation)).thenReturn(null);
         when(taxServiceCallResultCallable.call()).thenThrow(new TaxWebServiceException("some message"));
 
         expectExceptionWithMessage(TaxWebServiceException.class, "some message");
@@ -76,7 +74,7 @@ public class TaxPaymentWebServiceFacadeTest {
 
     @Test(expected = TaxWebServiceException.class)
     public void whenPreviousCallResultIsFailed_andCallReturnsException_exceptionIsReturned() throws Exception {
-        when(taxServiceCallResultRepository.findLastByTaxCalculation(taxCalculation)).thenReturn(taxServiceCallResultFailed);
+        when(taxServiceCallResultRepository.findSuccessfulByTaxCalculation(taxCalculation)).thenReturn(null);
         when(taxServiceCallResultCallable.call()).thenThrow(new TaxWebServiceException("some message"));
 
         taxPaymentWebServiceFacade.callTaxService(taxCalculation, taxServiceCallResultCallable);
@@ -84,7 +82,7 @@ public class TaxPaymentWebServiceFacadeTest {
 
     @Test
     public void whenPreviousCallResultIsFailed_andCallReturnsValid_callResultIsReturned() throws Exception {
-        when(taxServiceCallResultRepository.findLastByTaxCalculation(taxCalculation)).thenReturn(taxServiceCallResultFailed);
+        when(taxServiceCallResultRepository.findSuccessfulByTaxCalculation(taxCalculation)).thenReturn(null);
         when(taxServiceCallResultCallable.call()).thenReturn(taxServiceCallResultValid);
 
         assertThat(taxPaymentWebServiceFacade.callTaxService(taxCalculation, taxServiceCallResultCallable))
@@ -97,7 +95,7 @@ public class TaxPaymentWebServiceFacadeTest {
 
     @Test
     public void whenPreviousCallResultIsValid_thenPreviousCallResultIsReturned() throws Exception {
-        when(taxServiceCallResultRepository.findLastByTaxCalculation(taxCalculation)).thenReturn(taxServiceCallResultValid);
+        when(taxServiceCallResultRepository.findSuccessfulByTaxCalculation(taxCalculation)).thenReturn(taxServiceCallResultValid);
 
         assertThat(taxPaymentWebServiceFacade.callTaxService(taxCalculation, taxServiceCallResultCallable))
                 .isEqualTo(taxServiceCallResultValid);

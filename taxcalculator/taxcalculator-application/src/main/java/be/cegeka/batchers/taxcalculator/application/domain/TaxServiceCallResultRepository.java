@@ -50,8 +50,8 @@ public class TaxServiceCallResultRepository {
         return sum == null ? Money.zero(CurrencyUnit.EUR) : sum;
     }
 
-    public TaxServiceCallResult findLastByTaxCalculation(TaxCalculation taxCalculation) {
-        TypedQuery<TaxServiceCallResult> byTaxCalculation = entityManager.createNamedQuery(TaxServiceCallResult.FIND_LAST_BY_TAXCALCULATION, TaxServiceCallResult.class);
+    public TaxServiceCallResult findSuccessfulByTaxCalculation(TaxCalculation taxCalculation) {
+        TypedQuery<TaxServiceCallResult> byTaxCalculation = entityManager.createNamedQuery(TaxServiceCallResult.FIND_SUCCESSFUL_BY_TAXCALCULATION, TaxServiceCallResult.class);
 
         byTaxCalculation.setParameter("taxCalculationId", taxCalculation.getId());
 
