@@ -55,42 +55,42 @@
             <dependency>
                 <groupId>be.cegeka.batchers</groupId>
                 <artifactId>taxcalculator-infrastructure</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>${project.version}</version>
                 <type>jar</type>
             </dependency>
             <dependency>
                 <groupId>be.cegeka.batchers</groupId>
                 <artifactId>taxcalculator-infrastructure</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>${project.version}</version>
                 <scope>test</scope>
                 <type>test-jar</type>
             </dependency>
             <dependency>
                 <groupId>be.cegeka.batchers</groupId>
                 <artifactId>taxcalculator-application</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>be.cegeka.batchers</groupId>
                 <artifactId>taxcalculator-to</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>be.cegeka.batchers</groupId>
                 <artifactId>taxcalculator-application</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>${project.version}</version>
                 <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>be.cegeka.batchers</groupId>
                 <artifactId>taxcalculator-batch-api</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>be.cegeka.batchers</groupId>
                 <artifactId>taxcalculator-batch</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
