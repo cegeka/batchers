@@ -54,6 +54,7 @@ public class TaxPaymentWebServiceTest {
     public void testProcessHappyPath_NoExceptionHasBeenThrownAndEmployeeIsReturned() throws Exception {
         whenCallingTheWebservice().thenReturn(mockedResponse);
         when(mockedResponse.getBody()).thenReturn(new TaxServiceResponse("OK"));
+        when(mockedResponse.getStatusCode()).thenReturn(HttpStatus.OK);
 
         Employee employee = new EmployeeBuilder().build();
         TaxCalculation taxCalculation = TaxCalculation.from(1L, employee, 2014, 1, Money.of(CurrencyUnit.EUR, 2000.0));
@@ -68,13 +69,12 @@ public class TaxPaymentWebServiceTest {
     public void testProcessBadResponse_ExceptionHasBeenThrownForever() throws Exception {
         whenCallingTheWebservice().thenReturn(mockedResponse);
         when(mockedResponse.getBody()).thenReturn(new TaxServiceResponse("ERROR"));
+        when(mockedResponse.getStatusCode()).thenReturn(HttpStatus.OK);
 
         Employee employee = new EmployeeBuilder().build();
         TaxCalculation taxCalculation = TaxCalculation.from(1L, employee, 2014, 1, Money.of(CurrencyUnit.EUR, 2000.0));
 
-        TaxServiceCallResult taxServiceCallResult = taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
-
-        assertThat(taxServiceCallResult.getResponseStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
     }
 
     @Test(expected = TaxWebServiceException.class)
@@ -84,9 +84,7 @@ public class TaxPaymentWebServiceTest {
         Employee employee = new EmployeeBuilder().build();
         TaxCalculation taxCalculation = TaxCalculation.from(1L, employee, 2014, 1, Money.of(CurrencyUnit.EUR, 2000.0));
 
-        TaxServiceCallResult taxServiceCallResult = taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
-
-        assertThat(taxServiceCallResult.getResponseStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
     }
 
     @Test(expected = TaxWebServiceException.class)

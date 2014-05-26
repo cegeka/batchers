@@ -1,6 +1,5 @@
 package be.cegeka.batchers.taxcalculator.application.service;
 
-import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResult;
 import be.cegeka.batchers.taxcalculator.to.TaxServiceResponse;
@@ -24,94 +23,44 @@ public class TaxPaymentWebService {
     private RestTemplate restTemplate;
 
     public TaxServiceCallResult doWebserviceCallToTaxService(TaxCalculation taxCalculation) {
-        TaxServiceCallResult taxServiceCallResult;
+        TaxTo taxTo = createWebserviceInput(taxCalculation);
+        Integer httpStatus;
+        String responseBody;
+        boolean isSuccessfulResponse = false;
 
         try {
-            ResponseEntity<TaxServiceResponse> webserviceResult = getWebserviceResult(taxCalculation.getEmployee());
-            taxServiceCallResult = buildTaxServiceCallResult(webserviceResult, taxCalculation);
+            URI uri = URI.create(taxServiceUrl);
+            ResponseEntity<TaxServiceResponse> webserviceResult = restTemplate.postForEntity(uri, taxTo, TaxServiceResponse.class);
+            TaxServiceResponse taxServiceResponse = webserviceResult.getBody();
+
+            if (taxServiceResponse.getStatus().equals("OK")){
+                isSuccessfulResponse = true;
+            }
+
+            httpStatus = webserviceResult.getStatusCode().value();
+            responseBody = taxServiceResponse.toString();
         } catch (HttpStatusCodeException e){
-            taxServiceCallResult = buildTaxServiceCallResult(e, taxCalculation);
+            httpStatus = e.getStatusCode().value();
+            responseBody = e.getResponseBodyAsString();
         } catch (ResourceAccessException e) {
-            taxServiceCallResult = buildTaxServiceCallResult(e, taxCalculation);
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR.value();
+            responseBody = e.getMessage();
         }
 
-        if (!taxServiceCallResult.isHttpStatusOk()) {
+        TaxServiceCallResult taxServiceCallResult = TaxServiceCallResult.from(taxCalculation, taxTo.toString(),
+                httpStatus, responseBody, DateTime.now(), isSuccessfulResponse);
+
+        if (!taxServiceCallResult.isSuccessfulResponse()) {
             throw new TaxWebServiceException(taxServiceCallResult);
         } else {
             return taxServiceCallResult;
         }
     }
 
-    private TaxServiceCallResult buildTaxServiceCallResult(ResourceAccessException e, TaxCalculation taxCalculation) {
-        TaxTo taxTo = getTaxTo(taxCalculation);
-        int httpStatus = HttpStatus.INTERNAL_SERVER_ERROR.value();
-
-        String responseBody = e.getMessage();
-        TaxServiceCallResult taxServiceCallResult = getTaxServiceCallResult(taxCalculation, taxTo,
-                httpStatus, responseBody);
-
-        return taxServiceCallResult;
-    }
-
-    private TaxServiceCallResult buildTaxServiceCallResult(HttpStatusCodeException e, TaxCalculation taxCalculation) {
-        TaxTo taxTo = getTaxTo(taxCalculation);
-
-        int httpStatus = e.getStatusCode().value();
-        String responseBody = e.getResponseBodyAsString();
-        TaxServiceCallResult taxServiceCallResult = getTaxServiceCallResult(taxCalculation, taxTo,
-                httpStatus, responseBody);
-
-        return taxServiceCallResult;
-    }
-
-    private TaxServiceCallResult buildTaxServiceCallResult(ResponseEntity<TaxServiceResponse> webserviceResult, TaxCalculation taxCalculation) {
-        String status = webserviceResult.getBody().getStatus();
-        Integer httpStatus;
-
-        if ("OK".equals(status)) {
-            httpStatus = HttpStatus.OK.value();
-        } else {
-            HttpStatus wsResultStatusCode = webserviceResult.getStatusCode();
-            if (wsResultStatusCode != null) {
-                httpStatus = wsResultStatusCode.value();
-            } else {
-                httpStatus = HttpStatus.INTERNAL_SERVER_ERROR.value();
-            }
-        }
-
-        TaxTo taxTo = getTaxTo(taxCalculation);
-
-        String responseBody = webserviceResult.getBody().toString();
-        TaxServiceCallResult taxServiceCallResult = getTaxServiceCallResult(taxCalculation, taxTo,
-                httpStatus, responseBody);
-        return taxServiceCallResult;
-    }
-
-    private TaxTo getTaxTo(TaxCalculation taxCalculation) {
+    private TaxTo createWebserviceInput(TaxCalculation taxCalculation) {
         TaxTo taxTo = new TaxTo();
-        taxTo.setAmount(taxCalculation.getEmployee().getIncomeTax());
+        taxTo.setAmount(taxCalculation.getTax().getAmount().doubleValue());
         taxTo.setEmployeeId(taxCalculation.getEmployee().getId());
-        return taxTo;
-    }
-
-    private TaxServiceCallResult getTaxServiceCallResult(TaxCalculation taxCalculation, TaxTo taxTo, int httpStatusCode, String responseBody) {
-        return TaxServiceCallResult.from(taxCalculation, taxTo.toString(),
-                httpStatusCode, responseBody, DateTime.now());
-    }
-
-    private ResponseEntity<TaxServiceResponse> getWebserviceResult(Employee employee) {
-        ResponseEntity<TaxServiceResponse> stringResponseEntity = restTemplate.postForEntity(getUri(), createWebserviceInput(employee), TaxServiceResponse.class);
-        return stringResponseEntity;
-    }
-
-    private URI getUri() {
-        return URI.create(taxServiceUrl);
-    }
-
-    private TaxTo createWebserviceInput(Employee employee) {
-        TaxTo taxTo = new TaxTo();
-        taxTo.setAmount(employee.getIncomeTax());
-        taxTo.setEmployeeId(employee.getId());
         return taxTo;
     }
 }

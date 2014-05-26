@@ -5,7 +5,6 @@ import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResult;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResultRepository;
 import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +42,7 @@ public class TaxPaymentWebServiceFacade {
 	}
 
 	private boolean webServiceHasBeenCalledSuccessfully(TaxServiceCallResult previousResult) {
-		if (previousResult != null && previousResult.getResponseStatus() == HttpStatus.OK.value()) {
+		if (previousResult != null && previousResult.isSuccessfulResponse()) {
 			return true;
 		}
 		return false;

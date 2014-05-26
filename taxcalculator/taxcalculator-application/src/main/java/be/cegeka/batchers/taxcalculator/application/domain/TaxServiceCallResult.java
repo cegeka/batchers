@@ -54,18 +54,21 @@ public class TaxServiceCallResult {
 
     private String responseBody;
 
+    private boolean successfulResponse;
+
     @JsonSerialize(using = JodaDateTimeSerializer.class)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     @NotNull
     private DateTime callDate;
 
-    public static TaxServiceCallResult from(TaxCalculation taxCalculation, String callParameters, int responseStatus, String responseBody, DateTime callDate) {
+    public static TaxServiceCallResult from(TaxCalculation taxCalculation, String callParameters, int responseStatus, String responseBody, DateTime callDate, boolean successfulResponse) {
         TaxServiceCallResult taxServiceCallResult = new TaxServiceCallResult();
         taxServiceCallResult.taxCalculation = taxCalculation;
         taxServiceCallResult.callParameters = callParameters;
         taxServiceCallResult.responseStatus = responseStatus;
         taxServiceCallResult.responseBody = responseBody;
         taxServiceCallResult.callDate = callDate;
+        taxServiceCallResult.successfulResponse = successfulResponse;
         return taxServiceCallResult;
     }
 
@@ -93,7 +96,11 @@ public class TaxServiceCallResult {
         return callDate;
     }
 
-    public boolean isHttpStatusOk(){
-        return responseStatus == HttpStatus.OK.value();
+    public boolean isSuccessfulResponse() {
+        return successfulResponse;
+    }
+
+    public void setSuccessfulResponse(boolean successfulResponse) {
+        this.successfulResponse = successfulResponse;
     }
 }
