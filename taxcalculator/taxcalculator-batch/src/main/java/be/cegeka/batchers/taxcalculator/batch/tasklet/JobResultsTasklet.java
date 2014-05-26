@@ -21,9 +21,9 @@ public class JobResultsTasklet implements Tasklet {
     @Autowired
     MonthlyTaxReportService monthlyTaxReportService;
     @Value("#{jobParameters[year]}")
-    private int year;
+    private long year;
     @Value("#{jobParameters[month]}")
-    private int month;
+    private long month;
 
     @Override
     public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws IOException, XDocReportException {

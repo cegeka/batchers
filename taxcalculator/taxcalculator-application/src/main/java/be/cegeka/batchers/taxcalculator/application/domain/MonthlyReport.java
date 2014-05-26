@@ -35,11 +35,11 @@ public class MonthlyReport {
     @Max(12)
     @NotNull
     @Column(name = MonthlyReport.MONTH)
-    private int month;
+    private long month;
 
     @NotNull
     @Column(name = MonthlyReport.YEAR)
-    private int year;
+    private long year;
 
     @Lob
     private byte[] montlyReportPdf;
@@ -50,7 +50,7 @@ public class MonthlyReport {
     @NotNull
     private DateTime calculationDate;
 
-    public static MonthlyReport from(int year, int month, byte[] montlyReportPdf, DateTime calculationDate) {
+    public static MonthlyReport from(long year, long month, byte[] montlyReportPdf, DateTime calculationDate) {
         MonthlyReport monthlyReport = new MonthlyReport();
         monthlyReport.year = year;
         monthlyReport.month = month;
@@ -63,11 +63,11 @@ public class MonthlyReport {
         return id;
     }
 
-    public int getMonth() {
+    public long getMonth() {
         return month;
     }
 
-    public int getYear() {
+    public long getYear() {
         return year;
     }
 

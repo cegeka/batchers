@@ -23,12 +23,12 @@ public class MonthlyTaxReportService {
     @Autowired
     private MonthlyReportRepository monthlyReportRepository;
 
-    public byte[] generateReport(int year, int month) throws IOException, XDocReportException {
+    public byte[] generateReport(long year, long month) throws IOException, XDocReportException {
         Resource monthlyReportTemplate = new ClassPathResource("monthly-tax-report-template.docx");
 
         Map<String, Object> contextMap = new HashMap<>();
-        contextMap.put("success_sum", sumOfTaxes.getSuccessSum());
-        contextMap.put("failed_sum", sumOfTaxes.getFailedSum());
+        contextMap.put("success_sum", sumOfTaxes.getSuccessSum(year, month));
+        contextMap.put("failed_sum", sumOfTaxes.getFailedSum(year, month));
         contextMap.put("date", "" + month + " " + year);
 
         byte[] pdfBytes = pdfGeneratorService.generatePdfAsByteArray(monthlyReportTemplate, contextMap);
