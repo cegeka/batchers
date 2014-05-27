@@ -46,14 +46,14 @@ public class TaxServiceCallResultRepositoryTest extends IntegrationTest {
         february = TaxCalculation.from(1L, employee, 2014, 2, Money.of(CurrencyUnit.EUR, 10.0));
 
         List<TaxCalculation> taxCalculations = Arrays.asList(january, february);
-        taxCalculations.forEach(tax -> taxCalculationRepository.save(tax));
+        taxCalculations.forEach(taxCalculationRepository::save);
 
         januaryTry1 = TaxServiceCallResult.from(january, "", HttpStatus.INTERNAL_SERVER_ERROR.value(), null, DateTime.now(), false);
         januaryTry2 = TaxServiceCallResult.from(january, "", HttpStatus.OK.value(), "", DateTime.now(), true);
         februaryTry1 = TaxServiceCallResult.from(february, "", HttpStatus.OK.value(), "", DateTime.now(), true);
 
         List<TaxServiceCallResult> taxServiceCallResults = Arrays.asList(januaryTry1, januaryTry2, februaryTry1);
-        taxServiceCallResults.forEach(taxServiceCallResult -> taxServiceCallResultRepository.save(taxServiceCallResult));
+        taxServiceCallResults.forEach(taxServiceCallResultRepository::save);
     }
 
     @Test

@@ -19,7 +19,7 @@ import java.util.List;
 public class TaxCalculationRepository {
 
     @PersistenceContext
-    EntityManager entityManager;
+    private EntityManager entityManager;
 
     @Autowired
     private EntityManagerFactory entityManagerFactory;

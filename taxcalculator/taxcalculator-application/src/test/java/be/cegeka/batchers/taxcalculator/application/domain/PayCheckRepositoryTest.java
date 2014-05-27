@@ -3,7 +3,6 @@ package be.cegeka.batchers.taxcalculator.application.domain;
 import be.cegeka.batchers.taxcalculator.application.infrastructure.IntegrationTest;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,15 +23,13 @@ public class PayCheckRepositoryTest extends IntegrationTest {
     @Autowired
     PayCheckRepository payCheckRepository;
 
-
-    private Employee employee;
     private TaxCalculation january;
     private TaxCalculation february;
     private PayCheck payCheck;
 
     @Before
     public void setUp() throws Exception {
-        employee = anEmployee();
+        Employee employee = anEmployee();
 
         employeeRepository.save(employee);
 
@@ -40,7 +37,7 @@ public class PayCheckRepositoryTest extends IntegrationTest {
         february = TaxCalculation.from(1L, employee, 2014, 2, Money.of(CurrencyUnit.EUR, 10.0));
 
         List<TaxCalculation> taxCalculations = Arrays.asList(january, february);
-        taxCalculations.forEach(tax -> taxCalculationRepository.save(tax));
+        taxCalculations.forEach(taxCalculationRepository::save);
         byte[] content = getLargeByteArray();
         payCheck = PayCheck.from(january, content);
         payCheckRepository.save(payCheck);

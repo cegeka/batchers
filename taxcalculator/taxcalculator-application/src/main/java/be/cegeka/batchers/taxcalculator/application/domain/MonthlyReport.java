@@ -13,10 +13,6 @@ import javax.validation.constraints.NotNull;
 @NamedQueries({
         @NamedQuery(name = MonthlyReport.FIND_BY_YEAR_AND_MONTH, query = MonthlyReport.FIND_BY_YEAR_AND_MONTH_QUERY)
 })
-@Table(
-        uniqueConstraints =
-        @UniqueConstraint(columnNames = {MonthlyReport.YEAR, MonthlyReport.MONTH})
-)
 @Entity
 public class MonthlyReport {
 

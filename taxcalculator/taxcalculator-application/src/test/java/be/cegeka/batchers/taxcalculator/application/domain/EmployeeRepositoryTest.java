@@ -2,9 +2,7 @@ package be.cegeka.batchers.taxcalculator.application.domain;
 
 import be.cegeka.batchers.taxcalculator.application.infrastructure.IntegrationTest;
 import be.cegeka.batchers.taxcalculator.to.EmployeeTo;
-import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
-import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -15,15 +13,15 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.joda.money.CurrencyUnit.EUR;
 
 public class EmployeeRepositoryTest extends IntegrationTest {
-    public static final int INCOME = 500;
-    public static final String FIRST_NAME = "FirstName";
-    public static final String LAST_NAME = "LastName";
+    private static final int INCOME = 500;
+    private static final String FIRST_NAME = "FirstName";
+    private static final String LAST_NAME = "LastName";
 
     @Autowired
-    EmployeeRepository employeeRepository;
+    private EmployeeRepository employeeRepository;
 
     @Autowired
-    TaxCalculationRepository taxCalculationRepository;
+    private TaxCalculationRepository taxCalculationRepository;
 
     @Test
     public void testRepositoryIsNotNull() throws Exception {
