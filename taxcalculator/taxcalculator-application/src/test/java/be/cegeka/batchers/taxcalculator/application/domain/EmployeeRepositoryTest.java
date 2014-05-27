@@ -1,33 +1,38 @@
 package be.cegeka.batchers.taxcalculator.application.domain;
 
 import be.cegeka.batchers.taxcalculator.application.infrastructure.IntegrationTest;
-import org.joda.money.CurrencyUnit;
+import be.cegeka.batchers.taxcalculator.to.EmployeeTo;
 import org.joda.money.Money;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.joda.money.CurrencyUnit.EUR;
 
 public class EmployeeRepositoryTest extends IntegrationTest {
-    public static final int INCOME = 500;
-    public static final String FIRST_NAME = "FirstName";
-    public static final String LAST_NAME = "LastName";
+    private static final int INCOME = 500;
+    private static final String FIRST_NAME = "FirstName";
+    private static final String LAST_NAME = "LastName";
 
     @Autowired
-    EmployeeRepository repository;
+    private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private TaxCalculationRepository taxCalculationRepository;
 
     @Test
     public void testRepositoryIsNotNull() throws Exception {
-        assertThat(repository).isNotNull();
+        assertThat(employeeRepository).isNotNull();
     }
 
     @Test
     public void testWhenSavingEmployeeTheIdIsNotNull() throws Exception {
         Employee employee = new EmployeeBuilder().build();
 
-        repository.save(employee);
+        employeeRepository.save(employee);
 
         assertThat(employee.getId()).isNotNull();
     }
@@ -40,25 +45,12 @@ public class EmployeeRepositoryTest extends IntegrationTest {
                 .withLastName(LAST_NAME)
                 .build();
 
-        repository.save(employee);
+        employeeRepository.save(employee);
 
-        Employee savedEmployee = repository.getBy(employee.getId());
+        Employee savedEmployee = employeeRepository.getBy(employee.getId());
         assertThat(savedEmployee.getIncome()).isEqualTo(INCOME);
         assertThat(savedEmployee.getFirstName()).isEqualTo(FIRST_NAME);
         assertThat(savedEmployee.getLastName()).isEqualTo(LAST_NAME);
-        assertThat(savedEmployee.getTaxTotal()).isEqualTo(Money.zero(CurrencyUnit.EUR));
-    }
-
-    @Test
-    public void testWhenSettingRetirementSavingsTheCalculationDateIsCurrentDate() throws Exception {
-        Employee employee = new EmployeeBuilder()
-                .withIncome(100)
-                .build();
-        employee.addTax();
-        repository.save(employee);
-
-        Employee saved = repository.getBy(employee.getId());
-        assertThat(saved.getCalculationDate().isBeforeNow()).isTrue();
     }
 
     @Test
@@ -66,10 +58,10 @@ public class EmployeeRepositoryTest extends IntegrationTest {
         Employee first = new EmployeeBuilder().build();
         Employee second = new EmployeeBuilder().build();
 
-        repository.save(first);
-        repository.save(second);
+        employeeRepository.save(first);
+        employeeRepository.save(second);
 
-        assertThat(repository.count()).isEqualTo(2L);
+        assertThat(employeeRepository.count()).isEqualTo(2L);
     }
 
     @Test
@@ -77,11 +69,11 @@ public class EmployeeRepositoryTest extends IntegrationTest {
         Employee first = new EmployeeBuilder().build();
         Employee second = new EmployeeBuilder().build();
 
-        repository.save(first);
-        repository.save(second);
+        employeeRepository.save(first);
+        employeeRepository.save(second);
 
-        repository.deleteAll();
-        assertThat(repository.count()).isEqualTo(0L);
+        employeeRepository.deleteAll();
+        assertThat(employeeRepository.count()).isEqualTo(0L);
     }
 
     @Test
@@ -89,24 +81,46 @@ public class EmployeeRepositoryTest extends IntegrationTest {
         Employee first = new EmployeeBuilder().build();
         Employee second = new EmployeeBuilder().build();
 
-        repository.save(first);
-        repository.save(second);
+        employeeRepository.save(first);
+        employeeRepository.save(second);
 
-        assertThat(repository.getAll()).containsOnly(first, second);
+        assertThat(employeeRepository.getAll()).containsOnly(first, second);
     }
 
     @Test
     public void testGetAllIsEmptyWhenNoEmployees() throws Exception {
-        assertThat(repository.getAll()).isEmpty();
+        assertThat(employeeRepository.getAll()).isEmpty();
     }
 
     @Test
     public void testGetFirst20() throws Exception {
         for (int i = 0; i < 30; i++) {
-            repository.save(new EmployeeBuilder().build());
+            Employee employee = new EmployeeBuilder()
+                    .withFirstName("John" + i)
+                    .withLastName("Smith" + i)
+                    .withEmailAddress("john.smith" + i + "@gmail.com")
+                    .build();
+            employeeRepository.save(employee);
+            taxCalculationRepository.save(TaxCalculation.from(1L, employee, 2014, 5, Money.of(EUR, new BigDecimal(100))));
         }
 
-        List<Employee> first20 = repository.getFirst20();
+        List<EmployeeTo> first20 = employeeRepository.getFirst20();
         assertThat(first20).hasSize(20);
     }
+
+    @Test
+    public void givenEmployeesWithoutCalculatedTaxes_whenGetFirst20_thenAllEmployeesAreReturnedWithTaxZero() {
+        for (int i = 0; i < 30; i++) {
+            Employee employee = new EmployeeBuilder()
+                    .withFirstName("John" + i)
+                    .withLastName("Smith" + i)
+                    .withEmailAddress("john.smith" + i + "@gmail.com")
+                    .build();
+            employeeRepository.save(employee);
+        }
+
+        List<EmployeeTo> first20 = employeeRepository.getFirst20();
+        assertThat(first20).hasSize(20);
+    }
+
 }

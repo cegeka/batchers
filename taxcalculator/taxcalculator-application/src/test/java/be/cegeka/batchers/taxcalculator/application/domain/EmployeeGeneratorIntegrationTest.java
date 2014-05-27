@@ -2,8 +2,6 @@ package be.cegeka.batchers.taxcalculator.application.domain;
 
 
 import be.cegeka.batchers.taxcalculator.application.infrastructure.IntegrationTest;
-import org.joda.money.CurrencyUnit;
-import org.joda.money.Money;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -12,7 +10,7 @@ import java.util.List;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class EmployeeGeneratorIntegrationTest extends IntegrationTest {
-    public static final long SIZE = 7L;
+    private static final long SIZE = 7L;
 
     @Autowired
     private EmployeeRepository employeeRepository;
@@ -48,7 +46,6 @@ public class EmployeeGeneratorIntegrationTest extends IntegrationTest {
             assertThat(employee.getEmail()).isNotNull();
             assertThat(employee.getIncome()).isGreaterThanOrEqualTo(500);
             assertThat(employee.getIncome()).isLessThanOrEqualTo(5000);
-            assertThat(employee.getTaxTotal()).isEqualTo(Money.zero(CurrencyUnit.EUR));
         }
 
         employeeGenerator.resetSize();

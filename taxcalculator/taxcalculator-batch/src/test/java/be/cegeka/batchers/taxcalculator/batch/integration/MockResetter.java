@@ -1,12 +1,11 @@
 package be.cegeka.batchers.taxcalculator.batch.integration;
 
+import org.mockito.Mockito;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
 import java.util.HashSet;
 import java.util.Set;
-
-import static org.mockito.Mockito.reset;
 
 public class MockResetter implements BeanPostProcessor {
 
@@ -24,7 +23,7 @@ public class MockResetter implements BeanPostProcessor {
     }
 
     public void resetMocks() {
-        mocks.forEach(mock -> reset(mock));
+        mocks.forEach(Mockito::reset);
     }
 
     private void registerMockIfNecessary(Object bean) {
