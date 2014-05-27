@@ -3,14 +3,16 @@ package be.cegeka.batchers.taxcalculator.batch.integration;
 import be.cegeka.batchers.taxcalculator.application.domain.*;
 import be.cegeka.batchers.taxcalculator.batch.config.EmployeeJobConfig;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.springframework.batch.core.*;
+import org.springframework.batch.core.ExitStatus;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.test.JobLauncherTestUtils;
-import org.springframework.batch.test.JobRepositoryTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -26,26 +28,33 @@ public class TaxCalculationStepITest extends AbstractIntegrationTest {
     @Autowired
     private TaxCalculationRepository taxCalculationRepository;
 
-    private JobParameters getJobParameters() {
-        return new JobParametersBuilder()
-                .addLong("year", 2014L, false)
-                .addLong("month", 5L, false)
-                .addLong("uniqueIdentifier", new Date().getTime())
-                .toJobParameters();
-    }
-
     @After
-    @Transactional
     public void tearDown() {
         taxCalculationRepository.deleteAll();
         employeeRepository.deleteAll();
     }
 
     @Test
+    public void taxCalculationStep_noWork() throws Exception {
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addLong("year", 2014L, true)
+                .addLong("month", 5L, true)
+                .toJobParameters();
+
+        JobExecution jobExecution = jobLauncherTestUtils.launchStep(EmployeeJobConfig.TAX_CALCULATION_STEP, jobParameters);
+
+        assertThat(jobExecution.getExitStatus()).isEqualTo(ExitStatus.COMPLETED);
+        assertThat(taxCalculationRepository.findByYearAndMonth(2014, 5)).isEmpty();
+    }
+
+    @Test
     public void taxCalculationStep_generatesCorrectCalculation() throws Exception {
         Employee employee = haveOneEmployee();
 
-        JobParameters jobParameters = getJobParameters();
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addLong("year", 2014L, true)
+                .addLong("month", 5L, true)
+                .toJobParameters();
 
         JobExecution jobExecution = jobLauncherTestUtils.launchStep(EmployeeJobConfig.TAX_CALCULATION_STEP, jobParameters);
 
@@ -61,17 +70,6 @@ public class TaxCalculationStepITest extends AbstractIntegrationTest {
 
         List<TaxCalculation> byYearAndMonth = taxCalculationRepository.findByYearAndMonth(2014, 5);
         assertThat(byYearAndMonth).hasSize(1);
-    }
-
-    @Test
-    public void taxCalculationStep_noWork() throws Exception {
-
-        JobParameters jobParameters = getJobParameters();
-
-        JobExecution jobExecution = jobLauncherTestUtils.launchStep(EmployeeJobConfig.TAX_CALCULATION_STEP, jobParameters);
-
-        BatchStatus status = jobExecution.getStatus();
-        assertThat(status).isEqualTo(BatchStatus.COMPLETED);
     }
 
     private Employee haveOneEmployee() {

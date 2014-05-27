@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -54,13 +55,13 @@ public class TaxServiceCallResultRepository {
         TypedQuery<TaxServiceCallResult> byTaxCalculation = entityManager.createNamedQuery(TaxServiceCallResult.FIND_SUCCESSFUL_BY_TAXCALCULATION, TaxServiceCallResult.class);
 
         byTaxCalculation.setParameter("taxCalculationId", taxCalculation.getId());
+        byTaxCalculation.setMaxResults(1);
 
-        List<TaxServiceCallResult> resultList = byTaxCalculation.getResultList();
-        if (resultList.size() > 0) {
-            TaxServiceCallResult taxServiceCallResult = resultList.get(0);
-            return taxServiceCallResult;
+        try {
+            return byTaxCalculation.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
         }
-        return null;
     }
 
     public void deleteAll() {
