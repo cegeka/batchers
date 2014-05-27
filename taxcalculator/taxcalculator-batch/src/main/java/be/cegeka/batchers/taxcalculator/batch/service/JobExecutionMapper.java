@@ -29,7 +29,7 @@ public class JobExecutionMapper {
                 .stream()
                 .map(jobExec -> new JobExecutionResult(
                         jobExec.getStatus().toString(),
-                        jobExec.getStartTime(),
+                        jobExec.getEndTime(),
                         jobExec.getJobInstance().getJobName() + " " + jobExec.getId()))
                 .collect(Collectors.toList());
     }
