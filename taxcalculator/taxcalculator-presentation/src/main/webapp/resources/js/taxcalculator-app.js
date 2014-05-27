@@ -4,5 +4,6 @@ taxcalculator_app.config(['$routeProvider', function ($routeProvider) {
   $routeProvider
     .when('/employees', {templateUrl: 'partials/employees-overview.html', controller: 'EmployeesOverviewCtrl'})
     .when('/runJob', {templateUrl: 'partials/run-job.html', controller: 'RunJobCtrl'})
+    .when('/jobResults', {templateUrl: 'partials/job-results.html', controller: 'JobResultsCtrl'})
     .otherwise({redirectTo: '/'});
 }]);

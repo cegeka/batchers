@@ -1,0 +1,34 @@
+<div class="row">
+    <div class="panel panel-default">
+        <div class="panel-heading clearfix">
+            <div class="col-md-2"><strong>Job Name</strong></div>
+            <div class="col-md-3"><strong>Last Execution Date</strong></div>
+            <div class="col-md-2"><strong>Job Status</strong></div>
+        </div>
+    </div>
+</div>
+<div class="row" ng-repeat="job in jobResults">
+    <div class="panel"
+         ng-class="{COMPLETED:'panel-success', STARTED:'panel-info', FAILED:'panel-danger'}[job.jobExecutionResults[0].status]">
+        <div class="panel-heading clearfix">
+            <div class="col-md-2">{{job.jobName}}</div>
+            <div class="col-md-3">{{job.jobExecutionResults[0].dateTime | date:'medium'}}</div>
+            <div class="col-md-2">{{job.jobExecutionResults[0].status}}</div>
+            <div class="pull-right">
+                <i class="fa fa-plus-circle" ng-hide="job.details" ng-click="job.details = !job.details"></i>
+                <i class="fa fa-minus-circle" ng-hide="!job.details" ng-click="job.details = !job.details"></i>
+            </div>
+        </div>
+        <div class="panel-body" ng-show="job.details">
+            <div ng-repeat="jobExecutionResult in job.jobExecutionResults">
+                <div>
+                    <div class="col-md-2">{{jobExecutionResult.executionId}}</div>
+                    <div class="col-md-3">{{jobExecutionResult.dateTime | date:'medium'}}</div>
+                    <div class="col-md-2">{{jobExecutionResult.status}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
