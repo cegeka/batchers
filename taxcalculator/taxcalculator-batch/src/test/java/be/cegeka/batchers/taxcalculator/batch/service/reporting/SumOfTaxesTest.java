@@ -3,12 +3,10 @@ package be.cegeka.batchers.taxcalculator.batch.service.reporting;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResultRepository;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.internal.util.reflection.Whitebox;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertTrue;

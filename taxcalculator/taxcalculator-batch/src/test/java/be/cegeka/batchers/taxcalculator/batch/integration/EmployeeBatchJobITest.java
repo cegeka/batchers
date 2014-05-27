@@ -32,17 +32,23 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
 
 public class EmployeeBatchJobITest extends AbstractIntegrationTest {
-    public static final String STATUS_OK = "{\"status\": \"OK\" }";
-    public static final String EMAIL_ADDRESS = "employee@email.com";
-    public static final Long YEAR = 2014L;
-    public static final Long MONTH = 1L;
-
+    private static final String STATUS_OK = "{\"status\": \"OK\" }";
+    private static final String EMAIL_ADDRESS = "employee@email.com";
+    private static final Long YEAR = 2014L;
+    private static final Long MONTH = 1L;
+    private static Long counter = 0L;
     @Autowired
     String taxServiceUrl;
     @Autowired
     SumOfTaxes sumOfTaxes;
     @Autowired
     CallWebserviceProcessor callWebserviceProcessor;
+    @Autowired
+    PayCheckRepository payCheckRepository;
+    @Autowired
+    TaxCalculationRepository taxCalculationRepository;
+    @Autowired
+    TaxServiceCallResultRepository taxServiceCallResultRepository;
     @Autowired
     private JobLauncherTestUtils jobLauncherTestUtils;
     @Autowired
@@ -53,22 +59,10 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     private RestTemplate restTemplate;
     @Autowired
     private EmailSender emailSender;
-
-    @Autowired
-    PayCheckRepository payCheckRepository;
-
-    @Autowired
-    TaxCalculationRepository taxCalculationRepository;
-
-    @Autowired
-    TaxServiceCallResultRepository taxServiceCallResultRepository;
-
     @Autowired
     private RetryConfig retryConfig;
-
     private MockRestServiceServer mockServer;
     private JobParameters jobParams;
-    private static Long counter = 0L;
 
     @Before
     public void setUp() {

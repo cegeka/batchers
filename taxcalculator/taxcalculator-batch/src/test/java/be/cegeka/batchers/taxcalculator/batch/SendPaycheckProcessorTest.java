@@ -31,18 +31,20 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SendPaycheckProcessorTest {
+
     public static final String EMPLOYEE_EMAIL = "employee1123@work.com";
+
     @InjectMocks
-    SendPaycheckProcessor sendPaycheckProcessor;
+    private SendPaycheckProcessor sendPaycheckProcessor;
 
     @Mock
-    EmailSender emailSender;
+    private EmailSender emailSender;
     @Mock
-    PDFGeneratorService pdfGeneratorService;
+    private PDFGeneratorService pdfGeneratorService;
     @Captor
-    ArgumentCaptor<Map<String, Object>> contextCaptor;
+    private ArgumentCaptor<Map<String, Object>> contextCaptor;
     @Captor
-    ArgumentCaptor<EmailTO> emailToCaptor;
+    private ArgumentCaptor<EmailTO> emailToCaptor;
     @Mock
     private ResourceLoader resourceLoader;
     @Mock

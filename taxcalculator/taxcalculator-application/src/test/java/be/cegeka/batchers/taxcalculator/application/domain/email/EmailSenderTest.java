@@ -4,9 +4,6 @@ package be.cegeka.batchers.taxcalculator.application.domain.email;
 import org.apache.commons.mail.Email;
 import org.junit.Test;
 
-import javax.mail.MessagingException;
-import java.io.IOException;
-
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class EmailSenderTest {
@@ -20,7 +17,7 @@ public class EmailSenderTest {
         assertionsForEmail(email, emailTO());
     }
 
-    private void assertionsForEmail(Email actual, EmailTO expected) throws IOException, MessagingException {
+    private void assertionsForEmail(Email actual, EmailTO expected) {
         assertThat(actual.getFromAddress().getAddress()).isEqualTo(expected.getFrom());
         assertThat(actual.getToAddresses().iterator().next().getAddress()).isEqualTo(expected.getTos().iterator().next());
         assertThat(actual.getSubject()).isEqualTo(expected.getSubject());

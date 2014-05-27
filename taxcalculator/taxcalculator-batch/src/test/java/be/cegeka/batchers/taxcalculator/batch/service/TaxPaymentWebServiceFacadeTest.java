@@ -1,13 +1,14 @@
 package be.cegeka.batchers.taxcalculator.batch.service;
 
-import be.cegeka.batchers.taxcalculator.application.domain.*;
+import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
+import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResult;
+import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResultRepository;
 import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceException;
 import org.hamcrest.Matchers;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.joda.time.DateTime;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -19,11 +20,10 @@ import org.springframework.http.HttpStatus;
 
 import java.util.concurrent.Callable;
 
+import static be.cegeka.batchers.taxcalculator.application.domain.EmployeeTestFixture.anEmployee;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TaxPaymentWebServiceFacadeTest {
@@ -40,9 +40,8 @@ public class TaxPaymentWebServiceFacadeTest {
     @Mock
     private TaxServiceCallResultRepository taxServiceCallResultRepository;
 
-    private Employee employee;
     private TaxCalculation taxCalculation;
-    private DateTime now;
+
     private TaxServiceCallResult taxServiceCallResultValid;
 
     protected void expectExceptionWithMessage(Class<? extends Throwable> exception, String message) {
@@ -51,11 +50,9 @@ public class TaxPaymentWebServiceFacadeTest {
 
     @Before
     public void setUp() {
-        employee = new EmployeeBuilder().build();
-        now = DateTime.now();
         Money money = Money.of(CurrencyUnit.EUR, 2000.0);
-        taxCalculation = TaxCalculation.from(1L, employee, 2014, 1, money);
-        taxServiceCallResultValid = TaxServiceCallResult.from(taxCalculation, "", HttpStatus.OK.value(), "", now, true);
+        taxCalculation = TaxCalculation.from(1L, anEmployee(), 2014, 1, money);
+        taxServiceCallResultValid = TaxServiceCallResult.from(taxCalculation, "", HttpStatus.OK.value(), "", DateTime.now(), true);
     }
 
     @Test
@@ -85,7 +82,6 @@ public class TaxPaymentWebServiceFacadeTest {
         assertThat(taxPaymentWebServiceFacade.callTaxService(taxCalculation, taxServiceCallResultCallable))
                 .isEqualTo(taxServiceCallResultValid);
     }
-
 
 
 }

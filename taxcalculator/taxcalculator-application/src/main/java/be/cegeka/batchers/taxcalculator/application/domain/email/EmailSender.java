@@ -55,7 +55,7 @@ public class EmailSender implements JobStartListener {
         } catch (IllegalArgumentException e) {
             LOG.error("IllegalArgumentException occurred while sending the email ", e);
             throw e;
-        } catch (EmailException | AddressException | IOException e) {
+        } catch (EmailException | IOException e) {
             LOG.error("Errors occurred while sending the email ", e);
             throw new IllegalStateException(e);
         }
@@ -75,7 +75,7 @@ public class EmailSender implements JobStartListener {
             }
         }
 
-        public Email mapFromEmailTO(EmailTO emailTO) throws EmailException, AddressException, IOException {
+        public Email mapFromEmailTO(EmailTO emailTO) throws EmailException, IOException {
             HtmlEmail email = new HtmlEmail();
             email.setFrom(emailTO.getFrom());
             email.setTo(convertToInternetAddress(emailTO.getTos()));
@@ -89,7 +89,7 @@ public class EmailSender implements JobStartListener {
             return emailAddresses.stream().map(EmailMapper::toInternetAddress).collect(toSet());
         }
 
-        private void attachEmailAttachmentTOs(HtmlEmail email, List<EmailAttachmentTO> attachments) throws IOException, EmailException {
+        private void attachEmailAttachmentTOs(HtmlEmail email, List<EmailAttachmentTO> attachments) throws EmailException {
             for (EmailAttachmentTO attachmentTO : attachments) {
                 email.attach(new ByteArrayDataSource(attachmentTO.getBytes(), attachmentTO.getMimeType()),
                         attachmentTO.getName(), attachmentTO.getDescription(),

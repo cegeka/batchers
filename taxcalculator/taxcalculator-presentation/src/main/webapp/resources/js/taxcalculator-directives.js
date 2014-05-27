@@ -1,1 +1,1 @@
-angular.module('taxcalculatorDirectives', [])
+angular.module('taxcalculatorDirectives', []);

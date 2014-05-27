@@ -15,7 +15,7 @@ import javax.persistence.criteria.CriteriaDelete;
 public class PayCheckRepository {
 
     @PersistenceContext
-    EntityManager entityManager;
+    private EntityManager entityManager;
 
     public void save(PayCheck payCheckPdf) {
         entityManager.persist(payCheckPdf);

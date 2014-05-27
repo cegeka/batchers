@@ -3,7 +3,6 @@ package be.cegeka.batchers.taxcalculator.application.domain;
 import be.cegeka.batchers.taxcalculator.application.infrastructure.IntegrationTest;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +44,7 @@ public class TaxCalculationRepositoryTest extends IntegrationTest {
         ionelFebruary = TaxCalculation.from(1L, ionel, 2014, 2, Money.of(CurrencyUnit.EUR, 13.0));
 
         List<TaxCalculation> taxes = Arrays.asList(gigelJanuary, gigelFebruary, ionelJanuary, ionelFebruary);
-        taxes.forEach(tax -> taxCalculationRepository.save(tax));
+        taxes.forEach(taxCalculationRepository::save);
 
     }
 
