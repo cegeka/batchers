@@ -62,7 +62,6 @@ public class TaxPaymentWebServiceFacadeTest {
     }
 
     @Test
-    @Ignore
     public void whenCall_throwsException_exceptionIsReturned() throws Exception {
         when(taxServiceCallResultRepository.findSuccessfulByTaxCalculation(taxCalculation)).thenReturn(null);
         when(taxServiceCallResultCallable.call()).thenThrow(new TaxWebServiceException("some message"));

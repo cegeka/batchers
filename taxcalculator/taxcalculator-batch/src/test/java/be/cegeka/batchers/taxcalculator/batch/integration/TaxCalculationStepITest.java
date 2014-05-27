@@ -3,12 +3,8 @@ package be.cegeka.batchers.taxcalculator.batch.integration;
 import be.cegeka.batchers.taxcalculator.application.domain.*;
 import be.cegeka.batchers.taxcalculator.batch.config.EmployeeJobConfig;
 import org.junit.After;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.springframework.batch.core.ExitStatus;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.*;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -59,7 +55,6 @@ public class TaxCalculationStepITest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Ignore("Tests still share the jobRepository")
     public void taxCalculationStep_noWork() throws Exception {
 
         JobParameters jobParameters = new JobParametersBuilder()
@@ -67,9 +62,10 @@ public class TaxCalculationStepITest extends AbstractIntegrationTest {
                 .addLong("month", 5L, false)
                 .toJobParameters();
 
-        JobExecution jobExecution1 = jobLauncherTestUtils.launchStep(EmployeeJobConfig.TAX_CALCULATION_STEP, jobParameters);
+        JobExecution jobExecution = jobLauncherTestUtils.launchStep(EmployeeJobConfig.TAX_CALCULATION_STEP, jobParameters);
 
-
+        BatchStatus status = jobExecution.getStatus();
+        assertThat(status).isEqualTo(BatchStatus.COMPLETED);
     }
 
     private Employee haveOneEmployee() {
