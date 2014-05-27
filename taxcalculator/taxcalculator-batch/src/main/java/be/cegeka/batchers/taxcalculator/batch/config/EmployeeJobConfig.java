@@ -34,10 +34,11 @@ import java.util.Arrays;
 @PropertySource("classpath:taxcalculator-batch.properties")
 public class EmployeeJobConfig extends DefaultBatchConfigurer {
 
+    public static final String EMPLOYEE_JOB = "employeeJob";
     public static final String TAX_CALCULATION_STEP = "taxCalculationStep";
-    private static final String EMPLOYEE_JOB = "employeeJob";
     private static final String WS_CALL_STEP = "wsCallStep";
     private static Long OVERRIDDEN_BY_EXPRESSION = null;
+
     @Autowired
     private JobBuilderFactory jobBuilders;
     @Autowired
