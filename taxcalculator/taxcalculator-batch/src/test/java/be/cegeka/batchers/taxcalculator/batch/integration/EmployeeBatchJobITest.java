@@ -145,12 +145,9 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Ignore("If you can read this, then I am lazy and bug me to fix the @Ignore")
     public void jobRetriesIfWebserviceFails() throws Exception {
         haveOneEmployee();
-
-        mockServer.expect(requestTo(taxServiceUrl)).andExpect(method(HttpMethod.POST))
-                .andRespond(withServerError());
+        respondOneTimeWithServerError();
         respondOneTimeWithSuccess();
 
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
@@ -169,7 +166,6 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Ignore("If you can read this, then I am lazy and bug me to fix the @Ignore")
     public void whenTaxServiceReturnsFail_thenPaycheckIsNotSent() throws Exception {
         haveOneEmployee();
         respondOneTimeWithBadRequest();
@@ -250,6 +246,12 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         mockServer.expect(requestTo(taxServiceUrl))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withBadRequest());
+    }
+
+    private void respondOneTimeWithServerError() {
+        mockServer.expect(requestTo(taxServiceUrl))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(withServerError());
     }
 
 }

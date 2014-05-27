@@ -3,13 +3,11 @@ package be.cegeka.batchers.taxcalculator.batch.integration;
 import be.cegeka.batchers.taxcalculator.application.domain.*;
 import be.cegeka.batchers.taxcalculator.batch.config.EmployeeJobConfig;
 import org.junit.After;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 

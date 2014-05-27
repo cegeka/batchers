@@ -29,15 +29,6 @@ public abstract class AbstractIntegrationTest {
     @Autowired
     private DataSource dataSource;
 
-    @After
-    public void clearJobTables() throws SQLException {
-        ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator();
-        databasePopulator.setScripts(
-                new ClassPathResource("org/springframework/batch/core/schema-truncate-hsqldb.sql")
-        );
-        DatabasePopulatorUtils.execute(databasePopulator, this.dataSource);
-    }
-
     @BeforeClass
     public static void fixDateTimeToWhenJesusWasBorn() {
         DateTimeUtils.setCurrentMillisFixed(100L);
@@ -46,6 +37,15 @@ public abstract class AbstractIntegrationTest {
     @AfterClass
     public static void resetDateTime() {
         DateTimeUtils.currentTimeMillis();
+    }
+
+    @After
+    public void clearJobTables() throws SQLException {
+        ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator();
+        databasePopulator.setScripts(
+                new ClassPathResource("org/springframework/batch/core/schema-truncate-hsqldb.sql")
+        );
+        DatabasePopulatorUtils.execute(databasePopulator, this.dataSource);
     }
 
 }
