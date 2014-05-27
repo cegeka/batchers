@@ -1,6 +1,7 @@
 package be.cegeka.batchers.taxcalculator.batch.service;
 
-import be.cegeka.batchers.taxcalculator.to.JobResultTo;
+import be.cegeka.batchers.taxcalculator.batch.domain.JobExecutionResult;
+import be.cegeka.batchers.taxcalculator.batch.domain.JobResult;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,7 +12,10 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -26,8 +30,8 @@ public class JobExecutionMapperTest {
 
     @Test
     public void testToJobResultTo() throws Exception {
+        //ARRANGE
         Date now = DateTime.now().toDate();
-
         JobInstance jobInstance = new JobInstance(JOB_ID, JOB_NAME);
         JobParameters jobParams = new JobParameters();
 
@@ -35,10 +39,30 @@ public class JobExecutionMapperTest {
         jobExecution.setStatus(BatchStatus.ABANDONED);
         jobExecution.setCreateTime(now);
         jobExecution.setId(JOB_EXECUTION_ID);
+        Map.Entry<JobInstance, List<JobExecution>> entry = new Map.Entry<JobInstance, List<JobExecution>>() {
+            @Override
+            public JobInstance getKey() {
+                return jobInstance;
+            }
 
-        JobResultTo resultTo = mapper.toJobResultTo(jobExecution);
-        assertThat(resultTo.getStatus()).isEqualTo(BatchStatus.ABANDONED.toString());
-        assertThat(resultTo.getDateTime()).isEqualTo(now);
-        assertThat(resultTo.getExecutionId()).isEqualTo(JOB_NAME + " " + JOB_EXECUTION_ID);
+            @Override
+            public List<JobExecution> getValue() {
+                return Arrays.asList(jobExecution);
+            }
+
+            @Override
+            public List<JobExecution> setValue(List<JobExecution> value) {
+                return null;
+            }
+
+        };
+
+        //ACT
+        JobResult resultTo = mapper.toJobResultTo(entry);
+
+        //ASSERT
+        assertThat(resultTo.getJobExecutionResults()).hasSize(1);
+        JobExecutionResult jobExecutionResult = resultTo.getJobExecutionResults().get(0);
+        assertThat(jobExecutionResult.getStatus()).isEqualTo(BatchStatus.ABANDONED.toString());
     }
 }

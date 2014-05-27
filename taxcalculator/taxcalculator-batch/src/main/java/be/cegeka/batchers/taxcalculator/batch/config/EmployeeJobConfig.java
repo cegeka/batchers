@@ -15,6 +15,8 @@ import org.springframework.batch.core.configuration.annotation.DefaultBatchConfi
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.explore.JobExplorer;
+import org.springframework.batch.core.explore.support.JobExplorerFactoryBean;
 import org.springframework.batch.core.step.builder.FaultTolerantStepBuilder;
 import org.springframework.batch.core.step.skip.AlwaysSkipItemSkipPolicy;
 import org.springframework.batch.item.database.JpaPagingItemReader;
@@ -22,6 +24,7 @@ import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 
+import javax.sql.DataSource;
 import java.util.Arrays;
 
 @Configuration
@@ -36,32 +39,23 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
     public static final String TAX_CALCULATION_STEP = "taxCalculationStep";
     public static final String WS_CALL_STEP = "wsCallStep";
     public static final String GENERATE_PDF_STEP = "generatePDFStep";
-
+    private static Long OVERRIDDEN_BY_EXPRESSION = null;
     @Autowired
     private JobBuilderFactory jobBuilders;
-
     @Autowired
     private StepBuilderFactory stepBuilders;
-
     @Autowired
     private ItemReaderWriterConfig itemReaderWriterConfig;
-
     @Autowired
     private JpaPagingItemReader<Employee> taxCalculatorItemReader;
-
     @Autowired
     private CalculateTaxProcessor calculateTaxProcessor;
-
     @Autowired
     private CallWebserviceProcessor callWebserviceProcessor;
-
     @Autowired
     private SendPaycheckProcessor sendPaycheckProcessor;
-
     @Autowired
     private JobResultsTasklet jobResultsTasklet;
-
-    private static Long OVERRIDDEN_BY_EXPRESSION = null;
 
     @Bean
     public Job employeeJob() {
@@ -111,5 +105,13 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
         return stepBuilders.get("JOB_RESULTS_PDF")
                 .tasklet(jobResultsTasklet)
                 .build();
+    }
+
+    @Bean
+    public JobExplorer jobExplorer(DataSource dataSource) throws Exception {
+        JobExplorerFactoryBean factory = new JobExplorerFactoryBean();
+        factory.setDataSource(dataSource);
+        factory.afterPropertiesSet();
+        return factory.getObject();
     }
 }
