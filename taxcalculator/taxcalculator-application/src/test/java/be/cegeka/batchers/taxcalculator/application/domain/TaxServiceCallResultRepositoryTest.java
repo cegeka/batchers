@@ -101,17 +101,17 @@ public class TaxServiceCallResultRepositoryTest extends IntegrationTest {
     }
 
     @Test
-    public void testlastByTaxCalculation_returnsLast() {
-        TaxServiceCallResult lastByTaxCalculation = taxServiceCallResultRepository.findLastByTaxCalculation(january);
-        assertThat(lastByTaxCalculation).isEqualTo(januaryTry2);
+    public void testFindSuccessfulByTaxCalculation_returnsSuccessful() {
+        TaxServiceCallResult successfulByTaxCalculation = taxServiceCallResultRepository.findSuccessfulByTaxCalculation(january);
+        assertThat(successfulByTaxCalculation).isEqualTo(januaryTry2);
     }
 
     @Test
-    public void testlastByTaxCalculation_returnsNullWhenNoCall() {
+    public void testFindSuccessfulByTaxCalculation_returnsNullWhenNoCall() {
         TaxCalculation march = TaxCalculation.from(1L, employee, 2014, 3, Money.of(CurrencyUnit.EUR, 10.0));
         taxCalculationRepository.save(march);
 
-        TaxServiceCallResult lastByTaxCalculation = taxServiceCallResultRepository.findLastByTaxCalculation(march);
-        assertThat(lastByTaxCalculation).isNull();
+        TaxServiceCallResult successfulByTaxCalculation = taxServiceCallResultRepository.findSuccessfulByTaxCalculation(march);
+        assertThat(successfulByTaxCalculation).isNull();
     }
 }
