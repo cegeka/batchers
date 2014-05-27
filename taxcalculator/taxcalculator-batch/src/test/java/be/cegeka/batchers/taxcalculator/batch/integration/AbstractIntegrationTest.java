@@ -7,16 +7,27 @@ import be.cegeka.batchers.taxcalculator.batch.config.EmployeeJobConfig;
 import be.cegeka.batchers.taxcalculator.batch.config.EmployeeJobTestConfig;
 import be.cegeka.batchers.taxcalculator.infrastructure.config.PropertyPlaceHolderConfig;
 import org.joda.time.DateTimeUtils;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+
+import javax.sql.DataSource;
+import java.sql.SQLException;
 
 @RunWith(TaxCalculatorSpringJUnitClassRunner.class)
 @ActiveProfiles("test")
 @ContextConfiguration(classes = {EmployeeJobTestConfig.class, EmployeeJobConfig.class, EmployeeGeneratorTestConfig.class, WebserviceCallConfig.class, PropertyPlaceHolderConfig.class})
 public abstract class AbstractIntegrationTest {
+
+    @Autowired
+    private DataSource dataSource;
 
     @BeforeClass
     public static void fixDateTimeToWhenJesusWasBorn() {
@@ -26,6 +37,15 @@ public abstract class AbstractIntegrationTest {
     @AfterClass
     public static void resetDateTime() {
         DateTimeUtils.currentTimeMillis();
+    }
+
+    @After
+    public void clearJobTables() throws SQLException {
+        ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator();
+        databasePopulator.setScripts(
+                new ClassPathResource("org/springframework/batch/core/schema-truncate-hsqldb.sql")
+        );
+        DatabasePopulatorUtils.execute(databasePopulator, this.dataSource);
     }
 
 }

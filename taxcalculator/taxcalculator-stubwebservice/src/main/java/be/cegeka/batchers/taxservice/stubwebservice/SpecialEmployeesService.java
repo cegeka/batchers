@@ -1,5 +1,7 @@
 package be.cegeka.batchers.taxservice.stubwebservice;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -13,11 +15,16 @@ import static java.util.stream.Collectors.toMap;
 @Service
 public class SpecialEmployeesService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SpecialEmployeesService.class);
+
     private Map<Long, Integer> blacklistedEmployees = new HashMap<>();
     private Map<Long, Integer> timeoutEmployees = new HashMap<>();
 
     private String blacklistedEmployeesBackup;
     private String timeoutEmployeesBackup;
+
+    private Function<String, Integer> failureRate = employeeId -> Integer.valueOf(employeeId.split(":")[1]);
+    private Function<String, Long> employeeId = employeeId -> Long.valueOf(employeeId.split(":")[0]);
 
     @Value("${stubwebservice.timeout}")
     private int timeout;
@@ -43,14 +50,15 @@ public class SpecialEmployeesService {
             try {
                 Thread.sleep(timeout);
             } catch (InterruptedException e) {
+                LOG.error("I can't get no sleep", e);
             }
         }
     }
 
+
     public void setTimeout(int timeout) {
         this.timeout = timeout;
     }
-
 
     boolean isEmployeeTimeout(Long employeeId) {
         return hasEmployeeRemainingRetriesAndDecreaseRetries(timeoutEmployees, employeeId);
@@ -76,9 +84,6 @@ public class SpecialEmployeesService {
                 .stream()
                 .collect(toMap(employeeId, failureRate));
     }
-
-    private Function<String, Integer> failureRate = employeeId -> Integer.valueOf(employeeId.split(":")[1]);
-    private Function<String, Long> employeeId = employeeId -> Long.valueOf(employeeId.split(":")[0]);
 
     public void reset() {
         setBlacklistedEmployees(blacklistedEmployeesBackup);

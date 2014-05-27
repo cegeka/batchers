@@ -1,15 +1,10 @@
 package be.cegeka.batchers.taxcalculator.application.domain;
 
-import org.joda.money.Money;
-import org.joda.time.DateTime;
-
 public class EmployeeBuilder {
     private Long employeeId;
     private Integer income = 0;
     private String firstName;
     private String lastName;
-    private DateTime calculationDate;
-    private Money taxTotal;
     private String emailAddress;
 
     public Employee build() {
@@ -18,7 +13,6 @@ public class EmployeeBuilder {
         employee.setFirstName(firstName);
         employee.setLastName(lastName);
         employee.setIncome(income);
-        employee.setCalculationDate(calculationDate);
         employee.setEmail(emailAddress);
         return employee;
     }
@@ -37,17 +31,6 @@ public class EmployeeBuilder {
         this.lastName = lastName;
         return this;
     }
-
-    public EmployeeBuilder withCalculationDate(DateTime calculationDate) {
-        this.calculationDate = calculationDate;
-        return this;
-    }
-
-    public EmployeeBuilder withTaxTotal(Money taxTotal) {
-        this.taxTotal = taxTotal;
-        return this;
-    }
-
 
     public EmployeeBuilder withId(long employeeId) {
         this.employeeId = employeeId;

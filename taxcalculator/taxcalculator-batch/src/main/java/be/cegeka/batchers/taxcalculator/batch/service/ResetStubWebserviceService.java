@@ -13,7 +13,7 @@ import java.net.URI;
 @Component
 public class ResetStubWebserviceService implements JobStartListener {
 
-    private static Logger LOG = LoggerFactory.getLogger(ResetStubWebserviceService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ResetStubWebserviceService.class);
 
     @Autowired
     private String resetUrl;

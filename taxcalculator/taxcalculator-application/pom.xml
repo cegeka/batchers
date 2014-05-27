@@ -10,9 +10,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>be.cegeka.batchers</groupId>
     <artifactId>taxcalculator-application</artifactId>
-    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>

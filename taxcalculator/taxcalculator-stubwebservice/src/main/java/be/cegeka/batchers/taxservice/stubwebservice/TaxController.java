@@ -40,7 +40,7 @@ public class TaxController {
     }
 
     @RequestMapping(value = "/reset", method = POST)
-    public ResponseEntity<?> resetSpecialEmployeesService() {
+    public ResponseEntity resetSpecialEmployeesService() {
         specialEmployeesService.reset();
         return new ResponseEntity<>(HttpStatus.OK);
     }
