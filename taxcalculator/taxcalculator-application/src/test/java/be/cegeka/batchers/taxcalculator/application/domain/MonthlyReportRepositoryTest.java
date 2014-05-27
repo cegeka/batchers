@@ -5,8 +5,6 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.PersistenceException;
-
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class MonthlyReportRepositoryTest extends IntegrationTest {
@@ -31,14 +29,5 @@ public class MonthlyReportRepositoryTest extends IntegrationTest {
         assertThat(foundMarch.getMontlyReportPdf().length).isEqualTo(SIZE_10MB);
         assertThat(foundApril).isEqualTo(april);
         assertThat(foundApril.getMontlyReportPdf().length).isEqualTo(SIZE_10MB);
-    }
-
-    @Test(expected = PersistenceException.class)
-    public void cannotHaveMultipleReportsPerMonth() {
-        MonthlyReport may1 = MonthlyReport.from(2014, 5, new byte[SIZE_10MB], DateTime.now());
-        MonthlyReport may2 = MonthlyReport.from(2014, 5, new byte[SIZE_10MB], DateTime.now());
-
-        monthlyReportRepository.save(may1);
-        monthlyReportRepository.save(may2);
     }
 }

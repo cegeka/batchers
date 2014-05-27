@@ -39,12 +39,12 @@ public class SendPaycheckProcessorTest {
     EmailSender emailSender;
     @Mock
     PDFGeneratorService pdfGeneratorService;
-    @Mock
-    private ResourceLoader resourceLoader;
     @Captor
     ArgumentCaptor<Map<String, Object>> contextCaptor;
     @Captor
     ArgumentCaptor<EmailTO> emailToCaptor;
+    @Mock
+    private ResourceLoader resourceLoader;
     @Mock
     private TaxCalculationRepository taxCalculationRepository;
 
@@ -92,7 +92,7 @@ public class SendPaycheckProcessorTest {
 
         assertThat(capturedEmailTo.getTos()).containsOnly(employee.getEmail());
         assertThat(capturedEmailTo.getSubject()).isEqualTo("Paycheck");
-        String emailBodyForEmployee = sendPaycheckProcessor.getEmailBodyForEmployee(employee);
+        String emailBodyForEmployee = sendPaycheckProcessor.getEmailBodyForEmployee(taxCalculation);
 //        assertThat(emailBodyForEmployee).contains("May 2000");
         // TODO IN STEP 3
         assertThat(capturedEmailTo.getBody()).isEqualTo(emailBodyForEmployee);

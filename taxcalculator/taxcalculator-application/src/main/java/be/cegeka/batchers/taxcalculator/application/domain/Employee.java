@@ -1,8 +1,5 @@
 package be.cegeka.batchers.taxcalculator.application.domain;
 
-import org.joda.time.DateTime;
-import org.joda.time.Interval;
-
 import javax.persistence.*;
 
 @NamedQueries({
@@ -18,7 +15,7 @@ public class Employee {
 
     public static final String GET_EMPLOYEES_TOTAL_TAX_NAME = "Employee.getWithTotalTax";
     public static final String GET_EMPLOYEES_TOTAL_TAX_QUERY = "SELECT NEW be.cegeka.batchers.taxcalculator.to.EmployeeTo(e.firstName, e.lastName, e.email, e.income, sum(t.tax)) " +
-            "FROM TaxCalculation t RIGHT OUTER JOIN t.employee e GROUP BY e";
+            "FROM TaxCalculation t RIGHT OUTER JOIN t.employee e GROUP BY e ORDER BY e.id";
 
     public static final String GET_UNPROCESSED_EMPLOYEES_BY_YEAR_AND_MONTH = "TaxCalculation.GET_UNPROCESSED_EMPLOYEES_BY_YEAR_AND_MONTH";
     public static final String GET_UNPROCESSED_EMPLOYEES_BY_YEAR_AND_MONTH_QUERY = "SELECT emp FROM Employee emp WHERE NOT EXISTS (SELECT tc FROM TaxCalculation tc WHERE tc.month = :month AND tc.year = :year AND tc.employee.id = emp.id AND NOT (tc.jobExecutionId = :jobExecutionId))";
@@ -67,19 +64,6 @@ public class Employee {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-
-    public double getIncomeTax() {
-        return income * 0.1;
-    }
-
-    private boolean taxWasCalculatedThisMonth(DateTime calculationDate) {
-        return calculationDate != null && getCurrentMonthInterval().contains(calculationDate);
-    }
-
-    private Interval getCurrentMonthInterval() {
-        return DateTime.now().monthOfYear().toInterval();
     }
 
     public String getEmail() {
