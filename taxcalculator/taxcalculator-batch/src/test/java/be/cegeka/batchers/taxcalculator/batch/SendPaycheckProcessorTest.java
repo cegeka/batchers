@@ -1,11 +1,12 @@
 package be.cegeka.batchers.taxcalculator.batch;
 
-import be.cegeka.batchers.taxcalculator.application.domain.Employee;
-import be.cegeka.batchers.taxcalculator.application.domain.EmployeeBuilder;
+import be.cegeka.batchers.taxcalculator.application.domain.*;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailAttachmentTO;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailSender;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailTO;
 import be.cegeka.batchers.taxcalculator.application.domain.pdf.PDFGeneratorService;
+import org.joda.money.CurrencyUnit;
+import org.joda.money.Money;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,6 +19,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.http.HttpStatus;
 
 import java.util.Map;
 
@@ -37,12 +39,15 @@ public class SendPaycheckProcessorTest {
     EmailSender emailSender;
     @Mock
     PDFGeneratorService pdfGeneratorService;
-    @Mock
-    private ResourceLoader resourceLoader;
     @Captor
     ArgumentCaptor<Map<String, Object>> contextCaptor;
     @Captor
     ArgumentCaptor<EmailTO> emailToCaptor;
+    @Mock
+    private ResourceLoader resourceLoader;
+    @Mock
+    private TaxCalculationRepository taxCalculationRepository;
+
 
     @Before
     public void setUp() {
@@ -55,15 +60,18 @@ public class SendPaycheckProcessorTest {
                 .withEmailAddress(EMPLOYEE_EMAIL)
                 .withFirstName("FirstName")
                 .withIncome(2000)
-                .withCalculationDate(new DateTime().withDate(2000, 5, 1))
                 .build();
 
         byte[] generatedPdfBytes = new byte[]{0, 1, 2, 3, 4};
         when(pdfGeneratorService.generatePdfAsByteArray(any(), anyMap())).thenReturn(generatedPdfBytes);
 
-        Employee processedEmployee = sendPaycheckProcessor.process(employee);
+        TaxCalculation taxCalculation = TaxCalculation.from(1L, employee, 2014, 1, Money.of(CurrencyUnit.EUR, 10.0));
 
-        assertThat(processedEmployee).isEqualTo(employee);
+        TaxServiceCallResult taxServiceCallResult = TaxServiceCallResult.from(taxCalculation, "", HttpStatus.OK.value(), "", DateTime.now(), true);
+
+        PayCheck payCheck = sendPaycheckProcessor.process(taxServiceCallResult);
+
+        assertThat(payCheck.getTaxCalculation().getEmployee()).isEqualTo(employee);
 
         ArgumentCaptor<Resource> taxSummaryTemplateCaptor = ArgumentCaptor.forClass(Resource.class);
         verify(pdfGeneratorService).generatePdfAsByteArray(taxSummaryTemplateCaptor.capture(), contextCaptor.capture());
@@ -75,16 +83,18 @@ public class SendPaycheckProcessorTest {
                 .containsKey("name")
                 .containsKey("employee_id")
                 .containsKey("monthly_income")
-                .containsKey("monthly_tax")
-                .containsKey("tax_total");
+                .containsKey("monthly_tax");
+//                .containsKey("tax_total");
+        // TODO IN STEP 3
 
         verify(emailSender).send(emailToCaptor.capture());
         EmailTO capturedEmailTo = emailToCaptor.getValue();
 
         assertThat(capturedEmailTo.getTos()).containsOnly(employee.getEmail());
         assertThat(capturedEmailTo.getSubject()).isEqualTo("Paycheck");
-        String emailBodyForEmployee = sendPaycheckProcessor.getEmailBodyForEmployee(employee);
-        assertThat(emailBodyForEmployee).contains("May 2000");
+        String emailBodyForEmployee = sendPaycheckProcessor.getEmailBodyForEmployee(taxCalculation);
+//        assertThat(emailBodyForEmployee).contains("May 2000");
+        // TODO IN STEP 3
         assertThat(capturedEmailTo.getBody()).isEqualTo(emailBodyForEmployee);
 
 

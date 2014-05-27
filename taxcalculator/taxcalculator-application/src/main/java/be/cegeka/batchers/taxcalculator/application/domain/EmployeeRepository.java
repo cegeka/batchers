@@ -1,6 +1,7 @@
 package be.cegeka.batchers.taxcalculator.application.domain;
 
 
+import be.cegeka.batchers.taxcalculator.to.EmployeeTo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
@@ -16,7 +17,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import java.util.List;
 
 @Repository
-@Transactional(isolation = Isolation.DEFAULT)
+@Transactional(readOnly = true, isolation = Isolation.DEFAULT)
 public class EmployeeRepository {
 
     @PersistenceContext
@@ -25,6 +26,7 @@ public class EmployeeRepository {
     @Autowired
     private EntityManagerFactory entityManagerFactory;
 
+    @Transactional
     public void save(Employee employee) {
         entityManager.persist(employee);
     }
@@ -53,11 +55,10 @@ public class EmployeeRepository {
         criteriaQuery.select(criteriaQuery.from(Employee.class));
 
         return entityManager.createQuery(criteriaQuery).getResultList();
-
     }
 
-    public List<Employee> getFirst20() {
-        TypedQuery<Employee> first20 = entityManager.createNamedQuery(Employee.GET_ALL_NAME, Employee.class);
+    public List<EmployeeTo> getFirst20() {
+        TypedQuery<EmployeeTo> first20 = entityManager.createNamedQuery(Employee.GET_EMPLOYEES_TOTAL_TAX_NAME, EmployeeTo.class);
         first20.setMaxResults(20);
 
         return first20.getResultList();

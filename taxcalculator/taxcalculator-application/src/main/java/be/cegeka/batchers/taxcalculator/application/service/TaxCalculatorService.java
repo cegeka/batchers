@@ -1,21 +1,30 @@
 package be.cegeka.batchers.taxcalculator.application.service;
 
-import be.cegeka.batchers.taxcalculator.application.domain.Employee;
+import java.math.RoundingMode;
+
+import org.joda.money.CurrencyUnit;
+import org.joda.money.Money;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import be.cegeka.batchers.taxcalculator.application.domain.Employee;
+import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
 
 @Service
 public class TaxCalculatorService {
 
-    @Autowired
-    RunningTimeService runningTimeService;
+	@Autowired
+	private RunningTimeService runningTimeService;
 
-    public void calculateTax(Employee employee) {
-        employee.addTax();
-        runningTimeService.sleep();
-    }
+	public TaxCalculation calculateTax(long jobExecutionId, Employee employee, long year, long month) {
+		runningTimeService.sleep();
+		double taxAmount = employee.getIncome() * 0.1;
+		Money tax = Money.of(CurrencyUnit.EUR, taxAmount, RoundingMode.HALF_DOWN);
 
-    public void setRunningTimeService(RunningTimeService runningTimeService) {
-        this.runningTimeService = runningTimeService;
-    }
+		return TaxCalculation.from(jobExecutionId, employee, year, month, tax);
+	}
+
+	public void setRunningTimeService(RunningTimeService runningTimeService) {
+		this.runningTimeService = runningTimeService;
+	}
 }
