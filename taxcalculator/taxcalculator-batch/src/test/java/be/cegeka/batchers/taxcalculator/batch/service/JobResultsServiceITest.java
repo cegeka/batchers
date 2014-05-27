@@ -25,7 +25,9 @@ public class JobResultsServiceITest extends AbstractIntegrationTest {
 
         List<JobResult> finishedJobResults = jobResultsService.getFinishedJobResults();
 
-        assertThat(finishedJobResults).isNotEmpty();
+        assertThat(finishedJobResults)
+                .isNotEmpty()
+                .hasSize(2);
 
 //        assertThat(finishedJobResults.get(0).getJobName()).isEqualTo(EmployeeJobConfig.EMPLOYEE_JOB);
 //        assertThat(finishedJobResults.get(0).getJobStartParams().getYear()).isEqualTo(2014);
