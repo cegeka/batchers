@@ -3,11 +3,8 @@ package be.cegeka.batchers.taxcalculator.batch.service;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResult;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResultRepository;
-import com.sun.org.apache.bcel.internal.generic.NEW;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,38 +14,31 @@ import java.util.concurrent.Callable;
 @Service
 public class TaxPaymentWebServiceFacade {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TaxPaymentWebServiceFacade.class);
-
-    @Autowired
-    private TaxServiceCallResultRepository taxServiceCallResultRepository;
+	@Autowired
+	private TaxServiceCallResultRepository taxServiceCallResultRepository;
 
     public TaxServiceCallResult callTaxService(TaxCalculation taxCalculation, Callable<TaxServiceCallResult> callable)
             throws Exception {
-        TaxServiceCallResult previousResult = getPreviousTaxCalculation(taxCalculation);
-        if (webServiceHasBeenCalledSuccessfully(previousResult)) {
+        TaxServiceCallResult previousResult = taxServiceCallResultRepository.findSuccessfulByTaxCalculation(taxCalculation);
+
+        if (previousResult != null) {
             return previousResult;
-        } else {
-            TaxServiceCallResult taxServiceCallResult = callable.call();
-            saveTaxServiceCallResult(taxServiceCallResult);
-            return taxServiceCallResult;
+        }
+
+        try{
+            TaxServiceCallResult successTaxServiceCallResult = callable.call();
+            saveTaxServiceCallResult(successTaxServiceCallResult);
+            return successTaxServiceCallResult;
+        } catch(TaxWebServiceException e){
+            TaxServiceCallResult failedTaxServiceCallResult = e.getTaxServiceCallResult();
+            saveTaxServiceCallResult(failedTaxServiceCallResult);
+            throw e;
         }
     }
 
-    private TaxServiceCallResult getPreviousTaxCalculation(TaxCalculation taxCalculation) {
-        TaxServiceCallResult byTaxCalculation = taxServiceCallResultRepository.findLastByTaxCalculation(taxCalculation);
-        return byTaxCalculation;
-    }
-
-    private boolean webServiceHasBeenCalledSuccessfully(TaxServiceCallResult previousResult) {
-        if (previousResult != null && previousResult.getResponseStatus() == HttpStatus.OK.value()) {
-            return true;
-        }
-        return false;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    private void saveTaxServiceCallResult(TaxServiceCallResult taxServiceCallResult) {
-        taxServiceCallResultRepository.save(taxServiceCallResult);
-    }
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	private void saveTaxServiceCallResult(TaxServiceCallResult taxServiceCallResult) {
+		taxServiceCallResultRepository.save(taxServiceCallResult);
+	}
 
 }

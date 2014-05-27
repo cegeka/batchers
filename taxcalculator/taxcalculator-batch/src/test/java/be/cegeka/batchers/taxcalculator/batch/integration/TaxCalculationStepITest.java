@@ -3,7 +3,6 @@ package be.cegeka.batchers.taxcalculator.batch.integration;
 import be.cegeka.batchers.taxcalculator.application.domain.*;
 import be.cegeka.batchers.taxcalculator.batch.config.EmployeeJobConfig;
 import org.junit.After;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
@@ -34,12 +33,25 @@ public class TaxCalculationStepITest extends AbstractIntegrationTest {
     }
 
     @Test
+    public void taxCalculationStep_noWork() throws Exception {
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addLong("year", 2014L, true)
+                .addLong("month", 5L, true)
+                .toJobParameters();
+
+        JobExecution jobExecution = jobLauncherTestUtils.launchStep(EmployeeJobConfig.TAX_CALCULATION_STEP, jobParameters);
+
+        assertThat(jobExecution.getExitStatus()).isEqualTo(ExitStatus.COMPLETED);
+        assertThat(taxCalculationRepository.findByYearAndMonth(2014, 5)).isEmpty();
+    }
+
+    @Test
     public void taxCalculationStep_generatesCorrectCalculation() throws Exception {
         Employee employee = haveOneEmployee();
 
         JobParameters jobParameters = new JobParametersBuilder()
-                .addLong("year", 2014L, false)
-                .addLong("month", 5L, false)
+                .addLong("year", 2014L, true)
+                .addLong("month", 5L, true)
                 .toJobParameters();
 
         JobExecution jobExecution = jobLauncherTestUtils.launchStep(EmployeeJobConfig.TAX_CALCULATION_STEP, jobParameters);
@@ -56,20 +68,6 @@ public class TaxCalculationStepITest extends AbstractIntegrationTest {
 
         List<TaxCalculation> byYearAndMonth = taxCalculationRepository.findByYearAndMonth(2014, 5);
         assertThat(byYearAndMonth).hasSize(1);
-    }
-
-    @Test
-    @Ignore("Tests still share the jobRepository")
-    public void taxCalculationStep_noWork() throws Exception {
-
-        JobParameters jobParameters = new JobParametersBuilder()
-                .addLong("year", 2014L, false)
-                .addLong("month", 5L, false)
-                .toJobParameters();
-
-        JobExecution jobExecution1 = jobLauncherTestUtils.launchStep(EmployeeJobConfig.TAX_CALCULATION_STEP, jobParameters);
-
-
     }
 
     private Employee haveOneEmployee() {

@@ -4,6 +4,7 @@ import be.cegeka.batchers.taxcalculator.application.util.jackson.JodaDateTimeSer
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
+import org.springframework.http.HttpStatus;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -12,7 +13,7 @@ import javax.validation.constraints.NotNull;
         @NamedQuery(name = TaxServiceCallResult.FIND_BY_TAXCALCULATION, query = TaxServiceCallResult.FIND_BY_TAXCALCULATION_QUERY),
         @NamedQuery(name = TaxServiceCallResult.GET_SUCCESS_SUM, query = TaxServiceCallResult.GET_SUCCESS_SUM_QUERY),
         @NamedQuery(name = TaxServiceCallResult.GET_FAILED_SUM, query = TaxServiceCallResult.GET_FAILED_SUM_QUERY),
-        @NamedQuery(name = TaxServiceCallResult.FIND_LAST_BY_TAXCALCULATION, query = TaxServiceCallResult.FIND_LAST_BY_TAXCALCULATION_QUERY)
+        @NamedQuery(name = TaxServiceCallResult.FIND_SUCCESSFUL_BY_TAXCALCULATION, query = TaxServiceCallResult.FIND_SUCCESSFUL_BY_TAXCALCULATION_QUERY),
 })
 
 @Entity
@@ -33,9 +34,9 @@ public class TaxServiceCallResult {
             " JOIN tscr.taxCalculation as tc " +
             " where tscr.responseStatus <> " + HTTP_OK + " and tc.month = :month and tc.year = :year";
 
-    public static final String FIND_LAST_BY_TAXCALCULATION = "TaxServiceCallResult.FIND_LAST_BY_TAXCALCULATION";
-    public static final String FIND_LAST_BY_TAXCALCULATION_QUERY = "SELECT tscr FROM TaxServiceCallResult tscr " +
-            " WHERE tscr.taxCalculation.id = :taxCalculationId ORDER BY tscr.callDate DESC";
+    public static final String FIND_SUCCESSFUL_BY_TAXCALCULATION = "TaxServiceCallResult.FIND_SUCCESSFUL_BY_TAXCALCULATION";
+    public static final String FIND_SUCCESSFUL_BY_TAXCALCULATION_QUERY = "SELECT tscr FROM TaxServiceCallResult tscr " +
+            " WHERE tscr.taxCalculation.id = :taxCalculationId and tscr.successfulResponse IS true";
 
     @Id
     @GeneratedValue
@@ -53,18 +54,21 @@ public class TaxServiceCallResult {
 
     private String responseBody;
 
+    private boolean successfulResponse;
+
     @JsonSerialize(using = JodaDateTimeSerializer.class)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     @NotNull
     private DateTime callDate;
 
-    public static TaxServiceCallResult from(TaxCalculation taxCalculation, String callParameters, int responseStatus, String responseBody, DateTime callDate) {
+    public static TaxServiceCallResult from(TaxCalculation taxCalculation, String callParameters, int responseStatus, String responseBody, DateTime callDate, boolean successfulResponse) {
         TaxServiceCallResult taxServiceCallResult = new TaxServiceCallResult();
         taxServiceCallResult.taxCalculation = taxCalculation;
         taxServiceCallResult.callParameters = callParameters;
         taxServiceCallResult.responseStatus = responseStatus;
         taxServiceCallResult.responseBody = responseBody;
         taxServiceCallResult.callDate = callDate;
+        taxServiceCallResult.successfulResponse = successfulResponse;
         return taxServiceCallResult;
     }
 
@@ -90,5 +94,13 @@ public class TaxServiceCallResult {
 
     public DateTime getCallDate() {
         return callDate;
+    }
+
+    public boolean isSuccessfulResponse() {
+        return successfulResponse;
+    }
+
+    public void setSuccessfulResponse(boolean successfulResponse) {
+        this.successfulResponse = successfulResponse;
     }
 }

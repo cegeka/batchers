@@ -67,7 +67,7 @@ public class SendPaycheckProcessorTest {
 
         TaxCalculation taxCalculation = TaxCalculation.from(1L, employee, 2014, 1, Money.of(CurrencyUnit.EUR, 10.0));
 
-        TaxServiceCallResult taxServiceCallResult = TaxServiceCallResult.from(taxCalculation, "", HttpStatus.OK.value(), "", DateTime.now());
+        TaxServiceCallResult taxServiceCallResult = TaxServiceCallResult.from(taxCalculation, "", HttpStatus.OK.value(), "", DateTime.now(), true);
 
         PayCheck payCheck = sendPaycheckProcessor.process(taxServiceCallResult);
 

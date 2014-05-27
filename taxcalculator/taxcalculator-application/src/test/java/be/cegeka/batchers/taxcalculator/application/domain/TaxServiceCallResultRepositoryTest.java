@@ -48,9 +48,9 @@ public class TaxServiceCallResultRepositoryTest extends IntegrationTest {
         List<TaxCalculation> taxCalculations = Arrays.asList(january, february);
         taxCalculations.forEach(tax -> taxCalculationRepository.save(tax));
 
-        januaryTry1 = TaxServiceCallResult.from(january, "", HttpStatus.INTERNAL_SERVER_ERROR.value(), null, DateTime.now());
-        januaryTry2 = TaxServiceCallResult.from(january, "", HttpStatus.OK.value(), "", DateTime.now());
-        februaryTry1 = TaxServiceCallResult.from(february, "", HttpStatus.OK.value(), "", DateTime.now());
+        januaryTry1 = TaxServiceCallResult.from(january, "", HttpStatus.INTERNAL_SERVER_ERROR.value(), null, DateTime.now(), false);
+        januaryTry2 = TaxServiceCallResult.from(january, "", HttpStatus.OK.value(), "", DateTime.now(), true);
+        februaryTry1 = TaxServiceCallResult.from(february, "", HttpStatus.OK.value(), "", DateTime.now(), true);
 
         List<TaxServiceCallResult> taxServiceCallResults = Arrays.asList(januaryTry1, januaryTry2, februaryTry1);
         taxServiceCallResults.forEach(taxServiceCallResult -> taxServiceCallResultRepository.save(taxServiceCallResult));
@@ -73,7 +73,7 @@ public class TaxServiceCallResultRepositoryTest extends IntegrationTest {
         employeeRepository.save(anotherEmployee);
         TaxCalculation january2 = TaxCalculation.from(1L, anotherEmployee, 2014, 1, Money.of(CurrencyUnit.EUR, 10.0));
         taxCalculationRepository.save(january2);
-        TaxServiceCallResult januaryTry2 = TaxServiceCallResult.from(january2, "", HttpStatus.OK.value(), "", DateTime.now());
+        TaxServiceCallResult januaryTry2 = TaxServiceCallResult.from(january2, "", HttpStatus.OK.value(), "", DateTime.now(), true);
         taxServiceCallResultRepository.save(januaryTry2);
 
 
@@ -90,7 +90,7 @@ public class TaxServiceCallResultRepositoryTest extends IntegrationTest {
         employeeRepository.save(anotherEmployee);
         TaxCalculation january2 = TaxCalculation.from(1L, anotherEmployee, 2014, 1, Money.of(CurrencyUnit.EUR, 10.0));
         taxCalculationRepository.save(january2);
-        TaxServiceCallResult januaryTry2 = TaxServiceCallResult.from(january2, "", HttpStatus.BAD_REQUEST.value(), "", DateTime.now());
+        TaxServiceCallResult januaryTry2 = TaxServiceCallResult.from(january2, "", HttpStatus.BAD_REQUEST.value(), "", DateTime.now(), false);
         taxServiceCallResultRepository.save(januaryTry2);
 
         Money expectedMoney = Money.of(CurrencyUnit.EUR, 20.0);
@@ -98,5 +98,20 @@ public class TaxServiceCallResultRepositoryTest extends IntegrationTest {
         Money actualMoney = taxServiceCallResultRepository.getFailedSum(2014, 1);
 
         assertThat(actualMoney).isEqualTo(expectedMoney);
+    }
+
+    @Test
+    public void testFindSuccessfulByTaxCalculation_returnsSuccessful() {
+        TaxServiceCallResult successfulByTaxCalculation = taxServiceCallResultRepository.findSuccessfulByTaxCalculation(january);
+        assertThat(successfulByTaxCalculation).isEqualTo(januaryTry2);
+    }
+
+    @Test
+    public void testFindSuccessfulByTaxCalculation_returnsNullWhenNoCall() {
+        TaxCalculation march = TaxCalculation.from(1L, employee, 2014, 3, Money.of(CurrencyUnit.EUR, 10.0));
+        taxCalculationRepository.save(march);
+
+        TaxServiceCallResult successfulByTaxCalculation = taxServiceCallResultRepository.findSuccessfulByTaxCalculation(march);
+        assertThat(successfulByTaxCalculation).isNull();
     }
 }
