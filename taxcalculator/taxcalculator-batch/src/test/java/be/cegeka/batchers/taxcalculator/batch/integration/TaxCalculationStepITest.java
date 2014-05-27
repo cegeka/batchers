@@ -9,6 +9,7 @@ import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -34,12 +35,25 @@ public class TaxCalculationStepITest extends AbstractIntegrationTest {
     }
 
     @Test
+    public void taxCalculationStep_noWork() throws Exception {
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addLong("year", 2014L, true)
+                .addLong("month", 5L, true)
+                .toJobParameters();
+
+        JobExecution jobExecution = jobLauncherTestUtils.launchStep(EmployeeJobConfig.TAX_CALCULATION_STEP, jobParameters);
+
+        assertThat(jobExecution.getExitStatus()).isEqualTo(ExitStatus.COMPLETED);
+        assertThat(taxCalculationRepository.findByYearAndMonth(2014, 5)).isEmpty();
+    }
+
+    @Test
     public void taxCalculationStep_generatesCorrectCalculation() throws Exception {
         Employee employee = haveOneEmployee();
 
         JobParameters jobParameters = new JobParametersBuilder()
-                .addLong("year", 2014L, false)
-                .addLong("month", 5L, false)
+                .addLong("year", 2014L, true)
+                .addLong("month", 5L, true)
                 .toJobParameters();
 
         JobExecution jobExecution = jobLauncherTestUtils.launchStep(EmployeeJobConfig.TAX_CALCULATION_STEP, jobParameters);
@@ -56,20 +70,6 @@ public class TaxCalculationStepITest extends AbstractIntegrationTest {
 
         List<TaxCalculation> byYearAndMonth = taxCalculationRepository.findByYearAndMonth(2014, 5);
         assertThat(byYearAndMonth).hasSize(1);
-    }
-
-    @Test
-    @Ignore("Tests still share the jobRepository")
-    public void taxCalculationStep_noWork() throws Exception {
-
-        JobParameters jobParameters = new JobParametersBuilder()
-                .addLong("year", 2014L, false)
-                .addLong("month", 5L, false)
-                .toJobParameters();
-
-        JobExecution jobExecution1 = jobLauncherTestUtils.launchStep(EmployeeJobConfig.TAX_CALCULATION_STEP, jobParameters);
-
-
     }
 
     private Employee haveOneEmployee() {
