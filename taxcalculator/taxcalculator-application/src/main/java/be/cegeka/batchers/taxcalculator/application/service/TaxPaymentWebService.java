@@ -22,7 +22,7 @@ import java.net.URI;
 @Service
 public class TaxPaymentWebService {
 
-    public static final Logger LOG = LoggerFactory.getLogger(TaxPaymentWebService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TaxPaymentWebService.class);
 
     @Autowired
     private String taxServiceUrl;
@@ -41,7 +41,7 @@ public class TaxPaymentWebService {
             ResponseEntity<TaxServiceResponse> webserviceResult = restTemplate.postForEntity(uri, taxTo, TaxServiceResponse.class);
             TaxServiceResponse taxServiceResponse = webserviceResult.getBody();
 
-            if (taxServiceResponse.getStatus().equals("OK")) {
+            if ("OK".equals(taxServiceResponse.getStatus())) {
                 isSuccessfulResponse = true;
             }
             httpStatus = webserviceResult.getStatusCode().value();

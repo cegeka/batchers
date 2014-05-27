@@ -2,7 +2,6 @@ package be.cegeka.batchers.taxcalculator.batch;
 
 import be.cegeka.batchers.taxcalculator.application.domain.PayCheck;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
-import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculationRepository;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResult;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailAttachmentTO;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailSender;
@@ -31,8 +30,6 @@ public class SendPaycheckProcessor implements ItemProcessor<TaxServiceCallResult
     private PDFGeneratorService pdfGeneratorService;
     @Autowired
     private EmailSender emailSender;
-    @Autowired
-    private TaxCalculationRepository taxCalculationRepository;
 
     @Override
     public PayCheck process(TaxServiceCallResult taxServiceCallResult) throws Exception {
@@ -42,21 +39,19 @@ public class SendPaycheckProcessor implements ItemProcessor<TaxServiceCallResult
         byte[] pdfBytes = pdfGeneratorService.generatePdfAsByteArray(resource, getPayCheckPdfContext(taxCalculation));
         emailSender.send(getEmailTO(taxCalculation, pdfBytes));
 
-        PayCheck payCheck = PayCheck.from(taxCalculation, pdfBytes);
-
-        return payCheck;
+        return PayCheck.from(taxCalculation, pdfBytes);
     }
 
     public String getEmailBodyForEmployee(TaxCalculation taxCalculation) {
 
-        String ENDL = "<br/>";
+        String newline = "<br/>";
         StringBuilder sb = new StringBuilder()
                 .append("Dear employee,")
-                .append(ENDL)
+                .append(newline)
                 .append("Please find enclosed the paycheck for " + getYearMonth(taxCalculation))
-                .append(ENDL)
+                .append(newline)
                 .append("Regards,")
-                .append(ENDL)
+                .append(newline)
                 .append("The Finance department");
         return sb.toString();
     }
