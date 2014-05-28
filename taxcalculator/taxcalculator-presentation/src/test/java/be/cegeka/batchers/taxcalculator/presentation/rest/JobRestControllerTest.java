@@ -1,6 +1,7 @@
 package be.cegeka.batchers.taxcalculator.presentation.rest;
 
 import be.cegeka.batchers.taxcalculator.batch.api.JobService;
+import be.cegeka.batchers.taxcalculator.presentation.rest.controller.JobRestController;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

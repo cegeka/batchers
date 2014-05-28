@@ -1,4 +1,4 @@
-package be.cegeka.batchers.taxcalculator.presentation.rest;
+package be.cegeka.batchers.taxcalculator.presentation.rest.controller;
 
 import java.util.List;
 

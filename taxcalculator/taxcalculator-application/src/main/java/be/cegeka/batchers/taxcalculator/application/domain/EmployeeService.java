@@ -15,4 +15,16 @@ public class EmployeeService {
     public List<EmployeeTo> getFirst20() {
         return employeeRepository.getFirst20();
     }
+
+    public Long count() {
+        return employeeRepository.count();
+    }
+
+    public void deleteAll() {
+        employeeRepository.deleteAll();
+    }
+
+    public void truncate() {
+        employeeRepository.truncate();
+    }
 }

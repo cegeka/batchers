@@ -72,4 +72,13 @@ public class EmployeeRepository {
 
         entityManager.createQuery(criteriaDelete).executeUpdate();
     }
+
+    @Transactional
+    public void truncate() {
+        EntityManager em = entityManagerFactory.createEntityManager();
+        em.createNativeQuery("truncate table Employee").executeUpdate();
+        em.getTransaction().commit();
+    }
+
+
 }
