@@ -81,6 +81,7 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
                 .reader(taxCalculatorItemReader)
                 .processor(calculateTaxProcessor)
                 .writer(itemReaderWriterConfig.taxCalculatorItemWriter())
+                .allowStartIfComplete(true)
                 .build();
     }
 
@@ -99,6 +100,7 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
                 return false;
             }
         });
+
         faultTolerantStepBuilder.noRollback(TaxWebServiceException.class);
         faultTolerantStepBuilder.listener(failedStepStepExecutionListener);
 
@@ -113,6 +115,7 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
                 .processor(compositeItemProcessor)
                 .writer(itemReaderWriterConfig.wsCallItemWriter())
                 .listener(sendPaycheckProcessor)
+                .allowStartIfComplete(true)
                 .build();
     }
 
@@ -120,6 +123,7 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
     public Step jobResultsPdf() {
         return stepBuilders.get("JOB_RESULTS_PDF")
                 .tasklet(jobResultsTasklet)
+                .allowStartIfComplete(true)
                 .build();
     }
 

@@ -79,18 +79,15 @@ public class TaxCalculatorJobServiceTest {
     }
 
     @Test
-    public void givenJob_whenGetNewJobParameters_thenParametersContainIdentifierMonthAndYear() {
+    public void givenJob_whenGetNewJobParameters_thenParametersContainMonthAndYear() {
         JobParameters jobParameters = taxCalculatorJobService.getNewJobParameters();
 
-        assertThat(jobParameters.getParameters()).hasSize(3);
-        assertThat(jobParameters.getLong("uniqueIdentifier")).isNotNull();
-        assertThat(jobParameters.getParameters().get("uniqueIdentifier").getValue()).isNotNull();
-        assertThat(jobParameters.getParameters().get("uniqueIdentifier").isIdentifying()).isTrue();
+        assertThat(jobParameters.getParameters()).hasSize(2);
 
         assertThat((Long) jobParameters.getParameters().get("month").getValue()).isEqualTo(new DateTime().getMonthOfYear());
-        assertThat(jobParameters.getParameters().get("month").isIdentifying()).isFalse();
+        assertThat(jobParameters.getParameters().get("month").isIdentifying()).isTrue();
 
         assertThat((Long) jobParameters.getParameters().get("year").getValue()).isEqualTo(new DateTime().getYear());
-        assertThat(jobParameters.getParameters().get("year").isIdentifying()).isFalse();
+        assertThat(jobParameters.getParameters().get("year").isIdentifying()).isTrue();
     }
 }
