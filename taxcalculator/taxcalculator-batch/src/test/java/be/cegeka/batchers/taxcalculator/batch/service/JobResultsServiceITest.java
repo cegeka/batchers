@@ -24,7 +24,7 @@ public class JobResultsServiceITest extends AbstractIntegrationTest {
         jobLauncherTestUtils.launchJob(getJobParametersForMonth(5L));
         jobLauncherTestUtils.launchJob(getJobParametersForMonth(6L));
 
-        List<JobResult> finishedJobResults = jobResultsService.getFinishedJobResults();
+        List<JobResult> finishedJobResults = jobResultsService.getJobResults();
 
         assertThat(finishedJobResults)
                 .isNotEmpty()

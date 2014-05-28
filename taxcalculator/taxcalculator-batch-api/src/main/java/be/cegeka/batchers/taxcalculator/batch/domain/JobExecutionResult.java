@@ -5,12 +5,15 @@ import java.util.Date;
 public class JobExecutionResult {
 
     private String status;
-    private Date dateTime;
+    private Date startTime;
+    private Date endTime;
     private String executionId;
 
-    public JobExecutionResult(String status, Date dateTime, String executionId) {
+
+    public JobExecutionResult(String status, Date startTime, Date endTime, String executionId) {
         this.status = status;
-        this.dateTime = dateTime;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.executionId = executionId;
     }
 
@@ -18,8 +21,12 @@ public class JobExecutionResult {
         return status;
     }
 
-    public Date getDateTime() {
-        return dateTime;
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
     }
 
     public String getExecutionId() {
@@ -27,4 +34,10 @@ public class JobExecutionResult {
     }
 
 
+    public Long getDuration() {
+        if (endTime == null) {
+            return null;
+        }
+        return endTime.getTime() - startTime.getTime();
+    }
 }

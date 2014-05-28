@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class JobExecutionMapper {
+
     public JobResult toJobResultTo(Map.Entry<JobInstance, List<JobExecution>> mapEntry) {
         JobInstance jobInstance = mapEntry.getKey();
         List<JobExecution> jobExecutions = mapEntry.getValue();
@@ -29,9 +30,13 @@ public class JobExecutionMapper {
                 .stream()
                 .map(jobExec -> new JobExecutionResult(
                         jobExec.getStatus().toString(),
-                        jobExec.getEndTime(),
-                        jobExec.getJobInstance().getJobName() + " " + jobExec.getId()))
+                        jobExec.getStartTime(), jobExec.getEndTime(),
+                        getJobExecutionDescription(jobExec)))
                 .collect(Collectors.toList());
+    }
+
+    private String getJobExecutionDescription(JobExecution jobExec) {
+        return jobExec.getJobParameters().getLong("month") + "/" + jobExec.getJobParameters().getLong("year") + ", id :" + jobExec.getId();
     }
 
     private JobStartParams getJobStartParams(JobParameters jobParameters) {
