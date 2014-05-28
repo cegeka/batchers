@@ -14,31 +14,30 @@ import java.util.concurrent.Callable;
 @Service
 public class TaxPaymentWebServiceFacade {
 
-	@Autowired
-	private TaxServiceCallResultRepository taxServiceCallResultRepository;
+    @Autowired
+    private TaxServiceCallResultRepository taxServiceCallResultRepository;
 
-    public TaxServiceCallResult callTaxService(TaxCalculation taxCalculation, Callable<TaxServiceCallResult> callable)
-            throws Exception {
+    public TaxServiceCallResult callTaxService(TaxCalculation taxCalculation, Callable<TaxServiceCallResult> callable) throws Exception {
         TaxServiceCallResult previousResult = taxServiceCallResultRepository.findSuccessfulByTaxCalculation(taxCalculation);
 
         if (previousResult != null) {
             return previousResult;
         }
 
-        try{
+        try {
             TaxServiceCallResult successTaxServiceCallResult = callable.call();
             saveTaxServiceCallResult(successTaxServiceCallResult);
             return successTaxServiceCallResult;
-        } catch(TaxWebServiceException e){
+        } catch (TaxWebServiceException e) {
             TaxServiceCallResult failedTaxServiceCallResult = e.getTaxServiceCallResult();
             saveTaxServiceCallResult(failedTaxServiceCallResult);
             throw e;
         }
     }
 
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	private void saveTaxServiceCallResult(TaxServiceCallResult taxServiceCallResult) {
-		taxServiceCallResultRepository.save(taxServiceCallResult);
-	}
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    private void saveTaxServiceCallResult(TaxServiceCallResult taxServiceCallResult) {
+        taxServiceCallResultRepository.save(taxServiceCallResult);
+    }
 
 }

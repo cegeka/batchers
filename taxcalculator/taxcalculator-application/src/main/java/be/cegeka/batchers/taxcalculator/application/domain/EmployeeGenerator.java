@@ -11,13 +11,12 @@ import static java.lang.System.currentTimeMillis;
 
 @Component
 public class EmployeeGenerator {
-    public static final Long GENERATED_COUNT = 21L;
-
+    private static final Long GENERATED_COUNT = 21L;
 
     @Value("${number.of.employees:21}")
-    Long numberOfEmployees;
+    protected Long numberOfEmployees;
 
-    Faker faker = new Faker();
+    private Faker faker = new Faker();
 
     @Autowired
     private EmployeeRepository employeeRepository;

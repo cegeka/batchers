@@ -1,5 +1,6 @@
 package be.cegeka.batchers.taxcalculator.batch.service;
 
+import be.cegeka.batchers.taxcalculator.batch.config.EmployeeJobConfig;
 import be.cegeka.batchers.taxcalculator.batch.domain.JobResult;
 import be.cegeka.batchers.taxcalculator.batch.integration.AbstractIntegrationTest;
 import org.junit.Test;
@@ -25,12 +26,14 @@ public class JobResultsServiceITest extends AbstractIntegrationTest {
 
         List<JobResult> finishedJobResults = jobResultsService.getFinishedJobResults();
 
-        assertThat(finishedJobResults).isNotEmpty();
+        assertThat(finishedJobResults)
+                .isNotEmpty()
+                .hasSize(2);
 
-//        assertThat(finishedJobResults.get(0).getJobName()).isEqualTo(EmployeeJobConfig.EMPLOYEE_JOB);
-//        assertThat(finishedJobResults.get(0).getJobStartParams().getYear()).isEqualTo(2014);
-//        assertThat(finishedJobResults.get(0).getJobStartParams().getMonth()).isEqualTo(5);
-//        assertThat(finishedJobResults.get(0).getJobExecutionResults()).hasSize(1);
+        assertThat(finishedJobResults.get(0).getJobName()).isEqualTo(EmployeeJobConfig.EMPLOYEE_JOB);
+        assertThat(finishedJobResults.get(0).getJobStartParams().getYear()).isEqualTo(2014);
+        assertThat(finishedJobResults.get(0).getJobStartParams().getMonth()).isEqualTo(6);
+        assertThat(finishedJobResults.get(0).getJobExecutionResults()).hasSize(1);
     }
 
     private JobParameters getJobParametersForMonth(long month) {

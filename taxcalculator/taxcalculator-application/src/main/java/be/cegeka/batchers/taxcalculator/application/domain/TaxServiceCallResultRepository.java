@@ -19,7 +19,7 @@ import java.util.List;
 public class TaxServiceCallResultRepository {
 
     @PersistenceContext
-    EntityManager entityManager;
+    private EntityManager entityManager;
 
     public void save(TaxServiceCallResult taxServiceCallResult) {
         entityManager.persist(taxServiceCallResult);

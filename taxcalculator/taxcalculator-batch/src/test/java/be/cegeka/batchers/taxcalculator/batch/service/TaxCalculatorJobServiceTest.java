@@ -68,8 +68,8 @@ public class TaxCalculatorJobServiceTest {
     public void givenJob_whenCalculatingParameters_thenAUniqueIdentifierIsUsed() throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
         taxCalculatorJobService = spy(taxCalculatorJobService);
         JobParameters jobParameters = new JobParametersBuilder().addLong("uniqueIdentifier", new Date().getTime())
-                .addLong("month", new Long(5), false)
-                .addLong("year", new Long(2014), false).toJobParameters();
+                .addLong("month", 5L, false)
+                .addLong("year", 2014L, false).toJobParameters();
 
         doReturn(jobParameters).when(taxCalculatorJobService).getNewJobParameters();
 
@@ -87,10 +87,10 @@ public class TaxCalculatorJobServiceTest {
         assertThat(jobParameters.getParameters().get("uniqueIdentifier").getValue()).isNotNull();
         assertThat(jobParameters.getParameters().get("uniqueIdentifier").isIdentifying()).isTrue();
 
-        assertThat((Long)jobParameters.getParameters().get("month").getValue()).isEqualTo(new DateTime().getMonthOfYear());
+        assertThat((Long) jobParameters.getParameters().get("month").getValue()).isEqualTo(new DateTime().getMonthOfYear());
         assertThat(jobParameters.getParameters().get("month").isIdentifying()).isFalse();
 
-        assertThat((Long)jobParameters.getParameters().get("year").getValue()).isEqualTo(new DateTime().getYear());
+        assertThat((Long) jobParameters.getParameters().get("year").getValue()).isEqualTo(new DateTime().getYear());
         assertThat(jobParameters.getParameters().get("year").isIdentifying()).isFalse();
     }
 }

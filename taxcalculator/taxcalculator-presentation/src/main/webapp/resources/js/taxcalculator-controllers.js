@@ -27,3 +27,16 @@ taxcalculatorControllers
       );
     }
   ])
+
+  .controller('JobResultsCtrl', ['$scope', 'JobResultsResource',
+    function ($scope, JobResultsResource) {
+      $scope.jobResults = JobResultsResource.query(
+        {},
+        function (successData) {
+        },
+        function (error) {
+          $scope.$emit("alert", {'alertClass': 'alert-danger', 'message': 'Could not start job'})
+        }
+      );
+    }
+  ])

@@ -37,7 +37,7 @@ public class MonthlyTaxReportServiceTest {
     MonthlyReportRepository monthlyReportRepository;
 
     @Captor
-    ArgumentCaptor<MonthlyReport> monthlyReportArgumentCaptor;
+    private ArgumentCaptor<MonthlyReport> monthlyReportArgumentCaptor;
 
     @Before
     public void setUp() throws Exception {

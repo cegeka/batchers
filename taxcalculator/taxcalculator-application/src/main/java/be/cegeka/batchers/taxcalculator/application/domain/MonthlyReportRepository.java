@@ -15,11 +15,10 @@ import javax.persistence.criteria.CriteriaDelete;
 public class MonthlyReportRepository {
 
     @PersistenceContext
-    EntityManager entityManager;
+    private EntityManager entityManager;
 
-    public MonthlyReport save(MonthlyReport monthlyReport) {
+    public void save(MonthlyReport monthlyReport) {
         entityManager.persist(monthlyReport);
-        return monthlyReport;
     }
 
     public MonthlyReport findByYearAndMonth(long year, long month) {

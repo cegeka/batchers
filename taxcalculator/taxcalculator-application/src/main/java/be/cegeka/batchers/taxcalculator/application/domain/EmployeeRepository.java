@@ -21,7 +21,7 @@ import java.util.List;
 public class EmployeeRepository {
 
     @PersistenceContext
-    EntityManager entityManager;
+    private EntityManager entityManager;
 
     @Autowired
     private EntityManagerFactory entityManagerFactory;

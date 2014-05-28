@@ -4,8 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class EmailTO {
-    private List<String> tos = new LinkedList<String>();
-    private List<EmailAttachmentTO> attachments = new LinkedList<EmailAttachmentTO>();
+    private List<String> tos = new LinkedList<>();
+    private List<EmailAttachmentTO> attachments = new LinkedList<>();
     private String body;
     private String subject;
     private String from;
