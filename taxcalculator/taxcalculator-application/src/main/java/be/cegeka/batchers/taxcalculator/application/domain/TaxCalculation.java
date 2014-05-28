@@ -26,7 +26,8 @@ public class TaxCalculation {
 
     public static final String FIND_BY_YEAR_AND_MONTH = "TaxCalculation.FIND_BY_YEAR_AND_MONTH";
     public static final String FIND_BY_YEAR_AND_MONTH_QUERY = "SELECT tc FROM TaxCalculation tc " +
-            " WHERE tc.month = :month AND tc.year = :year";
+            " WHERE tc.month = :month AND tc.year = :year AND NOT EXISTS (SELECT pc FROM PayCheck pc WHERE" +
+                    " pc.taxCalculation.id = tc.id AND NOT (pc.jobExecutionId = :jobExecutionId))";
 
     public static final String FIND_BY_EMPLOYEE = "TaxCalculation.FIND_BY_EMPLOYEE";
     public static final String FIND_BY_EMPLOYEE_QUERY = "SELECT tc FROM TaxCalculation tc " +
