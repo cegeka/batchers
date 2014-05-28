@@ -25,7 +25,7 @@ public class JobResultsController {
     @RequestMapping(value = "jobResults", method = RequestMethod.GET)
     @ResponseBody
     public List<JobResult> getJobResults() {
-        return jobResultsService.getFinishedJobResults();
+        return jobResultsService.getJobResults();
     }
 
     @RequestMapping(value = "files/job_report/{jobId}.pdf", method = RequestMethod.GET)

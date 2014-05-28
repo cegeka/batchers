@@ -46,7 +46,7 @@ public class JobResultsControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        verify(jobResultsServiceMock).getFinishedJobResults();
+        verify(jobResultsServiceMock).getJobResults();
     }
 
     @Test
