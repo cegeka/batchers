@@ -36,6 +36,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     private static final String EMAIL_ADDRESS = "employee@email.com";
     private static final Long YEAR = 2014L;
     private static final Long MONTH = 1L;
+    private static final Long JOB_EXECUTION_ID = 12345L;
     private static Long counter = 0L;
     @Autowired
     String taxServiceUrl;
@@ -72,6 +73,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         Map<String, JobParameter> jobParamsMap = new HashMap<>();
         jobParamsMap.put("month", new JobParameter(MONTH, false));
         jobParamsMap.put("year", new JobParameter(YEAR, false));
+        jobParamsMap.put("jobExecutionId", new JobParameter(JOB_EXECUTION_ID, false));
         jobParamsMap.put("job-id-just-for-testing-shit-up", new JobParameter(counter++, true));
 
         jobParams = new JobParameters(jobParamsMap);

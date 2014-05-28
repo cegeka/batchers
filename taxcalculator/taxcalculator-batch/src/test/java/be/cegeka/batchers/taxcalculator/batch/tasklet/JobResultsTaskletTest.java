@@ -27,9 +27,10 @@ public class JobResultsTaskletTest {
     public void testExecuteCallsService() throws Exception {
         Whitebox.setInternalState(jobResultsTasklet, "month", 2);
         Whitebox.setInternalState(jobResultsTasklet, "year", 2015);
+        Whitebox.setInternalState(jobResultsTasklet, "jobExecutionId", 12345l);
 
         jobResultsTasklet.execute(stepContributionMock, chunkContextMock);
 
-        verify(monthlyTaxReportServiceMock).generateReport(2015, 2);
+        verify(monthlyTaxReportServiceMock).generateReport(2015, 2, 12345l);
     }
 }

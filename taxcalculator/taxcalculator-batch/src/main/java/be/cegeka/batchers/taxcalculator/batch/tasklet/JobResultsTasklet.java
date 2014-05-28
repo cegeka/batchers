@@ -25,9 +25,13 @@ public class JobResultsTasklet implements Tasklet {
     @Value("#{jobParameters[month]}")
     private long month;
 
+    @Value("#{jobParameters[jobExecutionId]}")
+    private long jobExecutionId;
+
+
     @Override
     public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws IOException, XDocReportException {
-        monthlyTaxReportService.generateReport(year, month);
+        monthlyTaxReportService.generateReport(year, month, jobExecutionId);
         return FINISHED;
     }
 }
