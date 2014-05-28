@@ -27,8 +27,10 @@ taxcalculatorControllers
       );
     }
   ])
-  .controller('GenerateEmployeesCtrl', ['$scope', 'GenerateEmployeesResource',
-    function ($scope, GenerateEmployeesResource) {
+  .controller('GenerateEmployeesCtrl', ['$scope', 'GenerateEmployeesResource', '$routeParams',
+    function ($scope, GenerateEmployeesResource, $routeParams) {
+      $scope.employeesCount = $routeParams.employeesCount;
+
       GenerateEmployeesResource.query(
         {},
         function (successData) {

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -17,14 +18,12 @@ public class GenerateEmployeesRestController {
     @Autowired
     protected EmployeeGenerator employeeGenerator;
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST, params = "employeesCount")
     @ResponseBody
-    public void generateEmployees() {
-        long numberOfEmployees = 500L;
+    public void generateEmployees(@RequestParam(value = "employeesCount") Long employeesCount) {
+        LOG.debug("Generating " + employeesCount + " employees in rest controller");
 
-        LOG.debug("Generating " + numberOfEmployees + " employees in rest controller");
-
-        employeeGenerator.setNumberOfEmployees(numberOfEmployees);
+        employeeGenerator.setNumberOfEmployees(employeesCount);
         employeeGenerator.generateAll();
     }
 
