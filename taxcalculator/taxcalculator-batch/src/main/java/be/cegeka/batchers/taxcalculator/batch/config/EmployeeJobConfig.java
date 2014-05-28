@@ -55,14 +55,18 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
     private SendPaycheckProcessor sendPaycheckProcessor;
     @Autowired
     private JobResultsTasklet jobResultsTasklet;
+    @Autowired
+    private ChangeStatusOnFailedStepsJobExecListener changeStatusOnFailedStepsJobExecListener;
+    @Autowired
+    private FailedStepStepExecutionListener failedStepStepExecutionListener;
 
     @Bean
     public Job employeeJob() {
         return jobBuilders.get(EMPLOYEE_JOB)
                 .start(taxCalculationStep())
                 .next(wsCallStep())
-
                 .next(jobResultsPdf())
+                .listener(changeStatusOnFailedStepsJobExecListener)
                 .build();
     }
 
@@ -85,6 +89,7 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
 
         faultTolerantStepBuilder.skipPolicy(new AlwaysSkipItemSkipPolicy());
         faultTolerantStepBuilder.noRollback(TaxWebServiceException.class);
+        faultTolerantStepBuilder.listener(failedStepStepExecutionListener);
 
         CompositeItemProcessor<TaxCalculation, PayCheck> compositeItemProcessor = new CompositeItemProcessor<>();
         compositeItemProcessor.setDelegates(Arrays.asList(
