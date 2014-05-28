@@ -1,9 +1,11 @@
 <h1 class="page-header">Employees </h1>
 
-Set size to
-<a href="#/generateEmployees">
-    Go
-</a>
+<div ng-controller="GenerateEmployeesCtrl">
+    Set size to: <input type="text" ng-model="GenerateEmployeesModel.employeesCount"><br>
+    <a ng-click="generateEmployees(GenerateEmployeesModel.employeesCount)">
+        Go
+    </a>
+</div>
 
 <div class="table-responsive">
     <table class="table table-striped">

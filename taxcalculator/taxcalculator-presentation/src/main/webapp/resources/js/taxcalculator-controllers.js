@@ -29,15 +29,17 @@ taxcalculatorControllers
   ])
   .controller('GenerateEmployeesCtrl', ['$scope', 'GenerateEmployeesResource', '$routeParams',
     function ($scope, GenerateEmployeesResource, $routeParams) {
-      $scope.employeesCount = $routeParams.employeesCount;
-
-      GenerateEmployeesResource.query(
-        {},
-        function (successData) {
-        },
-        function (error) {
-            $scope.$emit("alert", {'alertClass': 'alert-danger', 'message': 'Could not generate employees'})
-        }
-      );
+      $scope.GenerateEmployeesModel = {employeesCount: $routeParams.employeesCount};
+      $scope.generateEmployees = function(employeesCount){
+//          GenerateEmployeesResource.query(
+//              {},
+//              function (successData) {
+//              },
+//              function (error) {
+//                  $scope.$emit("alert", {'alertClass': 'alert-danger', 'message': 'Could not generate employees'})
+//              }
+//          );
+          console.log(employeesCount)
+      }
     }
   ]);
