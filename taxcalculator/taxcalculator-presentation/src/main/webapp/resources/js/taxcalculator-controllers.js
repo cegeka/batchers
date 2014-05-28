@@ -31,15 +31,15 @@ taxcalculatorControllers
     function ($scope, GenerateEmployeesResource, $routeParams) {
       $scope.GenerateEmployeesModel = {employeesCount: $routeParams.employeesCount};
       $scope.generateEmployees = function(employeesCount){
-//          GenerateEmployeesResource.query(
-//              {},
-//              function (successData) {
-//              },
-//              function (error) {
-//                  $scope.$emit("alert", {'alertClass': 'alert-danger', 'message': 'Could not generate employees'})
-//              }
-//          );
-          console.log(employeesCount)
+
+          GenerateEmployeesResource.post(
+              {employeesCount: employeesCount}, "",
+              function (successData) {
+              },
+              function (error) {
+                  $scope.$emit("alert", {'alertClass': 'alert-danger', 'message': 'Could not generate employees'})
+              }
+          );
       }
     }
   ]);

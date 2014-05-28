@@ -12,7 +12,12 @@ taxcalculatorServices
     }
   ])
   .factory('GenerateEmployeesResource', ['$resource',
-    function ($resource) {
-      return $resource('/taxcalculator/rest/generateEmployees/:employeesCount', {employeesCount: '@employeesCount'}, {'query': {method: 'POST'}});
+    function ($resource, employeesCount) {
+      console.log("employeesCount2 " + employeesCount);
+      return $resource('/taxcalculator/rest/generateEmployees/', {}, {'post':
+            {
+                method: 'POST'
+            }
+      });
     }
   ]);
