@@ -5,6 +5,7 @@ import be.cegeka.batchers.taxcalculator.application.domain.email.EmailAttachment
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailSender;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailTO;
 import be.cegeka.batchers.taxcalculator.application.domain.pdf.PDFGeneratorService;
+import fr.opensagres.xdocreport.core.XDocReportException;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.joda.time.DateTime;
@@ -16,11 +17,13 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.batch.core.StepExecution;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 
+import java.io.IOException;
 import java.util.Map;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -50,27 +53,37 @@ public class SendPaycheckProcessorTest {
     @Mock
     private TaxCalculationRepository taxCalculationRepository;
 
+    @Mock
+    private StepExecution stepExecution;
+    private Long jobExecutionId;
+    private Employee employee;
+    private TaxCalculation taxCalculation;
+    private TaxServiceCallResult taxServiceCallResult;
+    private byte[] generatedPdfBytes;
+
 
     @Before
-    public void setUp() {
-        when(resourceLoader.getResource("classpath:/paycheck-template.docx")).thenReturn(new ClassPathResource("paycheck-template.docx"));
-    }
+    public void setUp() throws IOException, XDocReportException {
+        jobExecutionId = 1L;
 
-    @Test
-    public void givenAnEmployee_whenProcessEmployee_thenAnEmailWithTheGeneratedPDFIsSent() throws Exception {
-        Employee employee = new EmployeeBuilder()
+        employee = new EmployeeBuilder()
                 .withEmailAddress(EMPLOYEE_EMAIL)
                 .withFirstName("FirstName")
                 .withIncome(2000)
                 .build();
 
-        byte[] generatedPdfBytes = new byte[]{0, 1, 2, 3, 4};
+        taxCalculation = TaxCalculation.from(1L, employee, 2014, 1, Money.of(CurrencyUnit.EUR, 10.0));
+        taxServiceCallResult = TaxServiceCallResult.from(taxCalculation, "", HttpStatus.OK.value(), "", DateTime.now(), true);
+
+        generatedPdfBytes = new byte[]{0, 1, 2, 3, 4};
         when(pdfGeneratorService.generatePdfAsByteArray(any(), anyMap())).thenReturn(generatedPdfBytes);
 
-        TaxCalculation taxCalculation = TaxCalculation.from(1L, employee, 2014, 1, Money.of(CurrencyUnit.EUR, 10.0));
+        when(resourceLoader.getResource("classpath:/paycheck-template.docx")).thenReturn(new ClassPathResource("paycheck-template.docx"));
+        when(stepExecution.getJobExecutionId()).thenReturn(jobExecutionId);
+    }
 
-        TaxServiceCallResult taxServiceCallResult = TaxServiceCallResult.from(taxCalculation, "", HttpStatus.OK.value(), "", DateTime.now(), true);
-
+    @Test
+    public void givenAnEmployee_whenProcessEmployee_thenAnEmailWithTheGeneratedPDFIsSent() throws Exception {
         PayCheck payCheck = sendPaycheckProcessor.process(taxServiceCallResult);
 
         assertThat(payCheck.getTaxCalculation().getEmployee()).isEqualTo(employee);
@@ -86,8 +99,6 @@ public class SendPaycheckProcessorTest {
                 .containsKey("employee_id")
                 .containsKey("monthly_income")
                 .containsKey("monthly_tax");
-//                .containsKey("tax_total");
-        // TODO IN STEP 3
 
         verify(emailSender).send(emailToCaptor.capture());
         EmailTO capturedEmailTo = emailToCaptor.getValue();
@@ -95,12 +106,18 @@ public class SendPaycheckProcessorTest {
         assertThat(capturedEmailTo.getTos()).containsOnly(employee.getEmail());
         assertThat(capturedEmailTo.getSubject()).isEqualTo("Paycheck");
         String emailBodyForEmployee = sendPaycheckProcessor.getEmailBodyForEmployee(taxCalculation);
-//        assertThat(emailBodyForEmployee).contains("May 2000");
-        // TODO IN STEP 3
         assertThat(capturedEmailTo.getBody()).isEqualTo(emailBodyForEmployee);
 
 
         EmailAttachmentTO attachmentTO = capturedEmailTo.getAttachments().get(0);
         assertThat(attachmentTO.getBytes()).contains(generatedPdfBytes);
+    }
+
+    @Test
+    public void givenAnEmployee_whenProcessEmployee_thenJobExecutionIdIsSetOnPaycheck() throws Exception {
+
+        PayCheck payCheck = sendPaycheckProcessor.process(taxServiceCallResult);
+
+        assertThat(payCheck.getJobExecutionId()).isEqualTo(jobExecutionId);
     }
 }

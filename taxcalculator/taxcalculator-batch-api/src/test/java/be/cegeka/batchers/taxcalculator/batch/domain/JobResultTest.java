@@ -26,7 +26,7 @@ public class JobResultTest {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DAY_OF_MONTH, day);
 
-        JobExecutionResult jobExecutionResult = new JobExecutionResult(null, calendar.getTime(), null);
+        JobExecutionResult jobExecutionResult = new JobExecutionResult(null, null, calendar.getTime(), null);
         return jobExecutionResult;
     }
 }

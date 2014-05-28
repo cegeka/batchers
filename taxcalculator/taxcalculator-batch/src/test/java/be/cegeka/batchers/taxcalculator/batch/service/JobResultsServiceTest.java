@@ -62,7 +62,7 @@ public class JobResultsServiceTest {
         when(jobExplorer.getJobExecutions(jobInstance2)).thenReturn(asList(jobInstance2_jobExecution1, jobInstance2_jobExecution2));
 
         //ACT
-        List<JobResult> jobResults = jobResultsService.getFinishedJobResults();
+        List<JobResult> jobResults = jobResultsService.getJobResults();
 
         //ASSERT
         verify(jobExplorer).getJobInstancesByJobName(EmployeeJobConfig.EMPLOYEE_JOB, 0, MAX_VALUE);
@@ -95,9 +95,9 @@ public class JobResultsServiceTest {
         when(jobExplorer.getJobExecutions(jobInstance2)).thenReturn(asList(jobInstance2_jobExecution1));
 
         //ACT
-        List<JobResult> jobResults = jobResultsService.getFinishedJobResults();
+        List<JobResult> jobResults = jobResultsService.getJobResults();
 
-        assertThat(jobResults.get(0).getJobExecutionResults().get(0).getDateTime()).isAfter(jobResults.get(1).getJobExecutionResults().get(0).getDateTime());
+        assertThat(jobResults.get(0).getJobExecutionResults().get(0).getEndTime()).isAfter(jobResults.get(1).getJobExecutionResults().get(0).getEndTime());
     }
 
     private JobExecution createJobExecution(JobInstance jobInstance, JobParameters jobParameters) {

@@ -12,7 +12,7 @@ public class JobResult {
     private String jobName;
     private JobStartParams jobStartParams;
     private List<JobExecutionResult> jobExecutionResults;
-    private Function<JobExecutionResult, Date> onDateTime = jobResult -> jobResult.getDateTime();
+    private Function<JobExecutionResult, Date> onDateTime = jobResult -> jobResult.getEndTime();
 
     public JobResult(String jobName, JobStartParams jobStartParams, List<JobExecutionResult> jobExecutionResults) {
         this.jobName = jobName;

@@ -27,6 +27,7 @@ public class JobExecutionMapperTest {
     private static final Long JOB_EXECUTION_ID = 222L;
     @InjectMocks
     JobExecutionMapper mapper;
+    private int DURATION_IN_SECONDS = 5;
 
     @Test
     public void testToJobResultTo() throws Exception {
@@ -37,7 +38,8 @@ public class JobExecutionMapperTest {
 
         JobExecution jobExecution = new JobExecution(jobInstance, jobParams);
         jobExecution.setStatus(BatchStatus.ABANDONED);
-        jobExecution.setCreateTime(now);
+        jobExecution.setStartTime(DateTime.now().minusSeconds(DURATION_IN_SECONDS).toDate());
+        jobExecution.setEndTime(now);
         jobExecution.setId(JOB_EXECUTION_ID);
         Map.Entry<JobInstance, List<JobExecution>> entry = new Map.Entry<JobInstance, List<JobExecution>>() {
             @Override
@@ -64,5 +66,6 @@ public class JobExecutionMapperTest {
         assertThat(resultTo.getJobExecutionResults()).hasSize(1);
         JobExecutionResult jobExecutionResult = resultTo.getJobExecutionResults().get(0);
         assertThat(jobExecutionResult.getStatus()).isEqualTo(BatchStatus.ABANDONED.toString());
+        assertThat(jobExecutionResult.getDuration()).isEqualTo(DURATION_IN_SECONDS * 1000);
     }
 }
