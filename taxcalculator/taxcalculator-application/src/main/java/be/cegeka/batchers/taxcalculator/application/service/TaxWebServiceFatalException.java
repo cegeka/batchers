@@ -1,18 +1,19 @@
 package be.cegeka.batchers.taxcalculator.application.service;
 
+
 import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResult;
 
-public class TaxWebServiceException extends RuntimeException {
+public class TaxWebServiceFatalException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
     private TaxServiceCallResult taxServiceCallResult;
 
-    public TaxWebServiceException(String message) {
+    public TaxWebServiceFatalException(String message) {
         super(message);
     }
 
-    public TaxWebServiceException(TaxServiceCallResult taxServiceCallResult) {
+    public TaxWebServiceFatalException(TaxServiceCallResult taxServiceCallResult) {
         super();
         this.taxServiceCallResult = taxServiceCallResult;
     }

@@ -1,17 +1,17 @@
 package be.cegeka.batchers.taxcalculator.batch.config;
 
-import org.springframework.batch.core.*;
+import org.springframework.batch.core.BatchStatus;
+import org.springframework.batch.core.ExitStatus;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.listener.JobExecutionListenerSupport;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class ChangeStatusOnFailedStepsJobExecListener implements JobExecutionListener {
-    @Override
-    public void beforeJob(JobExecution jobExecution) {
-        //Don't care
-    }
+public class ChangeStatusOnFailedStepsJobExecListener extends JobExecutionListenerSupport {
 
     @Override
     public void afterJob(JobExecution jobExecution) {
@@ -22,6 +22,7 @@ public class ChangeStatusOnFailedStepsJobExecListener implements JobExecutionLis
 
         if (failedStepExecutions.size() > 0) {
             jobExecution.setStatus(BatchStatus.FAILED);
+            jobExecution.setExitStatus(new ExitStatus("FAILED-BECAUSE-OF-SKIPS"));
         }
     }
 }

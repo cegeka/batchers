@@ -13,9 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.ResourceAccessException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.*;
 
 import java.net.URI;
 
@@ -32,9 +30,6 @@ public class TaxPaymentWebService {
 
     public TaxServiceCallResult doWebserviceCallToTaxService(TaxCalculation taxCalculation) {
         TaxTo taxTo = createWebserviceInput(taxCalculation);
-        Integer httpStatus;
-        String responseBody;
-        boolean isSuccessfulResponse = false;
 
         try {
             URI uri = URI.create(taxServiceUrl);
@@ -42,26 +37,29 @@ public class TaxPaymentWebService {
             TaxServiceResponse taxServiceResponse = webserviceResult.getBody();
 
             if ("OK".equals(taxServiceResponse.getStatus())) {
-                isSuccessfulResponse = true;
+                return getTaxServiceCallResult(taxCalculation, taxTo, webserviceResult.getStatusCode(), getJson(taxServiceResponse), true);
+            } else {
+                throw handleServerException(taxCalculation, taxTo, webserviceResult.getStatusCode(), getJson(taxServiceResponse));
             }
-            httpStatus = webserviceResult.getStatusCode().value();
-            responseBody = getJson(taxServiceResponse);
-        } catch (HttpStatusCodeException e) {
-            httpStatus = e.getStatusCode().value();
-            responseBody = e.getResponseBodyAsString();
+        } catch (HttpClientErrorException e) {
+            throw handleClientException(taxCalculation, taxTo, e.getStatusCode(), e.getResponseBodyAsString());
+        } catch (HttpServerErrorException e) {
+            throw handleServerException(taxCalculation, taxTo, e.getStatusCode(), e.getResponseBodyAsString());
         } catch (ResourceAccessException e) {
-            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR.value();
-            responseBody = e.getMessage();
+            throw handleServerException(taxCalculation, taxTo, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
+    }
 
-        TaxServiceCallResult taxServiceCallResult = TaxServiceCallResult.from(taxCalculation, getJson(taxTo),
-                httpStatus, responseBody, DateTime.now(), isSuccessfulResponse);
+    private RuntimeException handleClientException(TaxCalculation taxCalculation, TaxTo taxTo, HttpStatus httpStatus, String responseBody) {
+        return new TaxWebServiceFatalException(getTaxServiceCallResult(taxCalculation, taxTo, httpStatus, responseBody, false));
+    }
 
-        if (!taxServiceCallResult.isSuccessfulResponse()) {
-            throw new TaxWebServiceException(taxServiceCallResult);
-        } else {
-            return taxServiceCallResult;
-        }
+    private RuntimeException handleServerException(TaxCalculation taxCalculation, TaxTo taxTo, HttpStatus httpStatus, String responseBody) {
+        return new TaxWebServiceException(getTaxServiceCallResult(taxCalculation, taxTo, httpStatus, responseBody, false));
+    }
+
+    private TaxServiceCallResult getTaxServiceCallResult(TaxCalculation taxCalculation, TaxTo taxTo, HttpStatus httpStatus, String responseBody, boolean isSuccessfulResponse) {
+        return TaxServiceCallResult.from(taxCalculation, getJson(taxTo), httpStatus.value(), responseBody, DateTime.now(), isSuccessfulResponse);
     }
 
     private String getJson(Object object) {

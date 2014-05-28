@@ -7,15 +7,13 @@ import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceExcepti
 import be.cegeka.batchers.taxcalculator.batch.CalculateTaxProcessor;
 import be.cegeka.batchers.taxcalculator.batch.CallWebserviceProcessor;
 import be.cegeka.batchers.taxcalculator.batch.SendPaycheckProcessor;
+import be.cegeka.batchers.taxcalculator.batch.config.skippolicy.SkipMax5ConsecutiveNonFatalTaxWebServiceExceptions;
 import be.cegeka.batchers.taxcalculator.batch.tasklet.JobResultsTasklet;
 import be.cegeka.batchers.taxcalculator.infrastructure.config.PropertyPlaceHolderConfig;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.configuration.annotation.DefaultBatchConfigurer;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.*;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.explore.support.JobExplorerFactoryBean;
 import org.springframework.batch.core.step.builder.FaultTolerantStepBuilder;
@@ -24,6 +22,7 @@ import org.springframework.batch.core.step.skip.SkipPolicy;
 import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 
 import javax.sql.DataSource;
@@ -63,6 +62,9 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
     @Autowired
     private FailedStepStepExecutionListener failedStepStepExecutionListener;
 
+    @Value("${employeeJob.taxProcessor.retry.maxConsecutiveAttempts:5}")
+    private int maxConsecutiveTaxWebServiceExceptions = 5;
+
     @Bean
     public Job employeeJob() {
         return jobBuilders.get(EMPLOYEE_JOB)
@@ -87,33 +89,21 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
 
     @Bean
     public Step wsCallStep() {
-        FaultTolerantStepBuilder<TaxCalculation, PayCheck> faultTolerantStepBuilder = stepBuilders.get(WS_CALL_STEP)
-                .<TaxCalculation, PayCheck>chunk(5)
-                .faultTolerant();
-
-        faultTolerantStepBuilder.skipPolicy(new SkipPolicy() {
-            @Override
-            public boolean shouldSkip(Throwable t, int skipCount) throws SkipLimitExceededException {
-                if (t instanceof TaxWebServiceException) {
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        faultTolerantStepBuilder.noRollback(TaxWebServiceException.class);
-        faultTolerantStepBuilder.listener(failedStepStepExecutionListener);
-
         CompositeItemProcessor<TaxCalculation, PayCheck> compositeItemProcessor = new CompositeItemProcessor<>();
         compositeItemProcessor.setDelegates(Arrays.asList(
                 callWebserviceProcessor,
                 sendPaycheckProcessor
         ));
 
-        return faultTolerantStepBuilder
+        return stepBuilders.get(WS_CALL_STEP)
+                .<TaxCalculation, PayCheck>chunk(5)
+                .faultTolerant()
+                .skipPolicy(skipMax5ConsecutiveNonFatalTaxWebServiceExceptions())
+                .noRollback(TaxWebServiceException.class)
                 .reader(itemReaderWriterConfig.wsCallItemReader(OVERRIDDEN_BY_EXPRESSION, OVERRIDDEN_BY_EXPRESSION, OVERRIDDEN_BY_EXPRESSION_STEP_EXECUTION))
                 .processor(compositeItemProcessor)
                 .writer(itemReaderWriterConfig.wsCallItemWriter())
+                .listener(failedStepStepExecutionListener)
                 .listener(sendPaycheckProcessor)
                 .allowStartIfComplete(true)
                 .build();
@@ -133,5 +123,11 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
         factory.setDataSource(dataSource);
         factory.afterPropertiesSet();
         return factory.getObject();
+    }
+
+    @Bean
+    @StepScope
+    public SkipMax5ConsecutiveNonFatalTaxWebServiceExceptions skipMax5ConsecutiveNonFatalTaxWebServiceExceptions() {
+        return new SkipMax5ConsecutiveNonFatalTaxWebServiceExceptions();
     }
 }
