@@ -11,7 +11,8 @@ public class RunningTimeServiceTest {
 
     public static final int MINIMUM_TIME = 100;
     public static final int MAXIMUM_TIME = 500;
-    RunningTimeService runningTimeService = new RunningTimeService();
+
+    private RunningTimeService runningTimeService = new RunningTimeService();
 
     @Before
     public void setup() {
@@ -60,8 +61,5 @@ public class RunningTimeServiceTest {
         long sleepTime = runningTimeService.calculateSleepTime();
 
         assertThat(sleepTime).isGreaterThanOrEqualTo(MINIMUM_TIME).isLessThanOrEqualTo(MAXIMUM_TIME);
-
-        long sleepTimeSecond = runningTimeService.calculateSleepTime();
-        assertThat(sleepTimeSecond).isNotEqualTo(sleepTime);
     }
 }

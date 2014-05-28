@@ -2,14 +2,18 @@ package be.cegeka.batchers.taxcalculator.application.domain.email;
 
 
 import be.cegeka.batchers.taxcalculator.application.infrastructure.IntegrationTest;
-import org.junit.*;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static be.cegeka.batchers.taxcalculator.application.ApplicationAssertions.assertThat;
 
 public class EmailSenderITest extends IntegrationTest {
 
-    public static final String TEST_BODY = "test body";
+    private static final String TEST_BODY = "test body";
+
     @Autowired
     private EmailSender emailSender;
 
