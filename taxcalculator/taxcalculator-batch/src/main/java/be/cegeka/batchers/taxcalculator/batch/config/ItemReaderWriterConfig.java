@@ -45,13 +45,14 @@ public class ItemReaderWriterConfig {
 
     @Bean(destroyMethod = "")
     @StepScope
-    public JpaPagingItemReader<TaxCalculation> wsCallItemReader(@Value("#{jobParameters[year]}") Long year, @Value("#{jobParameters[month]}") Long month) {
+    public JpaPagingItemReader<TaxCalculation> wsCallItemReader(@Value("#{jobParameters[year]}") Long year, @Value("#{jobParameters[month]}") Long month, @Value("#{stepExecution}") StepExecution stepExecution) {
         JpaPagingItemReader<TaxCalculation> employeeItemReader = new JpaPagingItemReader<>();
         employeeItemReader.setEntityManagerFactory(persistenceConfig.entityManagerFactory());
         employeeItemReader.setQueryString(TaxCalculation.FIND_BY_YEAR_AND_MONTH_QUERY);
         Map<String, Object> queryParams = new HashMap<>();
         queryParams.put("month", month);
         queryParams.put("year", year);
+        queryParams.put("jobExecutionId", stepExecution.getJobExecutionId());
         employeeItemReader.setParameterValues(queryParams);
         return employeeItemReader;
     }

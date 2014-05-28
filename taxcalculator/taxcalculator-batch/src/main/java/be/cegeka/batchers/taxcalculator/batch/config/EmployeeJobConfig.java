@@ -11,6 +11,7 @@ import be.cegeka.batchers.taxcalculator.batch.tasklet.JobResultsTasklet;
 import be.cegeka.batchers.taxcalculator.infrastructure.config.PropertyPlaceHolderConfig;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.configuration.annotation.DefaultBatchConfigurer;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
@@ -18,7 +19,8 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.explore.support.JobExplorerFactoryBean;
 import org.springframework.batch.core.step.builder.FaultTolerantStepBuilder;
-import org.springframework.batch.core.step.skip.AlwaysSkipItemSkipPolicy;
+import org.springframework.batch.core.step.skip.SkipLimitExceededException;
+import org.springframework.batch.core.step.skip.SkipPolicy;
 import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,7 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
     public static final String TAX_CALCULATION_STEP = "taxCalculationStep";
     private static final String WS_CALL_STEP = "wsCallStep";
     private static Long OVERRIDDEN_BY_EXPRESSION = null;
+    private static StepExecution OVERRIDDEN_BY_EXPRESSION_STEP_EXECUTION = null;
 
     @Autowired
     private JobBuilderFactory jobBuilders;
@@ -87,7 +90,15 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
                 .<TaxCalculation, PayCheck>chunk(5)
                 .faultTolerant();
 
-        faultTolerantStepBuilder.skipPolicy(new AlwaysSkipItemSkipPolicy());
+        faultTolerantStepBuilder.skipPolicy(new SkipPolicy() {
+            @Override
+            public boolean shouldSkip(Throwable t, int skipCount) throws SkipLimitExceededException {
+                if (t instanceof TaxWebServiceException) {
+                    return true;
+                }
+                return false;
+            }
+        });
         faultTolerantStepBuilder.noRollback(TaxWebServiceException.class);
         faultTolerantStepBuilder.listener(failedStepStepExecutionListener);
 
@@ -98,9 +109,10 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
         ));
 
         return faultTolerantStepBuilder
-                .reader(itemReaderWriterConfig.wsCallItemReader(OVERRIDDEN_BY_EXPRESSION, OVERRIDDEN_BY_EXPRESSION))
+                .reader(itemReaderWriterConfig.wsCallItemReader(OVERRIDDEN_BY_EXPRESSION, OVERRIDDEN_BY_EXPRESSION, OVERRIDDEN_BY_EXPRESSION_STEP_EXECUTION))
                 .processor(compositeItemProcessor)
                 .writer(itemReaderWriterConfig.wsCallItemWriter())
+                .listener(sendPaycheckProcessor)
                 .build();
     }
 
