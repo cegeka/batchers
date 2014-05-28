@@ -1,6 +1,6 @@
 package be.cegeka.batchers.taxcalculator.application.domain;
 
-public class EmployeeBuilder {
+public class EmployeeTestBuilder {
     private Long employeeId;
     private Integer income = 0;
     private String firstName;
@@ -17,27 +17,27 @@ public class EmployeeBuilder {
         return employee;
     }
 
-    public EmployeeBuilder withIncome(Integer income) {
+    public EmployeeTestBuilder withIncome(Integer income) {
         this.income = income;
         return this;
     }
 
-    public EmployeeBuilder withFirstName(String firstName) {
+    public EmployeeTestBuilder withFirstName(String firstName) {
         this.firstName = firstName;
         return this;
     }
 
-    public EmployeeBuilder withLastName(String lastName) {
+    public EmployeeTestBuilder withLastName(String lastName) {
         this.lastName = lastName;
         return this;
     }
 
-    public EmployeeBuilder withId(long employeeId) {
+    public EmployeeTestBuilder withId(long employeeId) {
         this.employeeId = employeeId;
         return this;
     }
 
-    public EmployeeBuilder withEmailAddress(String emailAddress) {
+    public EmployeeTestBuilder withEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
         return this;
     }

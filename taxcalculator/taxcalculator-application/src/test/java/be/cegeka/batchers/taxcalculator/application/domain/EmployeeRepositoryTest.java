@@ -2,15 +2,12 @@ package be.cegeka.batchers.taxcalculator.application.domain;
 
 import be.cegeka.batchers.taxcalculator.application.infrastructure.IntegrationTest;
 import be.cegeka.batchers.taxcalculator.to.EmployeeTo;
-import org.joda.money.Money;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.joda.money.CurrencyUnit.EUR;
 
 public class EmployeeRepositoryTest extends IntegrationTest {
     private static final int INCOME = 500;
@@ -30,7 +27,7 @@ public class EmployeeRepositoryTest extends IntegrationTest {
 
     @Test
     public void testWhenSavingEmployeeTheIdIsNotNull() throws Exception {
-        Employee employee = new EmployeeBuilder().build();
+        Employee employee = new EmployeeTestBuilder().build();
 
         employeeRepository.save(employee);
 
@@ -39,7 +36,7 @@ public class EmployeeRepositoryTest extends IntegrationTest {
 
     @Test
     public void testWhenSavingTheEmployeeIsPersisted() throws Exception {
-        Employee employee = new EmployeeBuilder()
+        Employee employee = new EmployeeTestBuilder()
                 .withIncome(INCOME)
                 .withFirstName(FIRST_NAME)
                 .withLastName(LAST_NAME)
@@ -55,8 +52,8 @@ public class EmployeeRepositoryTest extends IntegrationTest {
 
     @Test
     public void testCount() throws Exception {
-        Employee first = new EmployeeBuilder().build();
-        Employee second = new EmployeeBuilder().build();
+        Employee first = new EmployeeTestBuilder().build();
+        Employee second = new EmployeeTestBuilder().build();
 
         employeeRepository.save(first);
         employeeRepository.save(second);
@@ -66,8 +63,8 @@ public class EmployeeRepositoryTest extends IntegrationTest {
 
     @Test
     public void testDeleteAll() throws Exception {
-        Employee first = new EmployeeBuilder().build();
-        Employee second = new EmployeeBuilder().build();
+        Employee first = new EmployeeTestBuilder().build();
+        Employee second = new EmployeeTestBuilder().build();
 
         employeeRepository.save(first);
         employeeRepository.save(second);
@@ -78,8 +75,8 @@ public class EmployeeRepositoryTest extends IntegrationTest {
 
     @Test
     public void testGetAll() throws Exception {
-        Employee first = new EmployeeBuilder().build();
-        Employee second = new EmployeeBuilder().build();
+        Employee first = new EmployeeTestBuilder().build();
+        Employee second = new EmployeeTestBuilder().build();
 
         employeeRepository.save(first);
         employeeRepository.save(second);
@@ -95,13 +92,13 @@ public class EmployeeRepositoryTest extends IntegrationTest {
     @Test
     public void testGetFirst20() throws Exception {
         for (int i = 0; i < 30; i++) {
-            Employee employee = new EmployeeBuilder()
+            Employee employee = new EmployeeTestBuilder()
                     .withFirstName("John" + i)
                     .withLastName("Smith" + i)
                     .withEmailAddress("john.smith" + i + "@gmail.com")
                     .build();
             employeeRepository.save(employee);
-            taxCalculationRepository.save(TaxCalculation.from(1L, employee, 2014, 5, Money.of(EUR, new BigDecimal(100))));
+            taxCalculationRepository.save(new TaxCalculationTestBuilder().withEmployee(employee).withYear(2014).withMonth(5).withTax(100.0).build());
         }
 
         List<EmployeeTo> first20 = employeeRepository.getFirst20();
@@ -111,7 +108,7 @@ public class EmployeeRepositoryTest extends IntegrationTest {
     @Test
     public void givenEmployeesWithoutCalculatedTaxes_whenGetFirst20_thenAllEmployeesAreReturnedWithTaxZero() {
         for (int i = 0; i < 30; i++) {
-            Employee employee = new EmployeeBuilder()
+            Employee employee = new EmployeeTestBuilder()
                     .withFirstName("John" + i)
                     .withLastName("Smith" + i)
                     .withEmailAddress("john.smith" + i + "@gmail.com")

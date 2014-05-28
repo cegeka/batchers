@@ -1,13 +1,8 @@
 package be.cegeka.batchers.taxcalculator.application.service;
 
-import be.cegeka.batchers.taxcalculator.application.domain.Employee;
-import be.cegeka.batchers.taxcalculator.application.domain.EmployeeBuilder;
-import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
-import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResult;
+import be.cegeka.batchers.taxcalculator.application.domain.*;
 import be.cegeka.batchers.taxcalculator.to.TaxServiceResponse;
 import be.cegeka.batchers.taxcalculator.to.TaxTo;
-import org.joda.money.CurrencyUnit;
-import org.joda.money.Money;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,8 +51,11 @@ public class TaxPaymentWebServiceTest {
         when(mockedResponse.getBody()).thenReturn(new TaxServiceResponse("OK"));
         when(mockedResponse.getStatusCode()).thenReturn(HttpStatus.OK);
 
-        Employee employee = new EmployeeBuilder().build();
-        TaxCalculation taxCalculation = TaxCalculation.from(1L, employee, 2014, 1, Money.of(CurrencyUnit.EUR, 2000.0));
+        Employee employee = new EmployeeTestBuilder().build();
+        TaxCalculation taxCalculation = new TaxCalculationTestBuilder()
+                .withEmployee(employee)
+                .withTax(2000.0)
+                .build();
 
         TaxServiceCallResult taxServiceCallResult = taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
 
@@ -71,8 +69,11 @@ public class TaxPaymentWebServiceTest {
         when(mockedResponse.getBody()).thenReturn(new TaxServiceResponse("ERROR"));
         when(mockedResponse.getStatusCode()).thenReturn(HttpStatus.OK);
 
-        Employee employee = new EmployeeBuilder().build();
-        TaxCalculation taxCalculation = TaxCalculation.from(1L, employee, 2014, 1, Money.of(CurrencyUnit.EUR, 2000.0));
+        Employee employee = new EmployeeTestBuilder().build();
+        TaxCalculation taxCalculation = new TaxCalculationTestBuilder()
+                .withEmployee(employee)
+                .withTax(2000.0)
+                .build();
 
         taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
     }
@@ -81,8 +82,11 @@ public class TaxPaymentWebServiceTest {
     public void testProcessTimeoutResponse_ExceptionHasBeenThrownForever() throws Exception {
         whenCallingTheWebservice().thenThrow(aWrappedTimeOutException());
 
-        Employee employee = new EmployeeBuilder().build();
-        TaxCalculation taxCalculation = TaxCalculation.from(1L, employee, 2014, 1, Money.of(CurrencyUnit.EUR, 2000.0));
+        Employee employee = new EmployeeTestBuilder().build();
+        TaxCalculation taxCalculation = new TaxCalculationTestBuilder()
+                .withEmployee(employee)
+                .withTax(2000.0)
+                .build();
 
         taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
     }
@@ -91,8 +95,11 @@ public class TaxPaymentWebServiceTest {
     public void testProcess_UnexpectedServerExceptionOccurs_ExceptionIsRethrown() throws Exception {
         whenCallingTheWebservice().thenThrow(aServerErrorException());
 
-        Employee employee = new EmployeeBuilder().build();
-        TaxCalculation taxCalculation = TaxCalculation.from(1L, employee, 2014, 1, Money.of(CurrencyUnit.EUR, 2000.0));
+        Employee employee = new EmployeeTestBuilder().build();
+        TaxCalculation taxCalculation = new TaxCalculationTestBuilder()
+                .withEmployee(employee)
+                .withTax(2000.0)
+                .build();
 
         taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
     }
@@ -101,8 +108,11 @@ public class TaxPaymentWebServiceTest {
     public void testProcess_ClientExceptionOccurs_TaxWebserviceFatalExceptionIsRethrown() throws Exception {
         whenCallingTheWebservice().thenThrow(aMethodNotAllowedException());
 
-        Employee employee = new EmployeeBuilder().build();
-        TaxCalculation taxCalculation = TaxCalculation.from(1L, employee, 2014, 1, Money.of(CurrencyUnit.EUR, 2000.0));
+        Employee employee = new EmployeeTestBuilder().build();
+        TaxCalculation taxCalculation = new TaxCalculationTestBuilder()
+                .withEmployee(employee)
+                .withTax(2000.0)
+                .build();
 
         taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
     }

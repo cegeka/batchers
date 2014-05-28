@@ -1,9 +1,6 @@
 package be.cegeka.batchers.taxcalculator.batch;
 
-import be.cegeka.batchers.taxcalculator.application.domain.Employee;
-import be.cegeka.batchers.taxcalculator.application.domain.EmployeeBuilder;
-import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
-import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResult;
+import be.cegeka.batchers.taxcalculator.application.domain.*;
 import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceException;
 import be.cegeka.batchers.taxcalculator.batch.config.RetryConfig;
 import be.cegeka.batchers.taxcalculator.batch.service.TaxPaymentWebServiceFacade;
@@ -43,9 +40,9 @@ public class CallWebserviceProcessorTest {
 
     @Before
     public void setUp() {
-        employee = new EmployeeBuilder().build();
+        employee = new EmployeeTestBuilder().build();
         Money money = Money.of(CurrencyUnit.EUR, 2000.0);
-        taxCalculation = TaxCalculation.from(1L, employee, 2014, 1, money);
+        taxCalculation = new TaxCalculationTestBuilder().withEmployee(employee).withTax(money).build();
         taxServiceCallResult = TaxServiceCallResult.from(taxCalculation, "", HttpStatus.OK.value(), "", DateTime.now(), true);
     }
 

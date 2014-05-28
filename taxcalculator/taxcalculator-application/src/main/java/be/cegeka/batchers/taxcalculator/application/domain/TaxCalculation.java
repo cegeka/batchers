@@ -46,6 +46,9 @@ public class TaxCalculation {
     @GeneratedValue
     private Long id;
 
+    @NotNull
+    private Long jobExecutionId;
+
     @Min(1)
     @Max(12)
     @NotNull
@@ -66,8 +69,6 @@ public class TaxCalculation {
     @NotNull
     private DateTime calculationDate;
 
-    @NotNull
-    private Long jobExecutionId;
 
     public static TaxCalculation from(Long jobExecutionId, Employee employee, long year, long month, Money tax) {
         TaxCalculation taxCalculation = new TaxCalculation();
@@ -107,4 +108,5 @@ public class TaxCalculation {
     public Long getJobExecutionId() {
         return jobExecutionId;
     }
+
 }

@@ -3,23 +3,19 @@ package be.cegeka.batchers.taxcalculator.batch.integration;
 import be.cegeka.batchers.taxcalculator.application.domain.*;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailSender;
 import be.cegeka.batchers.taxcalculator.application.domain.email.SmtpServerStub;
-import be.cegeka.batchers.taxcalculator.batch.CallWebserviceProcessor;
-import be.cegeka.batchers.taxcalculator.batch.config.EmployeeJobConfig;
+import be.cegeka.batchers.taxcalculator.batch.config.skippolicy.MaxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy;
 import be.cegeka.batchers.taxcalculator.batch.service.reporting.SumOfTaxes;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.internal.util.reflection.Whitebox;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.test.util.AssertionErrors;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
@@ -28,7 +24,9 @@ import java.util.Map;
 
 import static be.cegeka.batchers.taxcalculator.application.ApplicationAssertions.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.internal.util.reflection.Whitebox.setInternalState;
 import static org.springframework.batch.core.BatchStatus.COMPLETED;
+import static org.springframework.batch.core.BatchStatus.FAILED;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
@@ -38,24 +36,21 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     private static final String EMAIL_ADDRESS = "employee@email.com";
     private static final Long YEAR = 2014L;
     private static final Long MONTH = 1L;
-    private static Long counter = 0L;
 
     @Autowired
-    private EmployeeJobConfig employeeJobConfig;
+    private JobLauncherTestUtils jobLauncherTestUtils;
     @Autowired
     private String taxServiceUrl;
     @Autowired
-    private SumOfTaxes sumOfTaxes;
+    private MaxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy maxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy;
     @Autowired
-    private CallWebserviceProcessor callWebserviceProcessor;
+    private SumOfTaxes sumOfTaxes;
     @Autowired
     private PayCheckRepository payCheckRepository;
     @Autowired
     private TaxCalculationRepository taxCalculationRepository;
     @Autowired
     private TaxServiceCallResultRepository taxServiceCallResultRepository;
-    @Autowired
-    private JobLauncherTestUtils jobLauncherTestUtils;
     @Autowired
     private EmployeeRepository employeeRepository;
     @Autowired
@@ -76,11 +71,10 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         Map<String, JobParameter> jobParamsMap = new HashMap<>();
         jobParamsMap.put("month", new JobParameter(MONTH, false));
         jobParamsMap.put("year", new JobParameter(YEAR, false));
-        jobParamsMap.put("job-id-just-for-testing-shit-up", new JobParameter(counter++, true));
 
         jobParams = new JobParameters(jobParamsMap);
 
-        Whitebox.setInternalState(emailSender, "emailSendCounter", 0);
+        setInternalState(emailSender, "emailSendCounter", 0);
     }
 
     @After
@@ -95,6 +89,16 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
 
     @Test
     public void jobLaunched_NoEmployees_EmployeeRepositoryIsCalled_NoInteractionWithTheTaxCalculatorService() throws Exception {
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
+
+        assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
+        verifyJob(jobExecution);
+    }
+
+    @Test
+    public void jobLaunched_HappyPath() throws Exception {
+        haveEmployees(1);
+        respondOneTimeWithSuccess();
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
 
         assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
@@ -138,23 +142,19 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Ignore("contact ronald for more info | ronald will try to fix")
     public void jobDoesFailCompletelyWhenWebserviceResponseFails9TimesConsecutiveWithServerException_BackendMakesABobo() throws Exception {
-        Whitebox.setInternalState(employeeJobConfig, "maxConsecutiveTaxWebServiceExceptions", 3);
         haveEmployees(4);
         respondWithServerError(9);
 
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
 
         assertThat(jobExecution.getStatus().isUnsuccessful()).isTrue();
-        assertThat(jobExecution.getExitStatus().getExitCode()).isEqualTo("FAILED");
+        assertThat(jobExecution.getExitStatus().getExitCode()).isEqualTo("FAILED-BECAUSE-OF-SKIPS");
         verifyJob(jobExecution);
     }
 
     @Test
-    @Ignore("contact ronald for more info | ronald will try to fix")
     public void jobDoesContinueWhenWebserviceResponseFails8TimesConsecutiveWithServerException_BackendMakesABobo() throws Exception {
-        Whitebox.setInternalState(employeeJobConfig, "maxConsecutiveTaxWebServiceExceptions", 3);
         haveEmployees(5);
         respondWithServerError(8); //5->employee 1; 2->employee 2;
         respondOneTimeWithSuccess();//->employee 3
@@ -247,15 +247,28 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Ignore("Implement me")
-    public void rerunSameMonthJobIfPreviousJobHasFailures() {
-        throw new UnsupportedOperationException("Implement me");
+    public void rerunSameMonthJobIfPreviousJobHasFailures() throws Exception {
+        haveEmployees(1);
+
+        respondWithServerError(3); //fail user one with 3 retries
+        respondOneTimeWithSuccess();
+
+        //first attempt
+        JobExecution firstJobExecution = jobLauncherTestUtils.launchJob(jobParams);
+        assertThat(firstJobExecution.getStatus()).isEqualTo(FAILED);
+
+        //second attempt
+        JobExecution secondJobExecution = jobLauncherTestUtils.launchJob(jobParams);
+        assertThat(secondJobExecution.getStatus()).isEqualTo(COMPLETED);
+
+        verifyJob(secondJobExecution);
     }
 
-    @Test
-    @Ignore("Implement me")
-    public void rerunSameMonthJobIfPreviousJobHasCompletedSuccessFully() {
-        throw new UnsupportedOperationException("Implement me");
+    @Test(expected = JobInstanceAlreadyCompleteException.class)
+    public void rerunSameMonthJobIfPreviousJobHasCompletedSuccessFullyThrowsException() throws Exception {
+        jobLaunched_HappyPath();
+
+        jobLauncherTestUtils.launchJob(jobParams);
     }
 
     private void verifyJob(JobExecution jobExecution) {
@@ -273,7 +286,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     }
 
     private Employee haveOneEmployee() {
-        Employee employee = new EmployeeBuilder()
+        Employee employee = new EmployeeTestBuilder()
                 .withFirstName("Monica")
                 .withLastName("Dev")
                 .withIncome(1000)
