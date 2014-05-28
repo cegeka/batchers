@@ -27,3 +27,15 @@ taxcalculatorControllers
       );
     }
   ])
+  .controller('GenerateEmployeesCtrl', ['$scope', 'GenerateEmployeesResource',
+    function ($scope, GenerateEmployeesResource) {
+      GenerateEmployeesResource.query(
+        {},
+        function (successData) {
+        },
+        function (error) {
+            $scope.$emit("alert", {'alertClass': 'alert-danger', 'message': 'Could not generate employees'})
+        }
+      );
+    }
+  ]);
