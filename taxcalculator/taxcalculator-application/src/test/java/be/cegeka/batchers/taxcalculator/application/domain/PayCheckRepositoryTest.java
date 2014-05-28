@@ -39,7 +39,7 @@ public class PayCheckRepositoryTest extends IntegrationTest {
         List<TaxCalculation> taxCalculations = Arrays.asList(january, february);
         taxCalculations.forEach(taxCalculationRepository::save);
         byte[] content = getLargeByteArray();
-        payCheck = PayCheck.from(january, content);
+        payCheck = PayCheck.from(january, content, 1L);
         payCheckRepository.save(payCheck);
     }
 

@@ -42,7 +42,7 @@ public class TaxCalculationStepITest extends AbstractIntegrationTest {
         JobExecution jobExecution = jobLauncherTestUtils.launchStep(EmployeeJobConfig.TAX_CALCULATION_STEP, jobParameters);
 
         assertThat(jobExecution.getExitStatus()).isEqualTo(ExitStatus.COMPLETED);
-        assertThat(taxCalculationRepository.findByYearAndMonth(2014, 5)).isEmpty();
+        assertThat(taxCalculationRepository.find(2014, 5, 1L)).isEmpty();
     }
 
     @Test
@@ -66,7 +66,7 @@ public class TaxCalculationStepITest extends AbstractIntegrationTest {
         assertThat(taxCalculation.getYear()).isEqualTo(2014);
         assertThat(taxCalculation.getMonth()).isEqualTo(5);
 
-        List<TaxCalculation> byYearAndMonth = taxCalculationRepository.findByYearAndMonth(2014, 5);
+        List<TaxCalculation> byYearAndMonth = taxCalculationRepository.find(2014, 5, 1L);
         assertThat(byYearAndMonth).hasSize(1);
     }
 

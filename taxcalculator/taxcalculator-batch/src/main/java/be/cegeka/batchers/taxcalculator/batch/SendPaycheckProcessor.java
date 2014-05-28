@@ -7,6 +7,10 @@ import be.cegeka.batchers.taxcalculator.application.domain.email.EmailAttachment
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailSender;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailTO;
 import be.cegeka.batchers.taxcalculator.application.domain.pdf.PDFGeneratorService;
+import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.annotation.BeforeStep;
+import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.core.listener.StepExecutionListenerSupport;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,7 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class SendPaycheckProcessor implements ItemProcessor<TaxServiceCallResult, PayCheck> {
+@StepScope
+public class SendPaycheckProcessor extends StepExecutionListenerSupport implements ItemProcessor<TaxServiceCallResult, PayCheck> {
 
     @Value(value = "${paycheck.from.email:finance@email.com}")
     String payCheckFrom;
@@ -31,6 +36,8 @@ public class SendPaycheckProcessor implements ItemProcessor<TaxServiceCallResult
     @Autowired
     private EmailSender emailSender;
 
+    private StepExecution stepExecution;
+
     @Override
     public PayCheck process(TaxServiceCallResult taxServiceCallResult) throws Exception {
         Resource resource = resourceLoader.getResource(paycheckTemplateFileName);
@@ -39,7 +46,7 @@ public class SendPaycheckProcessor implements ItemProcessor<TaxServiceCallResult
         byte[] pdfBytes = pdfGeneratorService.generatePdfAsByteArray(resource, getPayCheckPdfContext(taxCalculation));
         emailSender.send(getEmailTO(taxCalculation, pdfBytes));
 
-        return PayCheck.from(taxCalculation, pdfBytes);
+        return PayCheck.from(taxCalculation, pdfBytes, stepExecution.getJobExecutionId());
     }
 
     public String getEmailBodyForEmployee(TaxCalculation taxCalculation) {
@@ -83,5 +90,10 @@ public class SendPaycheckProcessor implements ItemProcessor<TaxServiceCallResult
         attachmentTO.setName("paycheck.pdf");
         emailTo.addAttachment(attachmentTO);
         return emailTo;
+    }
+
+    @Override
+    public void beforeStep(StepExecution stepExecution) {
+        this.stepExecution = stepExecution;
     }
 }

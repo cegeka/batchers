@@ -1,6 +1,7 @@
 package be.cegeka.batchers.taxcalculator.application.domain;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @NamedQueries({
         @NamedQuery(name = PayCheck.FIND_BY_TAXCALCULATION, query = PayCheck.FIND_BY_TAXCALCULATION_QUERY)
@@ -21,10 +22,14 @@ public class PayCheck {
     @Lob
     private byte[] payCheckPdf;
 
-    public static PayCheck from(TaxCalculation taxCalculation, byte[] payCheckPdf) {
+    @NotNull
+    private Long jobExecutionId;
+
+    public static PayCheck from(TaxCalculation taxCalculation, byte[] payCheckPdf, Long jobExecutionId) {
         PayCheck payCheck = new PayCheck();
         payCheck.taxCalculation = taxCalculation;
         payCheck.payCheckPdf = payCheckPdf;
+        payCheck.jobExecutionId = jobExecutionId;
         return payCheck;
     }
 
@@ -38,5 +43,9 @@ public class PayCheck {
 
     public byte[] getPayCheckPdf() {
         return payCheckPdf;
+    }
+
+    public Long getJobExecutionId() {
+        return jobExecutionId;
     }
 }
