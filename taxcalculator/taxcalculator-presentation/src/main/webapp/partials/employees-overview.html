@@ -1,10 +1,13 @@
 <h1 class="page-header">Employees </h1>
 
-<div ng-controller="GenerateEmployeesCtrl">
-    Set size to: <input type="text" ng-model="GenerateEmployeesModel.employeesCount"><br>
-    <a ng-click="generateEmployees(GenerateEmployeesModel.employeesCount)">
-        Go
-    </a>
+<div class="form-inline" role="form" ng-controller="GenerateEmployeesCtrl">
+    <div class="form-group">
+        <label class="control-label" for="employeesCountInput">Set employee size to:</label>
+        <input ng-model="GenerateEmployeesModel.employeesCount" type="number" class="form-control" id="employeesCountInput" placeholder="new employee size">
+        <a ng-click="generateEmployees(GenerateEmployeesModel.employeesCount)" class="btn btn-primary">
+            Go
+        </a>
+    </div>
 </div>
 
 <div class="table-responsive">
