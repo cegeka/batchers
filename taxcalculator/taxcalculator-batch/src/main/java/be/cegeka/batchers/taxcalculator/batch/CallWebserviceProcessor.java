@@ -1,52 +1,44 @@
 package be.cegeka.batchers.taxcalculator.batch;
 
-import be.cegeka.batchers.taxcalculator.application.domain.Employee;
+import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
+import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResult;
 import be.cegeka.batchers.taxcalculator.application.service.TaxPaymentWebService;
-import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceException;
+import be.cegeka.batchers.taxcalculator.batch.config.RetryConfig;
+import be.cegeka.batchers.taxcalculator.batch.service.TaxPaymentWebServiceFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.retry.backoff.ExponentialBackOffPolicy;
-import org.springframework.retry.policy.SimpleRetryPolicy;
+import org.springframework.context.annotation.Import;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.Callable;
 
 @Component
-public class CallWebserviceProcessor implements ItemProcessor<Employee, Employee> {
+@Import(RetryConfig.class)
+public class CallWebserviceProcessor implements ItemProcessor<TaxCalculation, TaxServiceCallResult> {
     private static final Logger LOG = LoggerFactory.getLogger(CallWebserviceProcessor.class);
 
     @Autowired
     private TaxPaymentWebService taxPaymentWebService;
 
-    @Value("${taxProcessor.retry.initialInterval:100}")
-    private long initialInterval = 100;
+    @Autowired
+    private TaxPaymentWebServiceFacade taxPaymentWebServiceFacade;
 
-    @Value("${taxProcessor.retry.maxAtempts:3}")
-    private int maxAtempts = 3;
+    @Autowired
+    private RetryConfig retryConfig;
 
     @Override
-    public Employee process(Employee employee) throws Exception {
-        LOG.info("Web service process: " + employee);
-        return createRetryTemplate().execute(retryContext -> taxPaymentWebService.doWebserviceCallToTaxService(employee));
-    }
+    public TaxServiceCallResult process(TaxCalculation taxCalculation) throws Exception {
+        LOG.info("Web service process: " + taxCalculation);
 
-    private RetryTemplate createRetryTemplate() {
-        Map<Class<? extends Throwable>, Boolean> exceptions = new HashMap<>();
-        exceptions.put(TaxWebServiceException.class, true);
+        RetryTemplate retryTemplate = retryConfig.createRetryTemplate();
+        Callable<TaxServiceCallResult> callable = () -> retryTemplate.execute(retryContext ->
+                taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation));
 
-        RetryTemplate template = new RetryTemplate();
-        SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy(maxAtempts, exceptions);
-        template.setRetryPolicy(retryPolicy);
+        TaxServiceCallResult taxServiceCallResult = taxPaymentWebServiceFacade.callTaxService(taxCalculation, callable);
 
-        ExponentialBackOffPolicy backOffPolicy = new ExponentialBackOffPolicy();
-        backOffPolicy.setInitialInterval(initialInterval);
-        template.setBackOffPolicy(backOffPolicy);
-
-        return template;
+        return taxServiceCallResult;
     }
 }

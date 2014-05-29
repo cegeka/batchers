@@ -1,30 +1,19 @@
 package be.cegeka.batchers.taxcalculator.batch.service.reporting;
 
+import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResultRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class SumOfTaxes {
-    private double successSum;
-    private double failedSum;
+    @Autowired
+    TaxServiceCallResultRepository taxServiceCallResultRepository;
 
-    public void addToSuccessSum(double tax) {
-        successSum += tax;
+    public double getSuccessSum(long year, long month) {
+        return taxServiceCallResultRepository.getSuccessSum(year, month).getAmount().doubleValue();
     }
 
-    public double getSuccessSum() {
-        return successSum;
-    }
-
-    public void reset() {
-        successSum = 0;
-        failedSum = 0;
-    }
-
-    public double getFailedSum() {
-        return failedSum;
-    }
-
-    public void addToFailingSum(double incomeTax) {
-        failedSum += incomeTax;
+    public double getFailedSum(long year, long month) {
+        return taxServiceCallResultRepository.getFailedSum(year, month).getAmount().doubleValue();
     }
 }

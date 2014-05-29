@@ -1,7 +1,6 @@
 package be.cegeka.batchers.taxcalculator.application.service;
 
-import be.cegeka.batchers.taxcalculator.application.domain.Employee;
-import be.cegeka.batchers.taxcalculator.application.domain.EmployeeBuilder;
+import be.cegeka.batchers.taxcalculator.application.domain.*;
 import be.cegeka.batchers.taxcalculator.to.TaxServiceResponse;
 import be.cegeka.batchers.taxcalculator.to.TaxTo;
 import org.junit.Before;
@@ -14,6 +13,7 @@ import org.mockito.stubbing.OngoingStubbing;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
@@ -49,32 +49,72 @@ public class TaxPaymentWebServiceTest {
     public void testProcessHappyPath_NoExceptionHasBeenThrownAndEmployeeIsReturned() throws Exception {
         whenCallingTheWebservice().thenReturn(mockedResponse);
         when(mockedResponse.getBody()).thenReturn(new TaxServiceResponse("OK"));
+        when(mockedResponse.getStatusCode()).thenReturn(HttpStatus.OK);
 
-        Employee employee = new EmployeeBuilder().build();
+        Employee employee = new EmployeeTestBuilder().build();
+        TaxCalculation taxCalculation = new TaxCalculationTestBuilder()
+                .withEmployee(employee)
+                .withTax(2000.0)
+                .build();
 
-        assertThat(taxPaymentWebService.doWebserviceCallToTaxService(employee)).isEqualTo(employee);
+        TaxServiceCallResult taxServiceCallResult = taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
+
+        //todo change assert to check tax service call  result object, not only employee
+        assertThat(taxServiceCallResult.getTaxCalculation()).isEqualTo(taxCalculation);
     }
 
     @Test(expected = TaxWebServiceException.class)
     public void testProcessBadResponse_ExceptionHasBeenThrownForever() throws Exception {
         whenCallingTheWebservice().thenReturn(mockedResponse);
         when(mockedResponse.getBody()).thenReturn(new TaxServiceResponse("ERROR"));
+        when(mockedResponse.getStatusCode()).thenReturn(HttpStatus.OK);
 
-        taxPaymentWebService.doWebserviceCallToTaxService(new EmployeeBuilder().build());
+        Employee employee = new EmployeeTestBuilder().build();
+        TaxCalculation taxCalculation = new TaxCalculationTestBuilder()
+                .withEmployee(employee)
+                .withTax(2000.0)
+                .build();
+
+        taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
     }
 
     @Test(expected = TaxWebServiceException.class)
     public void testProcessTimeoutResponse_ExceptionHasBeenThrownForever() throws Exception {
         whenCallingTheWebservice().thenThrow(aWrappedTimeOutException());
 
-        taxPaymentWebService.doWebserviceCallToTaxService(new EmployeeBuilder().build());
+        Employee employee = new EmployeeTestBuilder().build();
+        TaxCalculation taxCalculation = new TaxCalculationTestBuilder()
+                .withEmployee(employee)
+                .withTax(2000.0)
+                .build();
+
+        taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
     }
 
     @Test(expected = TaxWebServiceException.class)
-    public void testProcess_UnexpectedExceptionOccurs_ExceptionIsRethrown() throws Exception {
+    public void testProcess_UnexpectedServerExceptionOccurs_ExceptionIsRethrown() throws Exception {
+        whenCallingTheWebservice().thenThrow(aServerErrorException());
+
+        Employee employee = new EmployeeTestBuilder().build();
+        TaxCalculation taxCalculation = new TaxCalculationTestBuilder()
+                .withEmployee(employee)
+                .withTax(2000.0)
+                .build();
+
+        taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
+    }
+
+    @Test(expected = TaxWebServiceFatalException.class)
+    public void testProcess_ClientExceptionOccurs_TaxWebserviceFatalExceptionIsRethrown() throws Exception {
         whenCallingTheWebservice().thenThrow(aMethodNotAllowedException());
 
-        taxPaymentWebService.doWebserviceCallToTaxService(new EmployeeBuilder().build());
+        Employee employee = new EmployeeTestBuilder().build();
+        TaxCalculation taxCalculation = new TaxCalculationTestBuilder()
+                .withEmployee(employee)
+                .withTax(2000.0)
+                .build();
+
+        taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
     }
 
     private OngoingStubbing<ResponseEntity<TaxServiceResponse>> whenCallingTheWebservice() {
@@ -83,6 +123,10 @@ public class TaxPaymentWebServiceTest {
 
     private HttpClientErrorException aMethodNotAllowedException() {
         return new HttpClientErrorException(HttpStatus.METHOD_NOT_ALLOWED);
+    }
+
+    private HttpServerErrorException aServerErrorException() {
+        return new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private ResourceAccessException aWrappedTimeOutException() {

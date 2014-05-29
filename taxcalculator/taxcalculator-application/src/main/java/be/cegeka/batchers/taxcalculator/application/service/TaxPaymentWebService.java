@@ -1,20 +1,26 @@
 package be.cegeka.batchers.taxcalculator.application.service;
 
-import be.cegeka.batchers.taxcalculator.application.domain.Employee;
+import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
+import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResult;
 import be.cegeka.batchers.taxcalculator.to.TaxServiceResponse;
 import be.cegeka.batchers.taxcalculator.to.TaxTo;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.ResourceAccessException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.*;
 
 import java.net.URI;
 
 @Service
 public class TaxPaymentWebService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TaxPaymentWebService.class);
 
     @Autowired
     private String taxServiceUrl;
@@ -22,30 +28,53 @@ public class TaxPaymentWebService {
     @Autowired
     private RestTemplate restTemplate;
 
-    public Employee doWebserviceCallToTaxService(Employee employee) {
+    public TaxServiceCallResult doWebserviceCallToTaxService(TaxCalculation taxCalculation) {
+        TaxTo taxTo = createWebserviceInput(taxCalculation);
+
         try {
-            if ("OK".equals(getWebserviceResult(employee))) {
-                return employee;
+            URI uri = URI.create(taxServiceUrl);
+            ResponseEntity<TaxServiceResponse> webserviceResult = restTemplate.postForEntity(uri, taxTo, TaxServiceResponse.class);
+            TaxServiceResponse taxServiceResponse = webserviceResult.getBody();
+
+            if ("OK".equals(taxServiceResponse.getStatus())) {
+                return getTaxServiceCallResult(taxCalculation, taxTo, webserviceResult.getStatusCode(), getJson(taxServiceResponse), true);
+            } else {
+                throw handleServerException(taxCalculation, taxTo, webserviceResult.getStatusCode(), getJson(taxServiceResponse));
             }
-            throw new TaxWebServiceException("Illegal response from web service");
-        } catch (ResourceAccessException | HttpServerErrorException | HttpClientErrorException e) {
-            throw new TaxWebServiceException("Could not retrieve response from webservice", e);
+        } catch (HttpClientErrorException e) {
+            throw handleClientException(taxCalculation, taxTo, e.getStatusCode(), e.getResponseBodyAsString());
+        } catch (HttpServerErrorException e) {
+            throw handleServerException(taxCalculation, taxTo, e.getStatusCode(), e.getResponseBodyAsString());
+        } catch (ResourceAccessException e) {
+            throw handleServerException(taxCalculation, taxTo, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
-    private String getWebserviceResult(Employee employee) {
-        ResponseEntity<TaxServiceResponse> stringResponseEntity = restTemplate.postForEntity(getUri(), createWebserviceInput(employee), TaxServiceResponse.class);
-        return stringResponseEntity.getBody().getStatus();
+    private RuntimeException handleClientException(TaxCalculation taxCalculation, TaxTo taxTo, HttpStatus httpStatus, String responseBody) {
+        return new TaxWebServiceFatalException(getTaxServiceCallResult(taxCalculation, taxTo, httpStatus, responseBody, false));
     }
 
-    private URI getUri() {
-        return URI.create(taxServiceUrl);
+    private RuntimeException handleServerException(TaxCalculation taxCalculation, TaxTo taxTo, HttpStatus httpStatus, String responseBody) {
+        return new TaxWebServiceException(getTaxServiceCallResult(taxCalculation, taxTo, httpStatus, responseBody, false));
     }
 
-    private TaxTo createWebserviceInput(Employee employee) {
+    private TaxServiceCallResult getTaxServiceCallResult(TaxCalculation taxCalculation, TaxTo taxTo, HttpStatus httpStatus, String responseBody, boolean isSuccessfulResponse) {
+        return TaxServiceCallResult.from(taxCalculation, getJson(taxTo), httpStatus.value(), responseBody, DateTime.now(), isSuccessfulResponse);
+    }
+
+    private String getJson(Object object) {
+        try {
+            return new ObjectMapper().writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            LOG.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    private TaxTo createWebserviceInput(TaxCalculation taxCalculation) {
         TaxTo taxTo = new TaxTo();
-        taxTo.setAmount(employee.getIncomeTax());
-        taxTo.setEmployeeId(employee.getId());
+        taxTo.setAmount(taxCalculation.getTax().getAmount().doubleValue());
+        taxTo.setEmployeeId(taxCalculation.getEmployee().getId());
         return taxTo;
     }
 }

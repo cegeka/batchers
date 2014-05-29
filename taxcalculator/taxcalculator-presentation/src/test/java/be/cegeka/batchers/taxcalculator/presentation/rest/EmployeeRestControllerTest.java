@@ -1,15 +1,15 @@
 package be.cegeka.batchers.taxcalculator.presentation.rest;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
-import be.cegeka.batchers.taxcalculator.application.domain.EmployeeBuilder;
+import be.cegeka.batchers.taxcalculator.application.domain.EmployeeTestBuilder;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeService;
-import org.fest.util.Lists;
+import be.cegeka.batchers.taxcalculator.to.EmployeeTo;
+import org.joda.money.Money;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -17,9 +17,6 @@ import org.springframework.integration.support.json.Jackson2JsonObjectMapper;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import java.util.Arrays;
-import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -47,13 +44,14 @@ public class EmployeeRestControllerTest {
 
     @Test
     public void testGetFirst20Employees() throws Exception {
-        Employee employee = new EmployeeBuilder()
+        Employee employee = new EmployeeTestBuilder()
                 .withIncome(200)
                 .withFirstName("firstName")
                 .build();
-        String expectedJSON = new Jackson2JsonObjectMapper().toJson(asList(employee));
 
-        when(employeeServiceMock.getFirst20()).thenReturn(asList(employee));
+        EmployeeTo employeeTo = new EmployeeTo(employee.getFirstName(), employee.getLastName(), employee.getEmail(), employee.getIncome(), Money.parse("EUR 200"));
+        String expectedJSON = new Jackson2JsonObjectMapper().toJson(asList(employeeTo));
+        when(employeeServiceMock.getFirst20()).thenReturn(asList(employeeTo));
 
         MvcResult mvcResult = mockMvc.perform(get("/employees").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

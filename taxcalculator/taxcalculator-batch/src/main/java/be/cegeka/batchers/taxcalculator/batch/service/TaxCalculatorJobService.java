@@ -3,6 +3,7 @@ package be.cegeka.batchers.taxcalculator.batch.service;
 
 import be.cegeka.batchers.taxcalculator.batch.api.JobService;
 import be.cegeka.batchers.taxcalculator.batch.api.JobStartListener;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
@@ -16,7 +17,6 @@ import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -57,6 +57,9 @@ public class TaxCalculatorJobService implements JobService {
     }
 
     protected JobParameters getNewJobParameters() {
-        return new JobParametersBuilder().addLong("uniqueIdentifier", new Date().getTime()).toJobParameters();
+        return new JobParametersBuilder()
+                .addLong("month", new Long(new DateTime().getMonthOfYear()))
+                .addLong("year", new Long(new DateTime().getYear()))
+                .toJobParameters();
     }
 }

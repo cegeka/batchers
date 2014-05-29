@@ -1,7 +1,8 @@
 package be.cegeka.batchers.taxcalculator.application.service;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
-import be.cegeka.batchers.taxcalculator.application.domain.EmployeeBuilder;
+import be.cegeka.batchers.taxcalculator.application.domain.EmployeeTestBuilder;
+import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.junit.Before;
@@ -26,22 +27,24 @@ public class TaxCalculatorServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        employee = new EmployeeBuilder()
+        employee = new EmployeeTestBuilder()
                 .withIncome(100)
+                .withId(1L)
                 .build();
     }
 
     @Test
     public void testCalculateTax() throws Exception {
-        taxCalculatorService.calculateTax(employee);
+        TaxCalculation taxCalculation = taxCalculatorService.calculateTax(1L, employee, 2014, 5);
 
         Money expectedMoney = Money.of(CurrencyUnit.EUR, 10);
-        assertThat(employee.getTaxTotal()).isEqualTo(expectedMoney);
+
+        assertThat(taxCalculation.getTax()).isEqualTo(expectedMoney);
     }
 
     @Test
     public void testCalculateTaxSleeps() throws Exception {
-        taxCalculatorService.calculateTax(employee);
+        taxCalculatorService.calculateTax(1L, employee, 2014, 5);
 
         verify(runningTimeService).sleep();
     }

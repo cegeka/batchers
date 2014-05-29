@@ -1,4 +1,4 @@
-## Setup
+## Setup 
 
 Install the following:
 > Java 8, Maven 3, Tomcat 7
@@ -117,6 +117,10 @@ There should be just one transaction manager, shared between JPA and Spring, the
 
 #### 3. Paging paging item readers
 The item reader query MUST NOT change size during the step execution.
+
+#### 4. Step Scoped Processor
+If a processor is used in a composite, and it should be step scoped, then the processor should also be registered as a listener.
+
 
 ## Relevant links
 
