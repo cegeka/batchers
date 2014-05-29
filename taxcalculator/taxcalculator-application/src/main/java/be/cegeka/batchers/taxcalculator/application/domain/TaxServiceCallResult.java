@@ -17,8 +17,6 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 public class TaxServiceCallResult {
-    public static final int HTTP_OK = 200;
-
     public static final String GET_SUCCESS_SUM = "TaxServiceCallResult.GET_SUCCESS_SUM";
     public static final String GET_SUCCESS_SUM_QUERY = "SELECT SUM(tc.tax) FROM TaxCalculation tc" +
             " WHERE tc.month = :month and tc.year = :year " +
