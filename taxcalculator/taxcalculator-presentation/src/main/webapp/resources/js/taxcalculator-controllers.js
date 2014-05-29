@@ -4,14 +4,17 @@ taxcalculatorControllers
 
   .controller('EmployeesOverviewCtrl', ['$scope', 'EmployeesOverviewResource',
     function ($scope, EmployeesOverviewResource) {
-      $scope.employees = EmployeesOverviewResource.query(
-        {},
-        function (successData) {
-        },
-        function (error) {
-          $scope.$emit("alert", {'alertClass': 'alert-danger', 'message': 'Could not retrieve application overview'})
-        }
-      );
+      $scope.refreshEmployee = function(){
+          $scope.employees = EmployeesOverviewResource.query(
+              {},
+              function (successData) {
+              },
+              function (error) {
+                  $scope.$emit("alert", {'alertClass': 'alert-danger', 'message': 'Could not retrieve application overview'})
+              }
+          );
+      }
+      $scope.refreshEmployee();
     }
   ])
 
@@ -35,6 +38,7 @@ taxcalculatorControllers
           GenerateEmployeesResource.post(
               {employeesCount: employeesCount}, "",
               function (successData) {
+                  $scope.refreshEmployee();
               },
               function (error) {
                   $scope.$emit("alert", {'alertClass': 'alert-danger', 'message': 'Could not generate employees'})
