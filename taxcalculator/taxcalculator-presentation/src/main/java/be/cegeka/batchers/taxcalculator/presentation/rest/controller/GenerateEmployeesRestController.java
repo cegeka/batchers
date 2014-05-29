@@ -30,7 +30,7 @@ public class GenerateEmployeesRestController {
 
         Long count = employeeService.count();
         if (count > employeesCount) {
-            employeeService.deleteAll();
+            employeeService.truncate();
         } else {
             employeesCount = employeesCount - count;
         }

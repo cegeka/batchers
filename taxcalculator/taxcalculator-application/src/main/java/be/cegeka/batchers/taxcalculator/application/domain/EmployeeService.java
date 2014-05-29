@@ -3,6 +3,7 @@ package be.cegeka.batchers.taxcalculator.application.domain;
 import be.cegeka.batchers.taxcalculator.to.EmployeeTo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -10,7 +11,20 @@ import java.util.List;
 public class EmployeeService {
 
     @Autowired
-    EmployeeRepository employeeRepository;
+    private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private MonthlyReportRepository monthlyReportRepository;
+
+    @Autowired
+    PayCheckRepository payCheckRepository;
+
+    @Autowired
+    TaxCalculationRepository taxCalculationRepository;
+
+    @Autowired
+    TaxServiceCallResultRepository taxServiceCallResultRepository;
+
 
     public List<EmployeeTo> getFirst20() {
         return employeeRepository.getFirst20();
@@ -20,11 +34,12 @@ public class EmployeeService {
         return employeeRepository.count();
     }
 
-    public void deleteAll() {
-        employeeRepository.deleteAll();
-    }
-
+    @Transactional
     public void truncate() {
+        monthlyReportRepository.truncate();
+        payCheckRepository.truncate();
+        taxServiceCallResultRepository.truncate();
+        taxCalculationRepository.truncate();
         employeeRepository.truncate();
     }
 }
