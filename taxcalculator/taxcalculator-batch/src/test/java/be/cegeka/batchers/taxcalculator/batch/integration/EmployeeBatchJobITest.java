@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static be.cegeka.batchers.taxcalculator.application.ApplicationAssertions.assertThat;
-import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.internal.util.reflection.Whitebox.setInternalState;
 import static org.springframework.batch.core.BatchStatus.COMPLETED;
 import static org.springframework.batch.core.BatchStatus.FAILED;
@@ -235,7 +234,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
 
     @Test
     public void whenWebServiceFailsForOneEmployee_thenSumOfTaxes_isCalculatedForFailedCalls() throws Exception {
-         haveEmployees(3);
+        haveEmployees(3);
 
         respondWithServerError(3);
         respondOneTimeWithSuccess();
