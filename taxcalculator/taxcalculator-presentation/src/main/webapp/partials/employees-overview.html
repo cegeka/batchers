@@ -1,14 +1,14 @@
 <h1 class="page-header">Employees </h1>
 
-<div class="form-inline" role="form" ng-controller="GenerateEmployeesCtrl">
+<form id="generateEmployeesForm" name="generateEmployeesForm" class="form-inline" role="form" ng-controller="GenerateEmployeesCtrl">
     <div class="form-group">
         <label class="control-label" for="employeesCountInput">Set employee size to:</label>
-        <input ng-model="GenerateEmployeesModel.employeesCount" type="number" class="form-control" id="employeesCountInput" placeholder="new employee size">
-        <a ng-click="generateEmployees(GenerateEmployeesModel.employeesCount)" class="btn btn-primary">
-            Go
-        </a>
+        <input ng-model="GenerateEmployeesModel.employeesCount" type="number" class="form-control"
+               id="employeesCountInput" placeholder="new employee size" min="1" max="300000" ng-required="true">
+        <input ng-click="generateEmployees(GenerateEmployeesModel.employeesCount)" type="submit" value="Go"
+               ng-disabled="generateEmployeesForm.$invalid" class="btn btn-primary"/>
     </div>
-</div>
+</form>
 
 <div class="table-responsive">
     <table class="table table-striped">
