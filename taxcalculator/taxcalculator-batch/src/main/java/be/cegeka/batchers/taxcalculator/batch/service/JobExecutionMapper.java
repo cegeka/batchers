@@ -26,21 +26,22 @@ public class JobExecutionMapper {
     }
 
     private String getJobName(JobInstance jobInstance, JobStartParams jobStartParams) {
-        return jobInstance.getJobName() + " id: " + jobInstance.getId() + " for " + jobStartParams.getMonth() + "/" + jobStartParams.getYear();
+        return jobStartParams.getMonth() + "/" + jobStartParams.getYear() + jobInstance.getJobName() + " id: " + jobInstance.getId();
     }
 
     private List<JobExecutionResult> getJobExecutionResults(List<JobExecution> jobExecutions) {
         return jobExecutions
                 .stream()
                 .map(jobExec -> new JobExecutionResult(
-                        jobExec.getStatus().toString(),
+                        jobExec.getId(), jobExec.getStatus().toString(),
                         jobExec.getStartTime(), jobExec.getEndTime(),
-                        getJobExecutionDescription(jobExec)))
+                        getDescription(jobExec)))
                 .collect(Collectors.toList());
     }
 
-    private String getJobExecutionDescription(JobExecution jobExec) {
-        return jobExec.getJobParameters().getLong("month") + "/" + jobExec.getJobParameters().getLong("year") + ", id :" + jobExec.getId();
+    private String getDescription(JobExecution jobExec) {
+        return jobExec.getJobParameters().getLong(JobStartParams.MONTH) + "/" + jobExec.getJobParameters().getLong(JobStartParams.YEAR)
+                + ", id :" + jobExec.getId();
     }
 
     private JobStartParams getJobStartParams(JobParameters jobParameters) {

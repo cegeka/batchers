@@ -4,17 +4,23 @@ import java.util.Date;
 
 public class JobExecutionResult {
 
+    private Long id;
     private String status;
     private Date startTime;
     private Date endTime;
-    private String executionId;
+    private String description;
 
 
-    public JobExecutionResult(String status, Date startTime, Date endTime, String executionId) {
+    public JobExecutionResult(Long id, String status, Date startTime, Date endTime, String description) {
+        this.id = id;
         this.status = status;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.executionId = executionId;
+        this.description = description;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getStatus() {
@@ -29,8 +35,8 @@ public class JobExecutionResult {
         return endTime;
     }
 
-    public String getExecutionId() {
-        return executionId;
+    public String getDescription() {
+        return description;
     }
 
 

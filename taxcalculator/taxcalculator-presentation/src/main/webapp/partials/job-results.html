@@ -23,7 +23,7 @@
         <div class="panel-body" ng-show="job.details">
             <div ng-repeat="jobExecutionResult in job.jobExecutionResults">
                 <div>
-                    <div class="col-md-2">{{jobExecutionResult.executionId}}</div>
+                    <div class="col-md-2">{{jobExecutionResult.description}}</div>
                     <div class="col-md-3">{{jobExecutionResult.endTime | date:'medium'}}</div>
                     <div class="col-md-2">{{jobExecutionResult.status}}</div>
                     <div class="col-md-5">{{formatDuration(jobExecutionResult.duration)}}</div>
