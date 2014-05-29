@@ -35,7 +35,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     private static final String EMAIL_ADDRESS = "employee@email.com";
     private static final Long YEAR = 2014L;
     private static final Long MONTH = 1L;
-    private static final Long JOB_EXECUTION_ID = 12345L;
+
     @Autowired
     private JobLauncherTestUtils jobLauncherTestUtils;
     @Autowired
