@@ -41,7 +41,6 @@ public class JobResultsServiceTest {
     @Before
     public void setUp() {
         Whitebox.setInternalState(jobResultsService, "jobExecutionMapper", mapper);
-
     }
 
     @Test
@@ -102,8 +101,7 @@ public class JobResultsServiceTest {
 
     private JobExecution createJobExecution(JobInstance jobInstance, JobParameters jobParameters) {
         JobExecution jobExecution = new JobExecution(jobInstance, jobParameters);
-        jobExecution.setEndTime(new Date());
-        jobExecution.setStartTime(new Date());
+        jobExecution.setId(1L);
         return jobExecution;
     }
 

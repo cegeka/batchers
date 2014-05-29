@@ -12,7 +12,7 @@
     <div class="panel"
          ng-class="{COMPLETED:'panel-success', STARTED:'panel-info', FAILED:'panel-danger'}[job.jobExecutionResults[0].status]">
         <div class="panel-heading clearfix">
-            <div class="col-md-2">{{job.jobName}}</div>
+            <div class="col-md-2">{{job.jobStartParams.year}}/{{job.jobStartParams.month}}<br/>{{job.jobName}}</div>
             <div class="col-md-3">{{job.jobExecutionResults[0].endTime | date:'medium'}}</div>
             <div class="col-md-2">{{job.jobExecutionResults[0].status}}</div>
             <div class="pull-right">
@@ -23,7 +23,7 @@
         <div class="panel-body" ng-show="job.details">
             <div ng-repeat="jobExecutionResult in job.jobExecutionResults">
                 <div>
-                    <div class="col-md-2">{{jobExecutionResult.executionId}}</div>
+                    <div class="col-md-2">{{jobExecutionResult.description}}</div>
                     <div class="col-md-3">{{jobExecutionResult.endTime | date:'medium'}}</div>
                     <div class="col-md-2">{{jobExecutionResult.status}}</div>
                     <div class="col-md-5">{{formatDuration(jobExecutionResult.duration)}}</div>
