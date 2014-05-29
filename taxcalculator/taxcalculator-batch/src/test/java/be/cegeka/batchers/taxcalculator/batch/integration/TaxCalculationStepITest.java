@@ -28,8 +28,8 @@ public class TaxCalculationStepITest extends AbstractIntegrationTest {
 
     @After
     public void tearDown() {
-        taxCalculationRepository.truncate();
-        employeeRepository.truncate();
+        taxCalculationRepository.deleteAll();
+        employeeRepository.deleteAll();
     }
 
     @Test

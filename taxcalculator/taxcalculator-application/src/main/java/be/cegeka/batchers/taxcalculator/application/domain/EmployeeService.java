@@ -17,13 +17,13 @@ public class EmployeeService {
     private MonthlyReportRepository monthlyReportRepository;
 
     @Autowired
-    PayCheckRepository payCheckRepository;
+    private PayCheckRepository payCheckRepository;
 
     @Autowired
-    TaxCalculationRepository taxCalculationRepository;
+    private TaxCalculationRepository taxCalculationRepository;
 
     @Autowired
-    TaxServiceCallResultRepository taxServiceCallResultRepository;
+    private TaxServiceCallResultRepository taxServiceCallResultRepository;
 
 
     public List<EmployeeTo> getFirst20() {
@@ -39,7 +39,9 @@ public class EmployeeService {
         monthlyReportRepository.truncate();
         payCheckRepository.truncate();
         taxServiceCallResultRepository.truncate();
-        taxCalculationRepository.truncate();
-        employeeRepository.truncate();
+        // if we use truncate we get this error
+        // [SqlExceptionHelper] Cannot truncate a table referenced in a foreign key constraint
+        employeeRepository.deleteAll();
+        taxCalculationRepository.deleteAll();
     }
 }

@@ -88,11 +88,11 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     @After
     public void tearDown() {
         SmtpServerStub.stop();
-        monthlyReportRepository.truncate();
-        payCheckRepository.truncate();
-        taxServiceCallResultRepository.truncate();
-        taxCalculationRepository.truncate();
-        employeeRepository.truncate();
+        monthlyReportRepository.deleteAll();
+        payCheckRepository.deleteAll();
+        taxServiceCallResultRepository.deleteAll();
+        taxCalculationRepository.deleteAll();
+        employeeRepository.deleteAll();
     }
 
     @Test

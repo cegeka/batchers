@@ -67,12 +67,10 @@ public abstract class AbstractRepository<E> {
 
     @Transactional
     public void truncate() {
-//        EntityManager em = entityManagerFactory.createEntityManager();
-//        String tableName = getTableName();
-//        String sqlString = "delete from " + tableName;
-//        em.createNativeQuery(sqlString).executeUpdate();
-//        em.getTransaction().commit();
-        deleteAll();
+        String tableName = getTableName();
+        String sqlString = "truncate table " + tableName;
+        entityManager.createNativeQuery(sqlString).executeUpdate();
+        entityManager.flush();
     }
 
     protected String getTableName() {
@@ -80,7 +78,7 @@ public abstract class AbstractRepository<E> {
     }
 
     public Class<E> getEntityClass() {
-        if(this.entityClass ==null){
+        if (this.entityClass == null) {
             this.entityClass = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
         }
         return entityClass;

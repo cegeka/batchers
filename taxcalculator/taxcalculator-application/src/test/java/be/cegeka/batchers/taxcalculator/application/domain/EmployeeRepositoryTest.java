@@ -67,14 +67,14 @@ public class EmployeeRepositoryTest extends IntegrationTest {
     }
 
     @Test
-    public void testTruncateAll() throws Exception {
+    public void testDeleteAll() throws Exception {
         Employee first = new EmployeeBuilder().build();
         Employee second = new EmployeeBuilder().build();
 
         employeeRepository.save(first);
         employeeRepository.save(second);
 
-        employeeRepository.truncate();
+        employeeRepository.deleteAll();
         assertThat(employeeRepository.count()).isEqualTo(0L);
     }
 
