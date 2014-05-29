@@ -26,7 +26,7 @@ public class JobExecutionMapper {
     }
 
     private String getJobName(JobInstance jobInstance, JobStartParams jobStartParams) {
-        return jobStartParams.getMonth() + "/" + jobStartParams.getYear() + jobInstance.getJobName() + " id: " + jobInstance.getId();
+        return jobInstance.getJobName() + " id: " + jobInstance.getId();
     }
 
     private List<JobExecutionResult> getJobExecutionResults(List<JobExecution> jobExecutions) {
