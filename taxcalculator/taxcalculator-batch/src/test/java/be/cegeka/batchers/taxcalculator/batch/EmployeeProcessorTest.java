@@ -1,7 +1,7 @@
 package be.cegeka.batchers.taxcalculator.batch;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
-import be.cegeka.batchers.taxcalculator.application.domain.EmployeeBuilder;
+import be.cegeka.batchers.taxcalculator.application.domain.EmployeeTestBuilder;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
 import be.cegeka.batchers.taxcalculator.application.service.RunningTimeService;
 import be.cegeka.batchers.taxcalculator.application.service.TaxCalculatorService;
@@ -36,8 +36,8 @@ public class EmployeeProcessorTest {
 
     @Test
     public void whenAnEmployeeWithoutCalculatedTax_isProcessed_thenTaxIsOnlyPercentOfCurrentIncome() throws Exception {
-        Employee employee1 = new EmployeeBuilder().withIncome(1000).withId(1L).build();
-        Employee employee2 = new EmployeeBuilder().withIncome(1500).withId(1L).build();
+        Employee employee1 = new EmployeeTestBuilder().withIncome(1000).withId(1L).build();
+        Employee employee2 = new EmployeeTestBuilder().withIncome(1500).withId(1L).build();
 
         TaxCalculation taxCalculation1 = calculateTaxProcessor.process(employee1);
         TaxCalculation taxCalculation2 = calculateTaxProcessor.process(employee2);

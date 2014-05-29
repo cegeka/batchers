@@ -37,15 +37,14 @@ public class TaxCalculationRepositoryTest extends IntegrationTest {
         employeeRepository.save(gigel);
         employeeRepository.save(ionel);
 
-        gigelJanuary = TaxCalculation.from(1L, gigel, 2014, 1, Money.of(CurrencyUnit.EUR, 10.0));
-        gigelFebruary = TaxCalculation.from(1L, gigel, 2014, 2, Money.of(CurrencyUnit.EUR, 10.0));
+        gigelJanuary = new TaxCalculationTestBuilder().withEmployee(gigel).withMonth(1).withTax(10.0).build();
+        gigelFebruary = new TaxCalculationTestBuilder().withEmployee(gigel).withMonth(2).withTax(10.0).build();
 
-        ionelJanuary = TaxCalculation.from(1L, ionel, 2014, 1, Money.of(CurrencyUnit.EUR, 12.0));
-        ionelFebruary = TaxCalculation.from(1L, ionel, 2014, 2, Money.of(CurrencyUnit.EUR, 13.0));
+        ionelJanuary = new TaxCalculationTestBuilder().withEmployee(ionel).withMonth(1).withTax(12.0).build();
+        ionelFebruary = new TaxCalculationTestBuilder().withEmployee(ionel).withMonth(2).withTax(13.0).build();
 
         List<TaxCalculation> taxes = Arrays.asList(gigelJanuary, gigelFebruary, ionelJanuary, ionelFebruary);
         taxes.forEach(taxCalculationRepository::save);
-
     }
 
     @Test
@@ -68,7 +67,7 @@ public class TaxCalculationRepositoryTest extends IntegrationTest {
 
     @Test(expected = PersistenceException.class)
     public void cannotHaveDuplicateCalculation() {
-        TaxCalculation gigelJanuary2 = TaxCalculation.from(1L, gigel, 2014, 1, Money.of(CurrencyUnit.EUR, 15.0));
+        TaxCalculation gigelJanuary2 = new TaxCalculationTestBuilder().withEmployee(gigel).withMonth(1).withTax(15.0).build();
         taxCalculationRepository.save(gigelJanuary2);
     }
 

@@ -13,18 +13,18 @@ import java.util.Map;
 @Configuration
 public class RetryConfig {
 
-    @Value("${taxProcessor.retry.initialInterval:100}")
+    @Value("${employeeJob.taxProcessor.retry.initialInterval:100}")
     private long initialInterval = 100;
 
-    @Value("${taxProcessor.retry.maxAtempts:3}")
-    private int maxAtempts = 3;
+    @Value("${employeeJob.taxProcessor.retry.maxAttemptsPerEmployee:3}")
+    private int maxAttempts = 3;
 
     public RetryTemplate createRetryTemplate() {
         Map<Class<? extends Throwable>, Boolean> exceptions = new HashMap<>();
         exceptions.put(TaxWebServiceException.class, true);
 
         RetryTemplate template = new RetryTemplate();
-        SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy(maxAtempts, exceptions);
+        SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy(maxAttempts, exceptions);
         template.setRetryPolicy(retryPolicy);
 
         ExponentialBackOffPolicy backOffPolicy = new ExponentialBackOffPolicy();

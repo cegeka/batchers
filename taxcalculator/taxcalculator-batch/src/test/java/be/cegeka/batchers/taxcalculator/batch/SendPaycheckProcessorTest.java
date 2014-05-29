@@ -66,13 +66,13 @@ public class SendPaycheckProcessorTest {
     public void setUp() throws IOException, XDocReportException {
         jobExecutionId = 1L;
 
-        employee = new EmployeeBuilder()
+        employee = new EmployeeTestBuilder()
                 .withEmailAddress(EMPLOYEE_EMAIL)
                 .withFirstName("FirstName")
                 .withIncome(2000)
                 .build();
 
-        taxCalculation = TaxCalculation.from(1L, employee, 2014, 1, Money.of(CurrencyUnit.EUR, 10.0));
+        taxCalculation = new TaxCalculationTestBuilder().withEmployee(employee).withTax(10.0).build();
         taxServiceCallResult = TaxServiceCallResult.from(taxCalculation, "", HttpStatus.OK.value(), "", DateTime.now(), true);
 
         generatedPdfBytes = new byte[]{0, 1, 2, 3, 4};

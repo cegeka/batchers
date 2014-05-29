@@ -1,6 +1,5 @@
 package be.cegeka.batchers.taxcalculator.batch.config;
 
-import be.cegeka.batchers.taxcalculator.batch.integration.MockResetter;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -40,10 +39,5 @@ public class EmployeeJobTestConfig {
     @Bean
     public JobLauncherTestUtils jobLauncherTestUtils() {
         return new JobLauncherTestUtils();
-    }
-
-    @Bean
-    public MockResetter mockResetter() {
-        return new MockResetter();
     }
 }

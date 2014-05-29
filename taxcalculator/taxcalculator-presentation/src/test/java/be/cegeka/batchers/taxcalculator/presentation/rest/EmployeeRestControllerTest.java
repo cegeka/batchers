@@ -1,7 +1,7 @@
 package be.cegeka.batchers.taxcalculator.presentation.rest;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
-import be.cegeka.batchers.taxcalculator.application.domain.EmployeeBuilder;
+import be.cegeka.batchers.taxcalculator.application.domain.EmployeeTestBuilder;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeService;
 import be.cegeka.batchers.taxcalculator.to.EmployeeTo;
 import org.joda.money.Money;
@@ -44,7 +44,7 @@ public class EmployeeRestControllerTest {
 
     @Test
     public void testGetFirst20Employees() throws Exception {
-        Employee employee = new EmployeeBuilder()
+        Employee employee = new EmployeeTestBuilder()
                 .withIncome(200)
                 .withFirstName("firstName")
                 .build();
