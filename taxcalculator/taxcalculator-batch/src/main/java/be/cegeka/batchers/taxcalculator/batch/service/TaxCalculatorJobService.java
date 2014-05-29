@@ -3,7 +3,6 @@ package be.cegeka.batchers.taxcalculator.batch.service;
 
 import be.cegeka.batchers.taxcalculator.batch.api.JobService;
 import be.cegeka.batchers.taxcalculator.batch.api.JobStartListener;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
@@ -34,9 +33,9 @@ public class TaxCalculatorJobService implements JobService {
     private Set<JobStartListener> jobStartListeners = new HashSet<>();
 
     @Override
-    public void runTaxCalculatorJob() {
+    public void runTaxCalculatorJob(long year, long month) {
         notifyJobStartListeners();
-        startJobs();
+        startJobs(year, month);
     }
 
     private void notifyJobStartListeners() {
@@ -44,9 +43,13 @@ public class TaxCalculatorJobService implements JobService {
                 .forEach(jobStartListener -> jobStartListener.jobHasBeenStarted(employeeJob.getName()));
     }
 
-    protected void startJobs() {
+    protected void startJobs(long year, long month) {
         try {
-            JobParameters jobParameters = getNewJobParameters();
+            JobParameters jobParameters = new JobParametersBuilder()
+                    .addLong("month", month)
+                    .addLong("year", year)
+                    .toJobParameters();
+
             System.out.println("Running job in jobservice");
             jobLauncher.run(employeeJob, jobParameters);
         } catch (JobExecutionAlreadyRunningException | JobRestartException
@@ -54,12 +57,5 @@ public class TaxCalculatorJobService implements JobService {
             LOG.error("Job running failed", e);
             //TODO shouldn't we handle this differently?
         }
-    }
-
-    protected JobParameters getNewJobParameters() {
-        return new JobParametersBuilder()
-                .addLong("month", new Long(new DateTime().getMonthOfYear()))
-                .addLong("year", new Long(new DateTime().getYear()))
-                .toJobParameters();
     }
 }

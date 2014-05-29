@@ -1,14 +1,18 @@
 package be.cegeka.batchers.taxcalculator.batch.service;
 
 import be.cegeka.batchers.taxcalculator.batch.api.JobStartListener;
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.batch.core.*;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
@@ -20,13 +24,15 @@ import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toSet;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.internal.util.reflection.Whitebox.setInternalState;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TaxCalculatorJobServiceTest {
     public static final String A_JOBS_NAME = "Steve Jobs :-)";
+    public static final long YEAR = 2004L;
+    public static final long MONTH = 2L;
 
     @InjectMocks
     private TaxCalculatorJobService taxCalculatorJobService;
@@ -41,9 +47,10 @@ public class TaxCalculatorJobServiceTest {
     private SimpleJobLauncher jobLauncherMock;
     @Mock
     private JobExecution jobExecution;
-
     @Mock
     private Date currentDate;
+    @Captor
+    private ArgumentCaptor<JobParameters> jobParametersArgumentCaptor;
 
     @Before
     public void setUpJobLauncher() throws Exception {
@@ -58,36 +65,20 @@ public class TaxCalculatorJobServiceTest {
     public void onJobStarted_AllJobStartListenersAreNotified() {
         when(jobMock.getName()).thenReturn(A_JOBS_NAME);
 
-        taxCalculatorJobService.runTaxCalculatorJob();
+        taxCalculatorJobService.runTaxCalculatorJob(YEAR, MONTH);
 
         verify(jobStartListenerMock1).jobHasBeenStarted(A_JOBS_NAME);
         verify(jobStartListenerMock2).jobHasBeenStarted(A_JOBS_NAME);
     }
 
     @Test
-    public void givenJob_whenCalculatingParameters_thenAUniqueIdentifierIsUsed() throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
-        taxCalculatorJobService = spy(taxCalculatorJobService);
-        JobParameters jobParameters = new JobParametersBuilder().addLong("uniqueIdentifier", new Date().getTime())
-                .addLong("month", 5L, false)
-                .addLong("year", 2014L, false).toJobParameters();
+    public void whenStarJobs_withGivenYearAndMonth_runJobWithParameters() throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
+        taxCalculatorJobService.runTaxCalculatorJob(YEAR, MONTH);
 
-        doReturn(jobParameters).when(taxCalculatorJobService).getNewJobParameters();
+        verify(jobLauncherMock).run(any(Job.class), jobParametersArgumentCaptor.capture());
 
-        taxCalculatorJobService.startJobs();
-
-        verify(jobLauncherMock).run(any(Job.class), eq(jobParameters));
-    }
-
-    @Test
-    public void givenJob_whenGetNewJobParameters_thenParametersContainMonthAndYear() {
-        JobParameters jobParameters = taxCalculatorJobService.getNewJobParameters();
-
-        assertThat(jobParameters.getParameters()).hasSize(2);
-
-        assertThat((Long) jobParameters.getParameters().get("month").getValue()).isEqualTo(new DateTime().getMonthOfYear());
-        assertThat(jobParameters.getParameters().get("month").isIdentifying()).isTrue();
-
-        assertThat((Long) jobParameters.getParameters().get("year").getValue()).isEqualTo(new DateTime().getYear());
-        assertThat(jobParameters.getParameters().get("year").isIdentifying()).isTrue();
+        JobParameters jobParameters = jobParametersArgumentCaptor.getValue();
+        assertThat(jobParameters.getLong("year")).isEqualTo(YEAR);
+        assertThat(jobParameters.getLong("month")).isEqualTo(MONTH);
     }
 }

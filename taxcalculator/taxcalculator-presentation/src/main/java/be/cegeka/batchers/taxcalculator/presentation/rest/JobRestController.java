@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -16,11 +17,11 @@ public class JobRestController {
     @Autowired
     JobService jobService;
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value = "/{year}/{month}", method = RequestMethod.POST)
     @ResponseBody
-    public void runJob() {
+    public void runJob(@PathVariable("year") Long year, @PathVariable("month") Long month) {
         LOG.debug("Running job in rest controller");
-        jobService.runTaxCalculatorJob();
+        jobService.runTaxCalculatorJob(2004L, 2L);
     }
 
 }
