@@ -11,17 +11,24 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @NamedQueries({
-        @NamedQuery(name = MonthlyReport.FIND_BY_YEAR_AND_MONTH, query = MonthlyReport.FIND_BY_YEAR_AND_MONTH_QUERY)
+        @NamedQuery(name = MonthlyReport.FIND_BY_YEAR_AND_MONTH, query = MonthlyReport.FIND_BY_YEAR_AND_MONTH_QUERY),
+        @NamedQuery(name = MonthlyReport.FIND_BY_JOBEXECUTIONID, query = MonthlyReport.FIND_BY_JOBEXECUTIONID_QUERY)
 })
 @Entity
 public class MonthlyReport {
 
     public static final String FIND_BY_YEAR_AND_MONTH = "MonthlyReport.FIND_BY_YEAR_AND_MONTH";
+    public static final String FIND_BY_JOBEXECUTIONID_QUERY = "SELECT mr FROM MonthlyReport mr " +
+            " WHERE mr.jobExecutionId = :jobExecutionId";
+
+    public static final String FIND_BY_JOBEXECUTIONID = "MonthlyReport.FIND_BY_JOBEXECUTIONID";
     public static final String FIND_BY_YEAR_AND_MONTH_QUERY = "SELECT mr FROM MonthlyReport mr " +
             " WHERE mr.month = :month AND mr.year = :year";
 
+
     public static final String MONTH = "month";
     public static final String YEAR = "year";
+    public static final String JOBEXECUTIONID = "jobExecutionId";
 
     @Id
     @GeneratedValue
@@ -46,13 +53,21 @@ public class MonthlyReport {
     @NotNull
     private DateTime calculationDate;
 
-    public static MonthlyReport from(long year, long month, byte[] montlyReportPdf, DateTime calculationDate) {
+    @Column(unique = true)
+    private Long jobExecutionId;
+
+    public static MonthlyReport from(long year, long month, byte[] montlyReportPdf, DateTime calculationDate, Long jobExecutionId) {
         MonthlyReport monthlyReport = new MonthlyReport();
         monthlyReport.year = year;
         monthlyReport.month = month;
         monthlyReport.montlyReportPdf = montlyReportPdf;
         monthlyReport.calculationDate = calculationDate;
+        monthlyReport.jobExecutionId = jobExecutionId;
         return monthlyReport;
+    }
+
+    public static MonthlyReport from(long year, long month, byte[] montlyReportPdf, DateTime calculationDate) {
+        return from(year, month, montlyReportPdf, calculationDate, null);
     }
 
     public Long getId() {
@@ -73,5 +88,13 @@ public class MonthlyReport {
 
     public DateTime getCalculationDate() {
         return calculationDate;
+    }
+
+    public void setJobExecutionId(Long jobExecutionId) {
+        this.jobExecutionId = jobExecutionId;
+    }
+
+    public Long getJobExecutionId() {
+        return jobExecutionId;
     }
 }

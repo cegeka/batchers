@@ -27,7 +27,8 @@ public class JobResultsTasklet implements Tasklet {
 
     @Override
     public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws IOException, XDocReportException {
-        monthlyTaxReportService.generateReport(year, month);
+        long jobExecutionId = chunkContext.getStepContext().getStepExecution().getJobExecutionId();
+        monthlyTaxReportService.generateReport(year, month, jobExecutionId);
         return FINISHED;
     }
 }

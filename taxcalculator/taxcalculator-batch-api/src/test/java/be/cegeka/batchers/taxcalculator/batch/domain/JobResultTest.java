@@ -2,7 +2,6 @@ package be.cegeka.batchers.taxcalculator.batch.domain;
 
 import org.junit.Test;
 
-import java.util.Calendar;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -12,21 +11,17 @@ public class JobResultTest {
 
     @Test
     public void testSortingOfJobExecutionResults() throws Exception {
-        JobExecutionResult je5 = jobExecutionResult(5);
-        JobExecutionResult je2 = jobExecutionResult(2);
-        JobExecutionResult je19 = jobExecutionResult(19);
-        List<JobExecutionResult> input = asList(je5, je2, je19);
+        JobExecutionResult execution5 = jobExecutionResult(5L);
+        JobExecutionResult execution2 = jobExecutionResult(2L);
+        JobExecutionResult execution19 = jobExecutionResult(19L);
+        List<JobExecutionResult> executions = asList(execution5, execution2, execution19);
 
-        JobResult jobResult = new JobResult(null, null, input);
+        JobResult jobResult = new JobResult(null, null, executions);
 
-        assertThat(jobResult.getJobExecutionResults()).containsExactly(je19, je5, je2);
+        assertThat(jobResult.getJobExecutionResults()).containsExactly(execution19, execution5, execution2);
     }
 
-    private JobExecutionResult jobExecutionResult(int day) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_MONTH, day);
-
-        JobExecutionResult jobExecutionResult = new JobExecutionResult(null, null, calendar.getTime(), null);
-        return jobExecutionResult;
+    private JobExecutionResult jobExecutionResult(Long id) {
+        return new JobExecutionResult(id, null, null, null, null);
     }
 }
