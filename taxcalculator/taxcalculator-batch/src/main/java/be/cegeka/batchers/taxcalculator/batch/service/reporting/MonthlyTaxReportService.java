@@ -24,6 +24,10 @@ public class MonthlyTaxReportService {
     private MonthlyReportRepository monthlyReportRepository;
 
     public byte[] generateReport(long year, long month) throws IOException, XDocReportException {
+        return generateReport(year, month, null);
+    }
+
+    public byte[] generateReport(long year, long month, Long jobExecutionId) throws IOException, XDocReportException {
         Resource monthlyReportTemplate = new ClassPathResource("monthly-tax-report-template.docx");
 
         Map<String, Object> contextMap = new HashMap<>();
@@ -33,7 +37,7 @@ public class MonthlyTaxReportService {
 
         byte[] pdfBytes = pdfGeneratorService.generatePdfAsByteArray(monthlyReportTemplate, contextMap);
 
-        MonthlyReport monthlyReport = MonthlyReport.from(year, month, pdfBytes, DateTime.now());
+        MonthlyReport monthlyReport = MonthlyReport.from(year, month, pdfBytes, DateTime.now(), jobExecutionId);
         monthlyReportRepository.save(monthlyReport);
         return pdfBytes;
     }

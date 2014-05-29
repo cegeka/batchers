@@ -1,6 +1,9 @@
 package be.cegeka.batchers.taxcalculator.presentation.rest;
 
+import be.cegeka.batchers.taxcalculator.application.domain.MonthlyReport;
+import be.cegeka.batchers.taxcalculator.application.domain.MonthlyReportRepository;
 import be.cegeka.batchers.taxcalculator.batch.service.JobResultsService;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,17 +15,22 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JobResultsControllerTest {
 
+    public static final long JOB_EXECUTION_ID = 112L;
     @InjectMocks
     JobResultsController jobResultsController;
 
     @Mock
     JobResultsService jobResultsServiceMock;
+    @Mock
+    MonthlyReportRepository monthlyReportRepository;
 
     private MockMvc mockMvc;
 
@@ -39,5 +47,16 @@ public class JobResultsControllerTest {
                 .andReturn();
 
         verify(jobResultsServiceMock).getJobResults();
+    }
+
+    @Test
+    public void testGetReportContent() throws Exception {
+        byte[] bytes = new byte[]{0, 34, 4};
+        MonthlyReport monthlyReport = MonthlyReport.from(2014, 4, bytes, new DateTime());
+        when(monthlyReportRepository.findByJobExecutionId(JOB_EXECUTION_ID))
+                .thenReturn(monthlyReport);
+
+        mockMvc.perform(get("/files/job_report/" + JOB_EXECUTION_ID + ".pdf")).andExpect(status().isOk())
+                .andExpect(content().bytes(bytes));
     }
 }
