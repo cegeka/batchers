@@ -35,9 +35,11 @@ taxcalculatorControllers
       $scope.GenerateEmployeesModel = {employeesCount: $routeParams.employeesCount};
       $scope.generateEmployees = function(employeesCount){
 
+          $scope.generatingEmployees = true;
           GenerateEmployeesResource.post(
               {employeesCount: employeesCount}, "",
               function (successData) {
+                  $scope.generatingEmployees = false;
                   $scope.refreshEmployee();
               },
               function (error) {
