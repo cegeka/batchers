@@ -2,6 +2,7 @@
     <div class="panel panel-default">
         <div class="panel-heading clearfix">
             <div class="col-md-2"><strong>Job Name</strong></div>
+            <div class="col-md-2"><strong>Report</strong></div>
             <div class="col-md-3"><strong>Last Execution Date</strong></div>
             <div class="col-md-2"><strong>Job Status</strong></div>
             <div class="col-md-2"><strong>Job Duration</strong></div>
@@ -24,9 +25,11 @@
             <div ng-repeat="jobExecutionResult in job.jobExecutionResults">
                 <div>
                     <div class="col-md-2">{{jobExecutionResult.description}}</div>
+                    <div class="col-md-2"><a href="rest/files/job_report/{{jobExecutionResult.id}}.pdf"> Download report
+                        {{jobExecutionResult.id}} </a></div>
                     <div class="col-md-3">{{jobExecutionResult.endTime | date:'medium'}}</div>
                     <div class="col-md-2">{{jobExecutionResult.status}}</div>
-                    <div class="col-md-5">{{formatDuration(jobExecutionResult.duration)}}</div>
+                    <div class="col-md-3">{{formatDuration(jobExecutionResult.duration)}}</div>
                 </div>
             </div>
         </div>

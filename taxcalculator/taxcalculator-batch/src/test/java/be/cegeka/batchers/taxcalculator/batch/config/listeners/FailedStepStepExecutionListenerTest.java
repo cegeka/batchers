@@ -1,6 +1,5 @@
 package be.cegeka.batchers.taxcalculator.batch.config.listeners;
 
-import be.cegeka.batchers.taxcalculator.batch.config.listeners.FailedStepStepExecutionListener;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;

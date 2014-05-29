@@ -128,7 +128,8 @@ public class TaxServiceCallResultRepositoryTest extends IntegrationTest {
                 .withEmployee(employee)
                 .withMonth(3)
                 .withTax(10.0)
-                .build();;
+                .build();
+        ;
         taxCalculationRepository.save(march);
 
         TaxServiceCallResult successfulByTaxCalculation = taxServiceCallResultRepository.findSuccessfulByTaxCalculation(march);

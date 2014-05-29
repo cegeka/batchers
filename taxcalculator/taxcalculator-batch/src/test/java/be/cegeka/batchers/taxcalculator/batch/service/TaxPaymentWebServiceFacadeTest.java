@@ -21,7 +21,6 @@ import org.springframework.http.HttpStatus;
 
 import java.util.concurrent.Callable;
 
-import static be.cegeka.batchers.taxcalculator.application.domain.EmployeeTestFixture.anEmployee;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.mockito.Mockito.*;
