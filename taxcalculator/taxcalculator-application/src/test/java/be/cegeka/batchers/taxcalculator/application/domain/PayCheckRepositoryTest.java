@@ -33,13 +33,21 @@ public class PayCheckRepositoryTest extends IntegrationTest {
 
         employeeRepository.save(employee);
 
-        january = TaxCalculation.from(1L, employee, 2014, 1, Money.of(CurrencyUnit.EUR, 10.0));
-        february = TaxCalculation.from(1L, employee, 2014, 2, Money.of(CurrencyUnit.EUR, 10.0));
+        january =  new TaxCalculationTestBuilder()
+                .withEmployee(employee)
+                .withMonth(1)
+                .withTax(10.0)
+                .build();
+        february = new TaxCalculationTestBuilder()
+                .withEmployee(employee)
+                .withMonth(2)
+                .withTax(10.0)
+                .build();
 
         List<TaxCalculation> taxCalculations = Arrays.asList(january, february);
         taxCalculations.forEach(taxCalculationRepository::save);
         byte[] content = getLargeByteArray();
-        payCheck = PayCheck.from(january, content, 1L);
+        payCheck = new PayCheckTestBuilder().withTaxCalculation(january).withContent(content).build();
         payCheckRepository.save(payCheck);
     }
 

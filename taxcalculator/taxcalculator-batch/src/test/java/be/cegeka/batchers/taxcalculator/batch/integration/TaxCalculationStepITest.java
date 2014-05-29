@@ -71,7 +71,7 @@ public class TaxCalculationStepITest extends AbstractIntegrationTest {
     }
 
     private Employee haveOneEmployee() {
-        Employee employee = new EmployeeBuilder()
+        Employee employee = new EmployeeTestBuilder()
                 .withFirstName("Monica")
                 .withLastName("Dev")
                 .withIncome(1000)

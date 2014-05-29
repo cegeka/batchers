@@ -1,20 +1,17 @@
 package be.cegeka.batchers.taxcalculator.batch.integration;
 
-import be.cegeka.batchers.taxcalculator.application.ApplicationAssertions;
 import be.cegeka.batchers.taxcalculator.application.domain.*;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailSender;
 import be.cegeka.batchers.taxcalculator.application.domain.email.SmtpServerStub;
-import be.cegeka.batchers.taxcalculator.batch.CallWebserviceProcessor;
-import be.cegeka.batchers.taxcalculator.batch.config.RetryConfig;
+import be.cegeka.batchers.taxcalculator.batch.config.skippolicy.MaxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy;
 import be.cegeka.batchers.taxcalculator.batch.service.reporting.SumOfTaxes;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.internal.util.reflection.Whitebox;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
@@ -25,8 +22,11 @@ import org.springframework.web.client.RestTemplate;
 import java.util.HashMap;
 import java.util.Map;
 
+import static be.cegeka.batchers.taxcalculator.application.ApplicationAssertions.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.internal.util.reflection.Whitebox.setInternalState;
 import static org.springframework.batch.core.BatchStatus.COMPLETED;
+import static org.springframework.batch.core.BatchStatus.FAILED;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
@@ -36,21 +36,21 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     private static final String EMAIL_ADDRESS = "employee@email.com";
     private static final Long YEAR = 2014L;
     private static final Long MONTH = 1L;
-    private static Long counter = 0L;
-    @Autowired
-    String taxServiceUrl;
-    @Autowired
-    SumOfTaxes sumOfTaxes;
-    @Autowired
-    CallWebserviceProcessor callWebserviceProcessor;
-    @Autowired
-    PayCheckRepository payCheckRepository;
-    @Autowired
-    TaxCalculationRepository taxCalculationRepository;
-    @Autowired
-    TaxServiceCallResultRepository taxServiceCallResultRepository;
+
     @Autowired
     private JobLauncherTestUtils jobLauncherTestUtils;
+    @Autowired
+    private String taxServiceUrl;
+    @Autowired
+    private MaxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy maxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy;
+    @Autowired
+    private SumOfTaxes sumOfTaxes;
+    @Autowired
+    private PayCheckRepository payCheckRepository;
+    @Autowired
+    private TaxCalculationRepository taxCalculationRepository;
+    @Autowired
+    private TaxServiceCallResultRepository taxServiceCallResultRepository;
     @Autowired
     private EmployeeRepository employeeRepository;
     @Autowired
@@ -59,8 +59,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     private RestTemplate restTemplate;
     @Autowired
     private EmailSender emailSender;
-    @Autowired
-    private RetryConfig retryConfig;
+
     private MockRestServiceServer mockServer;
     private JobParameters jobParams;
 
@@ -72,11 +71,10 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         Map<String, JobParameter> jobParamsMap = new HashMap<>();
         jobParamsMap.put("month", new JobParameter(MONTH, false));
         jobParamsMap.put("year", new JobParameter(YEAR, false));
-        jobParamsMap.put("job-id-just-for-testing-shit-up", new JobParameter(counter++, true));
 
         jobParams = new JobParameters(jobParamsMap);
 
-        Whitebox.setInternalState(emailSender, "emailSendCounter", 0);
+        setInternalState(emailSender, "emailSendCounter", 0);
     }
 
     @After
@@ -94,6 +92,80 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
 
         assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
+        verifyJob(jobExecution);
+    }
+
+    @Test
+    public void jobLaunched_HappyPath() throws Exception {
+        haveEmployees(1);
+        respondOneTimeWithSuccess();
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
+
+        assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
+        verifyJob(jobExecution);
+    }
+
+    @Test
+    public void jobFailsWhenWebserviceResponseFailsWithClientException_WeAreMakingABobo() throws Exception {
+        haveEmployees(1);
+        respondWithBadRequest(1);
+
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
+
+        assertThat(jobExecution.getStatus().isUnsuccessful()).isTrue();
+        verifyJob(jobExecution);
+    }
+
+    @Test
+    public void jobDoesNotFailWhenWebserviceResponseFails2TimesWithServerException_BackendMakesABobo() throws Exception {
+        haveEmployees(1);
+        respondWithServerError(2);
+        respondOneTimeWithSuccess();
+
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
+
+        assertThat(jobExecution.getStatus().isUnsuccessful()).isFalse();
+        verifyJob(jobExecution);
+    }
+
+    @Test
+    public void jobDoesFailBecauseOfSkipsWhenWebserviceResponseFails3TimesWithServerException_BackendMakesABobo() throws Exception {
+        haveEmployees(2);
+        respondWithServerError(4);
+        respondOneTimeWithSuccess();
+
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
+
+        assertThat(jobExecution.getStatus().isUnsuccessful()).isTrue();
+        assertThat(jobExecution.getExitStatus().getExitCode()).isEqualTo("FAILED-BECAUSE-OF-SKIPS");
+        verifyJob(jobExecution);
+    }
+
+    @Test
+    public void jobDoesFailCompletelyWhenWebserviceResponseFails9TimesConsecutiveWithServerException_BackendMakesABobo() throws Exception {
+        haveEmployees(4);
+        respondWithServerError(9);
+
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
+
+        assertThat(jobExecution.getStatus().isUnsuccessful()).isTrue();
+        assertThat(jobExecution.getExitStatus().getExitCode()).isEqualTo("FAILED-BECAUSE-OF-SKIPS");
+        verifyJob(jobExecution);
+    }
+
+    @Test
+    public void jobDoesContinueWhenWebserviceResponseFails8TimesConsecutiveWithServerException_BackendMakesABobo() throws Exception {
+        haveEmployees(5);
+        respondWithServerError(8); //5->employee 1; 2->employee 2;
+        respondOneTimeWithSuccess();//->employee 3
+        respondWithServerError(5);//2->employee 4
+        respondOneTimeWithSuccess();//->employee 5
+
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
+
+        assertThat(jobExecution.getStatus().isUnsuccessful()).isTrue();
+        assertThat(jobExecution.getExitStatus().getExitCode()).isEqualTo("FAILED-BECAUSE-OF-SKIPS");
+        verifyJob(jobExecution);
     }
 
     @Test
@@ -103,123 +175,118 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         respondOneTimeWithSuccess();
 
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
-        System.out.println(jobExecution.getAllFailureExceptions());
         assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
 
-        Employee reloadedEmployee = employeeRepository.getBy(employee.getId());
-        System.out.println("RELOADDED: " + reloadedEmployee);
+        assertThat(taxCalculationRepository.findByEmployee(employee)).hasSize(1);
+        assertThat(taxCalculationRepository.findByEmployee(employee).get(0).getTax().getAmount()).isPositive();
 
-        mockServer.verify();
-    }
-
-    @Test
-    @Ignore("job won't fail when the call to web service is failing")
-    public void jobFailsWhenWebserviceResponseFails() throws Exception {
-        haveOneEmployee();
-
-        respondOneTimeWithBadRequest();
-
-        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
-        assertThat(jobExecution.getStatus().isUnsuccessful()).isTrue();
-        mockServer.verify();
-    }
-
-    @Test
-    @Ignore("job won't fail when the call to web service is failing")
-    public void jobFailsWhenTwoEmployeesAndOneWebserviceResponseFails() throws Exception {
-        haveOneEmployee();
-        haveOneEmployee();
-
-        respondOneTimeWithSuccess();
-        respondOneTimeWithBadRequest();
-
-        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
-        assertThat(jobExecution.getStatus().isUnsuccessful()).isTrue();
-        mockServer.verify();
-    }
-
-    @Test
-    public void jobRetriesIfWebserviceFails() throws Exception {
-        haveOneEmployee();
-        respondOneTimeWithServerError();
-        respondOneTimeWithSuccess();
-
-        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
-        assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
-        mockServer.verify();
+        verifyJob(jobExecution);
     }
 
     @Test
     public void whenTaxServiceReturnsSuccess_thenPaycheckIsSent() throws Exception {
-        haveOneEmployee();
+        haveEmployees(1);
         respondOneTimeWithSuccess();
 
-        jobLauncherTestUtils.launchJob(jobParams);
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
 
-        ApplicationAssertions.assertThat(SmtpServerStub.wiser()).hasReceivedMessageSentTo(EMAIL_ADDRESS);
+        assertThat(SmtpServerStub.wiser()).hasReceivedMessageSentTo(EMAIL_ADDRESS);
+        verifyJob(jobExecution);
     }
 
     @Test
     public void whenTaxServiceReturnsFail_thenPaycheckIsNotSent() throws Exception {
-        haveOneEmployee();
-        respondOneTimeWithBadRequest();
+        haveEmployees(1);
+        respondWithBadRequest(1);
 
-        jobLauncherTestUtils.launchJob(jobParams);
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
 
-        ApplicationAssertions.assertThat(SmtpServerStub.wiser()).hasNoReceivedMessages();
+        assertThat(SmtpServerStub.wiser()).hasNoReceivedMessages();
+        verifyJob(jobExecution);
     }
 
     @Test
     public void testSumOfSuccessTaxesIsCalculated() throws Exception {
-        haveOneEmployee();
-        haveOneEmployee();
+        haveEmployees(2);
 
         respondOneTimeWithSuccess();
         respondOneTimeWithSuccess();
 
-        jobLauncherTestUtils.launchJob(jobParams);
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
 
         assertThat(sumOfTaxes.getSuccessSum(YEAR, MONTH)).isEqualTo(200D);
+        verifyJob(jobExecution);
     }
 
     @Test
     public void whenWebServiceFailsForOneEmployee_thenSumOfTaxes_isCalculatedOnlyForSuccessfulCalls() throws Exception {
-        Whitebox.setInternalState(retryConfig, "maxAtempts", 1);
+        haveEmployees(3);
 
-        haveOneEmployee();
-        haveOneEmployee();
-        haveOneEmployee();
-
-        respondOneTimeWithBadRequest();
+        respondWithServerError(3);
         respondOneTimeWithSuccess();
         respondOneTimeWithSuccess();
 
-        jobLauncherTestUtils.launchJob(jobParams);
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
 
         assertThat(sumOfTaxes.getSuccessSum(YEAR, MONTH)).isEqualTo(200D);
-        Whitebox.setInternalState(retryConfig, "maxAtempts", 3);
+        verifyJob(jobExecution);
     }
 
     @Test
     public void whenWebServiceFailsForOneEmployee_thenSumOfTaxes_isCalculatedForFailedCalls() throws Exception {
-        Whitebox.setInternalState(retryConfig, "maxAtempts", 1);
+         haveEmployees(3);
 
-        haveOneEmployee();
-        haveOneEmployee();
-        haveOneEmployee();
-
-        respondOneTimeWithBadRequest();
+        respondWithServerError(3);
         respondOneTimeWithSuccess();
         respondOneTimeWithSuccess();
 
-        jobLauncherTestUtils.launchJob(jobParams);
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
 
         assertThat(sumOfTaxes.getFailedSum(YEAR, MONTH)).isEqualTo(100D);
-        Whitebox.setInternalState(retryConfig, "maxAtempts", 3);
+        verifyJob(jobExecution);
+    }
+
+    @Test
+    public void rerunSameMonthJobIfPreviousJobHasFailures() throws Exception {
+        haveEmployees(1);
+
+        respondWithServerError(3); //fail user one with 3 retries
+        respondOneTimeWithSuccess();
+
+        //first attempt
+        JobExecution firstJobExecution = jobLauncherTestUtils.launchJob(jobParams);
+        assertThat(firstJobExecution.getStatus()).isEqualTo(FAILED);
+
+        //second attempt
+        JobExecution secondJobExecution = jobLauncherTestUtils.launchJob(jobParams);
+        assertThat(secondJobExecution.getStatus()).isEqualTo(COMPLETED);
+
+        verifyJob(secondJobExecution);
+    }
+
+    @Test(expected = JobInstanceAlreadyCompleteException.class)
+    public void rerunSameMonthJobIfPreviousJobHasCompletedSuccessFullyThrowsException() throws Exception {
+        jobLaunched_HappyPath();
+
+        jobLauncherTestUtils.launchJob(jobParams);
+    }
+
+    private void verifyJob(JobExecution jobExecution) {
+        mockServer.verify();
+
+        jobExecution.getStepExecutions()
+                .forEach(se -> se.getFailureExceptions()
+                        .forEach(t -> assertThat(t).isNotInstanceOf(AssertionError.class)));
+    }
+
+    private void haveEmployees(int nrOfEmployees) {
+        for (int i = 0; i < nrOfEmployees; i++) {
+            haveOneEmployee();
+        }
     }
 
     private Employee haveOneEmployee() {
-        Employee employee = new EmployeeBuilder()
+        Employee employee = new EmployeeTestBuilder()
                 .withFirstName("Monica")
                 .withLastName("Dev")
                 .withIncome(1000)
@@ -236,16 +303,20 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
                 .andRespond(withSuccess(STATUS_OK, MediaType.APPLICATION_JSON));
     }
 
-    private void respondOneTimeWithBadRequest() {
-        mockServer.expect(requestTo(taxServiceUrl))
-                .andExpect(method(HttpMethod.POST))
-                .andRespond(withBadRequest());
+    private void respondWithBadRequest(int nrOfTimes) {
+        for (int i = 0; i < nrOfTimes; i++) {
+            mockServer.expect(requestTo(taxServiceUrl))
+                    .andExpect(method(HttpMethod.POST))
+                    .andRespond(withBadRequest());
+        }
     }
 
-    private void respondOneTimeWithServerError() {
-        mockServer.expect(requestTo(taxServiceUrl))
-                .andExpect(method(HttpMethod.POST))
-                .andRespond(withServerError());
+    private void respondWithServerError(int nrOfTimes) {
+        for (int i = 0; i < nrOfTimes; i++) {
+            mockServer.expect(requestTo(taxServiceUrl))
+                    .andExpect(method(HttpMethod.POST))
+                    .andRespond(withServerError());
+        }
     }
 
 }

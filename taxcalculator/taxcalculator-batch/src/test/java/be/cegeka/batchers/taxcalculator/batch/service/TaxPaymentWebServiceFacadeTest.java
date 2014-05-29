@@ -1,6 +1,7 @@
 package be.cegeka.batchers.taxcalculator.batch.service;
 
 import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
+import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculationTestBuilder;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResult;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResultRepository;
 import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceException;
@@ -51,7 +52,7 @@ public class TaxPaymentWebServiceFacadeTest {
     @Before
     public void setUp() {
         Money money = Money.of(CurrencyUnit.EUR, 2000.0);
-        taxCalculation = TaxCalculation.from(1L, anEmployee(), 2014, 1, money);
+        taxCalculation = new TaxCalculationTestBuilder().withTax(money).build();
         taxServiceCallResultValid = TaxServiceCallResult.from(taxCalculation, "", HttpStatus.OK.value(), "", DateTime.now(), true);
     }
 

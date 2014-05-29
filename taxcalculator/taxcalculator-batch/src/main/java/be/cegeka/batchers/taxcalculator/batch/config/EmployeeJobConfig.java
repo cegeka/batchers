@@ -7,20 +7,18 @@ import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceExcepti
 import be.cegeka.batchers.taxcalculator.batch.CalculateTaxProcessor;
 import be.cegeka.batchers.taxcalculator.batch.CallWebserviceProcessor;
 import be.cegeka.batchers.taxcalculator.batch.SendPaycheckProcessor;
+import be.cegeka.batchers.taxcalculator.batch.config.listeners.ChangeStatusOnFailedStepsJobExecListener;
+import be.cegeka.batchers.taxcalculator.batch.config.listeners.FailedStepStepExecutionListener;
+import be.cegeka.batchers.taxcalculator.batch.config.skippolicy.MaxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy;
 import be.cegeka.batchers.taxcalculator.batch.tasklet.JobResultsTasklet;
 import be.cegeka.batchers.taxcalculator.infrastructure.config.PropertyPlaceHolderConfig;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.Step;
-import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.DefaultBatchConfigurer;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.explore.support.JobExplorerFactoryBean;
-import org.springframework.batch.core.step.builder.FaultTolerantStepBuilder;
-import org.springframework.batch.core.step.skip.SkipLimitExceededException;
-import org.springframework.batch.core.step.skip.SkipPolicy;
 import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +60,9 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
     private ChangeStatusOnFailedStepsJobExecListener changeStatusOnFailedStepsJobExecListener;
     @Autowired
     private FailedStepStepExecutionListener failedStepStepExecutionListener;
+    @Autowired
+    private MaxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy maxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy;
+
 
     @Bean
     public Job employeeJob() {
@@ -81,38 +82,30 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
                 .reader(taxCalculatorItemReader)
                 .processor(calculateTaxProcessor)
                 .writer(itemReaderWriterConfig.taxCalculatorItemWriter())
+                .allowStartIfComplete(true)
                 .build();
     }
 
     @Bean
     public Step wsCallStep() {
-        FaultTolerantStepBuilder<TaxCalculation, PayCheck> faultTolerantStepBuilder = stepBuilders.get(WS_CALL_STEP)
-                .<TaxCalculation, PayCheck>chunk(5)
-                .faultTolerant();
-
-        faultTolerantStepBuilder.skipPolicy(new SkipPolicy() {
-            @Override
-            public boolean shouldSkip(Throwable t, int skipCount) throws SkipLimitExceededException {
-                if (t instanceof TaxWebServiceException) {
-                    return true;
-                }
-                return false;
-            }
-        });
-        faultTolerantStepBuilder.noRollback(TaxWebServiceException.class);
-        faultTolerantStepBuilder.listener(failedStepStepExecutionListener);
-
         CompositeItemProcessor<TaxCalculation, PayCheck> compositeItemProcessor = new CompositeItemProcessor<>();
         compositeItemProcessor.setDelegates(Arrays.asList(
                 callWebserviceProcessor,
                 sendPaycheckProcessor
         ));
 
-        return faultTolerantStepBuilder
+        return stepBuilders.get(WS_CALL_STEP)
+                .<TaxCalculation, PayCheck>chunk(5)
+                .faultTolerant()
+                .skipPolicy(maxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy)
+                .noRollback(TaxWebServiceException.class)
                 .reader(itemReaderWriterConfig.wsCallItemReader(OVERRIDDEN_BY_EXPRESSION, OVERRIDDEN_BY_EXPRESSION, OVERRIDDEN_BY_EXPRESSION_STEP_EXECUTION))
                 .processor(compositeItemProcessor)
                 .writer(itemReaderWriterConfig.wsCallItemWriter())
+                .listener(maxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy)
+                .listener(failedStepStepExecutionListener)
                 .listener(sendPaycheckProcessor)
+                .allowStartIfComplete(true)
                 .build();
     }
 
@@ -120,6 +113,7 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
     public Step jobResultsPdf() {
         return stepBuilders.get("JOB_RESULTS_PDF")
                 .tasklet(jobResultsTasklet)
+                .allowStartIfComplete(true)
                 .build();
     }
 

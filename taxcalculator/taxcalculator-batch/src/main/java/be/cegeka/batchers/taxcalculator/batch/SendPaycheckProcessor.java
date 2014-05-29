@@ -46,7 +46,7 @@ public class SendPaycheckProcessor extends StepExecutionListenerSupport implemen
         byte[] pdfBytes = pdfGeneratorService.generatePdfAsByteArray(resource, getPayCheckPdfContext(taxCalculation));
         emailSender.send(getEmailTO(taxCalculation, pdfBytes));
 
-        return PayCheck.from(taxCalculation, pdfBytes, stepExecution.getJobExecutionId());
+        return PayCheck.from(stepExecution.getJobExecutionId(), taxCalculation, pdfBytes);
     }
 
     public String getEmailBodyForEmployee(TaxCalculation taxCalculation) {

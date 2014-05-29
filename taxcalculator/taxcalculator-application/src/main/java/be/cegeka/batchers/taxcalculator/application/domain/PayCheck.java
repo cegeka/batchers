@@ -16,20 +16,20 @@ public class PayCheck {
     @GeneratedValue
     private Long id;
 
+    @NotNull
+    private Long jobExecutionId;
+
     @OneToOne
     private TaxCalculation taxCalculation;
 
     @Lob
     private byte[] payCheckPdf;
 
-    @NotNull
-    private Long jobExecutionId;
-
-    public static PayCheck from(TaxCalculation taxCalculation, byte[] payCheckPdf, Long jobExecutionId) {
+    public static PayCheck from(Long jobExecutionId, TaxCalculation taxCalculation, byte[] payCheckPdf) {
         PayCheck payCheck = new PayCheck();
+        payCheck.jobExecutionId = jobExecutionId;
         payCheck.taxCalculation = taxCalculation;
         payCheck.payCheckPdf = payCheckPdf;
-        payCheck.jobExecutionId = jobExecutionId;
         return payCheck;
     }
 
@@ -48,4 +48,5 @@ public class PayCheck {
     public Long getJobExecutionId() {
         return jobExecutionId;
     }
+
 }

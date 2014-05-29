@@ -64,7 +64,7 @@ public class ItemReaderWriterConfig {
         return employeeJpaItemWriter;
     }
 
-    @Bean
+    @Bean(destroyMethod = "")
     public JpaPagingItemReader<Employee> generatePDFItemReader() {
         JpaPagingItemReader<Employee> employeeItemReader = new JpaPagingItemReader<>();
         employeeItemReader.setEntityManagerFactory(persistenceConfig.entityManagerFactory());
