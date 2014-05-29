@@ -70,7 +70,6 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         Map<String, JobParameter> jobParamsMap = new HashMap<>();
         jobParamsMap.put("month", new JobParameter(MONTH, false));
         jobParamsMap.put("year", new JobParameter(YEAR, false));
-        jobParamsMap.put("jobExecutionId", new JobParameter(JOB_EXECUTION_ID, false));
 
         jobParams = new JobParameters(jobParamsMap);
 
