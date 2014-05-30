@@ -57,11 +57,12 @@ public class EmployeeRepository {
         return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
-    public List<EmployeeTo> getFirst20() {
-        TypedQuery<EmployeeTo> first20 = entityManager.createNamedQuery(Employee.GET_EMPLOYEES_TOTAL_TAX_NAME, EmployeeTo.class);
-        first20.setMaxResults(20);
+    public List<EmployeeTo> getEmployees(int page, int pageSize) {
+        TypedQuery<EmployeeTo> employees = entityManager.createNamedQuery(Employee.GET_EMPLOYEES_TOTAL_TAX_NAME, EmployeeTo.class);
+        employees.setFirstResult(page * pageSize);
+        employees.setMaxResults(pageSize);
 
-        return first20.getResultList();
+        return employees.getResultList();
     }
 
     public void deleteAll() {
@@ -71,5 +72,9 @@ public class EmployeeRepository {
         criteriaDelete.from(Employee.class);
 
         entityManager.createQuery(criteriaDelete).executeUpdate();
+    }
+
+    public long getEmployeeCount() {
+        return entityManager.createNamedQuery(Employee.GET_EMPLOYEE_COUNT, Long.class).getSingleResult();
     }
 }

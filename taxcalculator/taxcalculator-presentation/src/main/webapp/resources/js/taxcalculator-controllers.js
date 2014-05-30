@@ -2,8 +2,8 @@ var taxcalculatorControllers = angular.module('taxcalculatorControllers', []);
 
 taxcalculatorControllers
 
-    .controller('EmployeesOverviewCtrl', ['$scope', 'EmployeesOverviewResource',
-        function ($scope, EmployeesOverviewResource) {
+    .controller('EmployeesOverviewCtrl', ['$scope', '$http', 'EmployeesOverviewResource',
+        function ($scope, $http, EmployeesOverviewResource) {
             $scope.currentPage = 0;
             $scope.itemsPerPage = 10;
 
@@ -71,15 +71,17 @@ taxcalculatorControllers
 
             $scope.$watch("currentPage", function (newValue, oldValue) {
                 $scope.employees = EmployeesOverviewResource.query(
-                    {},
+                    {page: newValue, pageSize: $scope.itemsPerPage},
                     function (successData) {
                     },
                     function (error) {
                         $scope.$emit("alert", {'alertClass': 'alert-danger', 'message': 'Could not retrieve application overview'})
                     }
                 );
-
-                $scope.total = 99;
+                $http.get('/taxcalculator/rest/employees/count').
+                    success(function (data) {
+                        $scope.total = data;
+                    });
             });
         }
     ])

@@ -5,6 +5,7 @@ import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.joda.time.DateTime;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -76,6 +77,7 @@ public class TaxServiceCallResultRepositoryTest extends IntegrationTest {
     }
 
     @Test
+    @Ignore
     public void testSuccess_Sum() throws Exception {
         Employee anotherEmployee = anEmployee();
         employeeRepository.save(anotherEmployee);
