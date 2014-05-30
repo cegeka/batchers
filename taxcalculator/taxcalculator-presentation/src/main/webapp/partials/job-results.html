@@ -15,16 +15,14 @@
          ng-class="{COMPLETED:'panel-success', STARTED:'panel-info', FAILED:'panel-danger'}[job.jobExecutionResults[0].status]">
         <div class="panel-heading clearfix">
             <div class="col-md-2">{{job.jobStartParams.year}}/{{job.jobStartParams.month}}<br/>{{job.jobName}}</div>
-            <div class="col-md-2"></div>
             <div class="col-md-2">{{job.jobExecutionResults[0].endTime | date:'medium'}}</div>
             <div class="col-md-2">
                 <a ng-show="isReportReady(job.jobExecutionResults[0])"
                    href="rest/files/job_report/{{job.jobExecutionResults[0].id}}.pdf"> Latest report
                 </a>
             </div>
-            <div class="col-md-3">{{job.jobExecutionResults[0].startTime | date:'medium'}}</div>
+            <div class="col-md-2">{{job.jobExecutionResults[0].startTime | date:'medium'}}</div>
             <div class="col-md-2">{{job.jobExecutionResults[0].status}}</div>
-            <div class="col-md-2"></div>
             <div class="col-md-2">
                 <button ng-click="runJob(job)"
                         ng-disabled="{{job.jobExecutionResults[0].status == 'COMPLETED' || job.jobExecutionResults[0].status == 'STARTED'}}"
@@ -47,7 +45,7 @@
                             {{jobExecutionResult.id}} </a>
                     </div>
                     <div class="col-md-2">{{jobExecutionResult.endTime | date:'medium'}}</div>
-                    <div class="col-md-3">{{jobExecutionResult.startTime | date:'medium'}}</div>
+                    <div class="col-md-2">{{jobExecutionResult.startTime | date:'medium'}}</div>
                     <div class="col-md-2">{{jobExecutionResult.status}}</div>
                     <div class="col-md-2">{{formatDuration(jobExecutionResult.duration)}}</div>
                 </div>
