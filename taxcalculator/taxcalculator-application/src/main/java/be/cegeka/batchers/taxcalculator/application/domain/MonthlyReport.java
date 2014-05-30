@@ -12,7 +12,10 @@ import javax.validation.constraints.NotNull;
 
 @NamedQueries({
         @NamedQuery(name = MonthlyReport.FIND_BY_YEAR_AND_MONTH, query = MonthlyReport.FIND_BY_YEAR_AND_MONTH_QUERY),
-        @NamedQuery(name = MonthlyReport.FIND_BY_JOBEXECUTIONID, query = MonthlyReport.FIND_BY_JOBEXECUTIONID_QUERY)
+        @NamedQuery(name = MonthlyReport.FIND_BY_JOBEXECUTIONID, query = MonthlyReport.FIND_BY_JOBEXECUTIONID_QUERY),
+        @NamedQuery(name = MonthlyReport.GET_SUCCESS_SUM, query = MonthlyReport.GET_SUCCESS_SUM_QUERY),
+        @NamedQuery(name = MonthlyReport.GET_FAILED_SUM, query = MonthlyReport.GET_FAILED_SUM_QUERY),
+
 })
 @Entity
 public class MonthlyReport {
@@ -25,6 +28,15 @@ public class MonthlyReport {
     public static final String FIND_BY_YEAR_AND_MONTH_QUERY = "SELECT mr FROM MonthlyReport mr " +
             " WHERE mr.month = :month AND mr.year = :year";
 
+    public static final String GET_SUCCESS_SUM = "MonthlyReport.GET_SUCCESS_SUM";
+    public static final String GET_SUCCESS_SUM_QUERY = "SELECT SUM(tc.tax) FROM TaxCalculation tc" +
+            " WHERE tc.month = :month and tc.year = :year " +
+            " AND EXISTS (SELECT pc FROM PayCheck pc WHERE pc.taxCalculation.id = tc.id)";
+
+    public static final String GET_FAILED_SUM = "MonthlyReport.GET_FAILED_SUM";
+    public static final String GET_FAILED_SUM_QUERY = "SELECT SUM(tc.tax) FROM TaxCalculation tc" +
+            " WHERE tc.month = :month and tc.year = :year " +
+            " AND NOT EXISTS (SELECT pc FROM PayCheck pc WHERE pc.taxCalculation.id = tc.id)";
 
     public static final String MONTH = "month";
     public static final String YEAR = "year";
@@ -90,11 +102,11 @@ public class MonthlyReport {
         return calculationDate;
     }
 
-    public void setJobExecutionId(Long jobExecutionId) {
-        this.jobExecutionId = jobExecutionId;
-    }
-
     public Long getJobExecutionId() {
         return jobExecutionId;
+    }
+
+    public void setJobExecutionId(Long jobExecutionId) {
+        this.jobExecutionId = jobExecutionId;
     }
 }

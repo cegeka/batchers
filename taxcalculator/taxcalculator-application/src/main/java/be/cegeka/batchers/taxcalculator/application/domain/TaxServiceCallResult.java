@@ -10,22 +10,11 @@ import javax.validation.constraints.NotNull;
 
 @NamedQueries({
         @NamedQuery(name = TaxServiceCallResult.FIND_BY_TAXCALCULATION, query = TaxServiceCallResult.FIND_BY_TAXCALCULATION_QUERY),
-        @NamedQuery(name = TaxServiceCallResult.GET_SUCCESS_SUM, query = TaxServiceCallResult.GET_SUCCESS_SUM_QUERY),
-        @NamedQuery(name = TaxServiceCallResult.GET_FAILED_SUM, query = TaxServiceCallResult.GET_FAILED_SUM_QUERY),
         @NamedQuery(name = TaxServiceCallResult.FIND_SUCCESSFUL_BY_TAXCALCULATION, query = TaxServiceCallResult.FIND_SUCCESSFUL_BY_TAXCALCULATION_QUERY),
 })
 
 @Entity
 public class TaxServiceCallResult {
-    public static final String GET_SUCCESS_SUM = "TaxServiceCallResult.GET_SUCCESS_SUM";
-    public static final String GET_SUCCESS_SUM_QUERY = "SELECT SUM(tc.tax) FROM TaxCalculation tc" +
-            " WHERE tc.month = :month and tc.year = :year " +
-            " AND EXISTS (SELECT pc FROM PayCheck pc WHERE pc.taxCalculation.id = tc.id)";
-
-    public static final String GET_FAILED_SUM = "TaxServiceCallResult.GET_FAILED_SUM";
-    public static final String GET_FAILED_SUM_QUERY = "SELECT SUM(tc.tax) FROM TaxCalculation tc" +
-            " WHERE tc.month = :month and tc.year = :year " +
-            " AND NOT EXISTS (SELECT pc FROM PayCheck pc WHERE pc.taxCalculation.id = tc.id)";
 
     public static final String FIND_BY_TAXCALCULATION = "TaxServiceCallResult.FIND_BY_TAXCALCULATION";
     public static final String FIND_BY_TAXCALCULATION_QUERY = "SELECT tscr FROM TaxServiceCallResult tscr " +
