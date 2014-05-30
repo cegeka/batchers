@@ -16,3 +16,8 @@ taxcalculatorServices
             return $resource('/taxcalculator/rest/runJob', {}, {'query': {method: 'POST'}});
         }
     ])
+  .factory('GenerateEmployeesResource', ['$resource',
+      function ($resource) {
+          return $resource('/taxcalculator/rest/generateEmployees/', {}, {'post': {method: 'POST'}});
+      }
+  ]);
