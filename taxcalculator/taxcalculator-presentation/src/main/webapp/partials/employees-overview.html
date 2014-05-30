@@ -6,7 +6,7 @@
             <label class="control-label" for="employeesCountInput">Set employee size to:</label>
             <input ng-model="GenerateEmployeesModel.employeesCount" type="number" class="form-control"
                    id="employeesCountInput" placeholder="new employee size" min="1" max="300000" ng-required="true">
-            <input ng-click="generateEmployees(GenerateEmployeesModel.employeesCount)" type="submit" value="Go"
+            <input id="generateEmployeesSubmit" ng-click="generateEmployees(GenerateEmployeesModel.employeesCount)" type="submit" value="Go"
                    ng-disabled="generateEmployeesForm.$invalid" class="btn btn-primary"/>
         </div>
     </form>
@@ -29,7 +29,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="employee in employees | filter:searchQuery">
+        <tr class="employeeRow" ng-repeat="employee in employees | filter:searchQuery">
             <td>{{employee.firstName}}</td>
             <td>{{employee.lastName}}</td>
             <td>{{employee.email}}</td>
