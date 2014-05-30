@@ -1,5 +1,7 @@
 package be.cegeka.batchers.taxcalculator.application.domain;
 
+import org.joda.money.CurrencyUnit;
+import org.joda.money.Money;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +47,24 @@ public class MonthlyReportRepository {
             monthlyReport = null;
         }
         return monthlyReport;
+    }
+
+    public Money getSuccessSum(long year, long month) {
+        Money sum = entityManager.createNamedQuery(MonthlyReport.GET_SUCCESS_SUM, Money.class)
+                .setParameter("month", month)
+                .setParameter("year", year)
+                .getSingleResult();
+
+        return sum == null ? Money.zero(CurrencyUnit.EUR) : sum;
+    }
+
+    public Money getFailedSum(long year, long month) {
+        Money sum = entityManager.createNamedQuery(MonthlyReport.GET_FAILED_SUM, Money.class)
+                .setParameter("month", month)
+                .setParameter("year", year)
+                .getSingleResult();
+
+        return sum == null ? Money.zero(CurrencyUnit.EUR) : sum;
     }
 
     public void deleteAll() {

@@ -1,8 +1,6 @@
 package be.cegeka.batchers.taxcalculator.application.domain;
 
 import be.cegeka.batchers.taxcalculator.application.infrastructure.IntegrationTest;
-import org.joda.money.CurrencyUnit;
-import org.joda.money.Money;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -73,47 +71,6 @@ public class TaxServiceCallResultRepositoryTest extends IntegrationTest {
         //ASSERT
         assertThat(forJanuary).containsOnly(januaryTry1, januaryTry2);
         assertThat(forFebruary).containsOnly(februaryTry1);
-    }
-
-    @Test
-    public void testSuccess_Sum() throws Exception {
-        Employee anotherEmployee = anEmployee();
-        employeeRepository.save(anotherEmployee);
-        TaxCalculation january = new TaxCalculationTestBuilder()
-                .withEmployee(anotherEmployee)
-                .withMonth(1)
-                .withTax(10.0)
-                .build();
-        taxCalculationRepository.save(january);
-        TaxServiceCallResult januaryTry2 = TaxServiceCallResult.from(january, "", HttpStatus.OK.value(), "", DateTime.now(), true);
-        taxServiceCallResultRepository.save(januaryTry2);
-
-
-        Money expectedMoney = Money.of(CurrencyUnit.EUR, 20.0);
-
-        Money actualMoney = taxServiceCallResultRepository.getSuccessSum(2014, 1);
-
-        assertThat(actualMoney).isEqualTo(expectedMoney);
-    }
-
-    @Test
-    public void testFailed_Sum() {
-        Employee anotherEmployee = anEmployee();
-        employeeRepository.save(anotherEmployee);
-        TaxCalculation january = new TaxCalculationTestBuilder()
-                .withEmployee(anotherEmployee)
-                .withMonth(1)
-                .withTax(10.0)
-                .build();
-        taxCalculationRepository.save(january);
-        TaxServiceCallResult januaryTry2 = TaxServiceCallResult.from(january, "", HttpStatus.BAD_REQUEST.value(), "", DateTime.now(), false);
-        taxServiceCallResultRepository.save(januaryTry2);
-
-        Money expectedMoney = Money.of(CurrencyUnit.EUR, 20.0);
-
-        Money actualMoney = taxServiceCallResultRepository.getFailedSum(2014, 1);
-
-        assertThat(actualMoney).isEqualTo(expectedMoney);
     }
 
     @Test

@@ -12,7 +12,11 @@ public class EmployeeService {
     @Autowired
     EmployeeRepository employeeRepository;
 
-    public List<EmployeeTo> getFirst20() {
-        return employeeRepository.getFirst20();
+    public List<EmployeeTo> getEmployees(int page, int pageSize) {
+        return employeeRepository.getEmployees(page, pageSize);
+    }
+
+    public long getEmployeeCount() {
+        return employeeRepository.getEmployeeCount();
     }
 }
