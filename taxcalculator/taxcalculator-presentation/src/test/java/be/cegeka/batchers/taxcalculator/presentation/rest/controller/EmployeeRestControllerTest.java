@@ -1,9 +1,8 @@
-package be.cegeka.batchers.taxcalculator.presentation.rest;
+package be.cegeka.batchers.taxcalculator.presentation.rest.controller;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeBuilder;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeService;
-import be.cegeka.batchers.taxcalculator.presentation.rest.controller.EmployeeRestController;
 import be.cegeka.batchers.taxcalculator.to.EmployeeTo;
 import org.joda.money.Money;
 import org.junit.Before;
