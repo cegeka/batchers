@@ -4,7 +4,7 @@
             <div class="col-md-2"><strong>Job Name</strong></div>
             <div class="col-md-2"><strong>Report</strong></div>
             <div class="col-md-2"><strong>Last Execution Date</strong></div>
-            <div class="col-md-1"><strong>Job Status</strong></div>
+            <div class="col-md-2"><strong>Job Status</strong></div>
             <div class="col-md-2"><strong>Job Duration</strong></div>
             <div class="col-md-2"><strong>Run Job</strong></div>
         </div>
@@ -17,7 +17,7 @@
             <div class="col-md-2">{{job.jobStartParams.year}}/{{job.jobStartParams.month}}<br/>{{job.jobName}}</div>
             <div class="col-md-2"></div>
             <div class="col-md-2">{{job.jobExecutionResults[0].endTime | date:'medium'}}</div>
-            <div class="col-md-1">{{job.jobExecutionResults[0].status}}</div>
+            <div class="col-md-2">{{job.jobExecutionResults[0].status}}</div>
             <div class="col-md-2"></div>
             <div class="col-md-2">
                 <button ng-click="runJob(job)">Run Job</button>
@@ -29,12 +29,12 @@
         </div>
         <div class="panel-body" ng-show="job.details">
             <div ng-repeat="jobExecutionResult in job.jobExecutionResults">
-                <div>
+                <div class="clearfix">
                     <div class="col-md-2">{{jobExecutionResult.description}}</div>
                     <div class="col-md-2"><a href="rest/files/job_report/{{jobExecutionResult.id}}.pdf"> Download report
                         {{jobExecutionResult.id}} </a></div>
                     <div class="col-md-2">{{jobExecutionResult.endTime | date:'medium'}}</div>
-                    <div class="col-md-1">{{jobExecutionResult.status}}</div>
+                    <div class="col-md-2">{{jobExecutionResult.status}}</div>
                     <div class="col-md-2">{{formatDuration(jobExecutionResult.duration)}}</div>
                 </div>
             </div>
