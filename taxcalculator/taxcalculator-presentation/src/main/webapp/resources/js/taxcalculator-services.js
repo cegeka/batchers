@@ -15,4 +15,8 @@ taxcalculatorServices
     function ($resource) {
       return $resource('/taxcalculator/rest/runJob/:year/:month', {}, {run: {method: 'POST', params: {year: '@year', month: '@month'}}});
     }
-  ])
+  ]).factory('GenerateEmployeesResource', ['$resource',
+    function ($resource) {
+      return $resource('/taxcalculator/rest/generateEmployees/', {}, {'post': {method: 'POST'}});
+    }
+  ]);

@@ -1,4 +1,4 @@
-package be.cegeka.batchers.taxcalculator.presentation.rest;
+package be.cegeka.batchers.taxcalculator.presentation.rest.controller;
 
 import be.cegeka.batchers.taxcalculator.batch.api.JobService;
 import org.slf4j.Logger;
