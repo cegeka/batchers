@@ -43,7 +43,7 @@ public class EmployeeRestControllerTest {
     }
 
     @Test
-    public void testGetFirst20Employees() throws Exception {
+    public void givenOneEmployee_whenGetEmployees_thenReturnCorrectJson() throws Exception {
         Employee employee = new EmployeeTestBuilder()
                 .withIncome(200)
                 .withFirstName("firstName")
@@ -51,15 +51,28 @@ public class EmployeeRestControllerTest {
 
         EmployeeTo employeeTo = new EmployeeTo(employee.getFirstName(), employee.getLastName(), employee.getEmail(), employee.getIncome(), Money.parse("EUR 200"));
         String expectedJSON = new Jackson2JsonObjectMapper().toJson(asList(employeeTo));
-        when(employeeServiceMock.getFirst20()).thenReturn(asList(employeeTo));
+        when(employeeServiceMock.getEmployees(0, 10)).thenReturn(asList(employeeTo));
 
-        MvcResult mvcResult = mockMvc.perform(get("/employees").contentType(MediaType.APPLICATION_JSON))
+        MvcResult mvcResult = mockMvc.perform(get("/employees?page=0&pageSize=10").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
 
         String actualJSON = mvcResult.getResponse().getContentAsString();
 
         assertThat(actualJSON).isEqualTo(expectedJSON);
+    }
+
+    @Test
+    public void givenOneEmployee_whenGetEmployeeCount_thenReturnCorrectJson() throws Exception {
+        when(employeeServiceMock.getEmployeeCount()).thenReturn(1L);
+
+        MvcResult mvcResult = mockMvc.perform(get("/employees/count").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String actualResult = mvcResult.getResponse().getContentAsString();
+
+        assertThat(actualResult).isEqualTo("1");
     }
 }
 

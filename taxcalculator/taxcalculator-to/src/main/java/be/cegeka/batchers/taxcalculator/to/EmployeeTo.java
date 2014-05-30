@@ -19,6 +19,14 @@ public class EmployeeTo {
             parameters = {@Parameter(name = "currencyCode", value = "EUR")})
     private Money taxTotal = Money.zero(CurrencyUnit.EUR);
 
+    public EmployeeTo(String firstName, String lastName, String email, Integer income, Integer taxTotal) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.income = income;
+        this.taxTotal = Money.of(CurrencyUnit.EUR, taxTotal);
+    }
+
     public EmployeeTo(String firstName, String lastName, String email, Integer income, Money taxTotal) {
         this.firstName = firstName;
         this.lastName = lastName;
