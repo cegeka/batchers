@@ -40,12 +40,12 @@ public class EmployeeService {
 
     @Transactional
     public void truncate() {
-        monthlyReportRepository.truncate();
-        payCheckRepository.truncate();
-        taxServiceCallResultRepository.truncate();
+        monthlyReportRepository.deleteAll();
+        payCheckRepository.deleteAll();
+        taxServiceCallResultRepository.deleteAll();
         // if we use truncate we get this error
         // [SqlExceptionHelper] Cannot truncate a table referenced in a foreign key constraint
-        employeeRepository.deleteAll();
         taxCalculationRepository.deleteAll();
+        employeeRepository.deleteAll();
     }
 }
