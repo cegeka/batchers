@@ -101,6 +101,10 @@ taxcalculatorControllers
 
     .controller('JobResultsCtrl', ['$scope', 'JobResultsResource',
         function ($scope, JobResultsResource) {
+            $scope.isReportReady = function (jobExecution) {
+                return jobExecution.status == 'FAILED' || jobExecution.status == 'COMPLETED';
+            }
+
             $scope.formatDuration = function (millis) {
                 if (millis === null) return "NOT FINISHED";
                 duration = moment.duration(millis);
