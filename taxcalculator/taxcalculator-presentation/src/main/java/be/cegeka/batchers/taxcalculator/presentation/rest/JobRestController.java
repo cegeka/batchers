@@ -16,7 +16,7 @@ public class JobRestController {
     @Autowired
     JobService jobService;
 
-    @RequestMapping(value = "runJob/{year}/{month}", method = RequestMethod.GET)
+    @RequestMapping(value = "runJob/{year}/{month}", method = RequestMethod.POST)
     @ResponseBody
     public void runJob(@PathVariable("year") Long year, @PathVariable("month") Long month) {
         LOG.debug("Running job in rest controller");

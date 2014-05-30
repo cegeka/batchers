@@ -13,6 +13,6 @@ taxcalculatorServices
   ])
   .factory('RunJobResource', [ '$resource',
     function ($resource) {
-      return $resource('/taxcalculator/rest/runJob', {}, {'query': {method: 'POST'}});
+      return $resource('/taxcalculator/rest/runJob/:year/:month', {}, {run: {method: 'POST', params: {year: '@year', month: '@month'}}});
     }
   ])
