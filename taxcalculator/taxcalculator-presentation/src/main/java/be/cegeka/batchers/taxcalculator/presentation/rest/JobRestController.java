@@ -11,17 +11,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping(value = "/runJob")
 public class JobRestController {
     private static final Logger LOG = LoggerFactory.getLogger(JobRestController.class);
     @Autowired
     JobService jobService;
 
-    @RequestMapping(value = "/{year}/{month}", method = RequestMethod.POST)
+    @RequestMapping(value = "runJob/{year}/{month}", method = RequestMethod.GET)
     @ResponseBody
     public void runJob(@PathVariable("year") Long year, @PathVariable("month") Long month) {
         LOG.debug("Running job in rest controller");
-        jobService.runTaxCalculatorJob(2004L, 2L);
+        jobService.runTaxCalculatorJob(year, month);
     }
 
 }

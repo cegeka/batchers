@@ -11,7 +11,8 @@ public class JobResult {
     private String jobName;
     private JobStartParams jobStartParams;
     private List<JobExecutionResult> jobExecutionResults;
-    private Function<JobExecutionResult, Long> onId = jobResult -> jobResult.getId();
+    private Function<JobExecutionResult, Long> onId = jobExecutionResult -> jobExecutionResult.getId();
+    private Long month;
 
     public JobResult(String jobName, JobStartParams jobStartParams, List<JobExecutionResult> jobExecutionResults) {
         this.jobName = jobName;
@@ -30,5 +31,14 @@ public class JobResult {
 
     public List<JobExecutionResult> getJobExecutionResults() {
         return jobExecutionResults;
+    }
+
+
+    public Long getMonth() {
+        return month;
+    }
+
+    public void setMonth(Long month) {
+        this.month = month;
     }
 }
