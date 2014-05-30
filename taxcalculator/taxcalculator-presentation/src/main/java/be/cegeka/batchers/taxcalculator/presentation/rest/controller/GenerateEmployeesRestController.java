@@ -1,7 +1,6 @@
 package be.cegeka.batchers.taxcalculator.presentation.rest.controller;
 
-import be.cegeka.batchers.taxcalculator.application.domain.EmployeeGenerator;
-import be.cegeka.batchers.taxcalculator.application.domain.EmployeeService;
+import be.cegeka.batchers.taxcalculator.application.domain.EmployeeGeneratorService;
 import be.cegeka.batchers.taxcalculator.presentation.rest.model.GenerateEmployeesModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,24 +17,15 @@ public class GenerateEmployeesRestController {
     private static final Logger LOG = LoggerFactory.getLogger(GenerateEmployeesRestController.class);
 
     @Autowired
-    protected EmployeeGenerator employeeGenerator;
-
-    @Autowired
-    protected EmployeeService employeeService;
+    protected EmployeeGeneratorService employeeGeneratorService;
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<?> generateEmployees(GenerateEmployeesModel generateEmployeesModel) {
         Long employeesCount = generateEmployeesModel.getEmployeesCount();
         LOG.debug("Generating " + employeesCount + " employees in rest controller");
 
-        Long count = employeeService.count();
-        if (count > employeesCount) {
-            employeeService.truncate();
-        } else {
-            employeesCount = employeesCount - count;
-        }
-        employeeGenerator.setNumberOfEmployees(employeesCount);
-        employeeGenerator.generateAll();
+        employeeGeneratorService.generateEmployees(employeesCount);
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
