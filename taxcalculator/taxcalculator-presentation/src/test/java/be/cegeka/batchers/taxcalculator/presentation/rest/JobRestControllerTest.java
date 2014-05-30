@@ -33,10 +33,10 @@ public class JobRestControllerTest {
     }
 
     @Test
-    public void givenBatch_whenRunJob_thenServiceIsCalled() throws Exception {
-        mockMvc.perform(post("/runJob").contentType(MediaType.ALL))
+    public void givenBatch_whenRunJobWithParams_thenServiceIsCalled() throws Exception {
+        mockMvc.perform(post("/runJob/2004/2").contentType(MediaType.ALL))
                 .andExpect(status().isOk())
                 .andReturn();
-        verify(jobService, times(1)).runTaxCalculatorJob();
+        verify(jobService, times(1)).runTaxCalculatorJob(2004L, 2L);
     }
 }

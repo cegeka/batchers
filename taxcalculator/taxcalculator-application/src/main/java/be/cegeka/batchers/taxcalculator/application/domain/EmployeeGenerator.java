@@ -22,12 +22,14 @@ public class EmployeeGenerator {
     private EmployeeRepository employeeRepository;
 
     public void generateAll() {
+        Random random = new Random(currentTimeMillis());
+
         for (int i = 0; i < numberOfEmployees; i++) {
             Employee employee = new Employee();
             employee.setFirstName(faker.firstName());
             employee.setLastName(faker.lastName());
             employee.setEmail(employee.getFirstName() + "." + employee.getLastName() + "@mailinator.com");
-            employee.setIncome(500 + (new Random(currentTimeMillis()).nextInt(4501)));
+            employee.setIncome(500 + (random.nextInt(4501)));
             employeeRepository.save(employee);
         }
     }

@@ -21,4 +21,22 @@
         </tr>
         </tbody>
     </table>
+
+    <ul class="pagination">
+        <li ng-class="prevPageDisabled()">
+            <a href ng-click="firstPage()">First</a>
+        </li>
+        <li ng-class="prevPageDisabled()">
+            <a href ng-click="prevPage()">« Prev</a>
+        </li>
+        <li ng-repeat="n in pageRange()" ng-class="{active: n == currentPage}" ng-click="setPage(n)">
+            <a>{{n+1}}</a>
+        </li>
+        <li ng-class="nextPageDisabled()">
+            <a href ng-click="nextPage()">Next »</a>
+        </li>
+        <li ng-class="nextPageDisabled()">
+            <a href ng-click="lastPage()">Last</a>
+        </li>
+    </ul>
 </div>

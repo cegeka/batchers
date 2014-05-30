@@ -37,7 +37,6 @@ public class JobResultsServiceTest {
 
     JobExecutionMapper mapper = new JobExecutionMapper();
 
-
     @Before
     public void setUp() {
         Whitebox.setInternalState(jobResultsService, "jobExecutionMapper", mapper);
@@ -68,35 +67,40 @@ public class JobResultsServiceTest {
         verify(jobExplorer).getJobExecutions(jobInstance1);
         verify(jobExplorer).getJobExecutions(jobInstance2);
 
-        assertThat(jobResults).hasSize(2);
-        assertThat(jobResults.get(0).getJobStartParams().getYear()).isEqualTo(2014);
-        assertThat(jobResults.get(0).getJobStartParams().getMonth()).isEqualTo(5);
-        assertThat(jobResults.get(1).getJobStartParams().getYear()).isEqualTo(2013);
-        assertThat(jobResults.get(1).getJobStartParams().getMonth()).isEqualTo(6);
+        assertThat(jobResults).hasSize(6);
     }
 
     @Test
     public void testGetFinishedJobResults_SameDates_SortingIsDescOnDate() throws Exception {
         //ARRANGE
         JobInstance jobInstance1 = new JobInstance(1L, EmployeeJobConfig.EMPLOYEE_JOB);
-        JobInstance jobInstance2 = new JobInstance(2L, EmployeeJobConfig.EMPLOYEE_JOB);
-        List<JobInstance> jobInstances = asList(jobInstance1, jobInstance2);
 
         when(jobExplorer.getJobInstancesByJobName(EmployeeJobConfig.EMPLOYEE_JOB, 0, MAX_VALUE))
-                .thenReturn(jobInstances);
+                .thenReturn(asList(jobInstance1));
 
-        JobExecution jobInstance1_jobExecution1 = new JobExecution(jobInstance1, createJobParameters(2014, 6));
+        JobExecution jobInstance1_jobExecution1 = new JobExecution(jobInstance1, 1L, createJobParameters(2014, 6), null);
         jobInstance1_jobExecution1.setEndTime(getDateOfDay(3));
-        when(jobExplorer.getJobExecutions(jobInstance1)).thenReturn(asList(jobInstance1_jobExecution1));
+        JobExecution jobInstance1_jobExecution2 = new JobExecution(jobInstance1, 2L, createJobParameters(2014, 6), null);
+        jobInstance1_jobExecution2.setEndTime(getDateOfDay(4));
 
-        JobExecution jobInstance2_jobExecution1 = new JobExecution(jobInstance2, createJobParameters(2014, 6));
-        jobInstance2_jobExecution1.setEndTime(getDateOfDay(4));
-        when(jobExplorer.getJobExecutions(jobInstance2)).thenReturn(asList(jobInstance2_jobExecution1));
-
+        when(jobExplorer.getJobExecutions(jobInstance1)).thenReturn(asList(jobInstance1_jobExecution1, jobInstance1_jobExecution2));
         //ACT
         List<JobResult> jobResults = jobResultsService.getJobResults();
 
-        assertThat(jobResults.get(0).getJobExecutionResults().get(0).getEndTime()).isAfter(jobResults.get(1).getJobExecutionResults().get(0).getEndTime());
+        assertThat(jobResults.get(5).getJobExecutionResults().get(0).getEndTime()).isAfter(jobResults.get(5).getJobExecutionResults().get(1).getEndTime());
+    }
+
+    @Test
+    public void testGetJobResults_Returns_First6Months() {
+        List<JobResult> jobResults = jobResultsService.getJobResults();
+
+        assertThat(jobResults).hasSize(6);
+        assertThat(jobResults.get(0).getMonth()).isEqualTo(1L);
+        assertThat(jobResults.get(1).getMonth()).isEqualTo(2L);
+        assertThat(jobResults.get(2).getMonth()).isEqualTo(3L);
+        assertThat(jobResults.get(3).getMonth()).isEqualTo(4L);
+        assertThat(jobResults.get(4).getMonth()).isEqualTo(5L);
+        assertThat(jobResults.get(5).getMonth()).isEqualTo(6L);
     }
 
     private JobExecution createJobExecution(JobInstance jobInstance, JobParameters jobParameters) {

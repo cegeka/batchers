@@ -8,11 +8,11 @@ taxcalculatorServices
   ])
   .factory('EmployeesOverviewResource', [ '$resource',
     function ($resource) {
-      return $resource('/taxcalculator/rest/employees', {}, {'query': {method: 'GET', isArray: true}});
+      return $resource('/taxcalculator/rest/employees', {page: 0, pageSize: 10}, {'query': {method: 'GET', params: ["page", "pageSize"], isArray: true}});
     }
   ])
   .factory('RunJobResource', [ '$resource',
     function ($resource) {
-      return $resource('/taxcalculator/rest/runJob', {}, {'query': {method: 'POST'}});
+      return $resource('/taxcalculator/rest/runJob/:year/:month', {}, {run: {method: 'POST', params: {year: '@year', month: '@month'}}});
     }
   ])
