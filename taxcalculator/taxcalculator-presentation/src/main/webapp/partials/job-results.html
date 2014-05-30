@@ -20,7 +20,10 @@
             <div class="col-md-2">{{job.jobExecutionResults[0].status}}</div>
             <div class="col-md-2"></div>
             <div class="col-md-2">
-                <button ng-click="runJob(job)">Run Job</button>
+                <button ng-click="runJob(job)" ng-disabled="{{job.jobExecutionResults[0].status == 'COMPLETED'}}"
+                        ng-class="{COMPLETED:'run-grey', FAILED:'run-failed', STARTED:'run-started'}[job.jobExecutionResults[0].status]">
+                    Run Job
+                </button>
             </div>
             <div class="pull-right">
                 <i class="fa fa-plus-circle" ng-hide="job.details" ng-click="job.details = !job.details"></i>
