@@ -40,7 +40,7 @@
         <div class="panel-body" ng-show="job.details">
             <div ng-repeat="jobExecutionResult in job.jobExecutionResults">
                 <div class="clearfix">
-                    <div class="col-md-2">{{jobExecutionResult.description}}</div>                    
+                    <div class="col-md-2">{{jobExecutionResult.description}}</div>
                     <div class="col-md-2">
                         <a ng-show="isReportReady(jobExecutionResult)"
                            href="rest/files/job_report/{{jobExecutionResult.id}}.pdf"> Download report
