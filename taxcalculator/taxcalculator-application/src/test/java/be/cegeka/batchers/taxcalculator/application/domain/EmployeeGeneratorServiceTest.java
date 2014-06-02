@@ -27,19 +27,19 @@ public class EmployeeGeneratorServiceTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void whenGenerateTooManyEmployees_thenThrowException() {
-        employeeGeneratorService.generateEmployees(TEST_MAX_GENERATED_EMPLOYEES);
+        employeeGeneratorService.resetEmployees(TEST_MAX_GENERATED_EMPLOYEES);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void whenGenerateNoEmployees_thenThrowException() {
-        employeeGeneratorService.generateEmployees(TEST_ZERO_EMPLOYEES);
+        employeeGeneratorService.resetEmployees(TEST_ZERO_EMPLOYEES);
     }
 
     @Test
     public void whenGenerateEmployees_thenEmployeesGetSaved() {
-        employeeGeneratorService.generateEmployees(3L);
+        employeeGeneratorService.resetEmployees(3L);
 
-        verify(employeeServiceMock).truncate();
+        verify(employeeServiceMock).deleteAll();
         verify(employeeRepositoryMock, times(3)).save(any(Employee.class));
     }
 

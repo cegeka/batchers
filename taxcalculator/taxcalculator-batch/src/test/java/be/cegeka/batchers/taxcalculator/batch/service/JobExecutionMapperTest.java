@@ -3,7 +3,6 @@ package be.cegeka.batchers.taxcalculator.batch.service;
 import be.cegeka.batchers.taxcalculator.batch.domain.JobExecutionResult;
 import be.cegeka.batchers.taxcalculator.batch.domain.JobResult;
 import org.joda.time.DateTime;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -39,7 +38,7 @@ public class JobExecutionMapperTest {
 
         JobExecution jobExecution = new JobExecution(jobInstance, jobParams);
         jobExecution.setStatus(BatchStatus.ABANDONED);
-        jobExecution.setStartTime(DateTime.now().minusSeconds(DURATION_IN_SECONDS).toDate());
+        jobExecution.setStartTime(new DateTime(now).minusSeconds(DURATION_IN_SECONDS).toDate());
         jobExecution.setEndTime(now);
         jobExecution.setId(JOB_EXECUTION_ID);
         Map.Entry<JobInstance, List<JobExecution>> entry = new Map.Entry<JobInstance, List<JobExecution>>() {

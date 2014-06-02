@@ -14,8 +14,8 @@ public class EmployeeGenerator {
     @Autowired
     private EmployeeGeneratorService employeeGeneratorService;
 
-    public void generateAll() {
-        employeeGeneratorService.generateEmployees(numberOfEmployees);
+    public void resetEmployees() {
+        employeeGeneratorService.resetEmployees(numberOfEmployees);
     }
 
     public Long getNumberOfEmployees() {
