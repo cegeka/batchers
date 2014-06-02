@@ -25,7 +25,6 @@ public class EmployeeService {
     @Autowired
     private TaxServiceCallResultRepository taxServiceCallResultRepository;
 
-
     public List<EmployeeTo> getEmployees(int page, int pageSize) {
         return employeeRepository.getEmployees(page, pageSize);
     }
@@ -39,7 +38,7 @@ public class EmployeeService {
     }
 
     @Transactional
-    public void truncate() {
+    public void deleteAll() {
         monthlyReportRepository.deleteAll();
         payCheckRepository.deleteAll();
         taxServiceCallResultRepository.deleteAll();
