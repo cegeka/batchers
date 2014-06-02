@@ -90,34 +90,42 @@ public class EmployeeRepositoryTest extends IntegrationTest {
     }
 
     @Test
-    public void testGetFirst20() throws Exception {
-        for (int i = 0; i < 30; i++) {
-            Employee employee = new EmployeeTestBuilder()
-                    .withFirstName("John" + i)
-                    .withLastName("Smith" + i)
-                    .withEmailAddress("john.smith" + i + "@gmail.com")
-                    .build();
-            employeeRepository.save(employee);
-            taxCalculationRepository.save(new TaxCalculationTestBuilder().withEmployee(employee).withYear(2014).withMonth(5).withTax(100.0).build());
-        }
+    public void given30Employees_whenGetEmployeesForFirstPage_thenFirst10EmployeesAreReturned() throws Exception {
+        haveEmployees(30, true);
 
-        List<EmployeeTo> first20 = employeeRepository.getFirst20();
-        assertThat(first20).hasSize(20);
+        List<EmployeeTo> first10 = employeeRepository.getEmployees(0, 10);
+        assertThat(first10).hasSize(10);
+        assertThat(first10.get(0).getEmail()).isEqualTo("john.smith0@gmail.com");
     }
 
     @Test
-    public void givenEmployeesWithoutCalculatedTaxes_whenGetFirst20_thenAllEmployeesAreReturnedWithTaxZero() {
-        for (int i = 0; i < 30; i++) {
+    public void givenEmployeesWithoutCalculatedTaxes_whenGetEmployeesForSecondPage_thenSecondPageEmployeesAreReturnedWithTaxZero() {
+        haveEmployees(30, false);
+
+        List<EmployeeTo> employeesSecondPage = employeeRepository.getEmployees(1, 10);
+        assertThat(employeesSecondPage).hasSize(10);
+        assertThat(employeesSecondPage.get(0).getEmail()).isEqualTo("john.smith10@gmail.com");
+    }
+
+    @Test
+    public void given20Employees_whenGetCount_thenEmployeeCountIs20() {
+        haveEmployees(20, false);
+
+        assertThat(employeeRepository.getEmployeeCount()).isEqualTo(20L);
+    }
+
+    private void haveEmployees(int employeeCount, boolean withTax) {
+        for (int i = 0; i < employeeCount; i++) {
             Employee employee = new EmployeeTestBuilder()
                     .withFirstName("John" + i)
                     .withLastName("Smith" + i)
                     .withEmailAddress("john.smith" + i + "@gmail.com")
                     .build();
             employeeRepository.save(employee);
+            if (withTax) {
+                taxCalculationRepository.save(new TaxCalculationTestBuilder().withEmployee(employee).withYear(2014).withMonth(5).withTax(100.0).build());
+            }
         }
-
-        List<EmployeeTo> first20 = employeeRepository.getFirst20();
-        assertThat(first20).hasSize(20);
     }
 
 }

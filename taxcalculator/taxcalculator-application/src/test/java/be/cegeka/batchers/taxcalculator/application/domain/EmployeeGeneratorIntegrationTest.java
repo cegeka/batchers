@@ -31,7 +31,7 @@ public class EmployeeGeneratorIntegrationTest extends IntegrationTest {
 
     @Test
     public void testNumberOfEmployeesIsReadFromPropertyFile() throws Exception {
-        assertThat(employeeGenerator.numberOfEmployees).isEqualTo(12);
+        assertThat(employeeGenerator.getNumberOfEmployees()).isEqualTo(12);
     }
 
     @Test

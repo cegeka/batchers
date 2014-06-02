@@ -22,7 +22,9 @@ public class JobExecutionMapper {
         JobStartParams jobStartParams = getJobStartParams(jobExecutions.get(0).getJobParameters());
         List<JobExecutionResult> jobExecutionResults = getJobExecutionResults(jobExecutions);
 
-        return new JobResult(getJobName(jobInstance, jobStartParams), jobStartParams, jobExecutionResults);
+        JobResult jobResult = new JobResult(getJobName(jobInstance, jobStartParams), jobStartParams, jobExecutionResults);
+        jobResult.setMonth((long) jobStartParams.getMonth());
+        return jobResult;
     }
 
     private String getJobName(JobInstance jobInstance, JobStartParams jobStartParams) {

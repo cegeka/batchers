@@ -1,0 +1,14 @@
+.run-grey {
+    background-color: #ededed;
+    color: BLACK;
+}
+
+.run-failed {
+    background-color: #ce2a27;
+    color: #ffffff;
+}
+
+.run-started {
+    background-color: #2b78e3;
+    color: #ffffff;
+}

@@ -1,14 +1,14 @@
 // Karma configuration
 // Generated on Thu Aug 29 2013 11:58:48 GMT+0200 (Romance Daylight Time)
 
-module.exports = function(config) {
+module.exports = function (config) {
   config.set({
 
     // base path, that will be used to resolve files and exclude
     basePath: '../../../../../',
 
     preprocessors: {
-        '**/*.html': []
+      '**/*.html': []
     },
 
     // frameworks to use
@@ -17,18 +17,18 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-        {pattern: 'src/main/webapp/**/*.html', included: false},
-        'src/main/webapp/resources/js/lib/angular.min.js',
-        'src/main/webapp/resources/js/lib/angular-translate.min.js',
-        'src/main/webapp/resources/js/**/*.js',
-        'src/test/js/karma/lib/**/*.js',
-        'src/test/js/e2e/**/*.js'
+      {pattern: 'src/main/webapp/**/*.html', included: false},
+      'src/main/webapp/resources/js/lib/angular.min.js',
+      'src/main/webapp/resources/js/lib/angular-translate.min.js',
+      'src/main/webapp/resources/js/**/*.js',
+      'src/test/js/karma/lib/**/*.js',
+      'src/test/js/e2e/**/*.js'
     ],
 
 
     // list of files to exclude
     exclude: [
-      
+
     ],
 
 
@@ -38,12 +38,12 @@ module.exports = function(config) {
 
     junitReporter: {
       outputFile: 'target/surefire-reports/TEST-E2E-karma.xml',
-      suite:'e2e'
+      suite: 'e2e'
     },
 
     // web server port
     port: 9877,
-    runnerPort : 9101,
+    runnerPort: 9101,
 
     // enable / disable colors in the output (reporters and logs)
     colors: true,
@@ -76,5 +76,10 @@ module.exports = function(config) {
     // Continuous Integration mode
     // if true, it capture browsers, run tests and exit
     singleRun: false
+
+//    proxies: {
+//        '/': 'http://localhost:9090/'
+//    }
+
   });
 };
