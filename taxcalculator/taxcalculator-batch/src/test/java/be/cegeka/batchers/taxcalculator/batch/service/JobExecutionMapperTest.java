@@ -31,7 +31,6 @@ public class JobExecutionMapperTest {
     private int DURATION_IN_SECONDS = 5;
 
     @Test
-    @Ignore
     public void testToJobResultTo() throws Exception {
         //ARRANGE
         Date now = DateTime.now().toDate();
