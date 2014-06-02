@@ -133,3 +133,14 @@ taxcalculatorControllers
       }
     }
   ]);
+
+taxcalculatorControllers.controller('EmployeeDetailsCtrl', ['$scope', '$routeParams', 'EmployeeDetailsResource',
+  function ($scope, $routeParams, EmployeeDetailsResource) {
+
+    EmployeeDetailsResource.query({id: $routeParams.employeeId}, function (successData) {
+      $scope.employee = successData;
+    });
+
+    $scope.employee = {name: 'John', email: 'john@email.com'};
+  }
+]);

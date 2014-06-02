@@ -8,7 +8,7 @@ import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 
 public class EmployeeTo {
-
+    private Long id;
     private String firstName;
     private String lastName;
     private String email;
@@ -19,12 +19,13 @@ public class EmployeeTo {
             parameters = {@Parameter(name = "currencyCode", value = "EUR")})
     private Money taxTotal = Money.zero(CurrencyUnit.EUR);
 
-    public EmployeeTo(String firstName, String lastName, String email, Integer income, Money taxTotal) {
+    public EmployeeTo(String firstName, String lastName, String email, Integer income, Money taxTotal, Long id) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.income = income;
         this.taxTotal = taxTotal;
+        this.id = id;
     }
 
     public String getFirstName() {
@@ -65,5 +66,13 @@ public class EmployeeTo {
 
     public void setTaxTotal(Money taxTotal) {
         this.taxTotal = taxTotal;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }
