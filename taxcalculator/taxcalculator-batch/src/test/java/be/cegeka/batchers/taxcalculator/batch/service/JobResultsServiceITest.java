@@ -27,11 +27,11 @@ public class JobResultsServiceITest extends AbstractIntegrationTest {
 
         assertThat(finishedJobResults)
                 .isNotEmpty()
-                .hasSize(2);
+                .hasSize(6);
 
-        assertThat(finishedJobResults.get(0).getJobStartParams().getYear()).isEqualTo(2014);
-        assertThat(finishedJobResults.get(0).getJobStartParams().getMonth()).isEqualTo(6);
-        assertThat(finishedJobResults.get(0).getJobExecutionResults()).hasSize(1);
+        assertThat(finishedJobResults.get(5).getJobStartParams().getYear()).isEqualTo(2014);
+        assertThat(finishedJobResults.get(5).getJobStartParams().getMonth()).isEqualTo(6);
+        assertThat(finishedJobResults.get(5).getJobExecutionResults()).hasSize(1);
     }
 
     private JobParameters getJobParametersForMonth(long month) {

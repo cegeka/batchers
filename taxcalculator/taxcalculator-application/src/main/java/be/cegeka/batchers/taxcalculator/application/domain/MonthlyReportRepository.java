@@ -1,27 +1,17 @@
 package be.cegeka.batchers.taxcalculator.application.domain;
 
+import org.joda.money.CurrencyUnit;
+import org.joda.money.Money;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaDelete;
 
 @Repository
 @Transactional(readOnly = true, isolation = Isolation.DEFAULT)
-public class MonthlyReportRepository {
-
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    @Transactional
-    public void save(MonthlyReport monthlyReport) {
-        entityManager.persist(monthlyReport);
-    }
+public class MonthlyReportRepository extends AbstractRepository<MonthlyReport> {
 
     public MonthlyReport findByYearAndMonth(long year, long month) {
         TypedQuery<MonthlyReport> typedQuery = entityManager.createNamedQuery(MonthlyReport.FIND_BY_YEAR_AND_MONTH, MonthlyReport.class);
@@ -47,12 +37,22 @@ public class MonthlyReportRepository {
         return monthlyReport;
     }
 
-    public void deleteAll() {
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaDelete<MonthlyReport> criteriaDelete = criteriaBuilder.createCriteriaDelete(MonthlyReport.class);
+    public Money getSuccessSum(long year, long month) {
+        Money sum = entityManager.createNamedQuery(MonthlyReport.GET_SUCCESS_SUM, Money.class)
+                .setParameter("month", month)
+                .setParameter("year", year)
+                .getSingleResult();
 
-        criteriaDelete.from(MonthlyReport.class);
-
-        entityManager.createQuery(criteriaDelete).executeUpdate();
+        return sum == null ? Money.zero(CurrencyUnit.EUR) : sum;
     }
+
+    public Money getFailedSum(long year, long month) {
+        Money sum = entityManager.createNamedQuery(MonthlyReport.GET_FAILED_SUM, Money.class)
+                .setParameter("month", month)
+                .setParameter("year", year)
+                .getSingleResult();
+
+        return sum == null ? Money.zero(CurrencyUnit.EUR) : sum;
+    }
+
 }

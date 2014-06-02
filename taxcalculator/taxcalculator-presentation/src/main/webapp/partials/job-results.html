@@ -3,9 +3,10 @@
         <div class="panel-heading clearfix">
             <div class="col-md-2"><strong>Job Name</strong></div>
             <div class="col-md-2"><strong>Report</strong></div>
-            <div class="col-md-3"><strong>Last Execution Date</strong></div>
+            <div class="col-md-2"><strong>Last Execution Date</strong></div>
             <div class="col-md-2"><strong>Job Status</strong></div>
             <div class="col-md-2"><strong>Job Duration</strong></div>
+            <div class="col-md-2"><strong>Run Job</strong></div>
         </div>
     </div>
 </div>
@@ -14,8 +15,21 @@
          ng-class="{COMPLETED:'panel-success', STARTED:'panel-info', FAILED:'panel-danger'}[job.jobExecutionResults[0].status]">
         <div class="panel-heading clearfix">
             <div class="col-md-2">{{job.jobStartParams.year}}/{{job.jobStartParams.month}}<br/>{{job.jobName}}</div>
-            <div class="col-md-3">{{job.jobExecutionResults[0].endTime | date:'medium'}}</div>
+            <div class="col-md-2">
+                <a ng-show="isReportReady(job.jobExecutionResults[0])"
+                   href="rest/files/job_report/{{job.jobExecutionResults[0].id}}.pdf"> Latest report
+                </a>
+            </div>
+            <div class="col-md-2">{{job.jobExecutionResults[0].startTime | date:'medium'}}</div>
             <div class="col-md-2">{{job.jobExecutionResults[0].status}}</div>
+            <div class="col-md-2"></div>
+            <div class="col-md-2">
+                <button ng-click="runJob(job)"
+                        ng-disabled="{{job.jobExecutionResults[0].status == 'COMPLETED' || job.jobExecutionResults[0].status == 'STARTED'}}"
+                        ng-class="{COMPLETED:'run-grey', FAILED:'run-failed', STARTED:'run-started'}[job.jobExecutionResults[0].status]">
+                    Run Job
+                </button>
+            </div>
             <div class="pull-right">
                 <i class="fa fa-plus-circle" ng-hide="job.details" ng-click="job.details = !job.details"></i>
                 <i class="fa fa-minus-circle" ng-hide="!job.details" ng-click="job.details = !job.details"></i>
@@ -23,13 +37,16 @@
         </div>
         <div class="panel-body" ng-show="job.details">
             <div ng-repeat="jobExecutionResult in job.jobExecutionResults">
-                <div>
+                <div class="clearfix">
                     <div class="col-md-2">{{jobExecutionResult.description}}</div>
-                    <div class="col-md-2"><a href="rest/files/job_report/{{jobExecutionResult.id}}.pdf"> Download report
-                        {{jobExecutionResult.id}} </a></div>
-                    <div class="col-md-3">{{jobExecutionResult.endTime | date:'medium'}}</div>
+                    <div class="col-md-2">
+                        <a ng-show="isReportReady(jobExecutionResult)"
+                           href="rest/files/job_report/{{jobExecutionResult.id}}.pdf"> Download report
+                            {{jobExecutionResult.id}} </a>
+                    </div>
+                    <div class="col-md-2">{{jobExecutionResult.startTime | date:'medium'}}</div>
                     <div class="col-md-2">{{jobExecutionResult.status}}</div>
-                    <div class="col-md-3">{{formatDuration(jobExecutionResult.duration)}}</div>
+                    <div class="col-md-2">{{formatDuration(jobExecutionResult.duration)}}</div>
                 </div>
             </div>
         </div>
