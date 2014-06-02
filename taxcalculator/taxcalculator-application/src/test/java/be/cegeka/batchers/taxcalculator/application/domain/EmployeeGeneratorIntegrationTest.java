@@ -22,7 +22,7 @@ public class EmployeeGeneratorIntegrationTest extends IntegrationTest {
     @Test
     public void testEmployeeGenerator() {
         employeeGenerator.setNumberOfEmployees(SIZE);
-        employeeGenerator.generateAll();
+        employeeGenerator.resetEmployees();
 
         Long count = employeeRepository.count();
         assertThat(count).isEqualTo(SIZE);
@@ -37,7 +37,7 @@ public class EmployeeGeneratorIntegrationTest extends IntegrationTest {
     @Test
     public void testEmployeeGeneratorSetsNameAndIncome() {
         employeeGenerator.setNumberOfEmployees(2L);
-        employeeGenerator.generateAll();
+        employeeGenerator.resetEmployees();
 
         List<Employee> all = employeeRepository.getAll();
         for (Employee employee : all) {

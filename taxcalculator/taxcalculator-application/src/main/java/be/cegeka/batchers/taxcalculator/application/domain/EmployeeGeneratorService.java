@@ -20,14 +20,17 @@ public class EmployeeGeneratorService {
     @Autowired
     private EmployeeService employeeService;
 
-    public void generateEmployees(Long numberOfEmployees) {
+    public void resetEmployees(Long numberOfEmployees) {
 
         if (numberOfEmployees < 1 || numberOfEmployees > MAX_GENERATED_EMPLOYEES) {
             throw new IllegalArgumentException("The number of generated employees must be between 1 and " + MAX_GENERATED_EMPLOYEES);
         }
 
-        employeeService.truncate();
+        deleteEmployees();
+        generateNewEmployees(numberOfEmployees);
+    }
 
+    private void generateNewEmployees(Long numberOfEmployees) {
         for (int i = 0; i < numberOfEmployees; i++) {
             Employee employee = new Employee();
             employee.setFirstName(faker.firstName());
@@ -36,6 +39,10 @@ public class EmployeeGeneratorService {
             employee.setIncome(500 + (new Random(currentTimeMillis()).nextInt(4501)));
             employeeRepository.save(employee);
         }
+    }
+
+    private void deleteEmployees() {
+        employeeService.deleteAll();
     }
 
 }
