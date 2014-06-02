@@ -1,6 +1,7 @@
 package be.cegeka.batchers.taxcalculator.batch.service;
 
 import be.cegeka.batchers.taxcalculator.batch.api.JobStartListener;
+import be.cegeka.batchers.taxcalculator.batch.api.events.JobStartRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,8 +32,8 @@ import static org.mockito.internal.util.reflection.Whitebox.setInternalState;
 @RunWith(MockitoJUnitRunner.class)
 public class TaxCalculatorJobServiceTest {
     public static final String A_JOBS_NAME = "Steve Jobs :-)";
-    public static final long YEAR = 2004L;
-    public static final long MONTH = 2L;
+    public static final Long YEAR = 2004L;
+    public static final Long MONTH = 2L;
 
     @InjectMocks
     private TaxCalculatorJobService taxCalculatorJobService;
@@ -65,7 +66,7 @@ public class TaxCalculatorJobServiceTest {
     public void onJobStarted_AllJobStartListenersAreNotified() {
         when(jobMock.getName()).thenReturn(A_JOBS_NAME);
 
-        taxCalculatorJobService.runTaxCalculatorJob(YEAR, MONTH);
+        taxCalculatorJobService.runTaxCalculatorJob(new JobStartRequest(null, YEAR.intValue(), MONTH.intValue()));
 
         verify(jobStartListenerMock1).jobHasBeenStarted(A_JOBS_NAME);
         verify(jobStartListenerMock2).jobHasBeenStarted(A_JOBS_NAME);
@@ -73,7 +74,7 @@ public class TaxCalculatorJobServiceTest {
 
     @Test
     public void whenStarJobs_withGivenYearAndMonth_runJobWithParameters() throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
-        taxCalculatorJobService.runTaxCalculatorJob(YEAR, MONTH);
+        taxCalculatorJobService.runTaxCalculatorJob(new JobStartRequest(null, YEAR.intValue(), MONTH.intValue()));
 
         verify(jobLauncherMock).run(any(Job.class), jobParametersArgumentCaptor.capture());
 

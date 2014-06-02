@@ -9,6 +9,7 @@ import be.cegeka.batchers.taxcalculator.batch.CallWebserviceProcessor;
 import be.cegeka.batchers.taxcalculator.batch.SendPaycheckProcessor;
 import be.cegeka.batchers.taxcalculator.batch.config.listeners.ChangeStatusOnFailedStepsJobExecListener;
 import be.cegeka.batchers.taxcalculator.batch.config.listeners.FailedStepStepExecutionListener;
+import be.cegeka.batchers.taxcalculator.batch.config.listeners.JobStatusListener;
 import be.cegeka.batchers.taxcalculator.batch.config.skippolicy.MaxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy;
 import be.cegeka.batchers.taxcalculator.batch.tasklet.JobResultsTasklet;
 import be.cegeka.batchers.taxcalculator.infrastructure.config.PropertyPlaceHolderConfig;
@@ -63,6 +64,8 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
     @Autowired
     private FailedStepStepExecutionListener failedStepStepExecutionListener;
     @Autowired
+    private JobStatusListener jobStatusListener;
+    @Autowired
     private MaxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy maxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy;
 
 
@@ -73,6 +76,7 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
                 .next(wsCallStep())
                 .next(jobResultsPdf())
                 .listener(changeStatusOnFailedStepsJobExecListener)
+                .listener(jobStatusListener)
                 .build();
     }
 

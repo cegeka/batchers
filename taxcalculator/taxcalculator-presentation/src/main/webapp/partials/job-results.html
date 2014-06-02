@@ -1,6 +1,24 @@
 <div class="row">
     <div class="panel panel-default">
         <div class="panel-heading clearfix">
+            <ul>
+                <li>{{model.connected}}</li>
+                <li>{{model.transport}}</li>
+            </ul>
+
+            <h3>Messages</h3>
+            <ul>
+                <li ng-repeat="message in model.messages">
+                    {{message.status}} {{message.jobStartRequest.name}} - {{message.jobStartRequest.year}}/{{message.jobStartRequest.month}}
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="panel panel-default">
+        <div class="panel-heading clearfix">
             <div class="col-md-2"><strong>Job Name</strong></div>
             <div class="col-md-2"><strong>Report</strong></div>
             <div class="col-md-2"><strong>Last Execution Date</strong></div>
