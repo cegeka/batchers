@@ -32,6 +32,11 @@ public class TaxPaymentWebService {
     private RestTemplate restTemplate;
 
     public TaxServiceCallResult doWebserviceCallToTaxService(TaxCalculation taxCalculation) {
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         TaxTo taxTo = createWebserviceInput(taxCalculation);
 
         try {

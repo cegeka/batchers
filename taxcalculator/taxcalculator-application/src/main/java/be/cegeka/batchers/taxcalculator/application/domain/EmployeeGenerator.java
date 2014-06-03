@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class EmployeeGenerator {
     private static final Long GENERATED_COUNT = 21L;
 
-    @Value("${number.of.employees:21}")
+    @Value("${number.of.employees:12}")
     private Long numberOfEmployees;
 
     @Autowired

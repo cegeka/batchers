@@ -1,6 +1,6 @@
 package be.cegeka.batchers.taxcalculator.batch.service;
 
-import be.cegeka.batchers.taxcalculator.batch.config.EmployeeJobConfig;
+import be.cegeka.batchers.taxcalculator.batch.config.singlejvm.EmployeeJobConfigSingleJvm;
 import be.cegeka.batchers.taxcalculator.batch.domain.JobResult;
 import be.cegeka.batchers.taxcalculator.batch.domain.JobStartParams;
 import org.springframework.batch.core.JobInstance;
@@ -28,7 +28,7 @@ public class JobResultsService {
     private Function<JobResult, Integer> onMonth = jobResult -> jobResult.getJobStartParams().getMonth();
 
     public List<JobResult> getJobResults() {
-        List<JobInstance> jobInstancesByJobName = jobExplorer.getJobInstancesByJobName(EmployeeJobConfig.EMPLOYEE_JOB, 0, Integer.MAX_VALUE);
+        List<JobInstance> jobInstancesByJobName = jobExplorer.getJobInstancesByJobName(EmployeeJobConfigSingleJvm.EMPLOYEE_JOB, 0, Integer.MAX_VALUE);
 
         List<Long> months = Arrays.asList(1L, 2L, 3L, 4L, 5L, 6L);
 
@@ -44,7 +44,7 @@ public class JobResultsService {
                 .map(month -> {
                     JobResult jobResult = jobResultMap.get(month);
                     if (jobResult == null) {
-                        jobResult = new JobResult(EmployeeJobConfig.EMPLOYEE_JOB, new JobStartParams(2014L, month), new ArrayList<>());
+                        jobResult = new JobResult(EmployeeJobConfigSingleJvm.EMPLOYEE_JOB, new JobStartParams(2014L, month), new ArrayList<>());
                     }
                     jobResult.setMonth(month);
                     return jobResult;

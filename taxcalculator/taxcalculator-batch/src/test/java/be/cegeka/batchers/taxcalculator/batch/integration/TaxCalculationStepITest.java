@@ -1,7 +1,7 @@
 package be.cegeka.batchers.taxcalculator.batch.integration;
 
 import be.cegeka.batchers.taxcalculator.application.domain.*;
-import be.cegeka.batchers.taxcalculator.batch.config.EmployeeJobConfig;
+import be.cegeka.batchers.taxcalculator.batch.config.singlejvm.EmployeeJobConfigSingleJvm;
 import org.junit.After;
 import org.junit.Test;
 import org.springframework.batch.core.ExitStatus;
@@ -39,7 +39,7 @@ public class TaxCalculationStepITest extends AbstractIntegrationTest {
                 .addLong("month", 5L, true)
                 .toJobParameters();
 
-        JobExecution jobExecution = jobLauncherTestUtils.launchStep(EmployeeJobConfig.TAX_CALCULATION_STEP, jobParameters);
+        JobExecution jobExecution = jobLauncherTestUtils.launchStep(EmployeeJobConfigSingleJvm.TAX_CALCULATION_STEP, jobParameters);
 
         assertThat(jobExecution.getExitStatus()).isEqualTo(ExitStatus.COMPLETED);
         assertThat(taxCalculationRepository.find(2014, 5, 1L)).isEmpty();
@@ -54,7 +54,7 @@ public class TaxCalculationStepITest extends AbstractIntegrationTest {
                 .addLong("month", 5L, true)
                 .toJobParameters();
 
-        JobExecution jobExecution = jobLauncherTestUtils.launchStep(EmployeeJobConfig.TAX_CALCULATION_STEP, jobParameters);
+        JobExecution jobExecution = jobLauncherTestUtils.launchStep(EmployeeJobConfigSingleJvm.TAX_CALCULATION_STEP, jobParameters);
 
         assertThat(jobExecution.getExitStatus()).isEqualTo(ExitStatus.COMPLETED);
 
