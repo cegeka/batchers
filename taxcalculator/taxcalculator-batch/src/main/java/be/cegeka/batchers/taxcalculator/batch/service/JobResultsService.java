@@ -1,6 +1,6 @@
 package be.cegeka.batchers.taxcalculator.batch.service;
 
-import be.cegeka.batchers.taxcalculator.batch.config.EmployeeJobConfig;
+import be.cegeka.batchers.taxcalculator.batch.config.singlejvm.EmployeeJobConfigSingleJvm;
 import be.cegeka.batchers.taxcalculator.batch.domain.JobResult;
 import be.cegeka.batchers.taxcalculator.batch.domain.JobStartParams;
 import org.springframework.batch.core.JobExecution;
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static java.util.stream.Collectors.toList;
@@ -34,7 +33,7 @@ public class JobResultsService {
     }
 
     private Map<JobInstance, List<JobExecution>> getJobInstanceWithJobExecutions() {
-        List<JobInstance> jobInstancesByJobName = jobExplorer.getJobInstancesByJobName(EmployeeJobConfig.EMPLOYEE_JOB, 0, Integer.MAX_VALUE);
+        List<JobInstance> jobInstancesByJobName = jobExplorer.getJobInstancesByJobName(EmployeeJobConfigSingleJvm.EMPLOYEE_JOB, 0, Integer.MAX_VALUE);
         return jobInstancesByJobName
                 .stream()
                 .collect(toMap(instance -> instance, instance -> jobExplorer.getJobExecutions(instance)));
@@ -54,7 +53,7 @@ public class JobResultsService {
             JobResult jobResultForMonth = executedJobResultsInFirstHalfOf2014.stream()
                     .filter(jobsIn2014ForMonth(i))
                     .findFirst()
-                    .orElse(new JobResult(EmployeeJobConfig.EMPLOYEE_JOB, new JobStartParams(2014, i)));
+                    .orElse(new JobResult(EmployeeJobConfigSingleJvm.EMPLOYEE_JOB, new JobStartParams(2014, i)));
             result.add(jobResultForMonth);
         }
 
