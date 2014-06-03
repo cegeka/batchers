@@ -5,6 +5,7 @@ import be.cegeka.batchers.taxcalculator.application.config.WebserviceCallConfig;
 import be.cegeka.batchers.taxcalculator.application.infrastructure.TaxCalculatorSpringJUnitClassRunner;
 import be.cegeka.batchers.taxcalculator.batch.config.EmployeeJobTestConfig;
 import be.cegeka.batchers.taxcalculator.batch.config.singlejvm.EmployeeJobConfigSingleJvm;
+import be.cegeka.batchers.taxcalculator.infrastructure.config.InfrastructureConfig;
 import be.cegeka.batchers.taxcalculator.infrastructure.config.PropertyPlaceHolderConfig;
 import org.joda.time.DateTimeUtils;
 import org.junit.After;
@@ -23,7 +24,7 @@ import java.sql.SQLException;
 
 @RunWith(TaxCalculatorSpringJUnitClassRunner.class)
 @ActiveProfiles("test")
-@ContextConfiguration(classes = {EmployeeJobTestConfig.class, EmployeeJobConfigSingleJvm.class, EmployeeGeneratorTestConfig.class, WebserviceCallConfig.class, PropertyPlaceHolderConfig.class})
+@ContextConfiguration(classes = {EmployeeJobTestConfig.class, EmployeeJobConfigSingleJvm.class, EmployeeGeneratorTestConfig.class, WebserviceCallConfig.class, PropertyPlaceHolderConfig.class, InfrastructureConfig.class})
 public abstract class AbstractIntegrationTest {
 
     @Autowired
