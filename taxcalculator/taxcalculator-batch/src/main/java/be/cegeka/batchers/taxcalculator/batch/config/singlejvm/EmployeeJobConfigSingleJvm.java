@@ -1,12 +1,14 @@
 package be.cegeka.batchers.taxcalculator.batch.config.singlejvm;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
+import be.cegeka.batchers.taxcalculator.application.domain.MonthlyTaxForEmployee;
 import be.cegeka.batchers.taxcalculator.application.domain.PayCheck;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
 import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceException;
-import be.cegeka.batchers.taxcalculator.batch.CalculateTaxProcessor;
-import be.cegeka.batchers.taxcalculator.batch.CallWebserviceProcessor;
-import be.cegeka.batchers.taxcalculator.batch.SendPaycheckProcessor;
+import be.cegeka.batchers.taxcalculator.batch.config.listeners.CreateMonthlyTaxForEmployeeListener;
+import be.cegeka.batchers.taxcalculator.batch.processor.CalculateTaxProcessor;
+import be.cegeka.batchers.taxcalculator.batch.processor.CallWebserviceProcessor;
+import be.cegeka.batchers.taxcalculator.batch.processor.SendPaycheckProcessor;
 import be.cegeka.batchers.taxcalculator.batch.config.ItemReaderWriterConfig;
 import be.cegeka.batchers.taxcalculator.batch.config.TempConfigToInitDB;
 import be.cegeka.batchers.taxcalculator.batch.config.listeners.ChangeStatusOnFailedStepsJobExecListener;
@@ -27,7 +29,6 @@ import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
-import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 
 import javax.sql.DataSource;
@@ -43,7 +44,8 @@ public class EmployeeJobConfigSingleJvm extends DefaultBatchConfigurer {
 
     public static final String EMPLOYEE_JOB = "employeeJob";
     public static final String TAX_CALCULATION_STEP = "taxCalculationStep";
-    private static final String WS_CALL_STEP = "wsCallStep";
+    private static final String WS_CALL_AND_GENERATE_AND_SEND_PAYCHECK_STEP = "wsCallAndGenerateAndSendPaycheckStep";
+    private static final String UPDATE_MONTHLY_TAX_FOR_EMPLOYEE_STEP = "updateMonthlyTaxForEmployeeStep";
     private static Long OVERRIDDEN_BY_EXPRESSION = null;
     private static StepExecution OVERRIDDEN_BY_EXPRESSION_STEP_EXECUTION = null;
 
@@ -69,6 +71,8 @@ public class EmployeeJobConfigSingleJvm extends DefaultBatchConfigurer {
     private FailedStepStepExecutionListener failedStepStepExecutionListener;
     @Autowired
     private MaxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy maxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy;
+    @Autowired
+    private CreateMonthlyTaxForEmployeeListener createMonthlyTaxForEmployeeListener;
 
     @Autowired
     private TaskExecutor taskExecutor;
@@ -78,11 +82,13 @@ public class EmployeeJobConfigSingleJvm extends DefaultBatchConfigurer {
     public Job employeeJob() {
         return jobBuilders.get(EMPLOYEE_JOB)
                 .start(taxCalculationStep())
-                .next(wsCallStep())
+                .next(wsCallAndGenerateAndSendPaycheckStep())
                 .next(jobResultsPdf())
                 .listener(changeStatusOnFailedStepsJobExecListener)
                 .build();
     }
+
+
 
     @Bean
     public Step taxCalculationStep() {
@@ -98,14 +104,14 @@ public class EmployeeJobConfigSingleJvm extends DefaultBatchConfigurer {
     }
 
     @Bean
-    public Step wsCallStep() {
+    public Step wsCallAndGenerateAndSendPaycheckStep() {
         CompositeItemProcessor<TaxCalculation, PayCheck> compositeItemProcessor = new CompositeItemProcessor<>();
         compositeItemProcessor.setDelegates(Arrays.asList(
                 callWebserviceProcessor,
                 sendPaycheckProcessor
         ));
 
-        return stepBuilders.get(WS_CALL_STEP)
+        return stepBuilders.get(WS_CALL_AND_GENERATE_AND_SEND_PAYCHECK_STEP)
                 .<TaxCalculation, PayCheck>chunk(5)
                 .faultTolerant()
                 .skipPolicy(maxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy)
@@ -113,9 +119,9 @@ public class EmployeeJobConfigSingleJvm extends DefaultBatchConfigurer {
                 .reader(itemReaderWriterConfig.wsCallItemReader(OVERRIDDEN_BY_EXPRESSION, OVERRIDDEN_BY_EXPRESSION, OVERRIDDEN_BY_EXPRESSION_STEP_EXECUTION))
                 .processor(compositeItemProcessor)
                 .writer(itemReaderWriterConfig.wsCallItemWriter())
+                .listener(createMonthlyTaxForEmployeeListener)
                 .listener(maxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy)
                 .listener(failedStepStepExecutionListener)
-                .listener(sendPaycheckProcessor)
                 .allowStartIfComplete(true)
                 .taskExecutor(taskExecutor)
                 .build();

@@ -13,8 +13,8 @@ public class TaxWebServiceFatalException extends RuntimeException {
         super(message);
     }
 
-    public TaxWebServiceFatalException(TaxServiceCallResult taxServiceCallResult) {
-        super();
+    public TaxWebServiceFatalException(String message, TaxServiceCallResult taxServiceCallResult) {
+        super(message);
         this.taxServiceCallResult = taxServiceCallResult;
     }
 

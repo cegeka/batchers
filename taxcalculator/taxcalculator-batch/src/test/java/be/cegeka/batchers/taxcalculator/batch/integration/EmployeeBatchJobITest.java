@@ -20,6 +20,7 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static be.cegeka.batchers.taxcalculator.application.ApplicationAssertions.assertThat;
@@ -45,13 +46,15 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     @Autowired
     private SumOfTaxes sumOfTaxes;
     @Autowired
+    private EmployeeRepository employeeRepository;
+    @Autowired
+    private MonthlyTaxForEmployeeRepository monthlyTaxForEmployeeRepository;
+    @Autowired
     private PayCheckRepository payCheckRepository;
     @Autowired
     private TaxCalculationRepository taxCalculationRepository;
     @Autowired
     private TaxServiceCallResultRepository taxServiceCallResultRepository;
-    @Autowired
-    private EmployeeRepository employeeRepository;
     @Autowired
     private MonthlyReportRepository monthlyReportRepository;
     @Autowired
@@ -79,6 +82,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     @After
     public void tearDown() {
         SmtpServerStub.stop();
+        monthlyTaxForEmployeeRepository.deleteAll();
         monthlyReportRepository.deleteAll();
         payCheckRepository.deleteAll();
         taxServiceCallResultRepository.deleteAll();
@@ -202,6 +206,32 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
 
         assertThat(SmtpServerStub.wiser()).hasNoReceivedMessages();
         verifyJob(jobExecution);
+    }
+
+    @Test
+    public void whenTaxServiceReturnsSuccess_MonthlyTaxForEmployeeHasNoErrorAndAPaycheck() throws Exception {
+        Employee employee = haveOneEmployee();
+        respondOneTimeWithSuccess();
+
+        jobLauncherTestUtils.launchJob(jobParams);
+
+        List<MonthlyTaxForEmployee> monthlyTaxesForEmployee = monthlyTaxForEmployeeRepository.findByEmployee(employee);
+        assertThat(monthlyTaxesForEmployee).hasSize(1);
+        assertThat(monthlyTaxesForEmployee.get(0).hasErrorMessage()).isFalse();
+        assertThat(monthlyTaxesForEmployee.get(0).getMonthlyReportPdf()).isNotEmpty();
+    }
+
+    @Test
+    public void whenTaxServiceReturnsFailure_MonthlyTaxForEmployeeHasErrorAndNoPaycheck() throws Exception {
+        Employee employee = haveOneEmployee();
+        respondWithBadRequest(1);
+
+        jobLauncherTestUtils.launchJob(jobParams);
+
+        List<MonthlyTaxForEmployee> monthlyTaxesForEmployee = monthlyTaxForEmployeeRepository.findByEmployee(employee);
+        assertThat(monthlyTaxesForEmployee).hasSize(1);
+        assertThat(monthlyTaxesForEmployee.get(0).hasErrorMessage()).isTrue();
+        assertThat(monthlyTaxesForEmployee.get(0).getMonthlyReportPdf()).isNullOrEmpty();
     }
 
     @Test

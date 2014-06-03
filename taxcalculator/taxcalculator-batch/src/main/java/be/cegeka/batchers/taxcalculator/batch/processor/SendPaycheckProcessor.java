@@ -1,4 +1,4 @@
-package be.cegeka.batchers.taxcalculator.batch;
+package be.cegeka.batchers.taxcalculator.batch.processor;
 
 import be.cegeka.batchers.taxcalculator.application.domain.PayCheck;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
@@ -22,7 +22,7 @@ import java.util.Map;
 
 @Component
 @StepScope
-public class SendPaycheckProcessor extends StepExecutionListenerSupport implements ItemProcessor<TaxServiceCallResult, PayCheck> {
+public class SendPaycheckProcessor implements ItemProcessor<TaxServiceCallResult, PayCheck> {
 
     @Value(value = "${paycheck.from.email:finance@email.com}")
     String payCheckFrom;
@@ -35,6 +35,7 @@ public class SendPaycheckProcessor extends StepExecutionListenerSupport implemen
     @Autowired
     private EmailSender emailSender;
 
+    @Value("#{stepExecution}")
     private StepExecution stepExecution;
 
     @Override
@@ -91,8 +92,4 @@ public class SendPaycheckProcessor extends StepExecutionListenerSupport implemen
         return emailTo;
     }
 
-    @Override
-    public void beforeStep(StepExecution stepExecution) {
-        this.stepExecution = stepExecution;
-    }
 }
