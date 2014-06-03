@@ -1,7 +1,7 @@
 package be.cegeka.batchers.taxcalculator.batch.service;
 
 
-import be.cegeka.batchers.taxcalculator.batch.config.EmployeeJobConfig;
+import be.cegeka.batchers.taxcalculator.batch.config.singlejvm.EmployeeJobConfigSingleJvm;
 import be.cegeka.batchers.taxcalculator.batch.domain.JobResult;
 import be.cegeka.batchers.taxcalculator.batch.domain.JobStartParams;
 import org.junit.Before;
@@ -45,11 +45,11 @@ public class JobResultsServiceTest {
     @Test
     public void testGetFinishedJobResults_DifferentDates_SortingIsDescOnYearAndMonth() throws Exception {
         //ARRANGE
-        JobInstance jobInstance1 = new JobInstance(1L, EmployeeJobConfig.EMPLOYEE_JOB);
-        JobInstance jobInstance2 = new JobInstance(2L, EmployeeJobConfig.EMPLOYEE_JOB);
+        JobInstance jobInstance1 = new JobInstance(1L, EmployeeJobConfigSingleJvm.EMPLOYEE_JOB);
+        JobInstance jobInstance2 = new JobInstance(2L, EmployeeJobConfigSingleJvm.EMPLOYEE_JOB);
         List<JobInstance> jobInstances = asList(jobInstance1, jobInstance2);
 
-        when(jobExplorer.getJobInstancesByJobName(EmployeeJobConfig.EMPLOYEE_JOB, 0, MAX_VALUE))
+        when(jobExplorer.getJobInstancesByJobName(EmployeeJobConfigSingleJvm.EMPLOYEE_JOB, 0, MAX_VALUE))
                 .thenReturn(jobInstances);
 
         JobExecution jobInstance1_jobExecution1 = createJobExecution(jobInstance1, createJobParameters(2014, 5));
@@ -63,7 +63,7 @@ public class JobResultsServiceTest {
         List<JobResult> jobResults = jobResultsService.getJobResults();
 
         //ASSERT
-        verify(jobExplorer).getJobInstancesByJobName(EmployeeJobConfig.EMPLOYEE_JOB, 0, MAX_VALUE);
+        verify(jobExplorer).getJobInstancesByJobName(EmployeeJobConfigSingleJvm.EMPLOYEE_JOB, 0, MAX_VALUE);
         verify(jobExplorer).getJobExecutions(jobInstance1);
         verify(jobExplorer).getJobExecutions(jobInstance2);
 
@@ -73,9 +73,9 @@ public class JobResultsServiceTest {
     @Test
     public void testGetFinishedJobResults_SameDates_SortingIsDescOnDate() throws Exception {
         //ARRANGE
-        JobInstance jobInstance1 = new JobInstance(1L, EmployeeJobConfig.EMPLOYEE_JOB);
+        JobInstance jobInstance1 = new JobInstance(1L, EmployeeJobConfigSingleJvm.EMPLOYEE_JOB);
 
-        when(jobExplorer.getJobInstancesByJobName(EmployeeJobConfig.EMPLOYEE_JOB, 0, MAX_VALUE))
+        when(jobExplorer.getJobInstancesByJobName(EmployeeJobConfigSingleJvm.EMPLOYEE_JOB, 0, MAX_VALUE))
                 .thenReturn(asList(jobInstance1));
 
         JobExecution jobInstance1_jobExecution1 = new JobExecution(jobInstance1, 1L, createJobParameters(2014, 6), null);
@@ -95,12 +95,12 @@ public class JobResultsServiceTest {
         List<JobResult> jobResults = jobResultsService.getJobResults();
 
         assertThat(jobResults).hasSize(6);
-        assertThat(jobResults.get(0).getMonth()).isEqualTo(1L);
-        assertThat(jobResults.get(1).getMonth()).isEqualTo(2L);
-        assertThat(jobResults.get(2).getMonth()).isEqualTo(3L);
-        assertThat(jobResults.get(3).getMonth()).isEqualTo(4L);
-        assertThat(jobResults.get(4).getMonth()).isEqualTo(5L);
-        assertThat(jobResults.get(5).getMonth()).isEqualTo(6L);
+        assertThat(jobResults.get(0).getJobStartParams().getMonth()).isEqualTo(1);
+        assertThat(jobResults.get(1).getJobStartParams().getMonth()).isEqualTo(2);
+        assertThat(jobResults.get(2).getJobStartParams().getMonth()).isEqualTo(3);
+        assertThat(jobResults.get(3).getJobStartParams().getMonth()).isEqualTo(4);
+        assertThat(jobResults.get(4).getJobStartParams().getMonth()).isEqualTo(5);
+        assertThat(jobResults.get(5).getJobStartParams().getMonth()).isEqualTo(6);
     }
 
     private JobExecution createJobExecution(JobInstance jobInstance, JobParameters jobParameters) {

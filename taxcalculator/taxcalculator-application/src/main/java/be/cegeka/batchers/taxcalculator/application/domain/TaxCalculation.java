@@ -53,11 +53,11 @@ public class TaxCalculation {
     @Max(12)
     @NotNull
     @Column(name = TaxCalculation.MONTH)
-    private long month;
+    private int month;
 
     @NotNull
     @Column(name = TaxCalculation.YEAR)
-    private long year;
+    private int year;
 
     @Type(type = "org.jadira.usertype.moneyandcurrency.joda.PersistentMoneyAmount",
             parameters = {@Parameter(name = "currencyCode", value = "EUR")})
@@ -70,7 +70,7 @@ public class TaxCalculation {
     private DateTime calculationDate;
 
 
-    public static TaxCalculation from(Long jobExecutionId, Employee employee, long year, long month, Money tax) {
+    public static TaxCalculation from(Long jobExecutionId, Employee employee, int year, int month, Money tax) {
         TaxCalculation taxCalculation = new TaxCalculation();
         taxCalculation.jobExecutionId = jobExecutionId;
         taxCalculation.employee = employee;
@@ -89,11 +89,11 @@ public class TaxCalculation {
         return employee;
     }
 
-    public long getMonth() {
+    public int getMonth() {
         return month;
     }
 
-    public long getYear() {
+    public int getYear() {
         return year;
     }
 

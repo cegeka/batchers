@@ -1,4 +1,4 @@
-package be.cegeka.batchers.taxcalculator.batch.config;
+package be.cegeka.batchers.taxcalculator.batch.config.singlejvm;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.PayCheck;
@@ -7,6 +7,8 @@ import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceExcepti
 import be.cegeka.batchers.taxcalculator.batch.CalculateTaxProcessor;
 import be.cegeka.batchers.taxcalculator.batch.CallWebserviceProcessor;
 import be.cegeka.batchers.taxcalculator.batch.SendPaycheckProcessor;
+import be.cegeka.batchers.taxcalculator.batch.config.ItemReaderWriterConfig;
+import be.cegeka.batchers.taxcalculator.batch.config.TempConfigToInitDB;
 import be.cegeka.batchers.taxcalculator.batch.config.listeners.ChangeStatusOnFailedStepsJobExecListener;
 import be.cegeka.batchers.taxcalculator.batch.config.listeners.FailedStepStepExecutionListener;
 import be.cegeka.batchers.taxcalculator.batch.config.skippolicy.MaxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy;
@@ -25,6 +27,8 @@ import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
 
 import javax.sql.DataSource;
 import java.util.Arrays;
@@ -34,7 +38,8 @@ import java.util.Arrays;
 @ComponentScan(basePackages = "be.cegeka.batchers.taxcalculator.batch")
 @Import({PropertyPlaceHolderConfig.class, TempConfigToInitDB.class, ItemReaderWriterConfig.class})
 @PropertySource("classpath:taxcalculator-batch.properties")
-public class EmployeeJobConfig extends DefaultBatchConfigurer {
+@Profile(value = {"default", "singleJvm", "test"})
+public class EmployeeJobConfigSingleJvm extends DefaultBatchConfigurer {
 
     public static final String EMPLOYEE_JOB = "employeeJob";
     public static final String TAX_CALCULATION_STEP = "taxCalculationStep";
@@ -65,6 +70,9 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
     @Autowired
     private MaxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy maxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy;
 
+    @Autowired
+    private TaskExecutor taskExecutor;
+
 
     @Bean
     public Job employeeJob() {
@@ -85,6 +93,7 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
                 .processor(calculateTaxProcessor)
                 .writer(itemReaderWriterConfig.taxCalculatorItemWriter())
                 .allowStartIfComplete(true)
+                .taskExecutor(taskExecutor)
                 .build();
     }
 
@@ -108,6 +117,7 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
                 .listener(failedStepStepExecutionListener)
                 .listener(sendPaycheckProcessor)
                 .allowStartIfComplete(true)
+                .taskExecutor(taskExecutor)
                 .build();
     }
 

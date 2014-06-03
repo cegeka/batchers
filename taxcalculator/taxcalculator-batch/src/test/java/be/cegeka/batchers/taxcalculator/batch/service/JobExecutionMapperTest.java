@@ -60,7 +60,7 @@ public class JobExecutionMapperTest {
         };
 
         //ACT
-        JobResult resultTo = mapper.toJobResultTo(entry);
+        JobResult resultTo = mapper.toJobResult(entry);
 
         //ASSERT
         assertThat(resultTo.getJobExecutionResults()).hasSize(1);

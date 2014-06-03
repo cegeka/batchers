@@ -24,8 +24,9 @@ public abstract class AbstractRepository<E> {
     private Class<E> entityClass;
 
     @Transactional
-    public void save(E entity) {
+    public E save(E entity) {
         entityManager.persist(entity);
+        return entity;
     }
 
     public E getBy(Long id) {
