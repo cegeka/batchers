@@ -38,7 +38,7 @@ import java.util.Arrays;
 @ComponentScan(basePackages = "be.cegeka.batchers.taxcalculator.batch")
 @Import({PropertyPlaceHolderConfig.class, TempConfigToInitDB.class, ItemReaderWriterConfig.class})
 @PropertySource("classpath:taxcalculator-batch.properties")
-@Profile(value = {"singleJvm", "test"})
+@Profile(value = {"default", "singleJvm", "test"})
 public class EmployeeJobConfigSingleJvm extends DefaultBatchConfigurer {
 
     public static final String EMPLOYEE_JOB = "employeeJob";
