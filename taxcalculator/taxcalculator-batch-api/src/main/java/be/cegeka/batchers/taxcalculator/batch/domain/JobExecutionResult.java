@@ -9,14 +9,16 @@ public class JobExecutionResult {
     private Date startTime;
     private Date endTime;
     private String description;
+    private JobStartParams jobStartParams;
 
 
-    public JobExecutionResult(Long id, String status, Date startTime, Date endTime, String description) {
+    public JobExecutionResult(Long id, String status, Date startTime, Date endTime, String description, JobStartParams jobStartParams) {
         this.id = id;
         this.status = status;
         this.startTime = startTime;
         this.endTime = endTime;
         this.description = description;
+        this.jobStartParams = jobStartParams;
     }
 
     public Long getId() {
@@ -39,6 +41,9 @@ public class JobExecutionResult {
         return description;
     }
 
+    public JobStartParams getJobStartParams() {
+        return jobStartParams;
+    }
 
     public Long getDuration() {
         if (endTime == null) {
