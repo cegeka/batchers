@@ -16,7 +16,7 @@ public class ApplicationInitializer implements ApplicationListener<ContextRefres
 
     private void runEmployeesGenerator() {
         if (generateEmployees) {
-            employeeGenerator.generateAll();
+            employeeGenerator.resetEmployees();
         }
     }
 
