@@ -2,7 +2,7 @@ package be.cegeka.batchers.taxcalculator.presentation.rest;
 
 import be.cegeka.batchers.taxcalculator.application.domain.MonthlyReport;
 import be.cegeka.batchers.taxcalculator.application.domain.MonthlyReportRepository;
-import be.cegeka.batchers.taxcalculator.batch.domain.JobExecutionResult;
+import be.cegeka.batchers.taxcalculator.batch.domain.JobResult;
 import be.cegeka.batchers.taxcalculator.batch.service.JobResultsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,7 +24,7 @@ public class JobResultsController {
 
     @RequestMapping(value = "jobResults", method = RequestMethod.GET)
     @ResponseBody
-    public List<JobExecutionResult> getJobResults() {
+    public List<JobResult> getJobResults() {
         return jobResultsService.getJobResults();
     }
 

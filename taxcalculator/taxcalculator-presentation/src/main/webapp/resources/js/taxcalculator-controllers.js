@@ -91,33 +91,16 @@ taxcalculatorControllers
 
     .controller('JobResultsCtrl', ['$scope', 'JobResultsResource', 'RunJobResource',
         function ($scope, JobResultsResource, RunJobResource) {
-            $scope.jobStartParamsList = [
-                {"year": 2014, "month": 1},
-                {"year": 2014, "month": 2},
-                {"year": 2014, "month": 3},
-                {"year": 2014, "month": 4},
-                {"year": 2014, "month": 5},
-                {"year": 2014, "month": 6}
-            ];
-
             $scope.isReportReady = function (jobExecution) {
                 return jobExecution != undefined && jobExecution.status != undefined && (jobExecution.status == 'FAILED' || jobExecution.status == 'COMPLETED');
-            };
+            }
 
             $scope.formatDuration = function (millis) {
                 if (millis === null) return "NOT FINISHED";
                 duration = moment.duration(millis);
                 return duration.hours() + "h " + duration.minutes() + "m " + duration.seconds() + "s " + duration.milliseconds() + "ms"
-            };
-
-            $scope.matchesJobStartParam = function (jobStartParam) {
-                return function (jobExecutionResult) {
-                    return jobExecutionResult.jobStartParams.year == jobStartParam.year
-                        && jobExecutionResult.jobStartParams.month == jobStartParam.month;
-                }
-            };
-
-            $scope.jobExecutionResults = JobResultsResource.query(
+            }
+            $scope.jobResults = JobResultsResource.query(
                 {},
                 function (successData) {
                 },
@@ -126,8 +109,8 @@ taxcalculatorControllers
                 }
             );
 
-            $scope.runJob = function (jobStartParams) {
-                RunJobResource.run({year: jobStartParams.year, month: jobStartParams.month});
+            $scope.runJob = function (job) {
+                RunJobResource.run({year: job.jobStartParams.year, month: job.jobStartParams.month});
             }
 
             $scope.model = {
