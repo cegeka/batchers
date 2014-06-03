@@ -1,12 +1,10 @@
 package be.cegeka.batchers.taxcalculator.batch.tasklet;
 
 import be.cegeka.batchers.taxcalculator.batch.service.reporting.MonthlyTaxReportService;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.internal.util.reflection.Whitebox;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepContribution;

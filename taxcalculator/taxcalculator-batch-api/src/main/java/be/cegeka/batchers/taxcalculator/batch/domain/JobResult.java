@@ -1,6 +1,5 @@
 package be.cegeka.batchers.taxcalculator.batch.domain;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
@@ -13,10 +12,6 @@ public class JobResult {
     private JobStartParams jobStartParams;
     private List<JobExecutionResult> jobExecutionResults;
     private Function<JobExecutionResult, Long> onId = jobExecutionResult -> jobExecutionResult.getId();
-
-    public JobResult(String jobName, JobStartParams jobStartParams) {
-        this(jobName, jobStartParams, new ArrayList<>());
-    }
 
     public JobResult(String jobName, JobStartParams jobStartParams, List<JobExecutionResult> jobExecutionResults) {
         this.jobName = jobName;
@@ -36,5 +31,4 @@ public class JobResult {
     public List<JobExecutionResult> getJobExecutionResults() {
         return jobExecutionResults;
     }
-
 }
