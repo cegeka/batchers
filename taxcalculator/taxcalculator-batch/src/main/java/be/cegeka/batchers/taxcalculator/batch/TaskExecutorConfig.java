@@ -8,7 +8,7 @@ import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 
 @Configuration
-@Profile("default")
+@Profile(value = {"default", "singleJvm"})
 public class TaskExecutorConfig {
 
     @Bean
