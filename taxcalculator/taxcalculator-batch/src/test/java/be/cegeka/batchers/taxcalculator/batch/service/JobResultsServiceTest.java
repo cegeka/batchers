@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.internal.util.reflection.Whitebox;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
@@ -26,6 +25,7 @@ import static java.util.Arrays.asList;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.internal.util.reflection.Whitebox.setInternalState;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JobResultsServiceTest {
@@ -39,7 +39,7 @@ public class JobResultsServiceTest {
 
     @Before
     public void setUp() {
-        Whitebox.setInternalState(jobResultsService, "jobExecutionMapper", mapper);
+        setInternalState(jobResultsService, "jobExecutionMapper", mapper);
     }
 
     @Test
@@ -49,8 +49,7 @@ public class JobResultsServiceTest {
         JobInstance jobInstance2 = new JobInstance(2L, EmployeeJobConfig.EMPLOYEE_JOB);
         List<JobInstance> jobInstances = asList(jobInstance1, jobInstance2);
 
-        when(jobExplorer.getJobInstancesByJobName(EmployeeJobConfig.EMPLOYEE_JOB, 0, MAX_VALUE))
-                .thenReturn(jobInstances);
+        when(jobExplorer.getJobInstancesByJobName(EmployeeJobConfig.EMPLOYEE_JOB, 0, MAX_VALUE)).thenReturn(jobInstances);
 
         JobExecution jobInstance1_jobExecution1 = createJobExecution(jobInstance1, createJobParameters(2014, 5));
         when(jobExplorer.getJobExecutions(jobInstance1)).thenReturn(asList(jobInstance1_jobExecution1));
@@ -95,12 +94,12 @@ public class JobResultsServiceTest {
         List<JobResult> jobResults = jobResultsService.getJobResults();
 
         assertThat(jobResults).hasSize(6);
-        assertThat(jobResults.get(0).getMonth()).isEqualTo(1L);
-        assertThat(jobResults.get(1).getMonth()).isEqualTo(2L);
-        assertThat(jobResults.get(2).getMonth()).isEqualTo(3L);
-        assertThat(jobResults.get(3).getMonth()).isEqualTo(4L);
-        assertThat(jobResults.get(4).getMonth()).isEqualTo(5L);
-        assertThat(jobResults.get(5).getMonth()).isEqualTo(6L);
+        assertThat(jobResults.get(0).getJobStartParams().getMonth()).isEqualTo(1);
+        assertThat(jobResults.get(1).getJobStartParams().getMonth()).isEqualTo(2);
+        assertThat(jobResults.get(2).getJobStartParams().getMonth()).isEqualTo(3);
+        assertThat(jobResults.get(3).getJobStartParams().getMonth()).isEqualTo(4);
+        assertThat(jobResults.get(4).getJobStartParams().getMonth()).isEqualTo(5);
+        assertThat(jobResults.get(5).getJobStartParams().getMonth()).isEqualTo(6);
     }
 
     private JobExecution createJobExecution(JobInstance jobInstance, JobParameters jobParameters) {

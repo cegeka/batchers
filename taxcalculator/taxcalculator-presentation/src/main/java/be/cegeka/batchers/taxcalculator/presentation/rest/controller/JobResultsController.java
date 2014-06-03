@@ -1,4 +1,4 @@
-package be.cegeka.batchers.taxcalculator.presentation.rest;
+package be.cegeka.batchers.taxcalculator.presentation.rest.controller;
 
 import be.cegeka.batchers.taxcalculator.application.domain.MonthlyReport;
 import be.cegeka.batchers.taxcalculator.application.domain.MonthlyReportRepository;
@@ -18,9 +18,9 @@ import java.util.List;
 @Controller
 public class JobResultsController {
     @Autowired
-    MonthlyReportRepository monthlyReportRepository;
-    @Autowired
     private JobResultsService jobResultsService;
+    @Autowired
+    private MonthlyReportRepository monthlyReportRepository;
 
     @RequestMapping(value = "jobResults", method = RequestMethod.GET)
     @ResponseBody
@@ -28,13 +28,13 @@ public class JobResultsController {
         return jobResultsService.getJobResults();
     }
 
-    @RequestMapping(value = "files/job_report/{jobId}.pdf", method = RequestMethod.GET)
+    @RequestMapping(value = "files/job_report/{id}.pdf", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<byte[]> getJobReportPdf(@PathVariable("jobId") Long jobExecutionId) {
-        MonthlyReport monthlyReport = monthlyReportRepository.findByJobExecutionId(jobExecutionId);
+    public ResponseEntity<byte[]> getJobReportPdf(@PathVariable("id") Long jobExecutionId) {
+        MonthlyReport monthlyReport = monthlyReportRepository.findById(jobExecutionId);
 
         if (monthlyReport != null) {
-            return new ResponseEntity<>(monthlyReport.getMontlyReportPdf(), HttpStatus.OK);
+            return new ResponseEntity<>(monthlyReport.getMonthlyReportPdf(), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

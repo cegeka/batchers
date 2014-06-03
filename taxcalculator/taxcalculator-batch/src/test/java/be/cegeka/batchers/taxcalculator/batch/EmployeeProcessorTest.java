@@ -12,12 +12,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.internal.util.reflection.Whitebox;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.batch.core.StepExecution;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.internal.util.reflection.Whitebox.setInternalState;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EmployeeProcessorTest {
@@ -30,7 +32,10 @@ public class EmployeeProcessorTest {
 
     @Before
     public void setUp() {
-        calculateTaxProcessor.taxCalculatorService = createTaxCalculatorService();
+        setInternalState(calculateTaxProcessor, "taxCalculatorService", createTaxCalculatorService());
+        setInternalState(calculateTaxProcessor, "year", 2014L);
+        setInternalState(calculateTaxProcessor, "month", 5L);
+
         when(stepExecution.getJobExecutionId()).thenReturn(1L);
     }
 

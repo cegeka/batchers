@@ -16,8 +16,8 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class SumOfTaxesTest {
     public static final Money MONEY_100Euro = Money.of(CurrencyUnit.EUR, 100D);
-    public static final long TEST_YEAR = 2015;
-    public static final long TEST_MONTH = 3;
+    public static final int TEST_YEAR = 2015;
+    public static final int TEST_MONTH = 3;
 
     @InjectMocks
     SumOfTaxes sumOfTaxes;
