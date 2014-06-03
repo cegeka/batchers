@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
@@ -33,11 +34,15 @@ public class JobExecutionMapper {
     private List<JobExecutionResult> getJobExecutionResults(List<JobExecution> jobExecutions) {
         return jobExecutions
                 .stream()
-                .map(jobExec -> new JobExecutionResult(
-                        jobExec.getId(), jobExec.getStatus().toString(),
-                        jobExec.getStartTime(), jobExec.getEndTime(),
-                        getDescription(jobExec)))
+                .map(jobExecutionToJobExecutionResultMapper())
                 .collect(Collectors.toList());
+    }
+
+    private Function<JobExecution, JobExecutionResult> jobExecutionToJobExecutionResultMapper() {
+        return jobExecution -> new JobExecutionResult(
+                jobExecution.getId(), jobExecution.getStatus().toString(),
+                jobExecution.getStartTime(), jobExecution.getEndTime(),
+                getDescription(jobExecution));
     }
 
     private String getDescription(JobExecution jobExec) {
