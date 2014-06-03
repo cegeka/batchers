@@ -19,14 +19,14 @@ public class JobStatusListener extends JobExecutionListenerSupport {
     public void beforeJob(JobExecution jobExecution) {
         JobStartRequest jobStartRequest = new JobStartRequestMapper().map(jobExecution.getJobInstance().getJobName(), jobExecution.getJobParameters());
 
-        eventBus.post(new JobEvent(jobStartRequest, "STARTED"));
+        eventBus.post(new JobEvent(jobStartRequest, jobExecution.getStatus().name()));
     }
 
     @Override
     public void afterJob(JobExecution jobExecution) {
         JobStartRequest jobStartRequest = new JobStartRequestMapper().map(jobExecution.getJobInstance().getJobName(), jobExecution.getJobParameters());
 
-        eventBus.post(new JobEvent(jobStartRequest, jobExecution.getExitStatus().getExitCode()));
+        eventBus.post(new JobEvent(jobStartRequest, jobExecution.getStatus().name()));
     }
 
 }

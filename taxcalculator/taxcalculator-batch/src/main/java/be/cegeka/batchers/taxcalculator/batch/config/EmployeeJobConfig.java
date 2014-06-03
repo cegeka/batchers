@@ -75,8 +75,8 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
                 .start(taxCalculationStep())
                 .next(wsCallStep())
                 .next(jobResultsPdf())
-                .listener(changeStatusOnFailedStepsJobExecListener)
                 .listener(jobStatusListener)
+                .listener(changeStatusOnFailedStepsJobExecListener)
                 .build();
     }
 
