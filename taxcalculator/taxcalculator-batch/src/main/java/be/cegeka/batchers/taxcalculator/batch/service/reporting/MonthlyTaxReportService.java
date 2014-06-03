@@ -23,21 +23,17 @@ public class MonthlyTaxReportService {
     @Autowired
     private MonthlyReportRepository monthlyReportRepository;
 
-    public byte[] generateReport(long year, long month) throws IOException, XDocReportException {
-        return generateReport(year, month, null);
-    }
-
-    public byte[] generateReport(long year, long month, Long jobExecutionId) throws IOException, XDocReportException {
+    public byte[] generateReport(Long jobExecutionId, int year, int month) throws IOException, XDocReportException {
         Resource monthlyReportTemplate = new ClassPathResource("monthly-tax-report-template.docx");
 
         Map<String, Object> contextMap = new HashMap<>();
         contextMap.put("success_sum", sumOfTaxes.getSuccessSum(year, month));
         contextMap.put("failed_sum", sumOfTaxes.getFailedSum(year, month));
-        contextMap.put("date", "" + month + " " + year);
+        contextMap.put("date", month + " " + year);
 
         byte[] pdfBytes = pdfGeneratorService.generatePdfAsByteArray(monthlyReportTemplate, contextMap);
 
-        MonthlyReport monthlyReport = MonthlyReport.from(year, month, pdfBytes, DateTime.now(), jobExecutionId);
+        MonthlyReport monthlyReport = MonthlyReport.from(jobExecutionId, year, month, pdfBytes, DateTime.now());
         monthlyReportRepository.save(monthlyReport);
         return pdfBytes;
     }

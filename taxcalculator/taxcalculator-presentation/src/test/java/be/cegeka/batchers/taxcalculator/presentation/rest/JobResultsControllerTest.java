@@ -3,6 +3,7 @@ package be.cegeka.batchers.taxcalculator.presentation.rest;
 import be.cegeka.batchers.taxcalculator.application.domain.MonthlyReport;
 import be.cegeka.batchers.taxcalculator.application.domain.MonthlyReportRepository;
 import be.cegeka.batchers.taxcalculator.batch.service.JobResultsService;
+import be.cegeka.batchers.taxcalculator.presentation.rest.controller.JobResultsController;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,8 +53,8 @@ public class JobResultsControllerTest {
     @Test
     public void testGetReportContent() throws Exception {
         byte[] bytes = new byte[]{0, 34, 4};
-        MonthlyReport monthlyReport = MonthlyReport.from(2014, 4, bytes, new DateTime());
-        when(monthlyReportRepository.findByJobExecutionId(JOB_EXECUTION_ID))
+        MonthlyReport monthlyReport = MonthlyReport.from(JOB_EXECUTION_ID, 2014, 4, bytes, new DateTime());
+        when(monthlyReportRepository.findById(JOB_EXECUTION_ID))
                 .thenReturn(monthlyReport);
 
         mockMvc.perform(get("/files/job_report/" + JOB_EXECUTION_ID + ".pdf")).andExpect(status().isOk())

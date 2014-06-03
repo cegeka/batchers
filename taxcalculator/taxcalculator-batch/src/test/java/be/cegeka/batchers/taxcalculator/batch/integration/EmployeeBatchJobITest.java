@@ -213,7 +213,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
 
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
 
-        assertThat(sumOfTaxes.getSuccessSum(YEAR, MONTH)).isEqualTo(200D);
+        assertThat(sumOfTaxes.getSuccessSum(YEAR.intValue(), MONTH.intValue())).isEqualTo(200D);
         verifyJob(jobExecution);
     }
 
@@ -227,7 +227,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
 
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
 
-        assertThat(sumOfTaxes.getSuccessSum(YEAR, MONTH)).isEqualTo(200D);
+        assertThat(sumOfTaxes.getSuccessSum(YEAR.intValue(), MONTH.intValue())).isEqualTo(200D);
         verifyJob(jobExecution);
     }
 
@@ -241,7 +241,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
 
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
 
-        assertThat(sumOfTaxes.getFailedSum(YEAR, MONTH)).isEqualTo(100D);
+        assertThat(sumOfTaxes.getFailedSum(YEAR.intValue(), MONTH.intValue())).isEqualTo(100D);
         verifyJob(jobExecution);
     }
 

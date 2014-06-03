@@ -1,7 +1,7 @@
 package be.cegeka.batchers.taxcalculator.batch.service;
 
 
-import be.cegeka.batchers.taxcalculator.batch.config.EmployeeJobConfig;
+import be.cegeka.batchers.taxcalculator.batch.config.singlejvm.EmployeeJobConfigSingleJvm;
 import be.cegeka.batchers.taxcalculator.batch.domain.JobResult;
 import be.cegeka.batchers.taxcalculator.batch.domain.JobStartParams;
 import org.joda.time.DateTime;
@@ -46,11 +46,11 @@ public class JobResultsServiceTest {
     @Test
     public void testGetFinishedJobResults_DifferentDates_SortingIsDescOnYearAndMonth() throws Exception {
         //ARRANGE
-        JobInstance jobInstance1 = new JobInstance(1L, EmployeeJobConfig.EMPLOYEE_JOB);
-        JobInstance jobInstance2 = new JobInstance(2L, EmployeeJobConfig.EMPLOYEE_JOB);
+        JobInstance jobInstance1 = new JobInstance(1L, EmployeeJobConfigSingleJvm.EMPLOYEE_JOB);
+        JobInstance jobInstance2 = new JobInstance(2L, EmployeeJobConfigSingleJvm.EMPLOYEE_JOB);
         List<JobInstance> jobInstances = asList(jobInstance1, jobInstance2);
 
-        when(jobExplorer.getJobInstancesByJobName(EmployeeJobConfig.EMPLOYEE_JOB, 0, MAX_VALUE))
+        when(jobExplorer.getJobInstancesByJobName(EmployeeJobConfigSingleJvm.EMPLOYEE_JOB, 0, MAX_VALUE))
                 .thenReturn(jobInstances);
 
         JobExecution jobInstance1_jobExecution1 = createJobExecution(jobInstance1, createJobParameters(2014, 5));
@@ -64,7 +64,7 @@ public class JobResultsServiceTest {
         List<JobResult> jobResults = jobResultsService.getJobResults();
 
         //ASSERT
-        verify(jobExplorer).getJobInstancesByJobName(EmployeeJobConfig.EMPLOYEE_JOB, 0, MAX_VALUE);
+        verify(jobExplorer).getJobInstancesByJobName(EmployeeJobConfigSingleJvm.EMPLOYEE_JOB, 0, MAX_VALUE);
         verify(jobExplorer).getJobExecutions(jobInstance1);
         verify(jobExplorer).getJobExecutions(jobInstance2);
 
@@ -74,9 +74,9 @@ public class JobResultsServiceTest {
     @Test
     public void testGetFinishedJobResults_SameDates_SortingIsDescOnDate() throws Exception {
         //ARRANGE
-        JobInstance jobInstance1 = new JobInstance(1L, EmployeeJobConfig.EMPLOYEE_JOB);
+        JobInstance jobInstance1 = new JobInstance(1L, EmployeeJobConfigSingleJvm.EMPLOYEE_JOB);
 
-        when(jobExplorer.getJobInstancesByJobName(EmployeeJobConfig.EMPLOYEE_JOB, 0, MAX_VALUE))
+        when(jobExplorer.getJobInstancesByJobName(EmployeeJobConfigSingleJvm.EMPLOYEE_JOB, 0, MAX_VALUE))
                 .thenReturn(asList(jobInstance1));
 
         DateTime dateTime = new DateTime();

@@ -29,8 +29,8 @@ public class ItemReaderWriterConfig {
         employeeItemReader.setEntityManagerFactory(persistenceConfig.entityManagerFactory());
         employeeItemReader.setQueryString(Employee.GET_UNPROCESSED_EMPLOYEES_BY_YEAR_AND_MONTH_QUERY);
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("year", stepExecution.getJobParameters().getLong("year"));
-        parameters.put("month", stepExecution.getJobParameters().getLong("month"));
+        parameters.put("year", stepExecution.getJobParameters().getLong("year").intValue());
+        parameters.put("month", stepExecution.getJobParameters().getLong("month").intValue());
         parameters.put("jobExecutionId", stepExecution.getJobExecutionId());
         employeeItemReader.setParameterValues(parameters);
         return employeeItemReader;
@@ -50,8 +50,8 @@ public class ItemReaderWriterConfig {
         employeeItemReader.setEntityManagerFactory(persistenceConfig.entityManagerFactory());
         employeeItemReader.setQueryString(TaxCalculation.FIND_BY_YEAR_AND_MONTH_QUERY);
         Map<String, Object> queryParams = new HashMap<>();
-        queryParams.put("month", month);
-        queryParams.put("year", year);
+        queryParams.put("year", year.intValue());
+        queryParams.put("month", month.intValue());
         queryParams.put("jobExecutionId", stepExecution.getJobExecutionId());
         employeeItemReader.setParameterValues(queryParams);
         return employeeItemReader;

@@ -9,11 +9,11 @@ public class SumOfTaxes {
     @Autowired
     MonthlyReportRepository monthlyReportRepository;
 
-    public double getSuccessSum(long year, long month) {
+    public double getSuccessSum(int year, int month) {
         return monthlyReportRepository.getSuccessSum(year, month).getAmount().doubleValue();
     }
 
-    public double getFailedSum(long year, long month) {
+    public double getFailedSum(int year, int month) {
         return monthlyReportRepository.getFailedSum(year, month).getAmount().doubleValue();
     }
 }

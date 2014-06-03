@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 
 @NamedQueries({
         @NamedQuery(name = MonthlyReport.FIND_BY_YEAR_AND_MONTH, query = MonthlyReport.FIND_BY_YEAR_AND_MONTH_QUERY),
-        @NamedQuery(name = MonthlyReport.FIND_BY_JOBEXECUTIONID, query = MonthlyReport.FIND_BY_JOBEXECUTIONID_QUERY),
+        @NamedQuery(name = MonthlyReport.FIND_BY_ID, query = MonthlyReport.FIND_BY_ID_QUERY),
         @NamedQuery(name = MonthlyReport.GET_SUCCESS_SUM, query = MonthlyReport.GET_SUCCESS_SUM_QUERY),
         @NamedQuery(name = MonthlyReport.GET_FAILED_SUM, query = MonthlyReport.GET_FAILED_SUM_QUERY),
 
@@ -21,12 +21,12 @@ import javax.validation.constraints.NotNull;
 public class MonthlyReport {
 
     public static final String FIND_BY_YEAR_AND_MONTH = "MonthlyReport.FIND_BY_YEAR_AND_MONTH";
-    public static final String FIND_BY_JOBEXECUTIONID_QUERY = "SELECT mr FROM MonthlyReport mr " +
-            " WHERE mr.jobExecutionId = :jobExecutionId";
-
-    public static final String FIND_BY_JOBEXECUTIONID = "MonthlyReport.FIND_BY_JOBEXECUTIONID";
     public static final String FIND_BY_YEAR_AND_MONTH_QUERY = "SELECT mr FROM MonthlyReport mr " +
-            " WHERE mr.month = :month AND mr.year = :year";
+            " WHERE  mr.year = :year AND mr.month = :month ORDER BY mr.year DESC, mr.month DESC";
+
+    public static final String FIND_BY_ID = "MonthlyReport.FIND_BY_ID";
+    public static final String FIND_BY_ID_QUERY = "SELECT mr FROM MonthlyReport mr " +
+            " WHERE mr.id = :id";
 
     public static final String GET_SUCCESS_SUM = "MonthlyReport.GET_SUCCESS_SUM";
     public static final String GET_SUCCESS_SUM_QUERY = "SELECT SUM(tc.tax) FROM TaxCalculation tc" +
@@ -38,48 +38,40 @@ public class MonthlyReport {
             " WHERE tc.month = :month and tc.year = :year " +
             " AND NOT EXISTS (SELECT pc FROM PayCheck pc WHERE pc.taxCalculation.id = tc.id)";
 
-    public static final String MONTH = "month";
+    public static final String ID = "id";
     public static final String YEAR = "year";
-    public static final String JOBEXECUTIONID = "jobExecutionId";
+    public static final String MONTH = "month";
 
     @Id
-    @GeneratedValue
+    @Column(name = MonthlyReport.ID)
     private Long id;
+
+    @NotNull
+    @Column(name = MonthlyReport.YEAR)
+    private int year;
 
     @Min(1)
     @Max(12)
     @NotNull
     @Column(name = MonthlyReport.MONTH)
-    private long month;
-
-    @NotNull
-    @Column(name = MonthlyReport.YEAR)
-    private long year;
+    private int month;
 
     @Lob
     private byte[] montlyReportPdf;
-
 
     @JsonSerialize(using = JodaDateTimeSerializer.class)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     @NotNull
     private DateTime calculationDate;
 
-    @Column(unique = true)
-    private Long jobExecutionId;
-
-    public static MonthlyReport from(long year, long month, byte[] montlyReportPdf, DateTime calculationDate, Long jobExecutionId) {
+    public static MonthlyReport from(Long id, int year, int month, byte[] montlyReportPdf, DateTime calculationDate) {
         MonthlyReport monthlyReport = new MonthlyReport();
+        monthlyReport.id = id;
         monthlyReport.year = year;
         monthlyReport.month = month;
         monthlyReport.montlyReportPdf = montlyReportPdf;
         monthlyReport.calculationDate = calculationDate;
-        monthlyReport.jobExecutionId = jobExecutionId;
         return monthlyReport;
-    }
-
-    public static MonthlyReport from(long year, long month, byte[] montlyReportPdf, DateTime calculationDate) {
-        return from(year, month, montlyReportPdf, calculationDate, null);
     }
 
     public Long getId() {
@@ -94,7 +86,7 @@ public class MonthlyReport {
         return year;
     }
 
-    public byte[] getMontlyReportPdf() {
+    public byte[] getMonthlyReportPdf() {
         return montlyReportPdf;
     }
 
@@ -102,11 +94,4 @@ public class MonthlyReport {
         return calculationDate;
     }
 
-    public Long getJobExecutionId() {
-        return jobExecutionId;
-    }
-
-    public void setJobExecutionId(Long jobExecutionId) {
-        this.jobExecutionId = jobExecutionId;
-    }
 }
