@@ -99,7 +99,7 @@ public class EmployeeRestControllerTest {
         List<EmployeeTaxTo> employeeTaxes = employeeRestController.getEmployeeTaxes(employeeId);
 
         assertThat(employeeTaxes).hasSize(1);
-        assertThat(employeeTaxes.get(0).getStatus()).isEqualTo("FAILURE");
+        assertThat(employeeTaxes.get(0).getStatus()).isEqualTo("IN PROGRESS");
         assertThat(employeeTaxes.get(0).getYear()).isEqualTo(year);
         assertThat(employeeTaxes.get(0).getMonth()).isEqualTo(month);
         assertThat(employeeTaxes.get(0).getTax()).isEqualTo(tax);
