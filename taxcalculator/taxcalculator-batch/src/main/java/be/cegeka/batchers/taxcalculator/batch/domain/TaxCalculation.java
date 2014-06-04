@@ -20,6 +20,7 @@ import javax.validation.constraints.NotNull;
         @NamedQuery(name = TaxCalculation.FIND_BY_EMPLOYEE, query = TaxCalculation.FIND_BY_EMPLOYEE_QUERY),
         @NamedQuery(name = TaxCalculation.GET_SUCCESS_SUM, query = TaxCalculation.GET_SUCCESS_SUM_QUERY),
         @NamedQuery(name = TaxCalculation.GET_FAILED_SUM, query = TaxCalculation.GET_FAILED_SUM_QUERY),
+        @NamedQuery(name = TaxCalculation.GET_UNPROCESSED_EMPLOYEES_BY_YEAR_AND_MONTH, query = TaxCalculation.GET_UNPROCESSED_EMPLOYEES_BY_YEAR_AND_MONTH_QUERY)
 })
 
 @Table(
@@ -47,6 +48,9 @@ public class TaxCalculation {
     public static final String GET_FAILED_SUM_QUERY = "SELECT SUM(tc.tax) FROM TaxCalculation tc" +
             " WHERE tc.month = :month and tc.year = :year " +
             " AND NOT EXISTS (SELECT pc FROM PayCheck pc WHERE pc.taxCalculation.id = tc.id)";
+
+    public static final String GET_UNPROCESSED_EMPLOYEES_BY_YEAR_AND_MONTH = "TaxCalculation.GET_UNPROCESSED_EMPLOYEES_BY_YEAR_AND_MONTH";
+    public static final String GET_UNPROCESSED_EMPLOYEES_BY_YEAR_AND_MONTH_QUERY = "SELECT emp FROM Employee emp WHERE NOT EXISTS (SELECT tc FROM TaxCalculation tc WHERE tc.month = :month AND tc.year = :year AND tc.employee.id = emp.id AND NOT (tc.jobExecutionId = :jobExecutionId))";
 
     public static final String EMPLOYEE = "employee_id";
     public static final String MONTH = "month";
