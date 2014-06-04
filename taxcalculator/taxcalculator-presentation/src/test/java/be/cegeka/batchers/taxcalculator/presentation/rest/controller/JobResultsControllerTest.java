@@ -1,4 +1,4 @@
-package be.cegeka.batchers.taxcalculator.presentation.rest;
+package be.cegeka.batchers.taxcalculator.presentation.rest.controller;
 
 import be.cegeka.batchers.taxcalculator.application.domain.reporting.MonthlyReport;
 import be.cegeka.batchers.taxcalculator.application.domain.reporting.MonthlyReportRepository;
