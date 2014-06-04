@@ -32,7 +32,7 @@ public class EmployeeJobPartitionerTest {
         }
         when(employeeService.getEmployeeIds(anyLong(), anyLong(), anyLong())).thenReturn(employeeIds);
 
-        Map<String,ExecutionContext> partitions = employeeJobPartitioner.partition(1);
+        Map<String, ExecutionContext> partitions = employeeJobPartitioner.partition(1);
 
         assertThat(partitions).hasSize(5);
 
@@ -61,7 +61,7 @@ public class EmployeeJobPartitionerTest {
         }
         when(employeeService.getEmployeeIds(anyLong(), anyLong(), anyLong())).thenReturn(employeeIds);
 
-        Map<String,ExecutionContext> partitions = employeeJobPartitioner.partition(1);
+        Map<String, ExecutionContext> partitions = employeeJobPartitioner.partition(1);
 
         assertThat(partitions).hasSize(5);
 

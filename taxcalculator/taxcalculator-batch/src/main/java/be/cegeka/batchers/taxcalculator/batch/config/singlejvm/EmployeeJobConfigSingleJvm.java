@@ -1,19 +1,18 @@
 package be.cegeka.batchers.taxcalculator.batch.config.singlejvm;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
-import be.cegeka.batchers.taxcalculator.application.domain.MonthlyTaxForEmployee;
 import be.cegeka.batchers.taxcalculator.application.domain.PayCheck;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
 import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceException;
-import be.cegeka.batchers.taxcalculator.batch.config.listeners.CreateMonthlyTaxForEmployeeListener;
-import be.cegeka.batchers.taxcalculator.batch.processor.CalculateTaxProcessor;
-import be.cegeka.batchers.taxcalculator.batch.processor.CallWebserviceProcessor;
-import be.cegeka.batchers.taxcalculator.batch.processor.SendPaycheckProcessor;
 import be.cegeka.batchers.taxcalculator.batch.config.ItemReaderWriterConfig;
 import be.cegeka.batchers.taxcalculator.batch.config.TempConfigToInitDB;
 import be.cegeka.batchers.taxcalculator.batch.config.listeners.ChangeStatusOnFailedStepsJobExecListener;
+import be.cegeka.batchers.taxcalculator.batch.config.listeners.CreateMonthlyTaxForEmployeeListener;
 import be.cegeka.batchers.taxcalculator.batch.config.listeners.FailedStepStepExecutionListener;
 import be.cegeka.batchers.taxcalculator.batch.config.skippolicy.MaxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy;
+import be.cegeka.batchers.taxcalculator.batch.processor.CalculateTaxProcessor;
+import be.cegeka.batchers.taxcalculator.batch.processor.CallWebserviceProcessor;
+import be.cegeka.batchers.taxcalculator.batch.processor.SendPaycheckProcessor;
 import be.cegeka.batchers.taxcalculator.batch.tasklet.JobResultsTasklet;
 import be.cegeka.batchers.taxcalculator.infrastructure.config.PropertyPlaceHolderConfig;
 import org.springframework.batch.core.Job;
@@ -87,7 +86,6 @@ public class EmployeeJobConfigSingleJvm extends DefaultBatchConfigurer {
                 .listener(changeStatusOnFailedStepsJobExecListener)
                 .build();
     }
-
 
 
     @Bean
