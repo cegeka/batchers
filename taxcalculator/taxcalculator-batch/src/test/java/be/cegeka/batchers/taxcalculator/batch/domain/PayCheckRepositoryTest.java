@@ -1,6 +1,8 @@
-package be.cegeka.batchers.taxcalculator.application.domain;
+package be.cegeka.batchers.taxcalculator.batch.domain;
 
-import be.cegeka.batchers.taxcalculator.application.infrastructure.IntegrationTest;
+import be.cegeka.batchers.taxcalculator.application.domain.*;
+import be.cegeka.batchers.taxcalculator.application.domain.EmployeeRepository;
+import be.cegeka.batchers.taxcalculator.batch.integration.AbstractIntegrationTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +14,7 @@ import static be.cegeka.batchers.taxcalculator.application.domain.EmployeeTestFi
 import static org.fest.assertions.api.Assertions.assertThat;
 
 
-public class PayCheckRepositoryTest extends IntegrationTest {
+public class PayCheckRepositoryTest extends AbstractBatchRepositoryIntegrationTest {
     public static final int SIZE_10_MB = 10_000_000;
     @Autowired
     EmployeeRepository employeeRepository;
@@ -57,7 +59,7 @@ public class PayCheckRepositoryTest extends IntegrationTest {
     public void testFindByTaxCalculation() throws Exception {
         PayCheck byTaxCalculation = payCheckRepository.findByTaxCalculation(january);
 
-        assertThat(byTaxCalculation).isEqualTo(payCheck);
+        assertThat(byTaxCalculation).isEqualsToByComparingFields(payCheck);
         assertThat(payCheck.getPayCheckPdf().length).isEqualTo(SIZE_10_MB);
     }
 }

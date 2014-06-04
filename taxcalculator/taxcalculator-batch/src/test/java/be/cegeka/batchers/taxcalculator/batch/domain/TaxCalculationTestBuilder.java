@@ -1,5 +1,6 @@
-package be.cegeka.batchers.taxcalculator.application.domain;
+package be.cegeka.batchers.taxcalculator.batch.domain;
 
+import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 

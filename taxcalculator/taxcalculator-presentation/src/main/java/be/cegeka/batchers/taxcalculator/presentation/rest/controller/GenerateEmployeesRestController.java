@@ -1,6 +1,6 @@
 package be.cegeka.batchers.taxcalculator.presentation.rest.controller;
 
-import be.cegeka.batchers.taxcalculator.application.domain.EmployeeGeneratorService;
+import be.cegeka.batchers.taxcalculator.application.service.EmployeeGeneratorService;
 import be.cegeka.batchers.taxcalculator.batch.service.SpringBatchRepository;
 import be.cegeka.batchers.taxcalculator.presentation.rest.model.GenerateEmployeesModel;
 import org.slf4j.Logger;

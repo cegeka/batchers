@@ -2,8 +2,8 @@ package be.cegeka.batchers.taxcalculator.batch.config.listeners;
 
 import be.cegeka.batchers.taxcalculator.application.domain.MonthlyTaxForEmployee;
 import be.cegeka.batchers.taxcalculator.application.domain.MonthlyTaxForEmployeeRepository;
-import be.cegeka.batchers.taxcalculator.application.domain.PayCheck;
-import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
+import be.cegeka.batchers.taxcalculator.batch.domain.PayCheck;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculation;
 import org.springframework.batch.core.ItemProcessListener;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.beans.factory.annotation.Autowired;

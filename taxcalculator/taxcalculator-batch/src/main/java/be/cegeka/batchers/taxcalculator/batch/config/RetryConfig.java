@@ -1,6 +1,6 @@
 package be.cegeka.batchers.taxcalculator.batch.config;
 
-import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceException;
+import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceNonFatalException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.backoff.ExponentialBackOffPolicy;
@@ -21,7 +21,7 @@ public class RetryConfig {
 
     public RetryTemplate createRetryTemplate() {
         Map<Class<? extends Throwable>, Boolean> exceptions = new HashMap<>();
-        exceptions.put(TaxWebServiceException.class, true);
+        exceptions.put(TaxWebServiceNonFatalException.class, true);
 
         RetryTemplate template = new RetryTemplate();
         SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy(maxAttempts, exceptions);

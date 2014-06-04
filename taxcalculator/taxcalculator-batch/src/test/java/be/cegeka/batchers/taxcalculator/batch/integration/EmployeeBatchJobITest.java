@@ -3,7 +3,13 @@ package be.cegeka.batchers.taxcalculator.batch.integration;
 import be.cegeka.batchers.taxcalculator.application.domain.*;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailSender;
 import be.cegeka.batchers.taxcalculator.application.domain.email.SmtpServerStub;
+import be.cegeka.batchers.taxcalculator.application.domain.reporting.MonthlyReportRepository;
+import be.cegeka.batchers.taxcalculator.application.domain.EmployeeRepository;
+import be.cegeka.batchers.taxcalculator.application.domain.MonthlyTaxForEmployeeRepository;
 import be.cegeka.batchers.taxcalculator.batch.config.skippolicy.MaxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy;
+import be.cegeka.batchers.taxcalculator.batch.domain.PayCheckRepository;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculationRepository;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxWebserviceCallResultRepository;
 import be.cegeka.batchers.taxcalculator.batch.service.reporting.SumOfTaxes;
 import org.junit.After;
 import org.junit.Before;
@@ -54,7 +60,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     @Autowired
     private TaxCalculationRepository taxCalculationRepository;
     @Autowired
-    private TaxServiceCallResultRepository taxServiceCallResultRepository;
+    private TaxWebserviceCallResultRepository taxWebserviceCallResultRepository;
     @Autowired
     private MonthlyReportRepository monthlyReportRepository;
     @Autowired
@@ -85,7 +91,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         monthlyTaxForEmployeeRepository.deleteAll();
         monthlyReportRepository.deleteAll();
         payCheckRepository.deleteAll();
-        taxServiceCallResultRepository.deleteAll();
+        taxWebserviceCallResultRepository.deleteAll();
         taxCalculationRepository.deleteAll();
         employeeRepository.deleteAll();
     }

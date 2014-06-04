@@ -1,7 +1,11 @@
 package be.cegeka.batchers.taxcalculator.presentation.rest.controller;
 
 import be.cegeka.batchers.taxcalculator.application.domain.*;
+import be.cegeka.batchers.taxcalculator.presentation.repositories.PresentationEmployeeRepository;
 import be.cegeka.batchers.taxcalculator.presentation.rest.model.EmployeeTaxTo;
+import be.cegeka.batchers.taxcalculator.application.domain.Employee;
+import be.cegeka.batchers.taxcalculator.application.service.EmployeeService;
+import be.cegeka.batchers.taxcalculator.application.domain.EmployeeTestBuilder;
 import be.cegeka.batchers.taxcalculator.to.EmployeeTo;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
@@ -36,13 +40,13 @@ public class EmployeeRestControllerTest {
     private EmployeeRestController employeeRestController;
 
     @Mock
-    private MonthlyTaxForEmployeeRepository monthlyTaxForEmployeeRepository;
-
-    @Mock
     private EmployeeService employeeServiceMock;
 
     @Mock
-    private TaxCalculationRepository taxCalculationRepositoryMock;
+    private MonthlyTaxForEmployeeRepository monthlyTaxForEmployeeRepository;
+
+    @Mock
+    private PresentationEmployeeRepository presentationEmployeeRepository;
 
     @Before
     public void setUp() throws Exception {
@@ -60,7 +64,7 @@ public class EmployeeRestControllerTest {
 
         EmployeeTo employeeTo = new EmployeeTo(employee.getFirstName(), employee.getLastName(), employee.getEmail(), employee.getIncome(), Money.parse("EUR 200"), 1L);
         String expectedJSON = new Jackson2JsonObjectMapper().toJson(asList(employeeTo));
-        when(employeeServiceMock.getEmployees(0, 10)).thenReturn(asList(employeeTo));
+        when(presentationEmployeeRepository.getEmployees(0, 10)).thenReturn(asList(employeeTo));
 
         MvcResult mvcResult = mockMvc.perform(get("/employees?page=0&pageSize=10").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -73,7 +77,7 @@ public class EmployeeRestControllerTest {
 
     @Test
     public void givenOneEmployee_whenGetEmployeeCount_thenReturnCorrectJson() throws Exception {
-        when(employeeServiceMock.getEmployeeCount()).thenReturn(1L);
+        when(presentationEmployeeRepository.getEmployeeCount()).thenReturn(1L);
 
         MvcResult mvcResult = mockMvc.perform(get("/employees/count").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -92,7 +96,7 @@ public class EmployeeRestControllerTest {
         Money tax = Money.of(CurrencyUnit.EUR, 10);
 
         Employee employee = new Employee();
-        TaxCalculation taxCalculation = TaxCalculation.from(1L, employee, year, month, tax);
+        MonthlyTaxForEmployee taxCalculation = MonthlyTaxForEmployee.from(employee, year, month, tax, (String)null);
         when(employeeServiceMock.getEmployee(employeeId)).thenReturn(employee);
         when(employeeServiceMock.getEmployeeTaxes(employeeId)).thenReturn(asList(taxCalculation));
 

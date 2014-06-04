@@ -1,7 +1,7 @@
 package be.cegeka.batchers.taxcalculator.batch.config.remotepartitioning;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
-import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculation;
 import be.cegeka.batchers.taxcalculator.batch.config.ItemReaderWriterConfig;
 import be.cegeka.batchers.taxcalculator.batch.config.TempConfigToInitDB;
 import be.cegeka.batchers.taxcalculator.batch.processor.CalculateTaxProcessor;

@@ -1,14 +1,14 @@
 package be.cegeka.batchers.taxcalculator.batch.service;
 
-import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
-import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculationTestBuilder;
-import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResult;
-import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResultRepository;
-import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceException;
+import be.cegeka.batchers.taxcalculator.application.domain.EmployeeTestBuilder;
+import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceNonFatalException;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculation;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculationTestBuilder;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxWebserviceCallResult;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxWebserviceCallResultRepository;
 import org.hamcrest.Matchers;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -35,14 +35,14 @@ public class TaxPaymentWebServiceFacadeTest {
     private TaxPaymentWebServiceFacade taxPaymentWebServiceFacade;
 
     @Mock
-    private Callable<TaxServiceCallResult> taxServiceCallResultCallable;
+    private Callable<Void> taxServiceCallResultCallable;
 
     @Mock
-    private TaxServiceCallResultRepository taxServiceCallResultRepository;
+    private TaxWebserviceCallResultRepository taxWebserviceCallResultRepository;
 
     private TaxCalculation taxCalculation;
 
-    private TaxServiceCallResult taxServiceCallResultValid;
+    private TaxWebserviceCallResult taxWebserviceCallResultValid;
 
     protected void expectExceptionWithMessage(Class<? extends Throwable> exception, String message) {
         thrown.expect(Matchers.allOf(Matchers.instanceOf(exception), Matchers.hasProperty("message", equalTo(message))));
@@ -52,35 +52,35 @@ public class TaxPaymentWebServiceFacadeTest {
     public void setUp() {
         Money money = Money.of(CurrencyUnit.EUR, 2000.0);
         taxCalculation = new TaxCalculationTestBuilder().withTax(money).build();
-        taxServiceCallResultValid = TaxServiceCallResult.from(taxCalculation, "", HttpStatus.OK.value(), "", DateTime.now(), true);
+        taxWebserviceCallResultValid = TaxWebserviceCallResult.callSucceeded(taxCalculation);
     }
 
     @Test
     public void whenPreviousCallResultIsFailed_andCallReturnsValid_callResultIsReturned() throws Exception {
-        when(taxServiceCallResultRepository.findSuccessfulByTaxCalculation(taxCalculation)).thenReturn(null);
-        when(taxServiceCallResultCallable.call()).thenReturn(taxServiceCallResultValid);
+        when(taxWebserviceCallResultRepository.findSuccessfulByTaxCalculation(taxCalculation)).thenReturn(null);
+        when(taxServiceCallResultCallable.call()).thenReturn(null);
 
-        assertThat(taxPaymentWebServiceFacade.callTaxService(taxCalculation, taxServiceCallResultCallable))
-                .isEqualTo(taxServiceCallResultValid);
+        TaxWebserviceCallResult actualTaxWebserviceCallResult = taxPaymentWebServiceFacade.callTaxService(taxCalculation, taxServiceCallResultCallable);
+        assertThat(actualTaxWebserviceCallResult.isSuccessfulResponse()).isTrue();
     }
 
     @Test
     public void whenPreviousCallResultIsFailed_andCallReturnsException_exceptionIsReturned() throws Exception {
-        when(taxServiceCallResultRepository.findSuccessfulByTaxCalculation(taxCalculation)).thenReturn(null);
-        when(taxServiceCallResultCallable.call()).thenThrow(new TaxWebServiceException("some message"));
+        when(taxWebserviceCallResultRepository.findSuccessfulByTaxCalculation(taxCalculation)).thenReturn(null);
+        when(taxServiceCallResultCallable.call()).thenThrow(new TaxWebServiceNonFatalException(new EmployeeTestBuilder().build(), Money.of(CurrencyUnit.EUR, 10), HttpStatus.INTERNAL_SERVER_ERROR, null, "boe"));
 
-        expectExceptionWithMessage(TaxWebServiceException.class, "some message");
+        expectExceptionWithMessage(TaxWebServiceNonFatalException.class, "Paying the taxes for employee with id null with amount EUR 10.00 failed because of boe");
 
         taxPaymentWebServiceFacade.callTaxService(taxCalculation, taxServiceCallResultCallable);
     }
 
     @Test
     public void whenPreviousCallResultIsValid_thenPreviousCallResultIsReturned() throws Exception {
-        when(taxServiceCallResultRepository.findSuccessfulByTaxCalculation(taxCalculation)).thenReturn(taxServiceCallResultValid);
+        when(taxWebserviceCallResultRepository.findSuccessfulByTaxCalculation(taxCalculation)).thenReturn(taxWebserviceCallResultValid);
         verify(taxServiceCallResultCallable, never()).call();
 
         assertThat(taxPaymentWebServiceFacade.callTaxService(taxCalculation, taxServiceCallResultCallable))
-                .isEqualTo(taxServiceCallResultValid);
+                .isEqualTo(taxWebserviceCallResultValid);
     }
 
 

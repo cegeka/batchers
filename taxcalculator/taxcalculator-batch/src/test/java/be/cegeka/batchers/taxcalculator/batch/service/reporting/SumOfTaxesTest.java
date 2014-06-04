@@ -1,6 +1,6 @@
 package be.cegeka.batchers.taxcalculator.batch.service.reporting;
 
-import be.cegeka.batchers.taxcalculator.application.domain.MonthlyReportRepository;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculationRepository;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.junit.Test;
@@ -20,28 +20,28 @@ public class SumOfTaxesTest {
     public static final int TEST_MONTH = 3;
 
     @InjectMocks
-    SumOfTaxes sumOfTaxes;
+    private SumOfTaxes sumOfTaxes;
 
     @Mock
-    private MonthlyReportRepository monthlyReportRepository;
+    private TaxCalculationRepository taxCalculationRepository;
 
     @Test
     public void testGetSuccessSum() throws Exception {
-        when(monthlyReportRepository.getSuccessSum(TEST_YEAR, TEST_MONTH)).thenReturn(MONEY_100Euro);
+        when(taxCalculationRepository.getSuccessSum(TEST_YEAR, TEST_MONTH)).thenReturn(MONEY_100Euro);
 
         double successSum = sumOfTaxes.getSuccessSum(TEST_YEAR, TEST_MONTH);
 
-        verify(monthlyReportRepository).getSuccessSum(TEST_YEAR, TEST_MONTH);
+        verify(taxCalculationRepository).getSuccessSum(TEST_YEAR, TEST_MONTH);
         assertTrue(successSum == MONEY_100Euro.getAmount().doubleValue());
     }
 
     @Test
     public void testGetFailedSum() throws Exception {
-        when(monthlyReportRepository.getFailedSum(TEST_YEAR, TEST_MONTH)).thenReturn(MONEY_100Euro);
+        when(taxCalculationRepository.getFailedSum(TEST_YEAR, TEST_MONTH)).thenReturn(MONEY_100Euro);
 
         double failedSum = sumOfTaxes.getFailedSum(TEST_YEAR, TEST_MONTH);
 
-        verify(monthlyReportRepository).getFailedSum(TEST_YEAR, TEST_MONTH);
+        verify(taxCalculationRepository).getFailedSum(TEST_YEAR, TEST_MONTH);
         assertTrue(failedSum == MONEY_100Euro.getAmount().doubleValue());
     }
 }
