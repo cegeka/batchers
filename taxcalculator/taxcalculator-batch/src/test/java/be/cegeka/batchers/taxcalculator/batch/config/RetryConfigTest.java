@@ -1,6 +1,9 @@
 package be.cegeka.batchers.taxcalculator.batch.config;
 
-import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceException;
+import be.cegeka.batchers.taxcalculator.application.domain.EmployeeTestBuilder;
+import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceNonFatalException;
+import org.joda.money.CurrencyUnit;
+import org.joda.money.Money;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +27,7 @@ public class RetryConfigTest {
     private RetryTemplate retryTemplate;
 
     @Mock
-    private RetryCallback<Object, TaxWebServiceException> retryCallback;
+    private RetryCallback<Object, TaxWebServiceNonFatalException> retryCallback;
 
     @Before
     public void setUp() throws Exception {
@@ -32,12 +35,12 @@ public class RetryConfigTest {
     }
 
     @Test
-    public void whenRetryCallbackFails_retryTimeIsExponential() {
+    public void whenRetryCallbackFails_retryTimeIsExponential() throws TaxWebServiceNonFatalException {
         long start = System.currentTimeMillis();
 
         when(retryCallback.doWithRetry(any(RetryContext.class)))
-                .thenThrow(new TaxWebServiceException("boe"))
-                .thenThrow(new TaxWebServiceException("boe"))
+                .thenThrow(new TaxWebServiceNonFatalException(new EmployeeTestBuilder().build(), Money.of(CurrencyUnit.EUR, 10), null, null, "boe"))
+                .thenThrow(new TaxWebServiceNonFatalException(new EmployeeTestBuilder().build(), Money.of(CurrencyUnit.EUR, 10), null, null, "boe"))
                 .thenReturn(any());
 
         retryTemplate.execute(retryCallback);

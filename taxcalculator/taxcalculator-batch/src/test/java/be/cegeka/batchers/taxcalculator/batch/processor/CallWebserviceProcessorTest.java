@@ -1,20 +1,20 @@
 package be.cegeka.batchers.taxcalculator.batch.processor;
 
 import be.cegeka.batchers.taxcalculator.application.domain.*;
-import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceException;
+import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceNonFatalException;
 import be.cegeka.batchers.taxcalculator.batch.config.RetryConfig;
-import be.cegeka.batchers.taxcalculator.batch.processor.CallWebserviceProcessor;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculation;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculationTestBuilder;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxWebserviceCallResult;
 import be.cegeka.batchers.taxcalculator.batch.service.TaxPaymentWebServiceFacade;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.http.HttpStatus;
 
 import java.util.concurrent.Callable;
 
@@ -37,27 +37,27 @@ public class CallWebserviceProcessorTest {
 
     private Employee employee;
     private TaxCalculation taxCalculation;
-    private TaxServiceCallResult taxServiceCallResult;
+    private TaxWebserviceCallResult taxWebserviceCallResult;
 
     @Before
     public void setUp() {
         employee = new EmployeeTestBuilder().build();
         Money money = Money.of(CurrencyUnit.EUR, 2000.0);
         taxCalculation = new TaxCalculationTestBuilder().withEmployee(employee).withTax(money).build();
-        taxServiceCallResult = TaxServiceCallResult.from(taxCalculation, "", HttpStatus.OK.value(), "", DateTime.now(), true);
+        taxWebserviceCallResult = TaxWebserviceCallResult.callSucceeded(taxCalculation);
     }
 
     @Test
     public void testProcessHappyPath_NoExceptionHasBeenThrownAndEmployeeIsReturned() throws Exception {
-        when(taxPaymentWebServiceFacade.callTaxService(eq(taxCalculation), any(Callable.class))).thenReturn(taxServiceCallResult);
+        when(taxPaymentWebServiceFacade.callTaxService(eq(taxCalculation), any(Callable.class))).thenReturn(taxWebserviceCallResult);
 
-        TaxServiceCallResult taxServiceCallResult1 = callWebserviceProcessor.process(taxCalculation);
-        assertThat(taxServiceCallResult1.getTaxCalculation().getEmployee()).isEqualTo(employee);
+        TaxWebserviceCallResult taxWebserviceCallResult1 = callWebserviceProcessor.process(taxCalculation);
+        assertThat(taxWebserviceCallResult1.getTaxCalculation().getEmployee()).isEqualTo(employee);
     }
 
-    @Test(expected = TaxWebServiceException.class)
+    @Test(expected = TaxWebServiceNonFatalException.class)
     public void testProcessBadResponse_ExceptionHasBeenThrownAndEmployeeIsReturned() throws Exception {
-        when(taxPaymentWebServiceFacade.callTaxService(eq(taxCalculation), any(Callable.class))).thenThrow(new TaxWebServiceException("boe"));
+        when(taxPaymentWebServiceFacade.callTaxService(eq(taxCalculation), any(Callable.class))).thenThrow(new TaxWebServiceNonFatalException(new EmployeeTestBuilder().build(), Money.of(CurrencyUnit.EUR, 10), null, null, "boe"));
 
         callWebserviceProcessor.process(taxCalculation);
     }

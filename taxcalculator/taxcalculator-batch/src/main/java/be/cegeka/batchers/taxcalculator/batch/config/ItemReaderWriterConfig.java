@@ -2,8 +2,8 @@ package be.cegeka.batchers.taxcalculator.batch.config;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.MonthlyTaxForEmployee;
-import be.cegeka.batchers.taxcalculator.application.domain.PayCheck;
-import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
+import be.cegeka.batchers.taxcalculator.batch.domain.PayCheck;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculation;
 import be.cegeka.batchers.taxcalculator.infrastructure.config.PersistenceConfig;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.configuration.annotation.StepScope;

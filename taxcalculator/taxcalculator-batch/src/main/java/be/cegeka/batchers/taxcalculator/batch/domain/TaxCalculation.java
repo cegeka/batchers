@@ -1,7 +1,10 @@
-package be.cegeka.batchers.taxcalculator.application.domain;
+package be.cegeka.batchers.taxcalculator.batch.domain;
 
+import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.util.jackson.JodaDateTimeSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.joda.money.Money;
@@ -14,7 +17,9 @@ import javax.validation.constraints.NotNull;
 
 @NamedQueries({
         @NamedQuery(name = TaxCalculation.FIND_BY_YEAR_AND_MONTH, query = TaxCalculation.FIND_BY_YEAR_AND_MONTH_QUERY),
-        @NamedQuery(name = TaxCalculation.FIND_BY_EMPLOYEE, query = TaxCalculation.FIND_BY_EMPLOYEE_QUERY)
+        @NamedQuery(name = TaxCalculation.FIND_BY_EMPLOYEE, query = TaxCalculation.FIND_BY_EMPLOYEE_QUERY),
+        @NamedQuery(name = TaxCalculation.GET_SUCCESS_SUM, query = TaxCalculation.GET_SUCCESS_SUM_QUERY),
+        @NamedQuery(name = TaxCalculation.GET_FAILED_SUM, query = TaxCalculation.GET_FAILED_SUM_QUERY),
 })
 
 @Table(
@@ -32,6 +37,16 @@ public class TaxCalculation {
     public static final String FIND_BY_EMPLOYEE = "TaxCalculation.FIND_BY_EMPLOYEE";
     public static final String FIND_BY_EMPLOYEE_QUERY = "SELECT tc FROM TaxCalculation tc " +
             " WHERE tc.employee.id = :employeeId";
+
+    public static final String GET_SUCCESS_SUM = "TaxCalculation.GET_SUCCESS_SUM";
+    public static final String GET_SUCCESS_SUM_QUERY = "SELECT SUM(tc.tax) FROM TaxCalculation tc" +
+            " WHERE tc.month = :month and tc.year = :year " +
+            " AND EXISTS (SELECT pc FROM PayCheck pc WHERE pc.taxCalculation.id = tc.id)";
+
+    public static final String GET_FAILED_SUM = "TaxCalculation.GET_FAILED_SUM";
+    public static final String GET_FAILED_SUM_QUERY = "SELECT SUM(tc.tax) FROM TaxCalculation tc" +
+            " WHERE tc.month = :month and tc.year = :year " +
+            " AND NOT EXISTS (SELECT pc FROM PayCheck pc WHERE pc.taxCalculation.id = tc.id)";
 
     public static final String EMPLOYEE = "employee_id";
     public static final String MONTH = "month";
@@ -109,4 +124,13 @@ public class TaxCalculation {
         return jobExecutionId;
     }
 
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this, "id");
+    }
+
+    @Override
+    public boolean equals(Object that) {
+        return EqualsBuilder.reflectionEquals(this, that, "id");
+    }
 }

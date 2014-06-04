@@ -1,7 +1,7 @@
 package be.cegeka.batchers.taxcalculator.presentation.rest.controller;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
-import be.cegeka.batchers.taxcalculator.application.domain.EmployeeService;
+import be.cegeka.batchers.taxcalculator.application.service.EmployeeService;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeTestBuilder;
 import be.cegeka.batchers.taxcalculator.to.EmployeeTo;
 import org.joda.money.Money;
@@ -51,7 +51,7 @@ public class EmployeeRestControllerTest {
 
         EmployeeTo employeeTo = new EmployeeTo(employee.getFirstName(), employee.getLastName(), employee.getEmail(), employee.getIncome(), Money.parse("EUR 200"));
         String expectedJSON = new Jackson2JsonObjectMapper().toJson(asList(employeeTo));
-        when(employeeServiceMock.getEmployees(0, 10)).thenReturn(asList(employeeTo));
+        //when(employeeServiceMock.getEmployees(0, 10)).thenReturn(asList(employeeTo));
 
         MvcResult mvcResult = mockMvc.perform(get("/employees?page=0&pageSize=10").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

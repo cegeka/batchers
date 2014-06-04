@@ -1,5 +1,11 @@
-package be.cegeka.batchers.taxcalculator.application.domain;
+package be.cegeka.batchers.taxcalculator.application.repositories;
 
+import be.cegeka.batchers.taxcalculator.application.domain.AbstractRepository;
+import be.cegeka.batchers.taxcalculator.application.domain.Employee;
+import be.cegeka.batchers.taxcalculator.application.domain.MonthlyTaxForEmployee;
+import be.cegeka.batchers.taxcalculator.application.domain.reporting.MonthlyReport;
+import org.joda.money.CurrencyUnit;
+import org.joda.money.Money;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -9,7 +15,7 @@ import javax.persistence.TypedQuery;
 import java.util.List;
 
 @Repository
-@Transactional(readOnly = false, isolation = Isolation.DEFAULT)
+@Transactional(readOnly = true, isolation = Isolation.DEFAULT)
 public class MonthlyTaxForEmployeeRepository extends AbstractRepository<MonthlyTaxForEmployee> {
 
     @Override

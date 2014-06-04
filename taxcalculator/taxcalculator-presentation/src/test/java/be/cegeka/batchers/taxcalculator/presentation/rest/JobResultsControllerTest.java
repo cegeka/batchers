@@ -1,7 +1,7 @@
 package be.cegeka.batchers.taxcalculator.presentation.rest;
 
-import be.cegeka.batchers.taxcalculator.application.domain.MonthlyReport;
-import be.cegeka.batchers.taxcalculator.application.domain.MonthlyReportRepository;
+import be.cegeka.batchers.taxcalculator.application.domain.reporting.MonthlyReport;
+import be.cegeka.batchers.taxcalculator.application.repositories.MonthlyReportRepository;
 import be.cegeka.batchers.taxcalculator.batch.service.JobResultsService;
 import be.cegeka.batchers.taxcalculator.presentation.rest.controller.JobResultsController;
 import org.joda.time.DateTime;

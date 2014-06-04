@@ -1,6 +1,11 @@
-package be.cegeka.batchers.taxcalculator.application.domain;
+package be.cegeka.batchers.taxcalculator.batch.repositories;
 
 
+import be.cegeka.batchers.taxcalculator.application.domain.AbstractRepository;
+import be.cegeka.batchers.taxcalculator.application.domain.Employee;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculation;
+import org.joda.money.CurrencyUnit;
+import org.joda.money.Money;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,5 +37,23 @@ public class TaxCalculationRepository extends AbstractRepository<TaxCalculation>
         byEmployee.setParameter("employeeId", employee.getId());
 
         return byEmployee.getResultList();
+    }
+
+    public Money getSuccessSum(int year, int month) {
+        Money sum = entityManager.createNamedQuery(TaxCalculation.GET_SUCCESS_SUM, Money.class)
+                .setParameter("month", month)
+                .setParameter("year", year)
+                .getSingleResult();
+
+        return sum == null ? Money.zero(CurrencyUnit.EUR) : sum;
+    }
+
+    public Money getFailedSum(int year, int month) {
+        Money sum = entityManager.createNamedQuery(TaxCalculation.GET_FAILED_SUM, Money.class)
+                .setParameter("month", month)
+                .setParameter("year", year)
+                .getSingleResult();
+
+        return sum == null ? Money.zero(CurrencyUnit.EUR) : sum;
     }
 }

@@ -1,7 +1,7 @@
 package be.cegeka.batchers.taxcalculator.batch.service.reporting;
 
-import be.cegeka.batchers.taxcalculator.application.domain.MonthlyReport;
-import be.cegeka.batchers.taxcalculator.application.domain.MonthlyReportRepository;
+import be.cegeka.batchers.taxcalculator.application.domain.reporting.MonthlyReport;
+import be.cegeka.batchers.taxcalculator.application.repositories.MonthlyReportRepository;
 import be.cegeka.batchers.taxcalculator.application.domain.pdf.PDFGeneratorService;
 import fr.opensagres.xdocreport.core.XDocReportException;
 import org.apache.pdfbox.pdmodel.PDDocument;
