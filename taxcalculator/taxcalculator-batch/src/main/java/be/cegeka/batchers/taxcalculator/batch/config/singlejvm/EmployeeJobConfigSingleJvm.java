@@ -1,10 +1,9 @@
 package be.cegeka.batchers.taxcalculator.batch.config.singlejvm;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
-import be.cegeka.batchers.taxcalculator.application.domain.MonthlyTaxForEmployee;
-import be.cegeka.batchers.taxcalculator.application.domain.PayCheck;
-import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
-import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceException;
+import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceNonFatalException;
+import be.cegeka.batchers.taxcalculator.batch.domain.PayCheck;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculation;
 import be.cegeka.batchers.taxcalculator.batch.config.listeners.CreateMonthlyTaxForEmployeeListener;
 import be.cegeka.batchers.taxcalculator.batch.processor.CalculateTaxProcessor;
 import be.cegeka.batchers.taxcalculator.batch.processor.CallWebserviceProcessor;
@@ -115,7 +114,7 @@ public class EmployeeJobConfigSingleJvm extends DefaultBatchConfigurer {
                 .<TaxCalculation, PayCheck>chunk(5)
                 .faultTolerant()
                 .skipPolicy(maxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy)
-                .noRollback(TaxWebServiceException.class)
+                .noRollback(TaxWebServiceNonFatalException.class)
                 .reader(itemReaderWriterConfig.wsCallItemReader(OVERRIDDEN_BY_EXPRESSION, OVERRIDDEN_BY_EXPRESSION, OVERRIDDEN_BY_EXPRESSION_STEP_EXECUTION))
                 .processor(compositeItemProcessor)
                 .writer(itemReaderWriterConfig.wsCallItemWriter())

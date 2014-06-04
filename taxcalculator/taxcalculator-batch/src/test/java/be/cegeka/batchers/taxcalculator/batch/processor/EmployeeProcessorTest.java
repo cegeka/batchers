@@ -2,10 +2,9 @@ package be.cegeka.batchers.taxcalculator.batch.processor;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeTestBuilder;
-import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculation;
 import be.cegeka.batchers.taxcalculator.application.service.RunningTimeService;
 import be.cegeka.batchers.taxcalculator.application.service.TaxCalculatorService;
-import be.cegeka.batchers.taxcalculator.batch.processor.CalculateTaxProcessor;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.junit.Before;

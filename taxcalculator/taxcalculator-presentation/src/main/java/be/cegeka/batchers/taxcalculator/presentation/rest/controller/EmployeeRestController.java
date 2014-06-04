@@ -1,6 +1,7 @@
 package be.cegeka.batchers.taxcalculator.presentation.rest.controller;
 
-import be.cegeka.batchers.taxcalculator.application.domain.EmployeeService;
+import be.cegeka.batchers.taxcalculator.application.domain.Employee;
+import be.cegeka.batchers.taxcalculator.application.service.EmployeeService;
 import be.cegeka.batchers.taxcalculator.to.EmployeeTo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,7 +20,7 @@ public class EmployeeRestController {
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public List<EmployeeTo> getEmployees(@RequestParam int page, @RequestParam int pageSize) {
+    public List<Employee> getEmployees(@RequestParam int page, @RequestParam int pageSize) {
         return employeeService.getEmployees(page, pageSize);
     }
 
