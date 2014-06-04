@@ -1,6 +1,7 @@
 package be.cegeka.batchers.taxcalculator.batch.config.remotepartitioning;
 
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeService;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -18,6 +19,7 @@ import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
+@Ignore("not yet used")
 public class EmployeeJobPartitionerTest {
     @Mock
     private EmployeeService employeeService;

@@ -32,6 +32,7 @@ import org.springframework.batch.core.partition.PartitionHandler;
 import org.springframework.batch.integration.partition.MessageChannelPartitionHandler;
 import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.integration.amqp.outbound.AmqpOutboundEndpoint;
@@ -52,9 +53,11 @@ public class EmployeeJobConfigMaster extends DefaultBatchConfigurer {
 
     public static final String EMPLOYEE_JOB = "employeeJobRemotePartitioning";
     public static final String TAX_CALCULATION_STEP = "taxCalculationMasterStep";
-    public static final String ROUTING_KEY_REPLIES = "vuln.replies";
     private static final String WS_CALL_STEP = "wsCallStep";
-    private static final String ROUTING_KEY_REQUESTS = "routingKeyRequests";
+
+    public static final String ROUTING_KEY_REQUESTS = "routingKeyRequests";
+    public static final String ROUTING_KEY_REPLIES = "routingKeyReplies";
+
     private static Long OVERRIDDEN_BY_EXPRESSION = null;
     private static StepExecution OVERRIDDEN_BY_EXPRESSION_STEP_EXECUTION = null;
 
@@ -82,6 +85,13 @@ public class EmployeeJobConfigMaster extends DefaultBatchConfigurer {
 
     @Autowired
     private EmployeeJobPartitioner employeeJobPartitioner;
+
+    @Value("${rabbitmq.ip}")
+    private String rabbitmqAddress;
+    @Value("${rabbitmq.username}")
+    private String rabbitmqUsername;
+    @Value("${rabbitmq.password}")
+    private String rabbitmqPassword;
 
 
     @Bean
@@ -196,7 +206,11 @@ public class EmployeeJobConfigMaster extends DefaultBatchConfigurer {
 
     @Bean
     private ConnectionFactory connectionFactory() {
-        return new CachingConnectionFactory();
+        CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
+        connectionFactory.setAddresses(rabbitmqAddress);
+        connectionFactory.setUsername(rabbitmqUsername);
+        connectionFactory.setPassword(rabbitmqPassword);
+        return connectionFactory;
     }
 
     @Bean
