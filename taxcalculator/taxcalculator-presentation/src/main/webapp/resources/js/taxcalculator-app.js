@@ -8,3 +8,10 @@ taxcalculator_app.config(['$routeProvider', function ($routeProvider) {
     .when('/employeeDetails/:employeeId', {templateUrl: 'partials/employee-details.html', controller: 'EmployeeDetailsCtrl'})
     .otherwise({redirectTo: '/'});
 }]);
+
+taxcalculator_app.filter('shortMonth', function () {
+  var shortMonths = ['IAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+  return function (input) {
+    return shortMonths[input - 1];
+  }
+})

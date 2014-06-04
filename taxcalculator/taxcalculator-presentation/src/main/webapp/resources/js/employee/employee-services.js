@@ -10,6 +10,12 @@ employeeService
     function ($resource) {
       return $resource('/taxcalculator/rest/generateEmployees/', {}, {'post': {method: 'POST'}});
     }
-  ]).factory('EmployeeDetailsResource', ['$resource', function ($resource) {
-    return $resource('/taxcalculator/rest/employees/:id/details', {}, {query: {method: 'GET', params: {id: '@id'}}})
-  }]);
+  ])
+  .factory('EmployeeDetailsResource', ['$resource', function ($resource) {
+    return $resource('/taxcalculator/rest/employees/:id/details', {}, {query: {method: 'GET', params: {id: '@id'}}});
+  }])
+  .factory('EmployeeTaxes', ['$resource',
+    function ($resource) {
+      return $resource('/taxcalculator/rest/employees/:id/taxes', {}, {query: {method: 'GET', params: {id: '@id'}, isArray: true}});
+    }
+  ]);

@@ -109,13 +109,15 @@ taxcalculatorControllers
     }
   ]);
 
-taxcalculatorControllers.controller('EmployeeDetailsCtrl', ['$scope', '$routeParams', 'EmployeeDetailsResource',
-  function ($scope, $routeParams, EmployeeDetailsResource) {
+taxcalculatorControllers.controller('EmployeeDetailsCtrl', ['$scope', '$routeParams', 'EmployeeDetailsResource', 'EmployeeTaxes',
+  function ($scope, $routeParams, EmployeeDetailsResource, EmployeeTaxes) {
 
     EmployeeDetailsResource.query({id: $routeParams.employeeId}, function (successData) {
       $scope.employee = successData;
     });
 
-    $scope.employee = {name: 'John', email: 'john@email.com'};
+    EmployeeTaxes.query({id: $routeParams.employeeId}, function (successData) {
+      $scope.taxes = successData;
+    })
   }
 ]);
