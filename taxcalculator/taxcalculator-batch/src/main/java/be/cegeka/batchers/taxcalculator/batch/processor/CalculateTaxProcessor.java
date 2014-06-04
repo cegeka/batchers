@@ -1,4 +1,4 @@
-package be.cegeka.batchers.taxcalculator.batch;
+package be.cegeka.batchers.taxcalculator.batch.processor;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
@@ -19,18 +19,18 @@ public class CalculateTaxProcessor extends StepExecutionListenerSupport implemen
     private static final Logger LOG = LoggerFactory.getLogger(CalculateTaxProcessor.class);
 
     @Autowired
-    TaxCalculatorService taxCalculatorService;
+    private TaxCalculatorService taxCalculatorService;
     @Value("#{jobParameters[year]}")
-    private long year;
+    private Long year;
     @Value("#{jobParameters[month]}")
-    private long month;
+    private Long month;
 
     private StepExecution stepExecution;
 
     @Override
     public TaxCalculation process(Employee employee) {
         LOG.info("Tax process: " + employee);
-        return taxCalculatorService.calculateTax(stepExecution.getJobExecutionId(), employee, year, month);
+        return taxCalculatorService.calculateTax(stepExecution.getJobExecutionId(), employee, year.intValue(), month.intValue());
     }
 
     @Override

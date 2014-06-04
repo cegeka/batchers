@@ -13,7 +13,7 @@ import javax.persistence.TypedQuery;
 @Transactional(readOnly = true, isolation = Isolation.DEFAULT)
 public class MonthlyReportRepository extends AbstractRepository<MonthlyReport> {
 
-    public MonthlyReport findByYearAndMonth(long year, long month) {
+    public MonthlyReport findByYearAndMonth(int year, int month) {
         TypedQuery<MonthlyReport> typedQuery = entityManager.createNamedQuery(MonthlyReport.FIND_BY_YEAR_AND_MONTH, MonthlyReport.class);
 
         typedQuery.setParameter("year", year);
@@ -22,10 +22,10 @@ public class MonthlyReportRepository extends AbstractRepository<MonthlyReport> {
         return typedQuery.getSingleResult();
     }
 
-    public MonthlyReport findByJobExecutionId(Long jobExecutionId) {
-        TypedQuery<MonthlyReport> typedQuery = entityManager.createNamedQuery(MonthlyReport.FIND_BY_JOBEXECUTIONID, MonthlyReport.class);
+    public MonthlyReport findById(Long id) {
+        TypedQuery<MonthlyReport> typedQuery = entityManager.createNamedQuery(MonthlyReport.FIND_BY_ID, MonthlyReport.class);
 
-        typedQuery.setParameter(MonthlyReport.JOBEXECUTIONID, jobExecutionId);
+        typedQuery.setParameter(MonthlyReport.ID, id);
 
         MonthlyReport monthlyReport;
         try {
@@ -37,7 +37,7 @@ public class MonthlyReportRepository extends AbstractRepository<MonthlyReport> {
         return monthlyReport;
     }
 
-    public Money getSuccessSum(long year, long month) {
+    public Money getSuccessSum(int year, int month) {
         Money sum = entityManager.createNamedQuery(MonthlyReport.GET_SUCCESS_SUM, Money.class)
                 .setParameter("month", month)
                 .setParameter("year", year)
@@ -46,7 +46,7 @@ public class MonthlyReportRepository extends AbstractRepository<MonthlyReport> {
         return sum == null ? Money.zero(CurrencyUnit.EUR) : sum;
     }
 
-    public Money getFailedSum(long year, long month) {
+    public Money getFailedSum(int year, int month) {
         Money sum = entityManager.createNamedQuery(MonthlyReport.GET_FAILED_SUM, Money.class)
                 .setParameter("month", month)
                 .setParameter("year", year)

@@ -12,8 +12,8 @@ public class TaxWebServiceException extends RuntimeException {
         super(message);
     }
 
-    public TaxWebServiceException(TaxServiceCallResult taxServiceCallResult) {
-        super();
+    public TaxWebServiceException(String message, TaxServiceCallResult taxServiceCallResult) {
+        super(message);
         this.taxServiceCallResult = taxServiceCallResult;
     }
 

@@ -25,8 +25,8 @@ import static org.mockito.Mockito.when;
 public class MonthlyTaxReportServiceTest {
     public static final double FAILED_AMOUNT = 450.1D;
     public static final double SUCCESS_AMOUNT = 600.1D;
-    public static final long TEST_YEAR = 2014;
-    public static final long TEST_MONTH = 5;
+    public static final int TEST_YEAR = 2014;
+    public static final int TEST_MONTH = 5;
 
     @InjectMocks
     MonthlyTaxReportService monthlyTaxReportService;
@@ -49,7 +49,7 @@ public class MonthlyTaxReportServiceTest {
 
     @Test
     public void generateReportWithCorrectData() throws IOException, XDocReportException {
-        byte[] pdfBytes = monthlyTaxReportService.generateReport(TEST_YEAR, TEST_MONTH);
+        byte[] pdfBytes = monthlyTaxReportService.generateReport(3L, TEST_YEAR, TEST_MONTH);
 
         PDDocument pdfDocument = PDDocument.load(new ByteArrayInputStream(pdfBytes));
         assertThat(pdfDocument)
@@ -67,12 +67,12 @@ public class MonthlyTaxReportServiceTest {
 
     @Test
     public void testResultsArePersisted() throws Exception {
-        byte[] expectedPdfBytes = monthlyTaxReportService.generateReport(TEST_YEAR, TEST_MONTH);
+        byte[] expectedPdfBytes = monthlyTaxReportService.generateReport(3L, TEST_YEAR, TEST_MONTH);
 
         verify(monthlyReportRepository).save(monthlyReportArgumentCaptor.capture());
 
         MonthlyReport value = monthlyReportArgumentCaptor.getValue();
-        assertThat(value.getMontlyReportPdf()).isEqualTo(expectedPdfBytes);
+        assertThat(value.getMonthlyReportPdf()).isEqualTo(expectedPdfBytes);
         assertThat(value.getYear()).isEqualTo(TEST_YEAR);
         assertThat(value.getMonth()).isEqualTo(TEST_MONTH);
         assertThat(value.getCalculationDate()).isNotNull();

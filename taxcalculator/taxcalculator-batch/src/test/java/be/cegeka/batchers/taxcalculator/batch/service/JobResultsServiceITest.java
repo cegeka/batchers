@@ -2,12 +2,15 @@ package be.cegeka.batchers.taxcalculator.batch.service;
 
 import be.cegeka.batchers.taxcalculator.batch.domain.JobResult;
 import be.cegeka.batchers.taxcalculator.batch.integration.AbstractIntegrationTest;
+import org.joda.time.DateTimeUtils;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Calendar;
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -18,10 +21,21 @@ public class JobResultsServiceITest extends AbstractIntegrationTest {
     @Autowired
     private JobLauncherTestUtils jobLauncherTestUtils;
 
+    @BeforeClass
+    public static void setUp() {
+        DateTimeUtils.setCurrentMillisSystem();
+    }
+
     @Test
     public void testJobResults() throws Exception {
-        jobLauncherTestUtils.launchJob(getJobParametersForMonth(5L));
-        jobLauncherTestUtils.launchJob(getJobParametersForMonth(6L));
+        Calendar calendar = Calendar.getInstance();
+        int currentMonth = calendar.get(Calendar.MONTH) + 1;
+
+        jobLauncherTestUtils.launchJob(getJobParametersForMonth(currentMonth, calendar.get(Calendar.YEAR)));
+
+        calendar.add(Calendar.MONTH, -1);
+        int previousMonth = calendar.get(Calendar.MONTH) + 1;
+        jobLauncherTestUtils.launchJob(getJobParametersForMonth(previousMonth, calendar.get(Calendar.YEAR)));
 
         List<JobResult> finishedJobResults = jobResultsService.getJobResults();
 
@@ -29,14 +43,13 @@ public class JobResultsServiceITest extends AbstractIntegrationTest {
                 .isNotEmpty()
                 .hasSize(6);
 
-        assertThat(finishedJobResults.get(5).getJobStartParams().getYear()).isEqualTo(2014);
-        assertThat(finishedJobResults.get(5).getJobStartParams().getMonth()).isEqualTo(6);
-        assertThat(finishedJobResults.get(5).getJobExecutionResults()).hasSize(1);
+        assertThat(finishedJobResults.get(0).getJobStartParams().getMonth()).isEqualTo(currentMonth);
+        assertThat(finishedJobResults.get(0).getJobExecutionResults()).hasSize(1);
     }
 
-    private JobParameters getJobParametersForMonth(long month) {
+    private JobParameters getJobParametersForMonth(long month, long year) {
         return new JobParametersBuilder()
-                .addLong("year", 2014L, true)
+                .addLong("year", year, true)
                 .addLong("month", month, true)
                 .toJobParameters();
     }

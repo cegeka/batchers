@@ -16,7 +16,7 @@ public class TaxCalculationRepository extends AbstractRepository<TaxCalculation>
         return entityManager.find(TaxCalculation.class, id);
     }
 
-    public List<TaxCalculation> find(long year, long month, long jobExecutionId) {
+    public List<TaxCalculation> find(int year, int month, long jobExecutionId) {
         TypedQuery<TaxCalculation> byMonthAndYear = entityManager.createNamedQuery(TaxCalculation.FIND_BY_YEAR_AND_MONTH, TaxCalculation.class);
 
         byMonthAndYear.setParameter("year", year);
