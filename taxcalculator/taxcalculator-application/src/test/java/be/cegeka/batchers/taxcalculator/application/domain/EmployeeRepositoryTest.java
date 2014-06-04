@@ -2,6 +2,7 @@ package be.cegeka.batchers.taxcalculator.application.domain;
 
 import be.cegeka.batchers.taxcalculator.application.infrastructure.IntegrationTest;
 import be.cegeka.batchers.taxcalculator.to.EmployeeTo;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -119,10 +120,11 @@ public class EmployeeRepositoryTest extends IntegrationTest {
     }
 
     @Test
+    @Ignore("not yet used")
     public void given5Employees_whenGetEmployeeIds_thenReturnCorrectList() {
         haveEmployees(5, false);
 
-        assertThat(employeeRepository.getEmployeeIds(2014, 5, 0)).isEqualTo(employeeIds);
+        assertThat(employeeRepository.getEmployeeIds(2014L, 5L, 0L)).isEqualTo(employeeIds);
     }
 
     private void haveEmployees(int employeeCount, boolean withTax) {
