@@ -21,14 +21,14 @@ public class JobResultsTasklet implements Tasklet {
     @Autowired
     MonthlyTaxReportService monthlyTaxReportService;
     @Value("#{jobParameters[year]}")
-    private long year;
+    private Long year;
     @Value("#{jobParameters[month]}")
-    private long month;
+    private Long month;
 
     @Override
     public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws IOException, XDocReportException {
-        long jobExecutionId = chunkContext.getStepContext().getStepExecution().getJobExecutionId();
-        monthlyTaxReportService.generateReport(year, month, jobExecutionId);
+        Long jobExecutionId = chunkContext.getStepContext().getStepExecution().getJobExecutionId();
+        monthlyTaxReportService.generateReport(jobExecutionId, year.intValue(), month.intValue());
         return FINISHED;
     }
 }

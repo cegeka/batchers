@@ -25,7 +25,6 @@ public class EmployeeService {
     @Autowired
     private TaxServiceCallResultRepository taxServiceCallResultRepository;
 
-
     public List<EmployeeTo> getEmployees(int page, int pageSize) {
         return employeeRepository.getEmployees(page, pageSize);
     }
@@ -39,7 +38,7 @@ public class EmployeeService {
     }
 
     @Transactional
-    public void truncate() {
+    public void deleteAll() {
         monthlyReportRepository.deleteAll();
         payCheckRepository.deleteAll();
         taxServiceCallResultRepository.deleteAll();
@@ -47,5 +46,9 @@ public class EmployeeService {
         // [SqlExceptionHelper] Cannot truncate a table referenced in a foreign key constraint
         taxCalculationRepository.deleteAll();
         employeeRepository.deleteAll();
+    }
+
+    public List<Long> getEmployeeIds(long year, long month, long jobExecutionId) {
+        return employeeRepository.getEmployeeIds(year, month, jobExecutionId);
     }
 }

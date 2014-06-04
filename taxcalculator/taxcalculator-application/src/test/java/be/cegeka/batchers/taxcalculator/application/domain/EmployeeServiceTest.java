@@ -35,5 +35,12 @@ public class EmployeeServiceTest {
         verifyNoMoreInteractions(employeeRepositoryMock);
     }
 
+    @Test
+    public void givenEmployees_whenGetEmployeeIds_thenRepositoryIsCalledWithCorrectParameters() {
+        employeeService.getEmployeeIds(2014, 5, 1);
+        verify(employeeRepositoryMock).getEmployeeIds(2014, 5, 1);
+        verifyNoMoreInteractions(employeeRepositoryMock);
+    }
+
 
 }

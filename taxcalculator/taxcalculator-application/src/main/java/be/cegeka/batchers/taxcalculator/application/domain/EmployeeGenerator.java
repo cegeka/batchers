@@ -8,14 +8,14 @@ import org.springframework.stereotype.Component;
 public class EmployeeGenerator {
     private static final Long GENERATED_COUNT = 21L;
 
-    @Value("${number.of.employees:21}")
+    @Value("${number.of.employees:12}")
     private Long numberOfEmployees;
 
     @Autowired
     private EmployeeGeneratorService employeeGeneratorService;
 
-    public void generateAll() {
-        employeeGeneratorService.generateEmployees(numberOfEmployees);
+    public void resetEmployees() {
+        employeeGeneratorService.resetEmployees(numberOfEmployees);
     }
 
     public Long getNumberOfEmployees() {

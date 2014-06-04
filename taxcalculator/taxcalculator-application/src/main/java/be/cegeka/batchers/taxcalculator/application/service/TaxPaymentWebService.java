@@ -42,23 +42,23 @@ public class TaxPaymentWebService {
             if ("OK".equals(taxServiceResponse.getStatus())) {
                 return getTaxServiceCallResult(taxCalculation, taxTo, webserviceResult.getStatusCode(), getJson(taxServiceResponse), true);
             } else {
-                throw handleServerException(taxCalculation, taxTo, webserviceResult.getStatusCode(), getJson(taxServiceResponse));
+                throw handleServerException(new IllegalStateException("Invalid response from server"), taxCalculation, taxTo, webserviceResult.getStatusCode(), getJson(taxServiceResponse));
             }
         } catch (HttpClientErrorException e) {
-            throw handleClientException(taxCalculation, taxTo, e.getStatusCode(), e.getResponseBodyAsString());
+            throw handleClientException(e, taxCalculation, taxTo, e.getStatusCode(), e.getResponseBodyAsString());
         } catch (HttpServerErrorException e) {
-            throw handleServerException(taxCalculation, taxTo, e.getStatusCode(), e.getResponseBodyAsString());
+            throw handleServerException(e, taxCalculation, taxTo, e.getStatusCode(), e.getResponseBodyAsString());
         } catch (ResourceAccessException e) {
-            throw handleServerException(taxCalculation, taxTo, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+            throw handleServerException(e, taxCalculation, taxTo, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
-    private RuntimeException handleClientException(TaxCalculation taxCalculation, TaxTo taxTo, HttpStatus httpStatus, String responseBody) {
-        return new TaxWebServiceFatalException(getTaxServiceCallResult(taxCalculation, taxTo, httpStatus, responseBody, false));
+    private RuntimeException handleClientException(Exception e, TaxCalculation taxCalculation, TaxTo taxTo, HttpStatus httpStatus, String responseBody) {
+        return new TaxWebServiceFatalException(e.getMessage(), getTaxServiceCallResult(taxCalculation, taxTo, httpStatus, responseBody, false));
     }
 
-    private RuntimeException handleServerException(TaxCalculation taxCalculation, TaxTo taxTo, HttpStatus httpStatus, String responseBody) {
-        return new TaxWebServiceException(getTaxServiceCallResult(taxCalculation, taxTo, httpStatus, responseBody, false));
+    private RuntimeException handleServerException(Exception e, TaxCalculation taxCalculation, TaxTo taxTo, HttpStatus httpStatus, String responseBody) {
+        return new TaxWebServiceException(e.getMessage(), getTaxServiceCallResult(taxCalculation, taxTo, httpStatus, responseBody, false));
     }
 
     private TaxServiceCallResult getTaxServiceCallResult(TaxCalculation taxCalculation, TaxTo taxTo, HttpStatus httpStatus, String responseBody, boolean isSuccessfulResponse) {

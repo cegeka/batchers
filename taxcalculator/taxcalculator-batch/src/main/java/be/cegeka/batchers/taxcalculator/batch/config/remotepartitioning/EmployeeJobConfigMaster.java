@@ -1,17 +1,24 @@
-package be.cegeka.batchers.taxcalculator.batch.config;
+package be.cegeka.batchers.taxcalculator.batch.config.remotepartitioning;
 
-import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.PayCheck;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
 import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceException;
-import be.cegeka.batchers.taxcalculator.batch.CalculateTaxProcessor;
-import be.cegeka.batchers.taxcalculator.batch.CallWebserviceProcessor;
-import be.cegeka.batchers.taxcalculator.batch.SendPaycheckProcessor;
+import be.cegeka.batchers.taxcalculator.batch.config.ItemReaderWriterConfig;
+import be.cegeka.batchers.taxcalculator.batch.config.TempConfigToInitDB;
 import be.cegeka.batchers.taxcalculator.batch.config.listeners.ChangeStatusOnFailedStepsJobExecListener;
 import be.cegeka.batchers.taxcalculator.batch.config.listeners.FailedStepStepExecutionListener;
 import be.cegeka.batchers.taxcalculator.batch.config.skippolicy.MaxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy;
+import be.cegeka.batchers.taxcalculator.batch.processor.CallWebserviceProcessor;
+import be.cegeka.batchers.taxcalculator.batch.processor.SendPaycheckProcessor;
 import be.cegeka.batchers.taxcalculator.batch.tasklet.JobResultsTasklet;
 import be.cegeka.batchers.taxcalculator.infrastructure.config.PropertyPlaceHolderConfig;
+import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepExecution;
@@ -21,10 +28,16 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.explore.support.JobExplorerFactoryBean;
-import org.springframework.batch.item.database.JpaPagingItemReader;
+import org.springframework.batch.core.partition.PartitionHandler;
+import org.springframework.batch.integration.partition.MessageChannelPartitionHandler;
 import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.integration.amqp.outbound.AmqpOutboundEndpoint;
+import org.springframework.integration.annotation.Aggregator;
+import org.springframework.integration.channel.DirectChannel;
+import org.springframework.integration.core.MessagingTemplate;
 
 import javax.sql.DataSource;
 import java.util.Arrays;
@@ -34,11 +47,16 @@ import java.util.Arrays;
 @ComponentScan(basePackages = "be.cegeka.batchers.taxcalculator.batch")
 @Import({PropertyPlaceHolderConfig.class, TempConfigToInitDB.class, ItemReaderWriterConfig.class})
 @PropertySource("classpath:taxcalculator-batch.properties")
-public class EmployeeJobConfig extends DefaultBatchConfigurer {
+@Profile(value = {"remotePartitioning", "testRemotePartitioning"})
+public class EmployeeJobConfigMaster extends DefaultBatchConfigurer {
 
-    public static final String EMPLOYEE_JOB = "employeeJob";
-    public static final String TAX_CALCULATION_STEP = "taxCalculationStep";
+    public static final String EMPLOYEE_JOB = "employeeJobRemotePartitioning";
+    public static final String TAX_CALCULATION_STEP = "taxCalculationMasterStep";
     private static final String WS_CALL_STEP = "wsCallStep";
+
+    private static final String ROUTING_KEY_REQUESTS = "routingKeyRequests";
+    public static final String ROUTING_KEY_REPLIES = "vuln.replies";
+
     private static Long OVERRIDDEN_BY_EXPRESSION = null;
     private static StepExecution OVERRIDDEN_BY_EXPRESSION_STEP_EXECUTION = null;
 
@@ -48,10 +66,6 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
     private StepBuilderFactory stepBuilders;
     @Autowired
     private ItemReaderWriterConfig itemReaderWriterConfig;
-    @Autowired
-    private JpaPagingItemReader<Employee> taxCalculatorItemReader;
-    @Autowired
-    private CalculateTaxProcessor calculateTaxProcessor;
     @Autowired
     private CallWebserviceProcessor callWebserviceProcessor;
     @Autowired
@@ -64,6 +78,12 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
     private FailedStepStepExecutionListener failedStepStepExecutionListener;
     @Autowired
     private MaxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy maxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy;
+
+    @Autowired
+    private TaskExecutor taskExecutor;
+
+    @Autowired
+    private EmployeeJobPartitioner employeeJobPartitioner;
 
 
     @Bean
@@ -80,11 +100,8 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
     public Step taxCalculationStep() {
         return stepBuilders
                 .get(TAX_CALCULATION_STEP)
-                .<Employee, TaxCalculation>chunk(5)
-                .reader(taxCalculatorItemReader)
-                .processor(calculateTaxProcessor)
-                .writer(itemReaderWriterConfig.taxCalculatorItemWriter())
-                .allowStartIfComplete(true)
+                .partitioner(TAX_CALCULATION_STEP, employeeJobPartitioner)
+                .partitionHandler(taxCalculationPartitionHandler())
                 .build();
     }
 
@@ -108,6 +125,7 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
                 .listener(failedStepStepExecutionListener)
                 .listener(sendPaycheckProcessor)
                 .allowStartIfComplete(true)
+                .taskExecutor(taskExecutor)
                 .build();
     }
 
@@ -125,5 +143,71 @@ public class EmployeeJobConfig extends DefaultBatchConfigurer {
         factory.setDataSource(dataSource);
         factory.afterPropertiesSet();
         return factory.getObject();
+    }
+
+    @Bean
+    @Aggregator(sendPartialResultsOnExpiry = true, sendTimeout = 60000000, inputChannel = "inboundStaging")
+    public PartitionHandler taxCalculationPartitionHandler() {
+        MessageChannelPartitionHandler messageChannelPartitionHandler = new MessageChannelPartitionHandler();
+        messageChannelPartitionHandler.setGridSize(1);
+        messageChannelPartitionHandler.setStepName(TAX_CALCULATION_STEP);
+
+        MessagingTemplate messagingGateway = new MessagingTemplate();
+        messagingGateway.setReceiveTimeout(60000000L);
+        messagingGateway.setDefaultChannel(new DirectChannel());
+        messageChannelPartitionHandler.setMessagingOperations(messagingGateway);
+
+        return messageChannelPartitionHandler;
+    }
+
+    @Bean
+    public AmqpOutboundEndpoint outboundEndpoint() {
+        return new AmqpOutboundEndpoint(amqpTemplate());
+    }
+
+    @Bean
+    private AmqpTemplate amqpTemplate() {
+        RabbitTemplate rabbitTemplate = new RabbitTemplate();
+        rabbitTemplate.setRoutingKey(ROUTING_KEY_REQUESTS);
+        rabbitTemplate.setConnectionFactory(connectionFactory());
+        rabbitTemplate.setReplyTimeout(60000000L);
+        rabbitTemplate.setReplyQueue(replyQueue());
+
+        return rabbitTemplate;
+    }
+
+    @Bean
+    public SimpleMessageListenerContainer replyListenerContainer() {
+        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
+        container.setConnectionFactory(connectionFactory());
+        container.setQueues(replyQueue());
+        container.setMessageListener(amqpTemplate());
+
+        return container;
+    }
+
+    @Bean
+    private Queue replyQueue() {
+        return new Queue(ROUTING_KEY_REPLIES);
+    }
+
+    @Bean
+    private Queue requestQueue() {
+        return new Queue(ROUTING_KEY_REQUESTS);
+    }
+
+    @Bean
+    private ConnectionFactory connectionFactory() {
+        return new CachingConnectionFactory();
+    }
+
+    @Bean
+    private DirectChannel inboundStaging() {
+        return new DirectChannel();
+    }
+
+    @Bean
+    private RabbitAdmin rabbitAdmin() {
+        return new RabbitAdmin(connectionFactory());
     }
 }

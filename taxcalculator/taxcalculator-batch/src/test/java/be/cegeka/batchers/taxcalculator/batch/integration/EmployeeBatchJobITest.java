@@ -20,6 +20,7 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static be.cegeka.batchers.taxcalculator.application.ApplicationAssertions.assertThat;
@@ -45,13 +46,15 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     @Autowired
     private SumOfTaxes sumOfTaxes;
     @Autowired
+    private EmployeeRepository employeeRepository;
+    @Autowired
+    private MonthlyTaxForEmployeeRepository monthlyTaxForEmployeeRepository;
+    @Autowired
     private PayCheckRepository payCheckRepository;
     @Autowired
     private TaxCalculationRepository taxCalculationRepository;
     @Autowired
     private TaxServiceCallResultRepository taxServiceCallResultRepository;
-    @Autowired
-    private EmployeeRepository employeeRepository;
     @Autowired
     private MonthlyReportRepository monthlyReportRepository;
     @Autowired
@@ -79,6 +82,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     @After
     public void tearDown() {
         SmtpServerStub.stop();
+        monthlyTaxForEmployeeRepository.deleteAll();
         monthlyReportRepository.deleteAll();
         payCheckRepository.deleteAll();
         taxServiceCallResultRepository.deleteAll();
@@ -205,6 +209,32 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     }
 
     @Test
+    public void whenTaxServiceReturnsSuccess_MonthlyTaxForEmployeeHasNoErrorAndAPaycheck() throws Exception {
+        Employee employee = haveOneEmployee();
+        respondOneTimeWithSuccess();
+
+        jobLauncherTestUtils.launchJob(jobParams);
+
+        List<MonthlyTaxForEmployee> monthlyTaxesForEmployee = monthlyTaxForEmployeeRepository.findByEmployee(employee);
+        assertThat(monthlyTaxesForEmployee).hasSize(1);
+        assertThat(monthlyTaxesForEmployee.get(0).hasErrorMessage()).isFalse();
+        assertThat(monthlyTaxesForEmployee.get(0).getMonthlyReportPdf()).isNotEmpty();
+    }
+
+    @Test
+    public void whenTaxServiceReturnsFailure_MonthlyTaxForEmployeeHasErrorAndNoPaycheck() throws Exception {
+        Employee employee = haveOneEmployee();
+        respondWithBadRequest(1);
+
+        jobLauncherTestUtils.launchJob(jobParams);
+
+        List<MonthlyTaxForEmployee> monthlyTaxesForEmployee = monthlyTaxForEmployeeRepository.findByEmployee(employee);
+        assertThat(monthlyTaxesForEmployee).hasSize(1);
+        assertThat(monthlyTaxesForEmployee.get(0).hasErrorMessage()).isTrue();
+        assertThat(monthlyTaxesForEmployee.get(0).getMonthlyReportPdf()).isNullOrEmpty();
+    }
+
+    @Test
     public void testSumOfSuccessTaxesIsCalculated() throws Exception {
         haveEmployees(2);
 
@@ -213,7 +243,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
 
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
 
-        assertThat(sumOfTaxes.getSuccessSum(YEAR, MONTH)).isEqualTo(200D);
+        assertThat(sumOfTaxes.getSuccessSum(YEAR.intValue(), MONTH.intValue())).isEqualTo(200D);
         verifyJob(jobExecution);
     }
 
@@ -227,7 +257,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
 
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
 
-        assertThat(sumOfTaxes.getSuccessSum(YEAR, MONTH)).isEqualTo(200D);
+        assertThat(sumOfTaxes.getSuccessSum(YEAR.intValue(), MONTH.intValue())).isEqualTo(200D);
         verifyJob(jobExecution);
     }
 
@@ -241,7 +271,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
 
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
 
-        assertThat(sumOfTaxes.getFailedSum(YEAR, MONTH)).isEqualTo(100D);
+        assertThat(sumOfTaxes.getFailedSum(YEAR.intValue(), MONTH.intValue())).isEqualTo(100D);
         verifyJob(jobExecution);
     }
 

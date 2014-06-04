@@ -48,7 +48,7 @@ public class TaxCalculationRepositoryTest extends IntegrationTest {
     @Test
     public void testFind() {
         //ACT
-        List<TaxCalculation> byYearAndMonth = taxCalculationRepository.find(2014L, 1L, 1L);
+        List<TaxCalculation> byYearAndMonth = taxCalculationRepository.find(2014, 1, 1L);
 
         //ASSERT
         assertThat(byYearAndMonth).containsOnly(gigelJanuary, ionelJanuary);
