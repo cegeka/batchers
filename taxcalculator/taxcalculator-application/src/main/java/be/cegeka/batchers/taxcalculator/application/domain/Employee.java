@@ -8,7 +8,6 @@ import javax.persistence.*;
 @NamedQueries({
         @NamedQuery(name = Employee.GET_ALL, query = Employee.GET_ALL_QUERY),
        // @NamedQuery(name = Employee.GET_EMPLOYEES_TOTAL_TAX_NAME, query = Employee.GET_EMPLOYEES_TOTAL_TAX_QUERY),
-        @NamedQuery(name = Employee.GET_UNPROCESSED_EMPLOYEES_BY_YEAR_AND_MONTH, query = Employee.GET_UNPROCESSED_EMPLOYEES_BY_YEAR_AND_MONTH_QUERY),
         @NamedQuery(name = Employee.GET_EMPLOYEE_COUNT, query = Employee.GET_EMPLOYEE_COUNT_QUERY)
 })
 
@@ -21,9 +20,6 @@ public class Employee {
 //    public static final String GET_EMPLOYEES_TOTAL_TAX_QUERY = "SELECT NEW be.cegeka.batchers.taxcalculator.to.EmployeeTo(e.firstName, e.lastName, e.email, e.income, " +
 //            "(select sum(t.tax) from TaxCalculation t where t.employee.id = e.id)) " +
 //            "FROM Employee e ORDER BY e.id";
-
-    public static final String GET_UNPROCESSED_EMPLOYEES_BY_YEAR_AND_MONTH = "TaxCalculation.GET_UNPROCESSED_EMPLOYEES_BY_YEAR_AND_MONTH";
-    public static final String GET_UNPROCESSED_EMPLOYEES_BY_YEAR_AND_MONTH_QUERY = "SELECT emp FROM Employee emp WHERE NOT EXISTS (SELECT mtfe FROM MonthlyTaxForEmployee mtfe WHERE mtfe.year = :year AND mtfe.month = :month AND mtfe.employee.id = emp.id AND mtfe.lastErrorMessage IS EMPTY)";
 
     public static final String GET_EMPLOYEE_COUNT = "Employee.getCount";
     public static final String GET_EMPLOYEE_COUNT_QUERY = "SELECT COUNT(e) FROM Employee e";
