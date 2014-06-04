@@ -13,14 +13,16 @@ jobresultController
         duration = moment.duration(millis);
         return duration.hours() + "h " + duration.minutes() + "m " + duration.seconds() + "s " + duration.milliseconds() + "ms"
       }
-      $scope.jobResults = JobResultsResource.query(
-        {},
-        function (successData) {
-        },
-        function (error) {
-          $scope.$emit("alert", {'alertClass': 'alert-danger', 'message': 'Could not start job'})
+        $scope.refreshJobResultsList = function () {
+            $scope.jobResults = JobResultsResource.query(
+                {},
+                function (successData) {
+                },
+                function (error) {
+                    $scope.$emit("alert", {'alertClass': 'alert-danger', 'message': 'Could not start job'})
+                }
+            );
         }
-      );
 
       $scope.runJob = function (job) {
         RunJobResource.run({year: job.jobStartParams.year, month: job.jobStartParams.month});
@@ -43,11 +45,15 @@ jobresultController
 
         client.subscribe("/jobinfo-updates", function (message) {
           var message = angular.fromJson(message.body);
+            if (message.status) {
+                $scope.refreshJobResultsList();
+            }
           $scope.model.messages.push(message);
           $scope.$apply();
         });
 
         client.send("/app/launch-job", {}, JSON.stringify({ 'message': 'test' }));
       });
+        $scope.refreshJobResultsList();
     }
   ]);
