@@ -10,7 +10,7 @@ taxcalculator_app.config(['$routeProvider', function ($routeProvider) {
 }]);
 
 taxcalculator_app.filter('shortMonth', function () {
-  var shortMonths = ['IAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+  var shortMonths = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
   return function (input) {
     return shortMonths[input - 1];
   }
