@@ -58,7 +58,8 @@ public class EmployeeRestController {
 
     private Function<TaxCalculation, EmployeeTaxTo> mapTaxCalculationToEmployeeTaxTo(Employee employee) {
         return taxCalculation -> {
-            String status = monthlyTaxForEmployeeRepository.find(employee, taxCalculation.getYear(), taxCalculation.getMonth()) != null ? "SUCCESS" : "FAILURE";
+            MonthlyTaxForEmployee monthlyTaxForEmployee = monthlyTaxForEmployeeRepository.find(employee, taxCalculation.getYear(), taxCalculation.getMonth());
+            String status = monthlyTaxForEmployee == null ? "IN PROGRESS" : monthlyTaxForEmployee.getMonthlyReportPdf() == null ? "FAILURE" : "SUCCESS";
             return new EmployeeTaxTo(taxCalculation.getYear(), taxCalculation.getMonth(), taxCalculation.getTax(), taxCalculation.getCalculationDate(), status);
         };
     }
