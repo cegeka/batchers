@@ -6,6 +6,7 @@ import javax.persistence.*;
         @NamedQuery(name = Employee.GET_ALL_NAME, query = Employee.GET_ALL_QUERY),
         @NamedQuery(name = Employee.GET_EMPLOYEES_TOTAL_TAX_NAME, query = Employee.GET_EMPLOYEES_TOTAL_TAX_QUERY),
         @NamedQuery(name = Employee.GET_UNPROCESSED_EMPLOYEES_BY_YEAR_AND_MONTH, query = Employee.GET_UNPROCESSED_EMPLOYEES_BY_YEAR_AND_MONTH_QUERY),
+        @NamedQuery(name = Employee.GET_UNPROCESSED_EMPLOYEES_IDS_BY_YEAR_AND_MONTH, query = Employee.GET_UNPROCESSED_EMPLOYEES_IDS_BY_YEAR_AND_MONTH_QUERY),
         @NamedQuery(name = Employee.GET_EMPLOYEE_COUNT, query = Employee.GET_EMPLOYEE_COUNT_QUERY)
 })
 
@@ -15,7 +16,6 @@ public class Employee {
     public static final String GET_ALL_QUERY = "SELECT e FROM Employee e";
 
     public static final String GET_EMPLOYEES_TOTAL_TAX_NAME = "Employee.getWithTotalTax";
-
     public static final String GET_EMPLOYEES_TOTAL_TAX_QUERY = "SELECT NEW be.cegeka.batchers.taxcalculator.to.EmployeeTo(e.firstName, e.lastName, e.email, e.income, " +
             "(select sum(t.tax) from TaxCalculation t where t.employee.id = e.id)) " +
             "FROM Employee e ORDER BY e.id";
@@ -25,6 +25,9 @@ public class Employee {
 
     public static final String GET_EMPLOYEE_COUNT = "Employee.getCount";
     public static final String GET_EMPLOYEE_COUNT_QUERY = "SELECT COUNT(e) FROM Employee e";
+
+    public static final String GET_UNPROCESSED_EMPLOYEES_IDS_BY_YEAR_AND_MONTH = "TaxCalculation.GET_UNPROCESSED_EMPLOYEES_IDS_BY_YEAR_AND_MONTH";
+    public static final String GET_UNPROCESSED_EMPLOYEES_IDS_BY_YEAR_AND_MONTH_QUERY = "SELECT emp.id FROM Employee emp WHERE NOT EXISTS (SELECT tc FROM TaxCalculation tc WHERE tc.month = :month AND tc.year = :year AND tc.employee.id = emp.id AND NOT (tc.jobExecutionId = :jobExecutionId)) ORDER BY emp.id";
 
 
     private Integer income;
