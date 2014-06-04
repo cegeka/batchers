@@ -41,11 +41,11 @@
             <div class="col-md-2">{{job.jobExecutionResults[0].startTime | date:'medium'}}</div>
             <div class="col-md-2">{{job.jobExecutionResults[0].status}}</div>
             <div class="col-md-2">
-                {{stepName}}<br/>
+                {{job.progress.stepName}}<br/>
 
-                <div class="progress progress-striped">
-                    <div class="progress-bar" role="progressbar" aria-valuenow="{{percentageComplete}}"
-                         aria-valuemin="0" aria-valuemax="100" style="width:{{percentageComplete}}%;">
+                <div class="progress progress-striped" ng-show="job.progress.visible">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="{{job.progress.percentageComplete}}"
+                         aria-valuemin="0" aria-valuemax="100" style="width:{{job.progress.percentageComplete}}%;">
                     </div>
                 </div>
             </div>

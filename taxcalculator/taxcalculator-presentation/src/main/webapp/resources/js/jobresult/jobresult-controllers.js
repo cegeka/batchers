@@ -51,8 +51,22 @@ jobresultController
             if (message.percentageComplete) {
                 $scope.percentageComplete = message.percentageComplete;
                 $scope.stepName = message.stepName;
+                function withNameYearAndMonth(element, index, array) {
+                    if (element.jobStartParams.year == message.jobStartRequest.year
+                        && element.jobStartParams.month == message.jobStartRequest.month) {
+                        return true;
+                    }
+                    return false;
+                };
+
+
+                var jobResult = $scope.jobResults.filter(withNameYearAndMonth)[0];
+                if (jobResult) {
+                    jobResult.progress = message;
+                    jobResult.progress.visible = jobResult.progress.percentageComplete < 100;
+                }
             }
-          $scope.$apply();
+            $scope.$apply();
         });
 
         client.send("/app/launch-job", {}, JSON.stringify({ 'message': 'test' }));
