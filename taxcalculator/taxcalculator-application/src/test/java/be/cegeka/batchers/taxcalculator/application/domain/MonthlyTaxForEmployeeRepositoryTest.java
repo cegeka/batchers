@@ -1,8 +1,6 @@
 package be.cegeka.batchers.taxcalculator.application.domain;
 
 import be.cegeka.batchers.taxcalculator.application.infrastructure.IntegrationTest;
-import org.fest.assertions.api.Assertions;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;

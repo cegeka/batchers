@@ -3,7 +3,6 @@ package be.cegeka.batchers.taxcalculator.batch.processor;
 import be.cegeka.batchers.taxcalculator.application.domain.*;
 import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceException;
 import be.cegeka.batchers.taxcalculator.batch.config.RetryConfig;
-import be.cegeka.batchers.taxcalculator.batch.processor.CallWebserviceProcessor;
 import be.cegeka.batchers.taxcalculator.batch.service.TaxPaymentWebServiceFacade;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
