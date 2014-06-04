@@ -40,7 +40,15 @@
             </div>
             <div class="col-md-2">{{job.jobExecutionResults[0].startTime | date:'medium'}}</div>
             <div class="col-md-2">{{job.jobExecutionResults[0].status}}</div>
-            <div class="col-md-2"></div>
+            <div class="col-md-2">
+                {{stepName}}<br/>
+
+                <div class="progress progress-striped">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="{{percentageComplete}}"
+                         aria-valuemin="0" aria-valuemax="100" style="width:{{percentageComplete}}%;">
+                    </div>
+                </div>
+            </div>
             <div class="col-md-2">
                 <button ng-click="runJob(job)"
                         ng-disabled="{{job.jobExecutionResults[0].status == 'COMPLETED' || job.jobExecutionResults[0].status == 'STARTED'}}"

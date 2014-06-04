@@ -124,6 +124,7 @@ public class EmployeeJobConfigSingleJvm extends DefaultBatchConfigurer {
                 .listener(maxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy)
                 .listener(failedStepStepExecutionListener)
                 .listener(sendPaycheckProcessor)
+                .listener(jobProgressListener)
                 .allowStartIfComplete(true)
                 .taskExecutor(taskExecutor)
                 .build();

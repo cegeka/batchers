@@ -48,7 +48,10 @@ jobresultController
             if (message.status) {
                 $scope.refreshJobResultsList();
             }
-          $scope.model.messages.push(message);
+            if (message.percentageComplete) {
+                $scope.percentageComplete = message.percentageComplete;
+                $scope.stepName = message.stepName;
+            }
           $scope.$apply();
         });
 
