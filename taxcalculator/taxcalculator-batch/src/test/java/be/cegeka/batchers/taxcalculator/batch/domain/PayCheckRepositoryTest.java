@@ -1,11 +1,8 @@
-package be.cegeka.batchers.taxcalculator.batch.repositories;
+package be.cegeka.batchers.taxcalculator.batch.domain;
 
 import be.cegeka.batchers.taxcalculator.application.domain.*;
-import be.cegeka.batchers.taxcalculator.application.repositories.EmployeeRepository;
-import be.cegeka.batchers.taxcalculator.batch.domain.PayCheck;
-import be.cegeka.batchers.taxcalculator.batch.domain.PayCheckTestBuilder;
-import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculation;
-import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculationTestBuilder;
+import be.cegeka.batchers.taxcalculator.application.domain.EmployeeRepository;
+import be.cegeka.batchers.taxcalculator.batch.integration.AbstractIntegrationTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

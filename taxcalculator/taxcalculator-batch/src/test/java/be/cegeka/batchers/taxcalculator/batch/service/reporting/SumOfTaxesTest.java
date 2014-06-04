@@ -1,6 +1,6 @@
 package be.cegeka.batchers.taxcalculator.batch.service.reporting;
 
-import be.cegeka.batchers.taxcalculator.batch.repositories.TaxCalculationRepository;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculationRepository;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.junit.Test;

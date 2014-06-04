@@ -3,7 +3,7 @@ package be.cegeka.batchers.taxcalculator.batch.service;
 import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceNonFatalException;
 import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculation;
 import be.cegeka.batchers.taxcalculator.batch.domain.TaxWebserviceCallResult;
-import be.cegeka.batchers.taxcalculator.batch.repositories.TaxWebserviceCallResultRepository;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxWebserviceCallResultRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;

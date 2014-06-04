@@ -1,8 +1,8 @@
 package be.cegeka.batchers.taxcalculator.application.service;
 
 import be.cegeka.batchers.taxcalculator.application.domain.*;
-import be.cegeka.batchers.taxcalculator.application.repositories.EmployeeRepository;
-import be.cegeka.batchers.taxcalculator.application.repositories.MonthlyTaxForEmployeeRepository;
+import be.cegeka.batchers.taxcalculator.application.domain.EmployeeRepository;
+import be.cegeka.batchers.taxcalculator.application.domain.MonthlyTaxForEmployeeRepository;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.junit.Test;

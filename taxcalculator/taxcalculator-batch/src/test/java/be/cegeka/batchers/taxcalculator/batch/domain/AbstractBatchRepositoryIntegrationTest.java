@@ -1,4 +1,4 @@
-package be.cegeka.batchers.taxcalculator.batch.repositories;
+package be.cegeka.batchers.taxcalculator.batch.domain;
 
 import be.cegeka.batchers.taxcalculator.application.infrastructure.TaxCalculatorSpringJUnitClassRunner;
 import be.cegeka.batchers.taxcalculator.infrastructure.config.PersistenceConfig;
@@ -20,7 +20,7 @@ public abstract class AbstractBatchRepositoryIntegrationTest {
 
     @Configuration
     @Import(value = {PropertyPlaceHolderConfig.class, PersistenceConfig.class,})
-    @ComponentScan(basePackages = {"be.cegeka.batchers.taxcalculator.application.repositories", "be.cegeka.batchers.taxcalculator.batch.repositories"})
+    @ComponentScan(basePackages = {"be.cegeka.batchers.taxcalculator.application", "be.cegeka.batchers.taxcalculator.batch.domain"})
     @PropertySource("classpath:taxcalculator-application.properties")
     static class TestConfiguration {
     }

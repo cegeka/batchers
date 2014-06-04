@@ -1,7 +1,7 @@
 package be.cegeka.batchers.taxcalculator.presentation.rest.controller;
 
 import be.cegeka.batchers.taxcalculator.application.domain.reporting.MonthlyReport;
-import be.cegeka.batchers.taxcalculator.application.repositories.MonthlyReportRepository;
+import be.cegeka.batchers.taxcalculator.application.domain.reporting.MonthlyReportRepository;
 import be.cegeka.batchers.taxcalculator.batch.domain.JobResult;
 import be.cegeka.batchers.taxcalculator.batch.service.JobResultsService;
 import org.springframework.beans.factory.annotation.Autowired;

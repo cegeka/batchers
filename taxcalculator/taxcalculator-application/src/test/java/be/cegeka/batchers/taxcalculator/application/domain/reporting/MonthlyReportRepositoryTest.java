@@ -1,7 +1,7 @@
-package be.cegeka.batchers.taxcalculator.application.repositories;
+package be.cegeka.batchers.taxcalculator.application.domain.reporting;
 
 import be.cegeka.batchers.taxcalculator.application.domain.reporting.MonthlyReport;
-import be.cegeka.batchers.taxcalculator.application.repositories.MonthlyReportRepository;
+import be.cegeka.batchers.taxcalculator.application.domain.reporting.MonthlyReportRepository;
 import be.cegeka.batchers.taxcalculator.application.infrastructure.IntegrationTest;
 import org.joda.time.DateTime;
 import org.junit.Test;

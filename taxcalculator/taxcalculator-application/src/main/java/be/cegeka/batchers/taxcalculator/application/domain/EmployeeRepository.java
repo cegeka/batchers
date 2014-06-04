@@ -1,4 +1,4 @@
-package be.cegeka.batchers.taxcalculator.application.repositories;
+package be.cegeka.batchers.taxcalculator.application.domain;
 
 import be.cegeka.batchers.taxcalculator.application.domain.AbstractRepository;
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;

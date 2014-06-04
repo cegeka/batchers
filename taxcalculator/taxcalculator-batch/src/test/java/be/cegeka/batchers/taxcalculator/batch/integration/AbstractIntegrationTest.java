@@ -25,6 +25,8 @@ import java.sql.SQLException;
 @RunWith(TaxCalculatorSpringJUnitClassRunner.class)
 @ActiveProfiles("test")
 @ContextConfiguration(classes = {EmployeeJobTestConfig.class, EmployeeJobConfigSingleJvm.class, EmployeeGeneratorTestConfig.class, WebserviceCallConfig.class, PropertyPlaceHolderConfig.class, PersistenceConfig.class})
+//why comment: we repeat the PersistenceConfig at the end because otherwise spring for some reason uses the DataSourceTransactionManager instead of our JpaTransactionManager defined in the persistenceConfig
+//It all boils down to the fact that the SpringBatch overrides our bean definition from PersistenceConfig with one provided by Spring Batch. Further investigation: set conditional breakpoint in ConcurrentHashMap.put with key "transactionManager"
 public abstract class AbstractIntegrationTest {
 
     @Autowired

@@ -6,7 +6,7 @@ import be.cegeka.batchers.taxcalculator.application.domain.email.EmailSender;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailTO;
 import be.cegeka.batchers.taxcalculator.application.domain.pdf.PDFGeneratorService;
 import be.cegeka.batchers.taxcalculator.batch.domain.*;
-import be.cegeka.batchers.taxcalculator.batch.repositories.TaxCalculationRepository;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculationRepository;
 import fr.opensagres.xdocreport.core.XDocReportException;
 import org.junit.Before;
 import org.junit.Test;

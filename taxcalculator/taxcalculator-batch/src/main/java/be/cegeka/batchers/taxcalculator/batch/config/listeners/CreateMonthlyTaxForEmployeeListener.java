@@ -1,7 +1,7 @@
 package be.cegeka.batchers.taxcalculator.batch.config.listeners;
 
 import be.cegeka.batchers.taxcalculator.application.domain.MonthlyTaxForEmployee;
-import be.cegeka.batchers.taxcalculator.application.repositories.MonthlyTaxForEmployeeRepository;
+import be.cegeka.batchers.taxcalculator.application.domain.MonthlyTaxForEmployeeRepository;
 import be.cegeka.batchers.taxcalculator.batch.domain.PayCheck;
 import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculation;
 import org.springframework.batch.core.ItemProcessListener;

@@ -1,12 +1,12 @@
-package be.cegeka.batchers.taxcalculator.application.repositories;
+package be.cegeka.batchers.taxcalculator.application.domain;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeTestBuilder;
 import be.cegeka.batchers.taxcalculator.application.domain.MonthlyTaxForEmployee;
 import be.cegeka.batchers.taxcalculator.application.domain.MonthlyTaxForEmployeeTestBuilder;
 import be.cegeka.batchers.taxcalculator.application.infrastructure.IntegrationTest;
-import be.cegeka.batchers.taxcalculator.application.repositories.EmployeeRepository;
-import be.cegeka.batchers.taxcalculator.application.repositories.MonthlyTaxForEmployeeRepository;
+import be.cegeka.batchers.taxcalculator.application.domain.EmployeeRepository;
+import be.cegeka.batchers.taxcalculator.application.domain.MonthlyTaxForEmployeeRepository;
 import org.joda.money.Money;
 import org.junit.Ignore;
 import org.junit.Test;

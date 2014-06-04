@@ -1,6 +1,6 @@
 package be.cegeka.batchers.taxcalculator.batch.service.reporting;
 
-import be.cegeka.batchers.taxcalculator.batch.repositories.TaxCalculationRepository;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

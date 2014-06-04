@@ -1,7 +1,7 @@
 package be.cegeka.batchers.taxcalculator.application.service;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
-import be.cegeka.batchers.taxcalculator.application.repositories.EmployeeRepository;
+import be.cegeka.batchers.taxcalculator.application.domain.EmployeeRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;

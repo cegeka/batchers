@@ -1,4 +1,4 @@
-package be.cegeka.batchers.taxcalculator.batch.repositories;
+package be.cegeka.batchers.taxcalculator.batch.domain;
 
 import be.cegeka.batchers.taxcalculator.application.domain.AbstractRepository;
 import be.cegeka.batchers.taxcalculator.batch.domain.PayCheck;

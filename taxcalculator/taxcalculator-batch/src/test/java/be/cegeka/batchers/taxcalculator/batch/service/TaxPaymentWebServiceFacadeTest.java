@@ -5,7 +5,7 @@ import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceNonFata
 import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculation;
 import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculationTestBuilder;
 import be.cegeka.batchers.taxcalculator.batch.domain.TaxWebserviceCallResult;
-import be.cegeka.batchers.taxcalculator.batch.repositories.TaxWebserviceCallResultRepository;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxWebserviceCallResultRepository;
 import org.hamcrest.Matchers;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
