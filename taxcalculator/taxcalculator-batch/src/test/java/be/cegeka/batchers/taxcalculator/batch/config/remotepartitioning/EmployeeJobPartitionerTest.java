@@ -19,7 +19,6 @@ import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-@Ignore("not yet used")
 public class EmployeeJobPartitionerTest {
     @Mock
     private EmployeeService employeeService;

@@ -119,7 +119,6 @@ public class EmployeeRepositoryTest extends IntegrationTest {
     }
 
     @Test
-    @Ignore("not yet used")
     public void given5Employees_whenGetEmployeeIds_thenReturnCorrectList() {
         haveEmployees(5, false);
 
