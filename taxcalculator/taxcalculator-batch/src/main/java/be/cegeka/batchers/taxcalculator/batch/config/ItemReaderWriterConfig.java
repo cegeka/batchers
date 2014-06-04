@@ -32,7 +32,7 @@ public class ItemReaderWriterConfig {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("year", stepExecution.getJobParameters().getLong("year").intValue());
         parameters.put("month", stepExecution.getJobParameters().getLong("month").intValue());
-        parameters.put("jobExecutionId", stepExecution.getJobExecutionId());
+        //parameters.put("jobExecutionId", stepExecution.getJobExecutionId());
         employeeItemReader.setParameterValues(parameters);
         return employeeItemReader;
     }
