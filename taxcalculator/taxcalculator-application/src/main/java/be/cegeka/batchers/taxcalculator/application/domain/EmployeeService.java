@@ -51,4 +51,8 @@ public class EmployeeService {
     public List<Long> getEmployeeIds(long year, long month, long jobExecutionId) {
         return employeeRepository.getEmployeeIds(year, month, jobExecutionId);
     }
+
+    public Employee getEmployee(Long employeeId) {
+        return employeeRepository.getBy(employeeId);
+    }
 }

@@ -27,8 +27,8 @@ public class EmployeeRepository extends AbstractRepository<Employee> {
     public List<Long> getEmployeeIds(long year, long month, long jobExecutionId) {
         TypedQuery<Long> namedQuery = entityManager
                 .createNamedQuery(Employee.GET_UNPROCESSED_EMPLOYEES_IDS_BY_YEAR_AND_MONTH, Long.class);
-        namedQuery.setParameter("year", year);
-        namedQuery.setParameter("month", month);
+        namedQuery.setParameter("year", (int) year);
+        namedQuery.setParameter("month", (int) month);
         namedQuery.setParameter("jobExecutionId", jobExecutionId);
 
         return namedQuery.getResultList();

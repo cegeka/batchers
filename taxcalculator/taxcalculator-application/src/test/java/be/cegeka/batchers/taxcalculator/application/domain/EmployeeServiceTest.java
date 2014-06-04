@@ -14,7 +14,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 public class EmployeeServiceTest {
 
     @InjectMocks
-    EmployeeService employeeService = new EmployeeService();
+    private EmployeeService employeeService = new EmployeeService();
 
     @Mock
     private EmployeeRepository employeeRepositoryMock;
@@ -42,5 +42,11 @@ public class EmployeeServiceTest {
         verifyNoMoreInteractions(employeeRepositoryMock);
     }
 
-
+    @Test
+    public void testGetEmployee() throws Exception {
+        long employeeId = 123L;
+        employeeService.getEmployee(employeeId);
+        verify(employeeRepositoryMock).getBy(employeeId);
+        verifyNoMoreInteractions(employeeRepositoryMock);
+    }
 }

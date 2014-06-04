@@ -1,13 +1,11 @@
 package be.cegeka.batchers.taxcalculator.presentation.rest.controller;
 
+import be.cegeka.batchers.taxcalculator.application.domain.EmployeeMapper;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeService;
 import be.cegeka.batchers.taxcalculator.to.EmployeeTo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -15,7 +13,9 @@ import java.util.List;
 @RequestMapping(value = "/employees")
 public class EmployeeRestController {
     @Autowired
-    EmployeeService employeeService;
+    private EmployeeService employeeService;
+    @Autowired
+    private EmployeeMapper employeeMapper;
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
@@ -27,5 +27,11 @@ public class EmployeeRestController {
     @ResponseBody
     public long getEmployeeCount() {
         return employeeService.getEmployeeCount();
+    }
+
+    @RequestMapping(value = "/{employeeId}/details", method = RequestMethod.GET)
+    @ResponseBody
+    public EmployeeTo getEmployeeDetails(@PathVariable(value = "employeeId") Long employeeId) {
+        return employeeMapper.toTo(employeeService.getEmployee(employeeId));
     }
 }
