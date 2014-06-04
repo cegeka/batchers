@@ -1,4 +1,4 @@
-var taxcalculator_app = angular.module('taxcalculatorApp', ['taxcalculatorServices', 'taxcalculatorControllers', 'taxcalculatorDirectives', 'ui.bootstrap', 'ngRoute']);
+var taxcalculator_app = angular.module('taxcalculatorApp', ['employee', 'jobresult', 'ui.bootstrap', 'ngRoute']);
 
 taxcalculator_app.config(['$routeProvider', function ($routeProvider) {
   $routeProvider

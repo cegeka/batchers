@@ -47,4 +47,8 @@ public class EmployeeService {
         taxCalculationRepository.deleteAll();
         employeeRepository.deleteAll();
     }
+
+    public List<Long> getEmployeeIds(long year, long month, long jobExecutionId) {
+        return employeeRepository.getEmployeeIds(year, month, jobExecutionId);
+    }
 }

@@ -1,6 +1,7 @@
 package be.cegeka.batchers.taxcalculator.batch.config;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
+import be.cegeka.batchers.taxcalculator.application.domain.MonthlyTaxForEmployee;
 import be.cegeka.batchers.taxcalculator.application.domain.PayCheck;
 import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
 import be.cegeka.batchers.taxcalculator.infrastructure.config.PersistenceConfig;
@@ -77,6 +78,13 @@ public class ItemReaderWriterConfig {
         JpaItemWriter<Employee> employeeJpaItemWriter = new JpaItemWriter<>();
         employeeJpaItemWriter.setEntityManagerFactory(persistenceConfig.entityManagerFactory());
         return employeeJpaItemWriter;
+    }
+
+    @Bean
+    public JpaItemWriter<MonthlyTaxForEmployee> monthlyTaxForEmployeeJpaItemWriter() {
+        JpaItemWriter<MonthlyTaxForEmployee> monthlyTaxForEmployeeJpaItemWriter = new JpaItemWriter<>();
+        monthlyTaxForEmployeeJpaItemWriter.setEntityManagerFactory(persistenceConfig.entityManagerFactory());
+        return monthlyTaxForEmployeeJpaItemWriter;
     }
 
 }

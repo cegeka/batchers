@@ -5,6 +5,8 @@ import be.cegeka.batchers.taxcalculator.to.EmployeeTo;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -19,6 +21,8 @@ public class EmployeeRepositoryTest extends IntegrationTest {
 
     @Autowired
     private TaxCalculationRepository taxCalculationRepository;
+
+    private List<Long> employeeIds = new ArrayList<>();
 
     @Test
     public void testRepositoryIsNotNull() throws Exception {
@@ -114,6 +118,13 @@ public class EmployeeRepositoryTest extends IntegrationTest {
         assertThat(employeeRepository.getEmployeeCount()).isEqualTo(20L);
     }
 
+    @Test
+    public void given5Employees_whenGetEmployeeIds_thenReturnCorrectList() {
+        haveEmployees(5, false);
+
+        assertThat(employeeRepository.getEmployeeIds(2014, 5, 0)).isEqualTo(employeeIds);
+    }
+
     private void haveEmployees(int employeeCount, boolean withTax) {
         for (int i = 0; i < employeeCount; i++) {
             Employee employee = new EmployeeTestBuilder()
@@ -122,6 +133,9 @@ public class EmployeeRepositoryTest extends IntegrationTest {
                     .withEmailAddress("john.smith" + i + "@gmail.com")
                     .build();
             employeeRepository.save(employee);
+
+            employeeIds.add(employee.getId());
+
             if (withTax) {
                 taxCalculationRepository.save(new TaxCalculationTestBuilder().withEmployee(employee).withYear(2014).withMonth(5).withTax(100.0).build());
             }
