@@ -11,6 +11,7 @@ import be.cegeka.batchers.taxcalculator.batch.config.ItemReaderWriterConfig;
 import be.cegeka.batchers.taxcalculator.batch.config.TempConfigToInitDB;
 import be.cegeka.batchers.taxcalculator.batch.config.listeners.ChangeStatusOnFailedStepsJobExecListener;
 import be.cegeka.batchers.taxcalculator.batch.config.listeners.FailedStepStepExecutionListener;
+import be.cegeka.batchers.taxcalculator.batch.config.listeners.JobProgressListener;
 import be.cegeka.batchers.taxcalculator.batch.config.listeners.JobStatusListener;
 import be.cegeka.batchers.taxcalculator.batch.config.skippolicy.MaxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy;
 import be.cegeka.batchers.taxcalculator.batch.tasklet.JobResultsTasklet;
@@ -73,6 +74,9 @@ public class EmployeeJobConfigSingleJvm extends DefaultBatchConfigurer {
     private MaxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy maxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy;
 
     @Autowired
+    private JobProgressListener jobProgressListener;
+
+    @Autowired
     private TaskExecutor taskExecutor;
 
 
@@ -95,8 +99,9 @@ public class EmployeeJobConfigSingleJvm extends DefaultBatchConfigurer {
                 .reader(taxCalculatorItemReader)
                 .processor(calculateTaxProcessor)
                 .writer(itemReaderWriterConfig.taxCalculatorItemWriter())
-                .allowStartIfComplete(true)
                 .taskExecutor(taskExecutor)
+                .listener(jobProgressListener)
+                .allowStartIfComplete(true)
                 .build();
     }
 
