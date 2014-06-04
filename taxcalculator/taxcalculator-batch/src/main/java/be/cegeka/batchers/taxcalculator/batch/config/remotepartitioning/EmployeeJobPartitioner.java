@@ -3,13 +3,11 @@ package be.cegeka.batchers.taxcalculator.batch.config.remotepartitioning;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeService;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.configuration.annotation.StepScope;
-import org.springframework.batch.core.listener.StepExecutionListenerSupport;
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;

@@ -53,11 +53,9 @@ public class EmployeeJobConfigMaster extends DefaultBatchConfigurer {
 
     public static final String EMPLOYEE_JOB = "employeeJobRemotePartitioning";
     public static final String TAX_CALCULATION_STEP = "taxCalculationMasterStep";
-    private static final String WS_CALL_STEP = "wsCallStep";
-
     public static final String ROUTING_KEY_REQUESTS = "routingKeyRequests";
     public static final String ROUTING_KEY_REPLIES = "routingKeyReplies";
-
+    private static final String WS_CALL_STEP = "wsCallStep";
     private static Long OVERRIDDEN_BY_EXPRESSION = null;
     private static StepExecution OVERRIDDEN_BY_EXPRESSION_STEP_EXECUTION = null;
 

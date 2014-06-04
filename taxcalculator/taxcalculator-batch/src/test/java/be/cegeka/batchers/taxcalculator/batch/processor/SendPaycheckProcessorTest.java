@@ -5,7 +5,6 @@ import be.cegeka.batchers.taxcalculator.application.domain.email.EmailAttachment
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailSender;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailTO;
 import be.cegeka.batchers.taxcalculator.application.domain.pdf.PDFGeneratorService;
-import be.cegeka.batchers.taxcalculator.batch.processor.SendPaycheckProcessor;
 import fr.opensagres.xdocreport.core.XDocReportException;
 import org.joda.time.DateTime;
 import org.junit.Before;

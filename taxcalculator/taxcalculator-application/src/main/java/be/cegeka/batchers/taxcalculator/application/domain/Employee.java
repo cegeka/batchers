@@ -18,7 +18,7 @@ public class Employee {
 
     public static final String GET_EMPLOYEES_TOTAL_TAX_NAME = "Employee.getWithTotalTax";
     public static final String GET_EMPLOYEES_TOTAL_TAX_QUERY = "SELECT NEW be.cegeka.batchers.taxcalculator.to.EmployeeTo(e.firstName, e.lastName, e.email, e.income, " +
-            "(select sum(t.tax) from TaxCalculation t where t.employee.id = e.id)) " +
+            "(select sum(t.tax) from TaxCalculation t where t.employee.id = e.id), e.id) " +
             "FROM Employee e ORDER BY e.id";
 
     public static final String GET_UNPROCESSED_EMPLOYEES_BY_YEAR_AND_MONTH = "TaxCalculation.GET_UNPROCESSED_EMPLOYEES_BY_YEAR_AND_MONTH";

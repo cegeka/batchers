@@ -34,7 +34,7 @@
         <tr class="employeeRow" ng-repeat="employee in employees | filter:searchQuery">
             <td>{{employee.firstName}}</td>
             <td>{{employee.lastName}}</td>
-            <td>{{employee.email}}</td>
+            <td><a href="#/employeeDetails/{{employee.id}}">{{employee.email}}</a></td>
             <td>{{employee.income}}</td>
             <td>{{employee.taxTotal}}</td>
         </tr>

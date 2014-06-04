@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.item.ExecutionContext;
 
 import java.util.ArrayList;
@@ -22,6 +23,8 @@ import static org.mockito.Mockito.when;
 public class EmployeeJobPartitionerTest {
     @Mock
     private EmployeeService employeeService;
+    @Mock
+    private StepExecution stepExecution;
 
     @InjectMocks
     private EmployeeJobPartitioner employeeJobPartitioner;
@@ -34,7 +37,7 @@ public class EmployeeJobPartitionerTest {
         }
         when(employeeService.getEmployeeIds(anyLong(), anyLong(), anyLong())).thenReturn(employeeIds);
 
-        Map<String,ExecutionContext> partitions = employeeJobPartitioner.partition(1);
+        Map<String, ExecutionContext> partitions = employeeJobPartitioner.partition(1);
 
         assertThat(partitions).hasSize(5);
 
@@ -63,7 +66,7 @@ public class EmployeeJobPartitionerTest {
         }
         when(employeeService.getEmployeeIds(anyLong(), anyLong(), anyLong())).thenReturn(employeeIds);
 
-        Map<String,ExecutionContext> partitions = employeeJobPartitioner.partition(1);
+        Map<String, ExecutionContext> partitions = employeeJobPartitioner.partition(1);
 
         assertThat(partitions).hasSize(5);
 
