@@ -17,6 +17,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.http.HttpStatus;
 
 import java.util.concurrent.Callable;
 
@@ -59,16 +60,16 @@ public class TaxPaymentWebServiceFacadeTest {
         when(taxWebserviceCallResultRepository.findSuccessfulByTaxCalculation(taxCalculation)).thenReturn(null);
         when(taxServiceCallResultCallable.call()).thenReturn(null);
 
-        assertThat(taxPaymentWebServiceFacade.callTaxService(taxCalculation, taxServiceCallResultCallable))
-                .isEqualTo(taxWebserviceCallResultValid);
+        TaxWebserviceCallResult actualTaxWebserviceCallResult = taxPaymentWebServiceFacade.callTaxService(taxCalculation, taxServiceCallResultCallable);
+        assertThat(actualTaxWebserviceCallResult.isSuccessfulResponse()).isTrue();
     }
 
     @Test
     public void whenPreviousCallResultIsFailed_andCallReturnsException_exceptionIsReturned() throws Exception {
         when(taxWebserviceCallResultRepository.findSuccessfulByTaxCalculation(taxCalculation)).thenReturn(null);
-        when(taxServiceCallResultCallable.call()).thenThrow(new TaxWebServiceNonFatalException(new EmployeeTestBuilder().build(), Money.of(CurrencyUnit.EUR, 10), null, null, "boe"));
+        when(taxServiceCallResultCallable.call()).thenThrow(new TaxWebServiceNonFatalException(new EmployeeTestBuilder().build(), Money.of(CurrencyUnit.EUR, 10), HttpStatus.INTERNAL_SERVER_ERROR, null, "boe"));
 
-        expectExceptionWithMessage(TaxWebServiceNonFatalException.class, "some message");
+        expectExceptionWithMessage(TaxWebServiceNonFatalException.class, "Paying the taxes for employee with id null with amount EUR 10.00 failed because of boe");
 
         taxPaymentWebServiceFacade.callTaxService(taxCalculation, taxServiceCallResultCallable);
     }

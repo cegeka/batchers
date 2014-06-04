@@ -31,20 +31,17 @@ public class CalculateTaxProcessorTest {
     @Mock
     private StepExecution stepExecution;
 
-    @Before
-    public void setUpCalculateTaxProcessor() {
-    }
-
     @Test
     public void testProcess() throws Exception {
         //GIVEN
-        setInternalState(calculateTaxProcessor, "year", 2014);
-        setInternalState(calculateTaxProcessor, "month", 5);
+        Employee employee = new EmployeeTestBuilder().withIncome(100).build();
+
+        setInternalState(calculateTaxProcessor, "year", 2014L);
+        setInternalState(calculateTaxProcessor, "month", 5L);
         setInternalState(calculateTaxProcessor, "stepExecution", stepExecution);
 
         when(stepExecution.getJobExecutionId()).thenReturn(123L);
-
-        Employee employee = new EmployeeTestBuilder().withIncome(100).build();
+        when(taxCalculatorService.calculateTax(employee)).thenReturn(Money.of(CurrencyUnit.EUR, 10));
 
         //WHEN
         TaxCalculation taxCalculation = calculateTaxProcessor.process(employee);

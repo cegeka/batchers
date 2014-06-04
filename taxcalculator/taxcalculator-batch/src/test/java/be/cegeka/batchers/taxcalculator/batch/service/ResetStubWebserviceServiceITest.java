@@ -14,7 +14,7 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-public class ResetStubWebserviceServiceTest extends AbstractIntegrationTest {
+public class ResetStubWebserviceServiceITest extends AbstractIntegrationTest {
 
     @Autowired
     private ResetStubWebserviceService resetStubWebserviceService;

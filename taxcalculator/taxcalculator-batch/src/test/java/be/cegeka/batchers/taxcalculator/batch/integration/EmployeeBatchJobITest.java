@@ -13,6 +13,7 @@ import be.cegeka.batchers.taxcalculator.batch.repositories.TaxWebserviceCallResu
 import be.cegeka.batchers.taxcalculator.batch.service.reporting.SumOfTaxes;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameter;
