@@ -17,8 +17,14 @@ import java.util.List;
 @Transactional(readOnly = true, isolation = Isolation.DEFAULT)
 public class TaxCalculationRepository extends AbstractRepository<TaxCalculation> {
 
-    public TaxCalculation getBy(Long id) {
-        return entityManager.find(TaxCalculation.class, id);
+    public List<Long> getUnprocessedEmployeeIds(long year, long month, long jobExecutionId) {
+        TypedQuery<Long> namedQuery = entityManager
+                .createNamedQuery(TaxCalculation.GET_UNPROCESSED_EMPLOYEES_IDS_BY_YEAR_AND_MONTH, Long.class);
+        namedQuery.setParameter("year", (int) year);
+        namedQuery.setParameter("month", (int) month);
+        namedQuery.setParameter("jobExecutionId", jobExecutionId);
+
+        return namedQuery.getResultList();
     }
 
     public List<TaxCalculation> find(int year, int month, long jobExecutionId) {

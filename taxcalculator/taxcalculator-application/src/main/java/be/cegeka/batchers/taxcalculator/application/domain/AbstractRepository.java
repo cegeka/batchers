@@ -34,7 +34,6 @@ public abstract class AbstractRepository<E> {
     }
 
     public Long count() {
-
         CriteriaBuilder criteriaBuilder = entityManagerFactory.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
 

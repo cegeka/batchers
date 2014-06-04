@@ -29,6 +29,10 @@ public class EmployeeService {
         return employeeRepository.getEmployees(page, pageSize);
     }
 
+    public Employee getEmployee(Long employeeId) {
+        return employeeRepository.getBy(employeeId);
+    }
+
     public Money getTotalAmountOfPaidTaxes(Employee employee) {
         return monthlyTaxForEmployeeRepository.findByEmployee(employee)
                 .stream()
@@ -38,16 +42,18 @@ public class EmployeeService {
                 .orElse(Money.zero(CurrencyUnit.EUR));
     }
 
-    public long getEmployeeCount() {
-        return employeeRepository.getEmployeeCount();
+    public List<MonthlyTaxForEmployee> getEmployeeTaxes(Long employeeId) {
+        Employee employee = employeeRepository.getBy(employeeId);
+        return monthlyTaxForEmployeeRepository.findByEmployee(employee);
     }
 
-    public Long count() {
+    public long getEmployeeCount() {
         return employeeRepository.count();
     }
 
     @Transactional
     public void deleteAll() {
+        monthlyTaxForEmployeeRepository.deleteAll();
         monthlyReportRepository.deleteAll();
         employeeRepository.deleteAll();
     }

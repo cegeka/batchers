@@ -8,11 +8,11 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.PersistenceException;
-import java.util.Arrays;
 import java.util.List;
 
 import static be.cegeka.batchers.taxcalculator.application.ApplicationAssertions.assertThat;
 import static be.cegeka.batchers.taxcalculator.application.domain.EmployeeTestFixture.anEmployee;
+import static java.util.Arrays.asList;
 
 public class TaxCalculationRepositoryTest extends AbstractBatchRepositoryIntegrationTest {
 
@@ -41,6 +41,11 @@ public class TaxCalculationRepositoryTest extends AbstractBatchRepositoryIntegra
 
         //ASSERT
         assertThat(byYearAndMonth).containsOnly(gigelJanuary, ionelJanuary);
+    }
+
+    @Test
+    public void noEmployeesSaved_emptyListIsReturned() {
+        assertThat(employeeRepository.count()).isZero();
     }
 
     @Test
@@ -112,6 +117,28 @@ public class TaxCalculationRepositoryTest extends AbstractBatchRepositoryIntegra
         assertThat(failedSum).isEqualTo(tax.getTax());
     }
 
+    @Test
+    public void given4EmployeesOneWithTax_whenGetUnprocessedEmployeeIds_thenReturnCorrectList() {
+        Employee employee1 = anEmployee();
+        Employee employee2 = anEmployee();
+        Employee employee3 = anEmployee();
+        Employee employee4 = anEmployee();
+
+        asList(employee1, employee2, employee3, employee4).forEach(employeeRepository::save);
+        TaxCalculation tax = new TaxCalculationTestBuilder()
+                .withEmployee(employee2)
+                .withYear(2014)
+                .withMonth(5)
+                .build();
+        taxCalculationRepository.save(tax);
+
+        assertThat(taxCalculationRepository.getUnprocessedEmployeeIds(2014L, 5L, 0L)).containsOnly(
+                employee1.getId(),
+                employee3.getId(),
+                employee4.getId()
+        );
+    }
+
     private void setupGigelAndIonel() {
         gigel = anEmployee();
         ionel = anEmployee();
@@ -125,7 +152,7 @@ public class TaxCalculationRepositoryTest extends AbstractBatchRepositoryIntegra
         ionelJanuary = new TaxCalculationTestBuilder().withEmployee(ionel).withMonth(1).withTax(12.0).build();
         ionelFebruary = new TaxCalculationTestBuilder().withEmployee(ionel).withMonth(2).withTax(13.0).build();
 
-        List<TaxCalculation> taxes = Arrays.asList(gigelJanuary, gigelFebruary, ionelJanuary, ionelFebruary);
+        List<TaxCalculation> taxes = asList(gigelJanuary, gigelFebruary, ionelJanuary, ionelFebruary);
         taxes.forEach(taxCalculationRepository::save);
     }
 }

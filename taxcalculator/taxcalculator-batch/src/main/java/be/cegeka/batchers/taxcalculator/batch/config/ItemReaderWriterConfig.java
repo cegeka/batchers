@@ -42,7 +42,7 @@ public class ItemReaderWriterConfig {
     public JpaPagingItemReader<Employee> taxCalculatorItemReaderSlave(@Value("#{stepExecution}") StepExecution stepExecution) {
         JpaPagingItemReader<Employee> employeeItemReader = new JpaPagingItemReader<>();
         employeeItemReader.setEntityManagerFactory(persistenceConfig.entityManagerFactory());
-        employeeItemReader.setQueryString(Employee.GET_UNPROCESSED_EMPLOYEES_BY_YEAR_AND_MONTH_QUERY_SLAVE);
+        employeeItemReader.setQueryString(TaxCalculation.GET_UNPROCESSED_EMPLOYEES_BY_YEAR_AND_MONTH_QUERY_SLAVE);
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("year", stepExecution.getJobParameters().getLong("year").intValue());
         parameters.put("month", stepExecution.getJobParameters().getLong("month").intValue());

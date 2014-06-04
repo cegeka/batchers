@@ -1,5 +1,6 @@
 package be.cegeka.batchers.taxcalculator.batch.domain;
 
+import be.cegeka.batchers.taxcalculator.application.config.EmployeeGeneratorTestConfig;
 import be.cegeka.batchers.taxcalculator.application.infrastructure.TaxCalculatorSpringJUnitClassRunner;
 import be.cegeka.batchers.taxcalculator.infrastructure.config.PersistenceConfig;
 import be.cegeka.batchers.taxcalculator.infrastructure.config.PropertyPlaceHolderConfig;
@@ -19,8 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 public abstract class AbstractBatchRepositoryIntegrationTest {
 
     @Configuration
-    @Import(value = {PropertyPlaceHolderConfig.class, PersistenceConfig.class,})
-    @ComponentScan(basePackages = {"be.cegeka.batchers.taxcalculator.application", "be.cegeka.batchers.taxcalculator.batch.domain"})
+    @Import(value = {EmployeeGeneratorTestConfig.class, PropertyPlaceHolderConfig.class, PersistenceConfig.class,})
+    @ComponentScan(basePackages = {"be.cegeka.batchers.taxcalculator.batch.domain"})
     @PropertySource("classpath:taxcalculator-application.properties")
     static class TestConfiguration {
     }

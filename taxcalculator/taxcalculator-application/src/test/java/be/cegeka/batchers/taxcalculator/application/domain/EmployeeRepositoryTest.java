@@ -22,9 +22,6 @@ public class EmployeeRepositoryTest extends IntegrationTest {
     @Autowired
     private EmployeeRepository employeeRepository;
 
-    @Autowired
-    private TaxCalculationRepository taxCalculationRepository;
-
     private List<Long> employeeIds = new ArrayList<>();
 
     @Test
@@ -118,17 +115,9 @@ public class EmployeeRepositoryTest extends IntegrationTest {
     public void given20Employees_whenGetCount_thenEmployeeCountIs20() {
         haveEmployees(20);
 
-        assertThat(employeeRepository.getEmployeeCount()).isEqualTo(20L);
+        assertThat(employeeRepository.count()).isEqualTo(20L);
     }
 
-    @Test
-    public void given5Employees_whenGetEmployeeIds_thenReturnCorrectList() {
-        haveEmployees(5, false);
-
-        assertThat(employeeRepository.getEmployeeIds(2014L, 5L, 0L)).isEqualTo(employeeIds);
-    }
-
-    private void haveEmployees(int employeeCount, boolean withTax) {
     private void haveEmployees(int employeeCount) {
         for (int i = 0; i < employeeCount; i++) {
             Employee employee = new EmployeeTestBuilder()
@@ -139,10 +128,6 @@ public class EmployeeRepositoryTest extends IntegrationTest {
             employeeRepository.save(employee);
 
             employeeIds.add(employee.getId());
-
-            if (withTax) {
-                taxCalculationRepository.save(new TaxCalculationTestBuilder().withEmployee(employee).withYear(2014).withMonth(5).withTax(100.0).build());
-            }
         }
     }
 

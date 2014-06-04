@@ -1,6 +1,8 @@
 package be.cegeka.batchers.taxcalculator.presentation.rest.controller;
 
 import be.cegeka.batchers.taxcalculator.application.domain.*;
+import be.cegeka.batchers.taxcalculator.application.service.EmployeeService;
+import be.cegeka.batchers.taxcalculator.presentation.repositories.PresentationEmployeeRepository;
 import be.cegeka.batchers.taxcalculator.presentation.rest.model.EmployeeTaxTo;
 import be.cegeka.batchers.taxcalculator.to.EmployeeTo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,37 +18,39 @@ import static java.util.Comparator.comparing;
 @Controller
 @RequestMapping(value = "/employees")
 public class EmployeeRestController {
+
+    private static final Function<EmployeeTaxTo, Integer> onMonth = employeeTaxTo -> employeeTaxTo.getMonth();
+
     @Autowired
     private EmployeeService employeeService;
     @Autowired
-    private EmployeeMapper employeeMapper;
+    private PresentationEmployeeRepository presentationEmployeeRepository;
     @Autowired
     private MonthlyTaxForEmployeeRepository monthlyTaxForEmployeeRepository;
-    private Function<EmployeeTaxTo, Integer> onMonth = employeeTaxTo -> employeeTaxTo.getMonth();
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public List<EmployeeTo> getEmployees(@RequestParam int page, @RequestParam int pageSize) {
-        return employeeService.getEmployees(page, pageSize);
+        return presentationEmployeeRepository.getEmployees(page, pageSize);
     }
 
     @RequestMapping(value = "/count", method = RequestMethod.GET)
     @ResponseBody
     public long getEmployeeCount() {
-        return employeeService.getEmployeeCount();
+        return presentationEmployeeRepository.getEmployeeCount();
     }
 
     @RequestMapping(value = "/{employeeId}/details", method = RequestMethod.GET)
     @ResponseBody
     public EmployeeTo getEmployeeDetails(@PathVariable(value = "employeeId") Long employeeId) {
-        return employeeMapper.toTo(employeeService.getEmployee(employeeId));
+        return presentationEmployeeRepository.getEmployee(employeeId);
     }
 
     @RequestMapping(value = "/{employeeId}/taxes", method = RequestMethod.GET)
     @ResponseBody
     public List<EmployeeTaxTo> getEmployeeTaxes(@PathVariable(value = "employeeId") Long employeeId) {
         Employee employee = employeeService.getEmployee(employeeId);
-        List<TaxCalculation> employeeTaxes = employeeService.getEmployeeTaxes(employeeId);
+        List<MonthlyTaxForEmployee> employeeTaxes = employeeService.getEmployeeTaxes(employeeId);
         List<EmployeeTaxTo> employeeTaxTos = employeeTaxes
                 .stream()
                 .map(mapTaxCalculationToEmployeeTaxTo(employee))
@@ -56,7 +60,7 @@ public class EmployeeRestController {
         return employeeTaxTos;
     }
 
-    private Function<TaxCalculation, EmployeeTaxTo> mapTaxCalculationToEmployeeTaxTo(Employee employee) {
+    private Function<MonthlyTaxForEmployee, EmployeeTaxTo> mapTaxCalculationToEmployeeTaxTo(Employee employee) {
         return taxCalculation -> {
             MonthlyTaxForEmployee monthlyTaxForEmployee = monthlyTaxForEmployeeRepository.find(employee, taxCalculation.getYear(), taxCalculation.getMonth());
             String status = monthlyTaxForEmployee == null ? "IN PROGRESS" : monthlyTaxForEmployee.getMonthlyReportPdf() == null ? "FAILURE" : "SUCCESS";

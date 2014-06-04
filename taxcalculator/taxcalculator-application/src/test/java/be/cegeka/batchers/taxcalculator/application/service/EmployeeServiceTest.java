@@ -21,9 +21,10 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EmployeeServiceTest {
+    public static final long EMPLOYEE_ID = 123L;
 
     @InjectMocks
-    EmployeeService employeeService = new EmployeeService();
+    private EmployeeService employeeService = new EmployeeService();
 
     @Mock
     private EmployeeRepository employeeRepositoryMock;
@@ -42,8 +43,26 @@ public class EmployeeServiceTest {
     public void givenEmployees_whenGetEmployeeCount_thenRepositoryIsCalled() throws Exception {
         employeeService.getEmployeeCount();
 
-        verify(employeeRepositoryMock).getEmployeeCount();
+        verify(employeeRepositoryMock).count();
         verifyNoMoreInteractions(employeeRepositoryMock);
+    }
+
+    @Test
+    public void testGetEmployee() throws Exception {
+        employeeService.getEmployee(EMPLOYEE_ID);
+        verify(employeeRepositoryMock).getBy(EMPLOYEE_ID);
+        verifyNoMoreInteractions(employeeRepositoryMock);
+    }
+
+    @Test
+    public void testGetEmployeeTaxes() throws Exception {
+        Employee employee = new Employee();
+        when(employeeService.getEmployee(EMPLOYEE_ID)).thenReturn(employee);
+
+        employeeService.getEmployeeTaxes(EMPLOYEE_ID);
+
+        verify(employeeRepositoryMock).getBy(EMPLOYEE_ID);
+        verify(monthlyTaxForEmployeeRepository).findByEmployee(employee);
     }
 
     @Test
