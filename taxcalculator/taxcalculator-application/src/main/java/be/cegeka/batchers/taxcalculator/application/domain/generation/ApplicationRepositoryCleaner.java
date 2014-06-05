@@ -6,7 +6,6 @@ import be.cegeka.batchers.taxcalculator.application.domain.reporting.MonthlyRepo
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Order(value=99)

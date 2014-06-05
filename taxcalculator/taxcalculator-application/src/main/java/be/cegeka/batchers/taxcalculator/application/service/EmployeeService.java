@@ -4,14 +4,10 @@ import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeRepository;
 import be.cegeka.batchers.taxcalculator.application.domain.MonthlyTaxForEmployee;
 import be.cegeka.batchers.taxcalculator.application.domain.MonthlyTaxForEmployeeRepository;
-import be.cegeka.batchers.taxcalculator.application.domain.generation.EmployeeGeneratorCleaner;
-import be.cegeka.batchers.taxcalculator.application.domain.reporting.MonthlyReportRepository;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 

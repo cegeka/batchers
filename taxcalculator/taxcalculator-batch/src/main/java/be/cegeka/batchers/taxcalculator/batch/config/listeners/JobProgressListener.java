@@ -14,13 +14,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Component
 @StepScope
 public class JobProgressListener implements StepExecutionListener, ItemWriteListener {
 
-    private int lastPercentageComplete = 0;
-    private int currentItemCount;
+    private AtomicInteger lastPercentageComplete;
+    private AtomicLong currentItemCount;
     private int totalItemCount;
     private JobStartParams jobStartParams;
     private String stepName;
@@ -36,9 +38,9 @@ public class JobProgressListener implements StepExecutionListener, ItemWriteList
         totalItemCount = employeeService.getEmployeeCount().intValue();
         jobStartParams = new JobStartParamsMapper().map(stepExecution.getJobParameters());
         stepName = stepExecution.getStepName();
-        currentItemCount = 0;
-        lastPercentageComplete = 0;
-        eventBus.post(new JobProgressEvent(jobStartParams, stepName, lastPercentageComplete));
+        currentItemCount = new AtomicLong();
+        lastPercentageComplete = new AtomicInteger();
+        eventBus.post(new JobProgressEvent(jobStartParams, stepName, 0));
     }
 
     @Override
@@ -52,12 +54,16 @@ public class JobProgressListener implements StepExecutionListener, ItemWriteList
 
     @Override
     public void afterWrite(List items) {
-        currentItemCount += items.size();
+        currentItemCount.addAndGet(items.size());
+        int percentageComplete = currentItemCount.intValue() * 100 / totalItemCount;
 
-        int percentageComplete = currentItemCount * 100 / totalItemCount;
-        if (percentageComplete > lastPercentageComplete) {
-            lastPercentageComplete = percentageComplete;
-            eventBus.post(new JobProgressEvent(jobStartParams, stepName, percentageComplete));
+        sentUpdateIfNeeded(percentageComplete);
+    }
+
+    private synchronized void sentUpdateIfNeeded(int percentageComplete) {
+        if (percentageComplete > lastPercentageComplete.get()) {
+            lastPercentageComplete = new AtomicInteger(percentageComplete);
+            eventBus.post(new JobProgressEvent(jobStartParams, stepName, lastPercentageComplete.intValue()));
         }
     }
 

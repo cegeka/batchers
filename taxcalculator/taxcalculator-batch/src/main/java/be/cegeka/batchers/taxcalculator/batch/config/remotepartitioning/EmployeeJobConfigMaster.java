@@ -39,12 +39,8 @@ import org.springframework.integration.amqp.channel.PollableAmqpChannel;
 import org.springframework.integration.amqp.outbound.AmqpOutboundEndpoint;
 import org.springframework.integration.annotation.Aggregator;
 import org.springframework.integration.channel.DirectChannel;
-import org.springframework.integration.channel.ExecutorChannel;
-import org.springframework.integration.channel.FixedSubscriberChannel;
 import org.springframework.integration.core.MessagingTemplate;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.MessageHandler;
-import org.springframework.messaging.simp.user.UserDestinationMessageHandler;
 
 import javax.sql.DataSource;
 import java.util.Arrays;
