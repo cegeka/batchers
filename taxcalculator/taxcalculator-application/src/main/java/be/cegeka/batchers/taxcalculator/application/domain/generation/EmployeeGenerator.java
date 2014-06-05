@@ -1,4 +1,4 @@
-package be.cegeka.batchers.taxcalculator.application.domain;
+package be.cegeka.batchers.taxcalculator.application.domain.generation;
 
 import be.cegeka.batchers.taxcalculator.application.service.EmployeeGeneratorService;
 import org.springframework.beans.factory.annotation.Autowired;

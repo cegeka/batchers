@@ -1,6 +1,6 @@
 package be.cegeka.batchers.taxcalculator.application;
 
-import be.cegeka.batchers.taxcalculator.application.domain.EmployeeGenerator;
+import be.cegeka.batchers.taxcalculator.application.domain.generation.EmployeeGenerator;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 

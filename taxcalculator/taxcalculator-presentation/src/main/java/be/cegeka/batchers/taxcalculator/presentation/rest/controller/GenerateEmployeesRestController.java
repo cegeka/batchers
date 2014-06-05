@@ -1,7 +1,7 @@
 package be.cegeka.batchers.taxcalculator.presentation.rest.controller;
 
 import be.cegeka.batchers.taxcalculator.application.service.EmployeeGeneratorService;
-import be.cegeka.batchers.taxcalculator.batch.service.SpringBatchRepository;
+import be.cegeka.batchers.taxcalculator.batch.service.SpringBatchAndBatchRepositoryCleaner;
 import be.cegeka.batchers.taxcalculator.presentation.rest.model.GenerateEmployeesModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +21,7 @@ public class GenerateEmployeesRestController {
     protected EmployeeGeneratorService employeeGeneratorService;
 
     @Autowired
-    private SpringBatchRepository springBatchRepository;
+    private SpringBatchAndBatchRepositoryCleaner springBatchAndBatchRepositoryCleaner;
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<?> generateEmployees(GenerateEmployeesModel generateEmployeesModel) {
@@ -29,7 +29,6 @@ public class GenerateEmployeesRestController {
         LOG.debug("Generating " + employeesCount + " employees in rest controller");
 
         employeeGeneratorService.resetEmployees(employeesCount);
-        springBatchRepository.removeJobExecutions();
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

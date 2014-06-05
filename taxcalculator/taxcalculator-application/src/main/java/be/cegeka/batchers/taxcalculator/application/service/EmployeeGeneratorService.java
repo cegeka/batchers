@@ -2,10 +2,13 @@ package be.cegeka.batchers.taxcalculator.application.service;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeRepository;
+import be.cegeka.batchers.taxcalculator.application.domain.generation.EmployeeGeneratorCleaner;
 import com.github.javafaker.Faker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Random;
 
 import static java.lang.System.currentTimeMillis;
@@ -20,15 +23,16 @@ public class EmployeeGeneratorService {
     private EmployeeRepository employeeRepository;
 
     @Autowired
-    private EmployeeService employeeService;
+    private List<EmployeeGeneratorCleaner> employeeGeneratorCleaners;
 
+    @Transactional
     public void resetEmployees(Long numberOfEmployees) {
 
         if (numberOfEmployees < 1 || numberOfEmployees > MAX_GENERATED_EMPLOYEES) {
             throw new IllegalArgumentException("The number of generated employees must be between 1 and " + MAX_GENERATED_EMPLOYEES);
         }
 
-        deleteEmployees();
+        deleteEmployeesAndEverythingRelated();
         generateNewEmployees(numberOfEmployees);
     }
 
@@ -43,8 +47,9 @@ public class EmployeeGeneratorService {
         }
     }
 
-    private void deleteEmployees() {
-        employeeService.deleteAll();
+
+    private void deleteEmployeesAndEverythingRelated() {
+        employeeGeneratorCleaners.forEach(EmployeeGeneratorCleaner::deleteAll);
     }
 
 }

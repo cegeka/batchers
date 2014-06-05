@@ -2,7 +2,7 @@ package be.cegeka.batchers.taxcalculator.presentation.rest.controller;
 
 import be.cegeka.batchers.taxcalculator.application.service.EmployeeGeneratorService;
 import be.cegeka.batchers.taxcalculator.application.service.EmployeeService;
-import be.cegeka.batchers.taxcalculator.batch.service.SpringBatchRepository;
+import be.cegeka.batchers.taxcalculator.batch.service.SpringBatchAndBatchRepositoryCleaner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,9 +33,6 @@ public class GenerateEmployeesRestControllerTest {
     @Mock
     private EmployeeService employeeServiceMock;
 
-    @Mock
-    private SpringBatchRepository springBatchRepositoryMock;
-
     @Before
     public void setUp() throws Exception {
         mockMvc = MockMvcBuilders.standaloneSetup(generateEmployeesRestController)
@@ -51,15 +48,5 @@ public class GenerateEmployeesRestControllerTest {
                 .andReturn();
 
         verify(employeeGeneratorServiceMock).resetEmployees(TEST_NUMBER_OF_EMPLOYEES_TO_GENERATE);
-    }
-
-    @Test
-    public void whenResetEmployees_thenBatchRepositoryIsCalled() throws Exception {
-        mockMvc.perform(post("/generateEmployees").param("employeesCount", "4"))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        verify(springBatchRepositoryMock).removeJobExecutions();
-        verifyNoMoreInteractions(springBatchRepositoryMock);
     }
 }

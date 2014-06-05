@@ -1,7 +1,7 @@
 package be.cegeka.batchers.taxcalculator.application.config;
 
 import be.cegeka.batchers.taxcalculator.application.ApplicationInitializer;
-import be.cegeka.batchers.taxcalculator.application.domain.EmployeeGenerator;
+import be.cegeka.batchers.taxcalculator.application.domain.generation.EmployeeGenerator;
 import be.cegeka.batchers.taxcalculator.infrastructure.config.PersistenceConfig;
 import be.cegeka.batchers.taxcalculator.infrastructure.config.PropertyPlaceHolderConfig;
 import org.springframework.beans.factory.annotation.Autowired;
