@@ -50,7 +50,7 @@ public class JobResultsServiceImplTest {
         JobInstance jobInstance2 = new JobInstance(2L, EmployeeJobConfigSingleJvm.EMPLOYEE_JOB);
         List<JobInstance> jobInstances = asList(jobInstance1, jobInstance2);
 
-        when(jobExplorer.getJobInstancesByJobName(EmployeeJobConfigSingleJvm.EMPLOYEE_JOB, 0, MAX_VALUE))
+        when(jobExplorer.findJobInstancesByJobName(EmployeeJobConfigSingleJvm.EMPLOYEE_JOB, 0, MAX_VALUE))
                 .thenReturn(jobInstances);
 
         JobExecution jobInstance1_jobExecution1 = createJobExecution(jobInstance1, createJobParameters(2014, 5));
@@ -64,7 +64,7 @@ public class JobResultsServiceImplTest {
         List<JobResult> jobResults = jobResultsService.getJobResults();
 
         //ASSERT
-        verify(jobExplorer).getJobInstancesByJobName(EmployeeJobConfigSingleJvm.EMPLOYEE_JOB, 0, MAX_VALUE);
+        verify(jobExplorer).findJobInstancesByJobName(EmployeeJobConfigSingleJvm.EMPLOYEE_JOB, 0, MAX_VALUE);
         verify(jobExplorer).getJobExecutions(jobInstance1);
         verify(jobExplorer).getJobExecutions(jobInstance2);
 
@@ -76,7 +76,7 @@ public class JobResultsServiceImplTest {
         //ARRANGE
         JobInstance jobInstance1 = new JobInstance(1L, EmployeeJobConfigSingleJvm.EMPLOYEE_JOB);
 
-        when(jobExplorer.getJobInstancesByJobName(EmployeeJobConfigSingleJvm.EMPLOYEE_JOB, 0, MAX_VALUE))
+        when(jobExplorer.findJobInstancesByJobName(EmployeeJobConfigSingleJvm.EMPLOYEE_JOB, 0, MAX_VALUE))
                 .thenReturn(asList(jobInstance1));
 
         DateTime dateTime = new DateTime();
