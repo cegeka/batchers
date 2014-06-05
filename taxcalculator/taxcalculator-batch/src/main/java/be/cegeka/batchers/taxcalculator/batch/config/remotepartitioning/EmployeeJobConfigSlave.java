@@ -37,7 +37,7 @@ import javax.sql.DataSource;
 @ComponentScan(basePackages = "be.cegeka.batchers.taxcalculator.batch")
 @Import({PropertyPlaceHolderConfig.class, TempConfigToInitDB.class, ItemReaderWriterConfig.class})
 @PropertySource("classpath:taxcalculator-batch.properties")
-@Profile(value = {"remotePartitioning", "testRemotePartitioning"})
+@Profile(value = {"remotePartitioningSlave", "testRemotePartitioning"})
 public class EmployeeJobConfigSlave extends DefaultBatchConfigurer {
 
     public static final String TAX_CALCULATION_STEP = "taxCalculationSlaveStep";
@@ -100,10 +100,11 @@ public class EmployeeJobConfigSlave extends DefaultBatchConfigurer {
     public AmqpInboundGateway amqpInboundGateway() {
         AbstractMessageListenerContainer listener = new SimpleMessageListenerContainer();
         listener.setConnectionFactory(connectionFactory());
+        listener.setQueueNames(EmployeeJobConfigMaster.ROUTING_KEY_REQUESTS);
         AmqpInboundGateway amqpInboundGateway = new AmqpInboundGateway(listener);
-        amqpInboundGateway.setRequestChannel(inboundRequest());
+        amqpInboundGateway.setRequestChannel(inboundRequests());
         amqpInboundGateway.setReplyChannel(outboundStaging());
-        amqpInboundGateway.setReplyTimeout(60000000L);
+        amqpInboundGateway.setReplyTimeout(EmployeeJobConfigMaster.RECEIVE_TIMEOUT);
         return amqpInboundGateway;
     }
 
@@ -113,7 +114,7 @@ public class EmployeeJobConfigSlave extends DefaultBatchConfigurer {
     }
 
     @Bean
-    public MessageChannel inboundRequest() {
+    public MessageChannel inboundRequests() {
         return new DirectChannel();
     }
 
