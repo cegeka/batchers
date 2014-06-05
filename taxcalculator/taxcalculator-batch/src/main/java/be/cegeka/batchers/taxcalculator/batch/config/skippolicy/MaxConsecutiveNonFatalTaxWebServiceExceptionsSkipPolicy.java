@@ -1,8 +1,8 @@
 package be.cegeka.batchers.taxcalculator.batch.config.skippolicy;
 
-import be.cegeka.batchers.taxcalculator.application.domain.PayCheck;
-import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
-import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceException;
+import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceNonFatalException;
+import be.cegeka.batchers.taxcalculator.batch.domain.PayCheck;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculation;
 import org.springframework.batch.core.ItemProcessListener;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.step.skip.SkipLimitExceededException;
@@ -28,7 +28,7 @@ public class MaxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy implements 
 
     @Override
     public boolean shouldSkip(Throwable t, int skipCount) throws SkipLimitExceededException {
-        if (t instanceof TaxWebServiceException) {
+        if (t instanceof TaxWebServiceNonFatalException) {
             if (skipCount >= (totalSkipLimit - 1)) {
                 throw new SkipLimitExceededException(totalSkipLimit, t);
             }

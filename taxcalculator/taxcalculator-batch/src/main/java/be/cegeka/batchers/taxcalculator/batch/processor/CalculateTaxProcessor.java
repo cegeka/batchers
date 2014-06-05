@@ -1,8 +1,9 @@
 package be.cegeka.batchers.taxcalculator.batch.processor;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
-import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculation;
 import be.cegeka.batchers.taxcalculator.application.service.TaxCalculatorService;
+import org.joda.money.Money;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.StepExecution;
@@ -30,7 +31,8 @@ public class CalculateTaxProcessor extends StepExecutionListenerSupport implemen
     @Override
     public TaxCalculation process(Employee employee) {
         LOG.info("Tax process: " + employee);
-        return taxCalculatorService.calculateTax(stepExecution.getJobExecutionId(), employee, year.intValue(), month.intValue());
+        Money calculatedTax = taxCalculatorService.calculateTax(employee);
+        return TaxCalculation.from(stepExecution.getJobExecutionId(), employee, year.intValue(), month.intValue(), calculatedTax);
     }
 
     @Override

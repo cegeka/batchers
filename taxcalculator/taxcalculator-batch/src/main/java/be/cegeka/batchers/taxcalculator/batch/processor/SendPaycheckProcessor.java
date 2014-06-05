@@ -1,8 +1,8 @@
 package be.cegeka.batchers.taxcalculator.batch.processor;
 
-import be.cegeka.batchers.taxcalculator.application.domain.PayCheck;
-import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
-import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResult;
+import be.cegeka.batchers.taxcalculator.batch.domain.PayCheck;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculation;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxWebserviceCallResult;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailAttachmentTO;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailSender;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailTO;
@@ -21,7 +21,7 @@ import java.util.Map;
 
 @Component
 @StepScope
-public class SendPaycheckProcessor implements ItemProcessor<TaxServiceCallResult, PayCheck> {
+public class SendPaycheckProcessor implements ItemProcessor<TaxWebserviceCallResult, PayCheck> {
 
     @Value(value = "${paycheck.from.email:finance@email.com}")
     String payCheckFrom;
@@ -38,10 +38,10 @@ public class SendPaycheckProcessor implements ItemProcessor<TaxServiceCallResult
     private StepExecution stepExecution;
 
     @Override
-    public PayCheck process(TaxServiceCallResult taxServiceCallResult) throws Exception {
+    public PayCheck process(TaxWebserviceCallResult taxWebserviceCallResult) throws Exception {
         Resource resource = resourceLoader.getResource(paycheckTemplateFileName);
 
-        TaxCalculation taxCalculation = taxServiceCallResult.getTaxCalculation();
+        TaxCalculation taxCalculation = taxWebserviceCallResult.getTaxCalculation();
         byte[] pdfBytes = pdfGeneratorService.generatePdfAsByteArray(resource, getPayCheckPdfContext(taxCalculation));
         emailSender.send(getEmailTO(taxCalculation, pdfBytes));
 

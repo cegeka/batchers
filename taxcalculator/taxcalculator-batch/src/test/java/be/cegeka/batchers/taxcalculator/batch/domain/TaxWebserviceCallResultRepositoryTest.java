@@ -1,7 +1,11 @@
-package be.cegeka.batchers.taxcalculator.application.domain;
+package be.cegeka.batchers.taxcalculator.batch.domain;
 
-import be.cegeka.batchers.taxcalculator.application.infrastructure.IntegrationTest;
-import org.joda.time.DateTime;
+import be.cegeka.batchers.taxcalculator.application.domain.*;
+import be.cegeka.batchers.taxcalculator.application.domain.EmployeeRepository;
+import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceFatalException;
+import be.cegeka.batchers.taxcalculator.batch.integration.AbstractIntegrationTest;
+import org.joda.money.CurrencyUnit;
+import org.joda.money.Money;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +17,10 @@ import java.util.List;
 import static be.cegeka.batchers.taxcalculator.application.ApplicationAssertions.assertThat;
 import static be.cegeka.batchers.taxcalculator.application.domain.EmployeeTestFixture.anEmployee;
 
-public class TaxServiceCallResultRepositoryTest extends IntegrationTest {
+public class TaxWebserviceCallResultRepositoryTest extends AbstractBatchRepositoryIntegrationTest {
 
     @Autowired
-    private TaxServiceCallResultRepository taxServiceCallResultRepository;
+    private TaxWebserviceCallResultRepository taxWebserviceCallResultRepository;
 
     @Autowired
     private TaxCalculationRepository taxCalculationRepository;
@@ -29,9 +33,9 @@ public class TaxServiceCallResultRepositoryTest extends IntegrationTest {
     private TaxCalculation january;
     private TaxCalculation february;
 
-    private TaxServiceCallResult januaryTry1;
-    private TaxServiceCallResult januaryTry2;
-    private TaxServiceCallResult februaryTry1;
+    private TaxWebserviceCallResult januaryTry1;
+    private TaxWebserviceCallResult januaryTry2;
+    private TaxWebserviceCallResult februaryTry1;
 
     @Before
     public void setup() {
@@ -54,19 +58,19 @@ public class TaxServiceCallResultRepositoryTest extends IntegrationTest {
         List<TaxCalculation> taxCalculations = Arrays.asList(january, february);
         taxCalculations.forEach(taxCalculationRepository::save);
 
-        januaryTry1 = TaxServiceCallResult.from(january, "", HttpStatus.INTERNAL_SERVER_ERROR.value(), null, DateTime.now(), false);
-        januaryTry2 = TaxServiceCallResult.from(january, "", HttpStatus.OK.value(), "", DateTime.now(), true);
-        februaryTry1 = TaxServiceCallResult.from(february, "", HttpStatus.OK.value(), "", DateTime.now(), true);
+        januaryTry1 = TaxWebserviceCallResult.callFailed(january, new TaxWebServiceFatalException(new EmployeeTestBuilder().build(), Money.of(CurrencyUnit.EUR, 10), HttpStatus.BAD_REQUEST, null, "boe"));
+        januaryTry2 = TaxWebserviceCallResult.callSucceeded(january);
+        februaryTry1 = TaxWebserviceCallResult.callSucceeded(february);
 
-        List<TaxServiceCallResult> taxServiceCallResults = Arrays.asList(januaryTry1, januaryTry2, februaryTry1);
-        taxServiceCallResults.forEach(taxServiceCallResultRepository::save);
+        List<TaxWebserviceCallResult> taxWebserviceCallResults = Arrays.asList(januaryTry1, januaryTry2, februaryTry1);
+        taxWebserviceCallResults.forEach(taxWebserviceCallResultRepository::save);
     }
 
     @Test
     public void testFindByTaxCalculation() {
         //ACT
-        List<TaxServiceCallResult> forJanuary = taxServiceCallResultRepository.findByTaxCalculation(january);
-        List<TaxServiceCallResult> forFebruary = taxServiceCallResultRepository.findByTaxCalculation(february);
+        List<TaxWebserviceCallResult> forJanuary = taxWebserviceCallResultRepository.findByTaxCalculation(january);
+        List<TaxWebserviceCallResult> forFebruary = taxWebserviceCallResultRepository.findByTaxCalculation(february);
 
         //ASSERT
         assertThat(forJanuary).containsOnly(januaryTry1, januaryTry2);
@@ -75,7 +79,7 @@ public class TaxServiceCallResultRepositoryTest extends IntegrationTest {
 
     @Test
     public void testFindSuccessfulByTaxCalculation_returnsSuccessful() {
-        TaxServiceCallResult successfulByTaxCalculation = taxServiceCallResultRepository.findSuccessfulByTaxCalculation(january);
+        TaxWebserviceCallResult successfulByTaxCalculation = taxWebserviceCallResultRepository.findSuccessfulByTaxCalculation(january);
         assertThat(successfulByTaxCalculation).isEqualTo(januaryTry2);
     }
 
@@ -89,7 +93,7 @@ public class TaxServiceCallResultRepositoryTest extends IntegrationTest {
         ;
         taxCalculationRepository.save(march);
 
-        TaxServiceCallResult successfulByTaxCalculation = taxServiceCallResultRepository.findSuccessfulByTaxCalculation(march);
+        TaxWebserviceCallResult successfulByTaxCalculation = taxWebserviceCallResultRepository.findSuccessfulByTaxCalculation(march);
         assertThat(successfulByTaxCalculation).isNull();
     }
 }

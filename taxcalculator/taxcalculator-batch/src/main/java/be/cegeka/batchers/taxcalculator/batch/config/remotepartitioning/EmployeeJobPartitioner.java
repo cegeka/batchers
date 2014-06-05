@@ -1,6 +1,6 @@
 package be.cegeka.batchers.taxcalculator.batch.config.remotepartitioning;
 
-import be.cegeka.batchers.taxcalculator.application.domain.EmployeeService;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculationRepository;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.partition.support.Partitioner;
@@ -19,7 +19,7 @@ public class EmployeeJobPartitioner implements Partitioner {
     private static final int PARTITIONS_PER_NODE = 5;
 
     @Autowired
-    private EmployeeService employeeService;
+    private TaxCalculationRepository taxCalculationRepository;
 
     @Value("#{jobParameters[year]}")
     private long year;
@@ -34,7 +34,7 @@ public class EmployeeJobPartitioner implements Partitioner {
     public Map<String, ExecutionContext> partition(int gridSize) {
         int partitionCount = gridSize * PARTITIONS_PER_NODE;
 
-        List<Long> employeeIds = employeeService.getEmployeeIds(year, month, stepExecution.getJobExecutionId());
+        List<Long> employeeIds = taxCalculationRepository.getUnprocessedEmployeeIds(year, month, stepExecution.getJobExecutionId());
         int size = employeeIds.size();
         int targetSize = size / partitionCount + 1;
 
