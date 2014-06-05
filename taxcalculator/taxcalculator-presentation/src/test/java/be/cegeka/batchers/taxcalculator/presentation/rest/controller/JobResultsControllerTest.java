@@ -3,7 +3,6 @@ package be.cegeka.batchers.taxcalculator.presentation.rest.controller;
 import be.cegeka.batchers.taxcalculator.application.domain.reporting.MonthlyReport;
 import be.cegeka.batchers.taxcalculator.application.domain.reporting.MonthlyReportRepository;
 import be.cegeka.batchers.taxcalculator.batch.service.JobResultsService;
-import be.cegeka.batchers.taxcalculator.presentation.rest.controller.JobResultsController;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;

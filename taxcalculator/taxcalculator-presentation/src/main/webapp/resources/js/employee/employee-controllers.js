@@ -88,35 +88,35 @@ taxcalculatorControllers
             $scope.refreshEmployee();
         }
     ])
-  .controller('GenerateEmployeesCtrl', ['$scope', 'GenerateEmployeesResource', '$routeParams',
-    function ($scope, GenerateEmployeesResource, $routeParams) {
-      $scope.GenerateEmployeesModel = {employeesCount: $routeParams.employeesCount};
-      $scope.generateEmployees = function (employeesCount) {
+    .controller('GenerateEmployeesCtrl', ['$scope', 'GenerateEmployeesResource', '$routeParams',
+        function ($scope, GenerateEmployeesResource, $routeParams) {
+            $scope.GenerateEmployeesModel = {employeesCount: $routeParams.employeesCount};
+            $scope.generateEmployees = function (employeesCount) {
 
-        $scope.generatingEmployees = true;
-        GenerateEmployeesResource.post(
-          {employeesCount: employeesCount}, "",
-          function (successData) {
-            $scope.generatingEmployees = false;
-            $scope.refreshEmployee();
-          },
-          function (error) {
-            $scope.$emit("alert", {'alertClass': 'alert-danger', 'message': 'Could not generate employees'})
-          }
-        );
-      }
-    }
-  ]);
+                $scope.generatingEmployees = true;
+                GenerateEmployeesResource.post(
+                    {employeesCount: employeesCount}, "",
+                    function (successData) {
+                        $scope.generatingEmployees = false;
+                        $scope.refreshEmployee();
+                    },
+                    function (error) {
+                        $scope.$emit("alert", {'alertClass': 'alert-danger', 'message': 'Could not generate employees'})
+                    }
+                );
+            }
+        }
+    ]);
 
 taxcalculatorControllers.controller('EmployeeDetailsCtrl', ['$scope', '$routeParams', 'EmployeeDetailsResource', 'EmployeeTaxes',
-  function ($scope, $routeParams, EmployeeDetailsResource, EmployeeTaxes) {
+    function ($scope, $routeParams, EmployeeDetailsResource, EmployeeTaxes) {
 
-    EmployeeDetailsResource.query({id: $routeParams.employeeId}, function (successData) {
-      $scope.employee = successData;
-    });
+        EmployeeDetailsResource.query({id: $routeParams.employeeId}, function (successData) {
+            $scope.employee = successData;
+        });
 
-    EmployeeTaxes.query({id: $routeParams.employeeId}, function (successData) {
-      $scope.taxes = successData;
-    })
-  }
+        EmployeeTaxes.query({id: $routeParams.employeeId}, function (successData) {
+            $scope.taxes = successData;
+        })
+    }
 ]);

@@ -1,16 +1,11 @@
 package be.cegeka.batchers.taxcalculator.presentation.repositories;
 
-import be.cegeka.batchers.taxcalculator.application.domain.AbstractRepository;
-import be.cegeka.batchers.taxcalculator.application.domain.Employee;
-import be.cegeka.batchers.taxcalculator.presentation.rest.model.EmployeeTaxTo;
 import be.cegeka.batchers.taxcalculator.to.EmployeeTo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.util.List;
@@ -33,13 +28,13 @@ public class PresentationEmployeeRepository {
     protected EntityManager entityManager;
 
     public EmployeeTo getEmployee(long id) {
-        TypedQuery<EmployeeTo> employees =  entityManager.createQuery(GET_EMPLOYEE_DETAIL_QUERY, EmployeeTo.class);
+        TypedQuery<EmployeeTo> employees = entityManager.createQuery(GET_EMPLOYEE_DETAIL_QUERY, EmployeeTo.class);
         employees.setParameter("id", id);
         return employees.getSingleResult();
     }
 
     public List<EmployeeTo> getEmployees(int page, int pageSize) {
-        TypedQuery<EmployeeTo> employees =  entityManager.createQuery(GET_EMPLOYEES_TOTAL_TAX_QUERY, EmployeeTo.class);
+        TypedQuery<EmployeeTo> employees = entityManager.createQuery(GET_EMPLOYEES_TOTAL_TAX_QUERY, EmployeeTo.class);
 
         employees.setFirstResult(page * pageSize);
         employees.setMaxResults(pageSize);

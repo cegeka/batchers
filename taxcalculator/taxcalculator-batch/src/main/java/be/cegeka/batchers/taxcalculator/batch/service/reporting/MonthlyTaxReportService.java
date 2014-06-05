@@ -1,8 +1,8 @@
 package be.cegeka.batchers.taxcalculator.batch.service.reporting;
 
+import be.cegeka.batchers.taxcalculator.application.domain.pdf.PDFGeneratorService;
 import be.cegeka.batchers.taxcalculator.application.domain.reporting.MonthlyReport;
 import be.cegeka.batchers.taxcalculator.application.domain.reporting.MonthlyReportRepository;
-import be.cegeka.batchers.taxcalculator.application.domain.pdf.PDFGeneratorService;
 import fr.opensagres.xdocreport.core.XDocReportException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;

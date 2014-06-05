@@ -11,7 +11,6 @@ import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
-import java.util.Calendar;
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;

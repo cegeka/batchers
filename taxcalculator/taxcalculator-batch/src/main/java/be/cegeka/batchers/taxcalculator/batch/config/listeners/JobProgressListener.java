@@ -1,6 +1,6 @@
 package be.cegeka.batchers.taxcalculator.batch.config.listeners;
 
-import be.cegeka.batchers.taxcalculator.application.domain.EmployeeService;
+import be.cegeka.batchers.taxcalculator.application.service.EmployeeService;
 import be.cegeka.batchers.taxcalculator.batch.api.events.JobProgressEvent;
 import be.cegeka.batchers.taxcalculator.batch.api.events.JobStartRequest;
 import com.google.common.eventbus.EventBus;
@@ -34,7 +34,7 @@ public class JobProgressListener implements StepExecutionListener, ItemWriteList
 
     @Override
     public void beforeStep(StepExecution stepExecution) {
-        totalItemCount = employeeService.count().intValue();
+        totalItemCount = employeeService.getEmployeeCount().intValue();
         jobStartRequest = new JobStartRequest(stepExecution.getJobExecution().getJobConfigurationName(),
                 stepExecution.getJobParameters().getLong("year").intValue(),
                 stepExecution.getJobParameters().getLong("month").intValue());
@@ -58,7 +58,7 @@ public class JobProgressListener implements StepExecutionListener, ItemWriteList
         currentItemCount += items.size();
 
         int percentageComplete = currentItemCount * 100 / totalItemCount;
-        if (percentageComplete - lastPercentageComplete > UPDATE_INTERVAL) {
+        if (percentageComplete - lastPercentageComplete >= UPDATE_INTERVAL) {
             lastPercentageComplete = percentageComplete;
             eventBus.post(new JobProgressEvent(jobStartRequest, stepName, percentageComplete));
         }

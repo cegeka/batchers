@@ -47,7 +47,7 @@ public class EmployeeService {
         return monthlyTaxForEmployeeRepository.findByEmployee(employee);
     }
 
-    public long getEmployeeCount() {
+    public Long getEmployeeCount() {
         return employeeRepository.count();
     }
 
