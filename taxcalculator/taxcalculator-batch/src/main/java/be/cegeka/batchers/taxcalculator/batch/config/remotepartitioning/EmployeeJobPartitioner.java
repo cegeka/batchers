@@ -27,7 +27,7 @@ public class EmployeeJobPartitioner implements Partitioner {
     @Value("#{jobParameters[month]}")
     private long month;
 
-    @Autowired
+    @Value("#{stepExecution}")
     private StepExecution stepExecution;
 
     @Override

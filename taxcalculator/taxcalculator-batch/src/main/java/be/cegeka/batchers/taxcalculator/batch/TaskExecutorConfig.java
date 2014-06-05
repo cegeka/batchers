@@ -8,7 +8,7 @@ import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 
 @Configuration
-@Profile(value = {"default", "singleJvm","remotePartitioning"})
+@Profile(value = {"default", "singleJvm","remotePartitioningMaster", "remotePartitioningSlave"})
 public class TaskExecutorConfig {
 
     @Bean
