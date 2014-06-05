@@ -19,8 +19,6 @@ import java.util.List;
 @StepScope
 public class JobProgressListener implements StepExecutionListener, ItemWriteListener {
 
-    public static final int UPDATE_INTERVAL = 5;
-
     private int lastPercentageComplete = 0;
     private int currentItemCount;
     private int totalItemCount;
@@ -57,7 +55,7 @@ public class JobProgressListener implements StepExecutionListener, ItemWriteList
         currentItemCount += items.size();
 
         int percentageComplete = currentItemCount * 100 / totalItemCount;
-        if (percentageComplete - lastPercentageComplete >= UPDATE_INTERVAL) {
+        if (percentageComplete > lastPercentageComplete) {
             lastPercentageComplete = percentageComplete;
             eventBus.post(new JobProgressEvent(jobStartParams, stepName, percentageComplete));
         }

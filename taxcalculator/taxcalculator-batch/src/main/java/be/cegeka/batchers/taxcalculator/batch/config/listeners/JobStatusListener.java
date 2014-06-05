@@ -17,15 +17,16 @@ public class JobStatusListener extends JobExecutionListenerSupport {
 
     @Override
     public void beforeJob(JobExecution jobExecution) {
-        JobStartParams jobStartParams = new JobStartParamsMapper().map(jobExecution.getJobParameters());
-
-        eventBus.post(new JobEvent(jobStartParams, jobExecution.getStatus().name()));
+        sendJobStatus(jobExecution);
     }
 
     @Override
     public void afterJob(JobExecution jobExecution) {
-        JobStartParams jobStartParams = new JobStartParamsMapper().map(jobExecution.getJobParameters());
+        sendJobStatus(jobExecution);
+    }
 
+    private void sendJobStatus(JobExecution jobExecution) {
+        JobStartParams jobStartParams = new JobStartParamsMapper().map(jobExecution.getJobParameters());
         eventBus.post(new JobEvent(jobStartParams, jobExecution.getStatus().name()));
     }
 

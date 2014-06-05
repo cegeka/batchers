@@ -52,8 +52,8 @@ jobresultController
                 $scope.percentageComplete = message.percentageComplete;
                 $scope.stepName = message.stepName;
                 function withNameYearAndMonth(element, index, array) {
-                    if (element.jobStartParams.year == message.jobStartRequest.year
-                        && element.jobStartParams.month == message.jobStartRequest.month) {
+                    if (element.jobStartParams.year == message.jobStartParams.year
+                        && element.jobStartParams.month == message.jobStartParams.month) {
                         return true;
                     }
                     return false;

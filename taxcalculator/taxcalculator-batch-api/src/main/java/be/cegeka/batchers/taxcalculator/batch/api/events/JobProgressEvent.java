@@ -14,7 +14,7 @@ public class JobProgressEvent {
         this.percentageComplete = percentageComplete;
     }
 
-    public JobStartParams getJobStartRequest() {
+    public JobStartParams getJobStartParams() {
         return jobStartParams;
     }
 
