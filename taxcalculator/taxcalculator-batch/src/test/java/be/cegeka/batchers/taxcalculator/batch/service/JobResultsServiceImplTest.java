@@ -29,9 +29,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class JobResultsServiceTest {
+public class JobResultsServiceImplTest {
     @InjectMocks
-    JobResultsService jobResultsService;
+    JobResultsServiceImpl jobResultsService;
 
     @Mock
     JobExplorer jobExplorer;

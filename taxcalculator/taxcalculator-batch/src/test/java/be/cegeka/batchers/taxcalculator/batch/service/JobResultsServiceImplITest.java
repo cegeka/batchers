@@ -11,14 +11,13 @@ import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
-import java.util.Calendar;
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class JobResultsServiceITest extends AbstractIntegrationTest {
+public class JobResultsServiceImplITest extends AbstractIntegrationTest {
     @Autowired
-    private JobResultsService jobResultsService;
+    private JobResultsServiceImpl jobResultsService;
     @Autowired
     private JobLauncherTestUtils jobLauncherTestUtils;
 

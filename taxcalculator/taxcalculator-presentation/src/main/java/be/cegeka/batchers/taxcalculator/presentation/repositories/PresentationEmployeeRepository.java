@@ -1,16 +1,11 @@
 package be.cegeka.batchers.taxcalculator.presentation.repositories;
 
-import be.cegeka.batchers.taxcalculator.application.domain.AbstractRepository;
-import be.cegeka.batchers.taxcalculator.application.domain.Employee;
-import be.cegeka.batchers.taxcalculator.presentation.rest.model.EmployeeTaxTo;
-import be.cegeka.batchers.taxcalculator.to.EmployeeTo;
-import org.springframework.beans.factory.annotation.Autowired;
+import be.cegeka.batchers.taxcalculator.presentation.to.EmployeeTo;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.util.List;
