@@ -107,3 +107,16 @@ taxcalculatorControllers
       }
     }
   ]);
+
+taxcalculatorControllers.controller('EmployeeDetailsCtrl', ['$scope', '$routeParams', 'EmployeeDetailsResource', 'EmployeeTaxes',
+  function ($scope, $routeParams, EmployeeDetailsResource, EmployeeTaxes) {
+
+    EmployeeDetailsResource.query({id: $routeParams.employeeId}, function (successData) {
+      $scope.employee = successData;
+    });
+
+    EmployeeTaxes.query({id: $routeParams.employeeId}, function (successData) {
+      $scope.taxes = successData;
+    })
+  }
+]);

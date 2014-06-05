@@ -1,8 +1,9 @@
 package be.cegeka.batchers.taxcalculator.batch.config;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
-import be.cegeka.batchers.taxcalculator.application.domain.PayCheck;
-import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
+import be.cegeka.batchers.taxcalculator.application.domain.MonthlyTaxForEmployee;
+import be.cegeka.batchers.taxcalculator.batch.domain.PayCheck;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculation;
 import be.cegeka.batchers.taxcalculator.infrastructure.config.PersistenceConfig;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -27,11 +28,27 @@ public class ItemReaderWriterConfig {
     public JpaPagingItemReader<Employee> taxCalculatorItemReader(@Value("#{stepExecution}") StepExecution stepExecution) {
         JpaPagingItemReader<Employee> employeeItemReader = new JpaPagingItemReader<>();
         employeeItemReader.setEntityManagerFactory(persistenceConfig.entityManagerFactory());
-        employeeItemReader.setQueryString(Employee.GET_UNPROCESSED_EMPLOYEES_BY_YEAR_AND_MONTH_QUERY);
+        employeeItemReader.setQueryString(TaxCalculation.GET_UNPROCESSED_EMPLOYEES_BY_YEAR_AND_MONTH_QUERY);
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("year", stepExecution.getJobParameters().getLong("year").intValue());
         parameters.put("month", stepExecution.getJobParameters().getLong("month").intValue());
         parameters.put("jobExecutionId", stepExecution.getJobExecutionId());
+        employeeItemReader.setParameterValues(parameters);
+        return employeeItemReader;
+    }
+
+    @Bean(destroyMethod = "")
+    @StepScope
+    public JpaPagingItemReader<Employee> taxCalculatorItemReaderSlave(@Value("#{stepExecution}") StepExecution stepExecution) {
+        JpaPagingItemReader<Employee> employeeItemReader = new JpaPagingItemReader<>();
+        employeeItemReader.setEntityManagerFactory(persistenceConfig.entityManagerFactory());
+        employeeItemReader.setQueryString(TaxCalculation.GET_UNPROCESSED_EMPLOYEES_BY_YEAR_AND_MONTH_QUERY_SLAVE);
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("year", stepExecution.getJobParameters().getLong("year").intValue());
+        parameters.put("month", stepExecution.getJobParameters().getLong("month").intValue());
+        parameters.put("jobExecutionId", stepExecution.getJobExecutionId());
+        parameters.put("minId", stepExecution.getExecutionContext().getLong("minValue"));
+        parameters.put("maxId", stepExecution.getExecutionContext().getLong("maxValue"));
         employeeItemReader.setParameterValues(parameters);
         return employeeItemReader;
     }
@@ -77,6 +94,13 @@ public class ItemReaderWriterConfig {
         JpaItemWriter<Employee> employeeJpaItemWriter = new JpaItemWriter<>();
         employeeJpaItemWriter.setEntityManagerFactory(persistenceConfig.entityManagerFactory());
         return employeeJpaItemWriter;
+    }
+
+    @Bean
+    public JpaItemWriter<MonthlyTaxForEmployee> monthlyTaxForEmployeeJpaItemWriter() {
+        JpaItemWriter<MonthlyTaxForEmployee> monthlyTaxForEmployeeJpaItemWriter = new JpaItemWriter<>();
+        monthlyTaxForEmployeeJpaItemWriter.setEntityManagerFactory(persistenceConfig.entityManagerFactory());
+        return monthlyTaxForEmployeeJpaItemWriter;
     }
 
 }

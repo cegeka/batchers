@@ -1,0 +1,29 @@
+<div class="col-md-6">
+    <h2> Employee Details</h2>
+    <table class="table table-bordered">
+        <tr>
+            <td><label>Name: </label></td>
+            <td>{{employee.firstName + " " + employee.lastName}}</td>
+        </tr>
+        <tr>
+            <td><label>Email: </label></td>
+            <td>{{employee.email}}</td>
+        </tr>
+    </table>
+
+    <table class="table table-bordered">
+        <tr>
+            <th>Month</th>
+            <th>Tax amount</th>
+            <th>Calculation date</th>
+            <th>Status</th>
+        </tr>
+        <tr ng-repeat="tax in taxes">
+            <td>{{tax.month | shortMonth}}</td>
+            <td>{{tax.tax}}</td>
+            <td>{{tax.calculationDate}}</td>
+            <td>{{tax.status}}</td>
+        </tr>
+    </table>
+
+</div>

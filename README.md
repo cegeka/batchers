@@ -1,4 +1,6 @@
-## Setup 
+
+
+## Setup
 
 Install the following:
 > Java 8, Maven 3, Tomcat 7
@@ -125,5 +127,6 @@ If a processor is used in a composite, and it should be step scoped, then the pr
 ## Relevant links
 
 - Spring Batch Reference Documentation: http://docs.spring.io/spring-batch/reference/html/
+- Spring Batch Reference Card on DZone: http://refcardz.dzone.com/refcardz/spring-batch-refcard
 - Spring Batch presentation at Java Users Group by Michael Minella: https://www.youtube.com/watch?v=CYTj5YT7CZU
 - Spring Batch with Java Config: https://blog.codecentric.de/en/2013/06/spring-batch-2-2-javaconfig-part-1-a-comparison-to-xml/

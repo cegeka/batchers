@@ -3,7 +3,13 @@ package be.cegeka.batchers.taxcalculator.batch.integration;
 import be.cegeka.batchers.taxcalculator.application.domain.*;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailSender;
 import be.cegeka.batchers.taxcalculator.application.domain.email.SmtpServerStub;
+import be.cegeka.batchers.taxcalculator.application.domain.reporting.MonthlyReportRepository;
+import be.cegeka.batchers.taxcalculator.application.domain.EmployeeRepository;
+import be.cegeka.batchers.taxcalculator.application.domain.MonthlyTaxForEmployeeRepository;
 import be.cegeka.batchers.taxcalculator.batch.config.skippolicy.MaxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy;
+import be.cegeka.batchers.taxcalculator.batch.domain.PayCheckRepository;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculationRepository;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxWebserviceCallResultRepository;
 import be.cegeka.batchers.taxcalculator.batch.service.reporting.SumOfTaxes;
 import org.junit.After;
 import org.junit.Before;
@@ -20,6 +26,7 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static be.cegeka.batchers.taxcalculator.application.ApplicationAssertions.assertThat;
@@ -45,13 +52,15 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     @Autowired
     private SumOfTaxes sumOfTaxes;
     @Autowired
+    private EmployeeRepository employeeRepository;
+    @Autowired
+    private MonthlyTaxForEmployeeRepository monthlyTaxForEmployeeRepository;
+    @Autowired
     private PayCheckRepository payCheckRepository;
     @Autowired
     private TaxCalculationRepository taxCalculationRepository;
     @Autowired
-    private TaxServiceCallResultRepository taxServiceCallResultRepository;
-    @Autowired
-    private EmployeeRepository employeeRepository;
+    private TaxWebserviceCallResultRepository taxWebserviceCallResultRepository;
     @Autowired
     private MonthlyReportRepository monthlyReportRepository;
     @Autowired
@@ -79,9 +88,10 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     @After
     public void tearDown() {
         SmtpServerStub.stop();
+        monthlyTaxForEmployeeRepository.deleteAll();
         monthlyReportRepository.deleteAll();
         payCheckRepository.deleteAll();
-        taxServiceCallResultRepository.deleteAll();
+        taxWebserviceCallResultRepository.deleteAll();
         taxCalculationRepository.deleteAll();
         employeeRepository.deleteAll();
     }
@@ -202,6 +212,32 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
 
         assertThat(SmtpServerStub.wiser()).hasNoReceivedMessages();
         verifyJob(jobExecution);
+    }
+
+    @Test
+    public void whenTaxServiceReturnsSuccess_MonthlyTaxForEmployeeHasNoErrorAndAPaycheck() throws Exception {
+        Employee employee = haveOneEmployee();
+        respondOneTimeWithSuccess();
+
+        jobLauncherTestUtils.launchJob(jobParams);
+
+        List<MonthlyTaxForEmployee> monthlyTaxesForEmployee = monthlyTaxForEmployeeRepository.findByEmployee(employee);
+        assertThat(monthlyTaxesForEmployee).hasSize(1);
+        assertThat(monthlyTaxesForEmployee.get(0).hasErrorMessage()).isFalse();
+        assertThat(monthlyTaxesForEmployee.get(0).getMonthlyReportPdf()).isNotEmpty();
+    }
+
+    @Test
+    public void whenTaxServiceReturnsFailure_MonthlyTaxForEmployeeHasErrorAndNoPaycheck() throws Exception {
+        Employee employee = haveOneEmployee();
+        respondWithBadRequest(1);
+
+        jobLauncherTestUtils.launchJob(jobParams);
+
+        List<MonthlyTaxForEmployee> monthlyTaxesForEmployee = monthlyTaxForEmployeeRepository.findByEmployee(employee);
+        assertThat(monthlyTaxesForEmployee).hasSize(1);
+        assertThat(monthlyTaxesForEmployee.get(0).hasErrorMessage()).isTrue();
+        assertThat(monthlyTaxesForEmployee.get(0).getMonthlyReportPdf()).isNullOrEmpty();
     }
 
     @Test

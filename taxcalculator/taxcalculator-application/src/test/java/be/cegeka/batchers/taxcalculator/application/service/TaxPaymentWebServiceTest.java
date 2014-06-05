@@ -1,8 +1,11 @@
 package be.cegeka.batchers.taxcalculator.application.service;
 
-import be.cegeka.batchers.taxcalculator.application.domain.*;
+import be.cegeka.batchers.taxcalculator.application.domain.Employee;
+import be.cegeka.batchers.taxcalculator.application.domain.EmployeeTestBuilder;
 import be.cegeka.batchers.taxcalculator.to.TaxServiceResponse;
 import be.cegeka.batchers.taxcalculator.to.TaxTo;
+import org.joda.money.CurrencyUnit;
+import org.joda.money.Money;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,56 +55,39 @@ public class TaxPaymentWebServiceTest {
         when(mockedResponse.getStatusCode()).thenReturn(HttpStatus.OK);
 
         Employee employee = new EmployeeTestBuilder().build();
-        TaxCalculation taxCalculation = new TaxCalculationTestBuilder()
-                .withEmployee(employee)
-                .withTax(2000.0)
-                .build();
 
-        TaxServiceCallResult taxServiceCallResult = taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
+        taxPaymentWebService.doWebserviceCallToTaxService(employee, Money.of(CurrencyUnit.EUR, 2000.0));
 
-        //todo change assert to check tax service call  result object, not only employee
-        assertThat(taxServiceCallResult.getTaxCalculation()).isEqualTo(taxCalculation);
+        assertThat("no error has been thrown").isNotEmpty();
     }
 
-    @Test(expected = TaxWebServiceException.class)
+    @Test(expected = TaxWebServiceNonFatalException.class)
     public void testProcessBadResponse_ExceptionHasBeenThrownForever() throws Exception {
         whenCallingTheWebservice().thenReturn(mockedResponse);
         when(mockedResponse.getBody()).thenReturn(new TaxServiceResponse("ERROR"));
         when(mockedResponse.getStatusCode()).thenReturn(HttpStatus.OK);
 
         Employee employee = new EmployeeTestBuilder().build();
-        TaxCalculation taxCalculation = new TaxCalculationTestBuilder()
-                .withEmployee(employee)
-                .withTax(2000.0)
-                .build();
 
-        taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
+        taxPaymentWebService.doWebserviceCallToTaxService(employee, Money.of(CurrencyUnit.EUR, 2000.0));
     }
 
-    @Test(expected = TaxWebServiceException.class)
+    @Test(expected = TaxWebServiceNonFatalException.class)
     public void testProcessTimeoutResponse_ExceptionHasBeenThrownForever() throws Exception {
         whenCallingTheWebservice().thenThrow(aWrappedTimeOutException());
 
         Employee employee = new EmployeeTestBuilder().build();
-        TaxCalculation taxCalculation = new TaxCalculationTestBuilder()
-                .withEmployee(employee)
-                .withTax(2000.0)
-                .build();
 
-        taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
+        taxPaymentWebService.doWebserviceCallToTaxService(employee, Money.of(CurrencyUnit.EUR, 2000.0));
     }
 
-    @Test(expected = TaxWebServiceException.class)
+    @Test(expected = TaxWebServiceNonFatalException.class)
     public void testProcess_UnexpectedServerExceptionOccurs_ExceptionIsRethrown() throws Exception {
         whenCallingTheWebservice().thenThrow(aServerErrorException());
 
         Employee employee = new EmployeeTestBuilder().build();
-        TaxCalculation taxCalculation = new TaxCalculationTestBuilder()
-                .withEmployee(employee)
-                .withTax(2000.0)
-                .build();
 
-        taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
+        taxPaymentWebService.doWebserviceCallToTaxService(employee, Money.of(CurrencyUnit.EUR, 2000.0));
     }
 
     @Test(expected = TaxWebServiceFatalException.class)
@@ -109,12 +95,8 @@ public class TaxPaymentWebServiceTest {
         whenCallingTheWebservice().thenThrow(aMethodNotAllowedException());
 
         Employee employee = new EmployeeTestBuilder().build();
-        TaxCalculation taxCalculation = new TaxCalculationTestBuilder()
-                .withEmployee(employee)
-                .withTax(2000.0)
-                .build();
 
-        taxPaymentWebService.doWebserviceCallToTaxService(taxCalculation);
+        taxPaymentWebService.doWebserviceCallToTaxService(employee, Money.of(CurrencyUnit.EUR, 2000.0));
     }
 
     private OngoingStubbing<ResponseEntity<TaxServiceResponse>> whenCallingTheWebservice() {

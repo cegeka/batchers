@@ -1,12 +1,11 @@
 package be.cegeka.batchers.taxcalculator.application.service;
 
-import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
-import be.cegeka.batchers.taxcalculator.application.domain.TaxServiceCallResult;
+import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.to.TaxServiceResponse;
 import be.cegeka.batchers.taxcalculator.to.TaxTo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.joda.time.DateTime;
+import org.joda.money.Money;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,38 +30,24 @@ public class TaxPaymentWebService {
     @Autowired
     private RestTemplate restTemplate;
 
-    public TaxServiceCallResult doWebserviceCallToTaxService(TaxCalculation taxCalculation) {
-        TaxTo taxTo = createWebserviceInput(taxCalculation);
+    public void doWebserviceCallToTaxService(Employee employee, Money taxesToPay) throws TaxWebServiceException {
+        TaxTo taxTo = createWebserviceInput(employee, taxesToPay);
 
         try {
             URI uri = URI.create(taxServiceUrl);
             ResponseEntity<TaxServiceResponse> webserviceResult = restTemplate.postForEntity(uri, taxTo, TaxServiceResponse.class);
             TaxServiceResponse taxServiceResponse = webserviceResult.getBody();
 
-            if ("OK".equals(taxServiceResponse.getStatus())) {
-                return getTaxServiceCallResult(taxCalculation, taxTo, webserviceResult.getStatusCode(), getJson(taxServiceResponse), true);
-            } else {
-                throw handleServerException(taxCalculation, taxTo, webserviceResult.getStatusCode(), getJson(taxServiceResponse));
+            if (!"OK".equals(taxServiceResponse.getStatus())) {
+                throw new TaxWebServiceNonFatalException(employee, taxesToPay, webserviceResult.getStatusCode(), getJson(taxServiceResponse), "invalid response from server");
             }
         } catch (HttpClientErrorException e) {
-            throw handleClientException(taxCalculation, taxTo, e.getStatusCode(), e.getResponseBodyAsString());
+            throw new TaxWebServiceFatalException(employee, taxesToPay, e.getStatusCode(), e.getResponseBodyAsString(), e);
         } catch (HttpServerErrorException e) {
-            throw handleServerException(taxCalculation, taxTo, e.getStatusCode(), e.getResponseBodyAsString());
+            throw new TaxWebServiceNonFatalException(employee, taxesToPay, e.getStatusCode(), e.getResponseBodyAsString(), e);
         } catch (ResourceAccessException e) {
-            throw handleServerException(taxCalculation, taxTo, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+            throw new TaxWebServiceNonFatalException(employee, taxesToPay, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
-    }
-
-    private RuntimeException handleClientException(TaxCalculation taxCalculation, TaxTo taxTo, HttpStatus httpStatus, String responseBody) {
-        return new TaxWebServiceFatalException(getTaxServiceCallResult(taxCalculation, taxTo, httpStatus, responseBody, false));
-    }
-
-    private RuntimeException handleServerException(TaxCalculation taxCalculation, TaxTo taxTo, HttpStatus httpStatus, String responseBody) {
-        return new TaxWebServiceException(getTaxServiceCallResult(taxCalculation, taxTo, httpStatus, responseBody, false));
-    }
-
-    private TaxServiceCallResult getTaxServiceCallResult(TaxCalculation taxCalculation, TaxTo taxTo, HttpStatus httpStatus, String responseBody, boolean isSuccessfulResponse) {
-        return TaxServiceCallResult.from(taxCalculation, getJson(taxTo), httpStatus.value(), responseBody, DateTime.now(), isSuccessfulResponse);
     }
 
     private String getJson(Object object) {
@@ -74,10 +59,10 @@ public class TaxPaymentWebService {
         }
     }
 
-    private TaxTo createWebserviceInput(TaxCalculation taxCalculation) {
+    private TaxTo createWebserviceInput(Employee employee, Money taxesToPay) {
         TaxTo taxTo = new TaxTo();
-        taxTo.setAmount(taxCalculation.getTax().getAmount().doubleValue());
-        taxTo.setEmployeeId(taxCalculation.getEmployee().getId());
+        taxTo.setEmployeeId(employee.getId());
+        taxTo.setAmount(taxesToPay.getAmount().doubleValue());
         return taxTo;
     }
 }
