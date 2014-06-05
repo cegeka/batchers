@@ -1,8 +1,8 @@
 package be.cegeka.batchers.taxcalculator.application.service;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
-import be.cegeka.batchers.taxcalculator.to.TaxServiceResponse;
-import be.cegeka.batchers.taxcalculator.to.TaxTo;
+import be.cegeka.batchers.taxcalculator.application.domain.taxpayment.TaxServiceResponse;
+import be.cegeka.batchers.taxcalculator.application.domain.taxpayment.TaxTo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.joda.money.Money;

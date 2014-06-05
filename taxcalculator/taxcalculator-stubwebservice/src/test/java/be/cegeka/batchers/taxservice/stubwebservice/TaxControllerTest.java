@@ -1,9 +1,9 @@
 package be.cegeka.batchers.taxservice.stubwebservice;
 
-import be.cegeka.batchers.taxcalculator.to.TaxServiceResponse;
-import be.cegeka.batchers.taxcalculator.to.TaxTo;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.junit.Before;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -27,20 +27,15 @@ public class TaxControllerTest {
     @InjectMocks
     private TaxController taxController;
 
-    private TaxTo taxTo;
-    private Long employeeId;
-
-    @Before
-    public void setup() {
-        employeeId = 1L;
-        taxTo = new TaxTo(employeeId, 123.0);
-    }
+    private Long employeeId = 1L;
+    private final double amount = 123.0;
+    private JsonNode taxTo = createTaxToAsJsonNode(employeeId, amount);
 
     @Test
     public void givenValidTaxTo_whenSubmitTaxForm_ThenALogLineIsCreatedWithStatusOk() throws JsonProcessingException {
         taxController.submitTaxForm(taxTo);
 
-        verify(taxLogger, times(1)).log(taxTo, "OK");
+        verify(taxLogger, times(1)).log(employeeId, amount, "OK");
     }
 
     @Test
@@ -49,17 +44,17 @@ public class TaxControllerTest {
 
         taxController.submitTaxForm(taxTo);
 
-        verify(taxLogger, times(1)).log(taxTo, "FAILURE");
+        verify(taxLogger, times(1)).log(employeeId, amount, "FAILURE");
     }
 
     @Test
     public void givenBlacklistEmployee_whenSubmitTaxForm_thenResponseFails() throws JsonProcessingException {
         when(specialEmployeesServiceMock.isEmployeeBlacklisted(employeeId)).thenReturn(true);
 
-        ResponseEntity<TaxServiceResponse> response = taxController.submitTaxForm(taxTo);
+        ResponseEntity<JsonNode> response = taxController.submitTaxForm(taxTo);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-        assertThat(response.getBody().getStatus()).isEqualTo(TaxController.RESPONSE_BODY_FAIL);
+        assertThat(response.getBody().get("status").asText()).isEqualTo(TaxController.RESPONSE_BODY_FAIL);
     }
 
     @Test
@@ -84,5 +79,12 @@ public class TaxControllerTest {
         taxController.resetSpecialEmployeesService();
 
         verify(specialEmployeesServiceMock).reset();
+    }
+
+    private JsonNode createTaxToAsJsonNode(Long employeeId, Double amount) {
+        ObjectNode objectNode = JsonNodeFactory.instance.objectNode();
+        objectNode.put("employeeId", employeeId);
+        objectNode.put("amount", amount);
+        return objectNode;
     }
 }

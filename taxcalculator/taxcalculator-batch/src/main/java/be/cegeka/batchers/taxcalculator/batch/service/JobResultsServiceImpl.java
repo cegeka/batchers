@@ -1,5 +1,6 @@
 package be.cegeka.batchers.taxcalculator.batch.service;
 
+import be.cegeka.batchers.taxcalculator.batch.api.JobResultsService;
 import be.cegeka.batchers.taxcalculator.batch.config.singlejvm.EmployeeJobConfigSingleJvm;
 import be.cegeka.batchers.taxcalculator.batch.domain.JobResult;
 import be.cegeka.batchers.taxcalculator.batch.domain.JobStartParams;
@@ -20,7 +21,7 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toMap;
 
 @Service
-public class JobResultsService {
+public class JobResultsServiceImpl implements JobResultsService {
     public static final int NUMBER_OF_MONTHS = 6;
     @Autowired
     JobExecutionMapper jobExecutionMapper;
