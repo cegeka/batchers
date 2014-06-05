@@ -1,5 +1,6 @@
 package be.cegeka.batchers.taxcalculator.application.domain;
 
+import be.cegeka.batchers.taxcalculator.application.service.EmployeeGeneratorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -26,7 +27,7 @@ public class EmployeeGenerator {
         this.numberOfEmployees = numberOfEmployees;
     }
 
-    void resetSize() {
+    public void resetSize() {
         numberOfEmployees = GENERATED_COUNT;
     }
 }

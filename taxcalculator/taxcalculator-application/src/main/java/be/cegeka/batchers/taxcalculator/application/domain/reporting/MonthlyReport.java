@@ -1,4 +1,4 @@
-package be.cegeka.batchers.taxcalculator.application.domain;
+package be.cegeka.batchers.taxcalculator.application.domain.reporting;
 
 import be.cegeka.batchers.taxcalculator.application.util.jackson.JodaDateTimeSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -12,10 +12,7 @@ import javax.validation.constraints.NotNull;
 
 @NamedQueries({
         @NamedQuery(name = MonthlyReport.FIND_BY_YEAR_AND_MONTH, query = MonthlyReport.FIND_BY_YEAR_AND_MONTH_QUERY),
-        @NamedQuery(name = MonthlyReport.FIND_BY_ID, query = MonthlyReport.FIND_BY_ID_QUERY),
-        @NamedQuery(name = MonthlyReport.GET_SUCCESS_SUM, query = MonthlyReport.GET_SUCCESS_SUM_QUERY),
-        @NamedQuery(name = MonthlyReport.GET_FAILED_SUM, query = MonthlyReport.GET_FAILED_SUM_QUERY),
-
+        @NamedQuery(name = MonthlyReport.FIND_BY_ID, query = MonthlyReport.FIND_BY_ID_QUERY)
 })
 @Entity
 public class MonthlyReport {
@@ -27,16 +24,6 @@ public class MonthlyReport {
     public static final String FIND_BY_ID = "MonthlyReport.FIND_BY_ID";
     public static final String FIND_BY_ID_QUERY = "SELECT mr FROM MonthlyReport mr " +
             " WHERE mr.id = :id";
-
-    public static final String GET_SUCCESS_SUM = "MonthlyReport.GET_SUCCESS_SUM";
-    public static final String GET_SUCCESS_SUM_QUERY = "SELECT SUM(tc.tax) FROM TaxCalculation tc" +
-            " WHERE tc.month = :month and tc.year = :year " +
-            " AND EXISTS (SELECT pc FROM PayCheck pc WHERE pc.taxCalculation.id = tc.id)";
-
-    public static final String GET_FAILED_SUM = "MonthlyReport.GET_FAILED_SUM";
-    public static final String GET_FAILED_SUM_QUERY = "SELECT SUM(tc.tax) FROM TaxCalculation tc" +
-            " WHERE tc.month = :month and tc.year = :year " +
-            " AND NOT EXISTS (SELECT pc FROM PayCheck pc WHERE pc.taxCalculation.id = tc.id)";
 
     public static final String ID = "id";
     public static final String YEAR = "year";

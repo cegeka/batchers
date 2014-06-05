@@ -10,6 +10,7 @@ import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.List;
 
@@ -28,14 +29,12 @@ public class JobResultsServiceITest extends AbstractIntegrationTest {
 
     @Test
     public void testJobResults() throws Exception {
-        Calendar calendar = Calendar.getInstance();
-        int currentMonth = calendar.get(Calendar.MONTH) + 1;
+        int year = LocalDate.now().getYear();
+        int currentMonth = LocalDate.now().getMonthValue();
+        int previousMonth = currentMonth - 1;
 
-        jobLauncherTestUtils.launchJob(getJobParametersForMonth(currentMonth, calendar.get(Calendar.YEAR)));
-
-        calendar.add(Calendar.MONTH, -1);
-        int previousMonth = calendar.get(Calendar.MONTH) + 1;
-        jobLauncherTestUtils.launchJob(getJobParametersForMonth(previousMonth, calendar.get(Calendar.YEAR)));
+        jobLauncherTestUtils.launchJob(getJobParametersForMonth(currentMonth, year));
+        jobLauncherTestUtils.launchJob(getJobParametersForMonth(previousMonth, year));
 
         List<JobResult> finishedJobResults = jobResultsService.getJobResults();
 
