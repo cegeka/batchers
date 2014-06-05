@@ -66,7 +66,7 @@ public class TaxCalculatorJobServiceTest {
     public void onJobStarted_AllJobStartListenersAreNotified() {
         when(jobMock.getName()).thenReturn(A_JOBS_NAME);
 
-        taxCalculatorJobService.runTaxCalculatorJob(new JobStartParams(YEAR.intValue(), MONTH.intValue()));
+        taxCalculatorJobService.runTaxCalculatorJob(new JobStartParams(YEAR, MONTH));
 
         verify(jobStartListenerMock1).jobHasBeenStarted(A_JOBS_NAME);
         verify(jobStartListenerMock2).jobHasBeenStarted(A_JOBS_NAME);
@@ -74,7 +74,7 @@ public class TaxCalculatorJobServiceTest {
 
     @Test
     public void whenStarJobs_withGivenYearAndMonth_runJobWithParameters() throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
-        taxCalculatorJobService.runTaxCalculatorJob(new JobStartParams(YEAR.intValue(), MONTH.intValue()));
+        taxCalculatorJobService.runTaxCalculatorJob(new JobStartParams(YEAR, MONTH));
 
         verify(jobLauncherMock).run(any(Job.class), jobParametersArgumentCaptor.capture());
 

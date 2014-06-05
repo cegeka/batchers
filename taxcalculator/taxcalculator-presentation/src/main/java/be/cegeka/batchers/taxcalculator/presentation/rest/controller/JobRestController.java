@@ -21,7 +21,7 @@ public class JobRestController {
     @ResponseBody
     public void runJob(@PathVariable("year") Long year, @PathVariable("month") Long month) {
         LOG.debug("Running job in rest controller");
-        jobService.runTaxCalculatorJob(new JobStartParams(year.intValue(), month.intValue()));
+        jobService.runTaxCalculatorJob(new JobStartParams(year, month));
     }
 
 }
