@@ -2,12 +2,12 @@ package be.cegeka.batchers.taxcalculator.presentation.rest.controller;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeTestBuilder;
+import be.cegeka.batchers.taxcalculator.presentation.to.EmployeeTo;
 import be.cegeka.batchers.taxcalculator.application.domain.MonthlyTaxForEmployee;
 import be.cegeka.batchers.taxcalculator.application.domain.MonthlyTaxForEmployeeRepository;
 import be.cegeka.batchers.taxcalculator.application.service.EmployeeService;
 import be.cegeka.batchers.taxcalculator.presentation.repositories.PresentationEmployeeRepository;
 import be.cegeka.batchers.taxcalculator.presentation.rest.model.EmployeeTaxTo;
-import be.cegeka.batchers.taxcalculator.to.EmployeeTo;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.junit.Before;
@@ -97,7 +97,7 @@ public class EmployeeRestControllerTest {
         Money tax = Money.of(CurrencyUnit.EUR, 10);
 
         Employee employee = new Employee();
-        MonthlyTaxForEmployee taxCalculation = MonthlyTaxForEmployee.from(employee, year, month, tax, (String) null);
+        MonthlyTaxForEmployee taxCalculation = MonthlyTaxForEmployee.from(employee, year, month, tax, (String)null);
         when(employeeServiceMock.getEmployee(employeeId)).thenReturn(employee);
         when(employeeServiceMock.getEmployeeTaxes(employeeId)).thenReturn(asList(taxCalculation));
 

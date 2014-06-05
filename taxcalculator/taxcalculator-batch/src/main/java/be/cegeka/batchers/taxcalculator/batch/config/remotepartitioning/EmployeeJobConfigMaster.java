@@ -35,10 +35,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.integration.amqp.channel.PollableAmqpChannel;
 import org.springframework.integration.amqp.outbound.AmqpOutboundEndpoint;
 import org.springframework.integration.annotation.Aggregator;
 import org.springframework.integration.channel.DirectChannel;
+import org.springframework.integration.channel.ExecutorChannel;
+import org.springframework.integration.channel.FixedSubscriberChannel;
 import org.springframework.integration.core.MessagingTemplate;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.MessageHandler;
+import org.springframework.messaging.simp.user.UserDestinationMessageHandler;
 
 import javax.sql.DataSource;
 import java.util.Arrays;
@@ -48,7 +54,7 @@ import java.util.Arrays;
 @ComponentScan(basePackages = "be.cegeka.batchers.taxcalculator.batch")
 @Import({PropertyPlaceHolderConfig.class, TempConfigToInitDB.class, ItemReaderWriterConfig.class})
 @PropertySource("classpath:taxcalculator-batch.properties")
-@Profile(value = {"remotePartitioning", "testRemotePartitioning"})
+@Profile(value = {"remotePartitioningMaster", "testRemotePartitioning"})
 public class EmployeeJobConfigMaster extends DefaultBatchConfigurer {
 
     public static final String EMPLOYEE_JOB = "employeeJobRemotePartitioning";
@@ -56,6 +62,7 @@ public class EmployeeJobConfigMaster extends DefaultBatchConfigurer {
     public static final String ROUTING_KEY_REQUESTS = "routingKeyRequests";
     public static final String ROUTING_KEY_REPLIES = "routingKeyReplies";
     private static final String WS_CALL_STEP = "wsCallStep";
+    public static final long RECEIVE_TIMEOUT = 60000000L;
     private static Long OVERRIDDEN_BY_EXPRESSION = null;
     private static StepExecution OVERRIDDEN_BY_EXPRESSION_STEP_EXECUTION = null;
 
@@ -152,33 +159,44 @@ public class EmployeeJobConfigMaster extends DefaultBatchConfigurer {
     }
 
     @Bean
-    @Aggregator(sendPartialResultsOnExpiry = true, sendTimeout = 60000000, inputChannel = "inboundStaging")
+    @Aggregator(sendPartialResultsOnExpiry = true, sendTimeout = RECEIVE_TIMEOUT, inputChannel = "inboundStaging")
     public PartitionHandler taxCalculationPartitionHandler() {
         MessageChannelPartitionHandler messageChannelPartitionHandler = new MessageChannelPartitionHandler();
         messageChannelPartitionHandler.setGridSize(1);
-        messageChannelPartitionHandler.setStepName(TAX_CALCULATION_STEP);
+        messageChannelPartitionHandler.setStepName(EmployeeJobConfigSlave.TAX_CALCULATION_STEP);
 
         MessagingTemplate messagingGateway = new MessagingTemplate();
-        messagingGateway.setReceiveTimeout(60000000L);
-        messagingGateway.setDefaultChannel(new DirectChannel());
+        messagingGateway.setReceiveTimeout(RECEIVE_TIMEOUT);
+        messagingGateway.setDefaultChannel(outboundRequests());
         messageChannelPartitionHandler.setMessagingOperations(messagingGateway);
 
         return messageChannelPartitionHandler;
     }
 
     @Bean
-    public AmqpOutboundEndpoint outboundEndpoint() {
-        return new AmqpOutboundEndpoint(amqpTemplate());
+    public MessageChannel outboundRequests() {
+        MessageChannel directChannel = new PollableAmqpChannel(ROUTING_KEY_REQUESTS, amqpTemplate());
+        return directChannel;
     }
 
     @Bean
-    private AmqpTemplate amqpTemplate() {
+    public MessageChannel inboundStaging() {
+        return new DirectChannel();
+    }
+
+    @Bean
+    public AmqpOutboundEndpoint outboundEndpoint() {
+        AmqpOutboundEndpoint amqpOutboundEndpoint = new AmqpOutboundEndpoint(amqpTemplate());
+        return amqpOutboundEndpoint;
+    }
+
+    @Bean
+    public AmqpTemplate amqpTemplate() {
         RabbitTemplate rabbitTemplate = new RabbitTemplate();
         rabbitTemplate.setRoutingKey(ROUTING_KEY_REQUESTS);
         rabbitTemplate.setConnectionFactory(connectionFactory());
-        rabbitTemplate.setReplyTimeout(60000000L);
+        rabbitTemplate.setReplyTimeout(RECEIVE_TIMEOUT);
         rabbitTemplate.setReplyQueue(replyQueue());
-
         return rabbitTemplate;
     }
 
@@ -193,17 +211,17 @@ public class EmployeeJobConfigMaster extends DefaultBatchConfigurer {
     }
 
     @Bean
-    private Queue replyQueue() {
+    public Queue replyQueue() {
         return new Queue(ROUTING_KEY_REPLIES);
     }
 
     @Bean
-    private Queue requestQueue() {
+    public Queue requestQueue() {
         return new Queue(ROUTING_KEY_REQUESTS);
     }
 
     @Bean
-    private ConnectionFactory connectionFactory() {
+    public ConnectionFactory connectionFactory() {
         CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
         connectionFactory.setAddresses(rabbitmqAddress);
         connectionFactory.setUsername(rabbitmqUsername);
@@ -212,12 +230,7 @@ public class EmployeeJobConfigMaster extends DefaultBatchConfigurer {
     }
 
     @Bean
-    private DirectChannel inboundStaging() {
-        return new DirectChannel();
-    }
-
-    @Bean
-    private RabbitAdmin rabbitAdmin() {
+    public RabbitAdmin rabbitAdmin() {
         return new RabbitAdmin(connectionFactory());
     }
 }

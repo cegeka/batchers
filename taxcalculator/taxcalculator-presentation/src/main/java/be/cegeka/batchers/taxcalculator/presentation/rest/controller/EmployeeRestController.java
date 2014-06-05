@@ -6,7 +6,7 @@ import be.cegeka.batchers.taxcalculator.application.domain.MonthlyTaxForEmployee
 import be.cegeka.batchers.taxcalculator.application.service.EmployeeService;
 import be.cegeka.batchers.taxcalculator.presentation.repositories.PresentationEmployeeRepository;
 import be.cegeka.batchers.taxcalculator.presentation.rest.model.EmployeeTaxTo;
-import be.cegeka.batchers.taxcalculator.to.EmployeeTo;
+import be.cegeka.batchers.taxcalculator.presentation.to.EmployeeTo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;

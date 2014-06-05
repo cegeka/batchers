@@ -4,10 +4,12 @@ import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeRepository;
 import be.cegeka.batchers.taxcalculator.application.domain.MonthlyTaxForEmployee;
 import be.cegeka.batchers.taxcalculator.application.domain.MonthlyTaxForEmployeeRepository;
+import be.cegeka.batchers.taxcalculator.application.domain.generation.EmployeeGeneratorCleaner;
 import be.cegeka.batchers.taxcalculator.application.domain.reporting.MonthlyReportRepository;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,9 +20,6 @@ public class EmployeeService {
 
     @Autowired
     private EmployeeRepository employeeRepository;
-
-    @Autowired
-    private MonthlyReportRepository monthlyReportRepository;
 
     @Autowired
     private MonthlyTaxForEmployeeRepository monthlyTaxForEmployeeRepository;
@@ -51,10 +50,5 @@ public class EmployeeService {
         return employeeRepository.count();
     }
 
-    @Transactional
-    public void deleteAll() {
-        monthlyTaxForEmployeeRepository.deleteAll();
-        monthlyReportRepository.deleteAll();
-        employeeRepository.deleteAll();
-    }
+
 }

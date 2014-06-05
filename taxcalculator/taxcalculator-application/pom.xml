@@ -28,16 +28,17 @@
             <artifactId>taxcalculator-batch-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>be.cegeka.batchers</groupId>
-            <artifactId>taxcalculator-to</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -106,7 +107,7 @@
         <dependency>
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-http</artifactId>
-            <version>3.0.2.RELEASE</version>
+            <version>4.0.2.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>

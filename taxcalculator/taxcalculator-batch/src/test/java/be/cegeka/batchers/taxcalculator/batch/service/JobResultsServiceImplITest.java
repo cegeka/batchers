@@ -15,9 +15,9 @@ import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class JobResultsServiceITest extends AbstractIntegrationTest {
+public class JobResultsServiceImplITest extends AbstractIntegrationTest {
     @Autowired
-    private JobResultsService jobResultsService;
+    private JobResultsServiceImpl jobResultsService;
     @Autowired
     private JobLauncherTestUtils jobLauncherTestUtils;
 

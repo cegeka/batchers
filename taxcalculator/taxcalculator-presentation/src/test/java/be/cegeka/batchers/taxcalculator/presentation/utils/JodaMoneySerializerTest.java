@@ -1,4 +1,4 @@
-package be.cegeka.batchers.taxcalculator.utils;
+package be.cegeka.batchers.taxcalculator.presentation.utils;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import org.joda.money.CurrencyUnit;

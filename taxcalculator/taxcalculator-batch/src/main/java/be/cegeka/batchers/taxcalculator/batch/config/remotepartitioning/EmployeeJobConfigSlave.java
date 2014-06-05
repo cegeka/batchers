@@ -37,7 +37,7 @@ import javax.sql.DataSource;
 @ComponentScan(basePackages = "be.cegeka.batchers.taxcalculator.batch")
 @Import({PropertyPlaceHolderConfig.class, TempConfigToInitDB.class, ItemReaderWriterConfig.class})
 @PropertySource("classpath:taxcalculator-batch.properties")
-@Profile(value = {"remotePartitioning", "testRemotePartitioning"})
+@Profile(value = {"remotePartitioningSlave", "testRemotePartitioning"})
 public class EmployeeJobConfigSlave extends DefaultBatchConfigurer {
 
     public static final String TAX_CALCULATION_STEP = "taxCalculationSlaveStep";
@@ -87,43 +87,45 @@ public class EmployeeJobConfigSlave extends DefaultBatchConfigurer {
     }
 
     @Bean
-    private Queue replyQueue() {
+    public Queue replyQueue() {
         return new Queue(EmployeeJobConfigMaster.ROUTING_KEY_REPLIES);
     }
 
     @Bean
-    private Queue requestQueue() {
+    public Queue requestQueue() {
         return new Queue(EmployeeJobConfigMaster.ROUTING_KEY_REQUESTS);
     }
 
     @Bean
-    private AmqpInboundGateway amqpInboundGateway() {
+    public AmqpInboundGateway amqpInboundGateway() {
         AbstractMessageListenerContainer listener = new SimpleMessageListenerContainer();
+        listener.setConnectionFactory(connectionFactory());
+        listener.setQueueNames(EmployeeJobConfigMaster.ROUTING_KEY_REQUESTS);
         AmqpInboundGateway amqpInboundGateway = new AmqpInboundGateway(listener);
-        amqpInboundGateway.setRequestChannel(inboundRequest());
+        amqpInboundGateway.setRequestChannel(inboundRequests());
         amqpInboundGateway.setReplyChannel(outboundStaging());
-        amqpInboundGateway.setReplyTimeout(60000000L);
+        amqpInboundGateway.setReplyTimeout(EmployeeJobConfigMaster.RECEIVE_TIMEOUT);
         return amqpInboundGateway;
     }
 
     @Bean
-    private MessageChannel outboundStaging() {
+    public MessageChannel outboundStaging() {
         return new DirectChannel();
     }
 
     @Bean
-    private MessageChannel inboundRequest() {
+    public MessageChannel inboundRequests() {
         return new DirectChannel();
     }
 
     @Bean
-    private BeanFactoryStepLocator stepLocator() {
+    public BeanFactoryStepLocator stepLocator() {
         return new BeanFactoryStepLocator();
     }
 
     @Bean
     @ServiceActivator(inputChannel = "inboundRequests", outputChannel = "outboundStaging")
-    private StepExecutionRequestHandler stepExecutionRequestHandler() throws Exception {
+    public StepExecutionRequestHandler stepExecutionRequestHandler() throws Exception {
         StepExecutionRequestHandler stepExecutionRequestHandler = new StepExecutionRequestHandler();
         stepExecutionRequestHandler.setJobExplorer(jobExplorer(datasource));
         stepExecutionRequestHandler.setStepLocator(stepLocator());
@@ -131,7 +133,7 @@ public class EmployeeJobConfigSlave extends DefaultBatchConfigurer {
     }
 
     @Bean
-    private ConnectionFactory connectionFactory() {
+    public ConnectionFactory connectionFactory() {
         CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
         connectionFactory.setAddresses(rabbitmqAddress);
         connectionFactory.setUsername(rabbitmqUsername);
@@ -140,7 +142,7 @@ public class EmployeeJobConfigSlave extends DefaultBatchConfigurer {
     }
 
     @Bean
-    private RabbitAdmin rabbitAdmin() {
+    public RabbitAdmin rabbitAdmin() {
         return new RabbitAdmin(connectionFactory());
     }
 }

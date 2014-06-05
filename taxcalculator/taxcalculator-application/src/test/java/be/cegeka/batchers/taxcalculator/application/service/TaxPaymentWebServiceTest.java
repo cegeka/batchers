@@ -2,8 +2,8 @@ package be.cegeka.batchers.taxcalculator.application.service;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeTestBuilder;
-import be.cegeka.batchers.taxcalculator.to.TaxServiceResponse;
-import be.cegeka.batchers.taxcalculator.to.TaxTo;
+import be.cegeka.batchers.taxcalculator.application.domain.taxpayment.TaxServiceResponseTo;
+import be.cegeka.batchers.taxcalculator.application.domain.taxpayment.TaxTo;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.junit.Before;
@@ -41,7 +41,7 @@ public class TaxPaymentWebServiceTest {
     private RestTemplate restTemplateMock;
 
     @Mock
-    private ResponseEntity<TaxServiceResponse> mockedResponse;
+    private ResponseEntity<TaxServiceResponseTo> mockedResponse;
 
     @Before
     public void setUpCallWebserviceProcessor() {
@@ -51,7 +51,7 @@ public class TaxPaymentWebServiceTest {
     @Test
     public void testProcessHappyPath_NoExceptionHasBeenThrownAndEmployeeIsReturned() throws Exception {
         whenCallingTheWebservice().thenReturn(mockedResponse);
-        when(mockedResponse.getBody()).thenReturn(new TaxServiceResponse("OK"));
+        when(mockedResponse.getBody()).thenReturn(new TaxServiceResponseTo("OK"));
         when(mockedResponse.getStatusCode()).thenReturn(HttpStatus.OK);
 
         Employee employee = new EmployeeTestBuilder().build();
@@ -64,7 +64,7 @@ public class TaxPaymentWebServiceTest {
     @Test(expected = TaxWebServiceNonFatalException.class)
     public void testProcessBadResponse_ExceptionHasBeenThrownForever() throws Exception {
         whenCallingTheWebservice().thenReturn(mockedResponse);
-        when(mockedResponse.getBody()).thenReturn(new TaxServiceResponse("ERROR"));
+        when(mockedResponse.getBody()).thenReturn(new TaxServiceResponseTo("ERROR"));
         when(mockedResponse.getStatusCode()).thenReturn(HttpStatus.OK);
 
         Employee employee = new EmployeeTestBuilder().build();
@@ -99,8 +99,8 @@ public class TaxPaymentWebServiceTest {
         taxPaymentWebService.doWebserviceCallToTaxService(employee, Money.of(CurrencyUnit.EUR, 2000.0));
     }
 
-    private OngoingStubbing<ResponseEntity<TaxServiceResponse>> whenCallingTheWebservice() {
-        return when(restTemplateMock.postForEntity(eq(URI.create(HTTP_SOMEHOST_SOMEURL)), any(TaxTo.class), eq(TaxServiceResponse.class)));
+    private OngoingStubbing<ResponseEntity<TaxServiceResponseTo>> whenCallingTheWebservice() {
+        return when(restTemplateMock.postForEntity(eq(URI.create(HTTP_SOMEHOST_SOMEURL)), any(TaxTo.class), eq(TaxServiceResponseTo.class)));
     }
 
     private HttpClientErrorException aMethodNotAllowedException() {
