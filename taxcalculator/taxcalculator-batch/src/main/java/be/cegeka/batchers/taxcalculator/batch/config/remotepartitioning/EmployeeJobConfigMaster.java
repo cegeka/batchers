@@ -172,7 +172,7 @@ public class EmployeeJobConfigMaster extends DefaultBatchConfigurer {
     }
 
     @Bean
-    private AmqpTemplate amqpTemplate() {
+    public AmqpTemplate amqpTemplate() {
         RabbitTemplate rabbitTemplate = new RabbitTemplate();
         rabbitTemplate.setRoutingKey(ROUTING_KEY_REQUESTS);
         rabbitTemplate.setConnectionFactory(connectionFactory());
@@ -193,17 +193,17 @@ public class EmployeeJobConfigMaster extends DefaultBatchConfigurer {
     }
 
     @Bean
-    private Queue replyQueue() {
+    public Queue replyQueue() {
         return new Queue(ROUTING_KEY_REPLIES);
     }
 
     @Bean
-    private Queue requestQueue() {
+    public Queue requestQueue() {
         return new Queue(ROUTING_KEY_REQUESTS);
     }
 
     @Bean
-    private ConnectionFactory connectionFactory() {
+    public ConnectionFactory connectionFactory() {
         CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
         connectionFactory.setAddresses(rabbitmqAddress);
         connectionFactory.setUsername(rabbitmqUsername);
@@ -212,12 +212,12 @@ public class EmployeeJobConfigMaster extends DefaultBatchConfigurer {
     }
 
     @Bean
-    private DirectChannel inboundStaging() {
+    public DirectChannel inboundStaging() {
         return new DirectChannel();
     }
 
     @Bean
-    private RabbitAdmin rabbitAdmin() {
+    public RabbitAdmin rabbitAdmin() {
         return new RabbitAdmin(connectionFactory());
     }
 }
