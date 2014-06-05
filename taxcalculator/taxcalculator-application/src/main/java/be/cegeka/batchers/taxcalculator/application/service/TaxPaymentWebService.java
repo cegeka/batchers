@@ -1,7 +1,7 @@
 package be.cegeka.batchers.taxcalculator.application.service;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
-import be.cegeka.batchers.taxcalculator.application.domain.taxpayment.TaxServiceResponse;
+import be.cegeka.batchers.taxcalculator.application.domain.taxpayment.TaxServiceResponseTo;
 import be.cegeka.batchers.taxcalculator.application.domain.taxpayment.TaxTo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,11 +35,11 @@ public class TaxPaymentWebService {
 
         try {
             URI uri = URI.create(taxServiceUrl);
-            ResponseEntity<TaxServiceResponse> webserviceResult = restTemplate.postForEntity(uri, taxTo, TaxServiceResponse.class);
-            TaxServiceResponse taxServiceResponse = webserviceResult.getBody();
+            ResponseEntity<TaxServiceResponseTo> webserviceResult = restTemplate.postForEntity(uri, taxTo, TaxServiceResponseTo.class);
+            TaxServiceResponseTo taxServiceResponseTo = webserviceResult.getBody();
 
-            if (!"OK".equals(taxServiceResponse.getStatus())) {
-                throw new TaxWebServiceNonFatalException(employee, taxesToPay, webserviceResult.getStatusCode(), getJson(taxServiceResponse), "invalid response from server");
+            if (!"OK".equals(taxServiceResponseTo.getStatus())) {
+                throw new TaxWebServiceNonFatalException(employee, taxesToPay, webserviceResult.getStatusCode(), getJson(taxServiceResponseTo), "invalid response from server");
             }
         } catch (HttpClientErrorException e) {
             throw new TaxWebServiceFatalException(employee, taxesToPay, e.getStatusCode(), e.getResponseBodyAsString(), e);

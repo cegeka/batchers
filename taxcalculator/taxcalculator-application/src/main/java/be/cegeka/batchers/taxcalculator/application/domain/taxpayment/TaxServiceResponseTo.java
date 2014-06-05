@@ -3,14 +3,14 @@ package be.cegeka.batchers.taxcalculator.application.domain.taxpayment;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
-public class TaxServiceResponse {
+public class TaxServiceResponseTo {
     private String status;
 
-    public TaxServiceResponse() {
+    public TaxServiceResponseTo() {
         //needed for Jackson
     }
 
-    public TaxServiceResponse(String status) {
+    public TaxServiceResponseTo(String status) {
         this.status = status;
     }
 
