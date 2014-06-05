@@ -1,9 +1,9 @@
 package be.cegeka.batchers.taxcalculator.batch.api;
 
-import be.cegeka.batchers.taxcalculator.batch.api.events.JobStartRequest;
+import be.cegeka.batchers.taxcalculator.batch.domain.JobStartParams;
 
 public interface JobService {
 
-    void runTaxCalculatorJob(JobStartRequest jobStartRequest);
+    void runTaxCalculatorJob(JobStartParams jobStartParams);
 
 }

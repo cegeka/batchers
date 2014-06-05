@@ -2,7 +2,8 @@ package be.cegeka.batchers.taxcalculator.batch.config.listeners;
 
 import be.cegeka.batchers.taxcalculator.application.service.EmployeeService;
 import be.cegeka.batchers.taxcalculator.batch.api.events.JobProgressEvent;
-import be.cegeka.batchers.taxcalculator.batch.api.events.JobStartRequest;
+import be.cegeka.batchers.taxcalculator.batch.domain.JobStartParams;
+import be.cegeka.batchers.taxcalculator.batch.mapping.JobStartParamsMapper;
 import com.google.common.eventbus.EventBus;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.ItemWriteListener;
@@ -23,7 +24,7 @@ public class JobProgressListener implements StepExecutionListener, ItemWriteList
     private int lastPercentageComplete = 0;
     private int currentItemCount;
     private int totalItemCount;
-    private JobStartRequest jobStartRequest;
+    private JobStartParams jobStartParams;
     private String stepName;
 
     @Autowired
@@ -35,13 +36,11 @@ public class JobProgressListener implements StepExecutionListener, ItemWriteList
     @Override
     public void beforeStep(StepExecution stepExecution) {
         totalItemCount = employeeService.getEmployeeCount().intValue();
-        jobStartRequest = new JobStartRequest(stepExecution.getJobExecution().getJobConfigurationName(),
-                stepExecution.getJobParameters().getLong("year").intValue(),
-                stepExecution.getJobParameters().getLong("month").intValue());
+        jobStartParams = new JobStartParamsMapper().map(stepExecution.getJobParameters());
         stepName = stepExecution.getStepName();
         currentItemCount = 0;
         lastPercentageComplete = 0;
-        eventBus.post(new JobProgressEvent(jobStartRequest, stepName, lastPercentageComplete));
+        eventBus.post(new JobProgressEvent(jobStartParams, stepName, lastPercentageComplete));
     }
 
     @Override
@@ -60,7 +59,7 @@ public class JobProgressListener implements StepExecutionListener, ItemWriteList
         int percentageComplete = currentItemCount * 100 / totalItemCount;
         if (percentageComplete - lastPercentageComplete >= UPDATE_INTERVAL) {
             lastPercentageComplete = percentageComplete;
-            eventBus.post(new JobProgressEvent(jobStartRequest, stepName, percentageComplete));
+            eventBus.post(new JobProgressEvent(jobStartParams, stepName, percentageComplete));
         }
     }
 

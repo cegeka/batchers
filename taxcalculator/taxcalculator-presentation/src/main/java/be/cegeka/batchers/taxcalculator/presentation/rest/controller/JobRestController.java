@@ -1,7 +1,7 @@
 package be.cegeka.batchers.taxcalculator.presentation.rest.controller;
 
 import be.cegeka.batchers.taxcalculator.batch.api.JobService;
-import be.cegeka.batchers.taxcalculator.batch.api.events.JobStartRequest;
+import be.cegeka.batchers.taxcalculator.batch.domain.JobStartParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ public class JobRestController {
     @ResponseBody
     public void runJob(@PathVariable("year") Long year, @PathVariable("month") Long month) {
         LOG.debug("Running job in rest controller");
-        jobService.runTaxCalculatorJob(new JobStartRequest("employeeJob", year.intValue(), month.intValue()));
+        jobService.runTaxCalculatorJob(new JobStartParams(year.intValue(), month.intValue()));
     }
 
 }

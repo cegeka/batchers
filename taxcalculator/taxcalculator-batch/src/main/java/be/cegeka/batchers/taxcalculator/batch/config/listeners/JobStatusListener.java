@@ -1,8 +1,8 @@
 package be.cegeka.batchers.taxcalculator.batch.config.listeners;
 
 import be.cegeka.batchers.taxcalculator.batch.api.events.JobEvent;
-import be.cegeka.batchers.taxcalculator.batch.api.events.JobStartRequest;
-import be.cegeka.batchers.taxcalculator.batch.mapping.JobStartRequestMapper;
+import be.cegeka.batchers.taxcalculator.batch.domain.JobStartParams;
+import be.cegeka.batchers.taxcalculator.batch.mapping.JobStartParamsMapper;
 import com.google.common.eventbus.EventBus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.listener.JobExecutionListenerSupport;
@@ -17,16 +17,16 @@ public class JobStatusListener extends JobExecutionListenerSupport {
 
     @Override
     public void beforeJob(JobExecution jobExecution) {
-        JobStartRequest jobStartRequest = new JobStartRequestMapper().map(jobExecution.getJobInstance().getJobName(), jobExecution.getJobParameters());
+        JobStartParams jobStartParams = new JobStartParamsMapper().map(jobExecution.getJobParameters());
 
-        eventBus.post(new JobEvent(jobStartRequest, jobExecution.getStatus().name()));
+        eventBus.post(new JobEvent(jobStartParams, jobExecution.getStatus().name()));
     }
 
     @Override
     public void afterJob(JobExecution jobExecution) {
-        JobStartRequest jobStartRequest = new JobStartRequestMapper().map(jobExecution.getJobInstance().getJobName(), jobExecution.getJobParameters());
+        JobStartParams jobStartParams = new JobStartParamsMapper().map(jobExecution.getJobParameters());
 
-        eventBus.post(new JobEvent(jobStartRequest, jobExecution.getStatus().name()));
+        eventBus.post(new JobEvent(jobStartParams, jobExecution.getStatus().name()));
     }
 
 }

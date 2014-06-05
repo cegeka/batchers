@@ -1,7 +1,7 @@
 package be.cegeka.batchers.taxcalculator.batch.service;
 
 import be.cegeka.batchers.taxcalculator.batch.api.JobStartListener;
-import be.cegeka.batchers.taxcalculator.batch.api.events.JobStartRequest;
+import be.cegeka.batchers.taxcalculator.batch.domain.JobStartParams;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -66,7 +66,7 @@ public class TaxCalculatorJobServiceTest {
     public void onJobStarted_AllJobStartListenersAreNotified() {
         when(jobMock.getName()).thenReturn(A_JOBS_NAME);
 
-        taxCalculatorJobService.runTaxCalculatorJob(new JobStartRequest(null, YEAR.intValue(), MONTH.intValue()));
+        taxCalculatorJobService.runTaxCalculatorJob(new JobStartParams(YEAR.intValue(), MONTH.intValue()));
 
         verify(jobStartListenerMock1).jobHasBeenStarted(A_JOBS_NAME);
         verify(jobStartListenerMock2).jobHasBeenStarted(A_JOBS_NAME);
@@ -74,7 +74,7 @@ public class TaxCalculatorJobServiceTest {
 
     @Test
     public void whenStarJobs_withGivenYearAndMonth_runJobWithParameters() throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
-        taxCalculatorJobService.runTaxCalculatorJob(new JobStartRequest(null, YEAR.intValue(), MONTH.intValue()));
+        taxCalculatorJobService.runTaxCalculatorJob(new JobStartParams(YEAR.intValue(), MONTH.intValue()));
 
         verify(jobLauncherMock).run(any(Job.class), jobParametersArgumentCaptor.capture());
 

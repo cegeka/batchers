@@ -3,7 +3,7 @@ package be.cegeka.batchers.taxcalculator.batch.service;
 
 import be.cegeka.batchers.taxcalculator.batch.api.JobService;
 import be.cegeka.batchers.taxcalculator.batch.api.JobStartListener;
-import be.cegeka.batchers.taxcalculator.batch.api.events.JobStartRequest;
+import be.cegeka.batchers.taxcalculator.batch.domain.JobStartParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
@@ -34,9 +34,9 @@ public class TaxCalculatorJobService implements JobService {
     private Set<JobStartListener> jobStartListeners = new HashSet<>();
 
     @Override
-    public void runTaxCalculatorJob(JobStartRequest jobStartRequest) {
+    public void runTaxCalculatorJob(JobStartParams jobStartParams) {
         notifyJobStartListeners();
-        startJobs(jobStartRequest.getYear(), jobStartRequest.getMonth());
+        startJobs(jobStartParams.getYear(), jobStartParams.getMonth());
     }
 
     private void notifyJobStartListeners() {
