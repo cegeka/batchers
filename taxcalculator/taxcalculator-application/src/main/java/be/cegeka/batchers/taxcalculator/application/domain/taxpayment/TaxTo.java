@@ -1,4 +1,4 @@
-package be.cegeka.batchers.taxcalculator.to;
+package be.cegeka.batchers.taxcalculator.application.domain.taxpayment;
 
 import javax.validation.constraints.NotNull;
 

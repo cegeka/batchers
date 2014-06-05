@@ -1,6 +1,6 @@
-package be.cegeka.batchers.taxcalculator.to;
+package be.cegeka.batchers.taxcalculator.presentation.to;
 
-import be.cegeka.batchers.taxcalculator.utils.JodaMoneySerializer;
+import be.cegeka.batchers.taxcalculator.presentation.utils.JodaMoneySerializer;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;

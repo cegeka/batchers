@@ -6,7 +6,7 @@ import be.cegeka.batchers.taxcalculator.presentation.rest.model.EmployeeTaxTo;
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.service.EmployeeService;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeTestBuilder;
-import be.cegeka.batchers.taxcalculator.to.EmployeeTo;
+import be.cegeka.batchers.taxcalculator.presentation.to.EmployeeTo;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.junit.Before;

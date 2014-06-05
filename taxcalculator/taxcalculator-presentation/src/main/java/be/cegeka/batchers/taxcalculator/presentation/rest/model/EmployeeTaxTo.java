@@ -1,7 +1,7 @@
 package be.cegeka.batchers.taxcalculator.presentation.rest.model;
 
 import be.cegeka.batchers.taxcalculator.application.util.jackson.JodaDateTimeSerializer;
-import be.cegeka.batchers.taxcalculator.utils.JodaMoneySerializer;
+import be.cegeka.batchers.taxcalculator.presentation.utils.JodaMoneySerializer;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.joda.money.Money;
 import org.joda.time.DateTime;

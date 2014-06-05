@@ -2,15 +2,22 @@ package be.cegeka.batchers.taxcalculator.application.service;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeRepository;
+import be.cegeka.batchers.taxcalculator.application.domain.generation.EmployeeGeneratorCleaner;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.internal.util.reflection.Whitebox;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.Arrays;
+
+import static java.util.Arrays.asList;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.internal.util.reflection.Whitebox.setInternalState;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EmployeeGeneratorServiceTest {
@@ -25,7 +32,12 @@ public class EmployeeGeneratorServiceTest {
     private EmployeeRepository employeeRepositoryMock;
 
     @Mock
-    private EmployeeService employeeServiceMock;
+    private EmployeeGeneratorCleaner employeeGeneratorCleaner;
+
+    @Before
+    public void setUp() {
+        setInternalState(employeeGeneratorService, "employeeGeneratorCleaners", asList(employeeGeneratorCleaner));
+    }
 
     @Test(expected = IllegalArgumentException.class)
     public void whenGenerateTooManyEmployees_thenThrowException() {
@@ -41,7 +53,7 @@ public class EmployeeGeneratorServiceTest {
     public void whenGenerateEmployees_thenEmployeesGetSaved() {
         employeeGeneratorService.resetEmployees(3L);
 
-        verify(employeeServiceMock).deleteAll();
+        verify(employeeGeneratorCleaner).deleteAll();
         verify(employeeRepositoryMock, times(3)).save(any(Employee.class));
     }
 

@@ -1,8 +1,10 @@
 package be.cegeka.batchers.taxservice.stubwebservice;
 
-import be.cegeka.batchers.taxcalculator.to.TaxTo;
 import be.cegeka.batchers.taxservice.stubwebservice.config.WebAppTestConfig;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 
@@ -22,7 +24,7 @@ public class TaxControllerIntegrationTest extends WebAppTestConfig {
     @Test
     public void testOK() throws Exception {
         mockMvc.perform(post("/taxservice").contentType(MediaType.APPLICATION_JSON)
-                .content(convertObjectToJsonBytes(new TaxTo(1233454354L, 222.3)))
+                .content(convertObjectToJsonBytes(createTaxToAsJsonNode(1233454354L, 222.3)))
         ).andExpect(status().isOk());
     }
 
@@ -36,14 +38,14 @@ public class TaxControllerIntegrationTest extends WebAppTestConfig {
     @Test
     public void testMissingEmployeeId() throws Exception {
         mockMvc.perform(post("/taxservice").contentType(MediaType.APPLICATION_JSON)
-                .content(convertObjectToJsonBytes(new TaxTo(null, 222.3)))
+                .content(convertObjectToJsonBytes(createTaxToAsJsonNode(null, 222.3)))
         ).andExpect(status().isBadRequest());
     }
 
     @Test
     public void testMissingAmount() throws Exception {
         mockMvc.perform(post("/taxservice").contentType(MediaType.APPLICATION_JSON)
-                .content(convertObjectToJsonBytes(new TaxTo(1234455667L, null)))
+                .content(convertObjectToJsonBytes(createTaxToAsJsonNode(1234455667L, null)))
         ).andExpect(status().isBadRequest());
     }
 
@@ -51,12 +53,19 @@ public class TaxControllerIntegrationTest extends WebAppTestConfig {
     @Test
     public void testUnluckEmployeesGetFailureResponse() throws Exception {
         mockMvc.perform(post("/taxservice").contentType(MediaType.APPLICATION_JSON)
-                .content(convertObjectToJsonBytes(new TaxTo(123L, 222.3)))
+                .content(convertObjectToJsonBytes(createTaxToAsJsonNode(123L, 222.3)))
         ).andExpect(status().is5xxServerError());
     }
 
     @Test
     public void testResetSpecialEmployeesService() throws Exception {
         mockMvc.perform(post("/reset")).andExpect(status().isOk());
+    }
+
+    private JsonNode createTaxToAsJsonNode(Long employeeId, Double amount) {
+        ObjectNode objectNode = JsonNodeFactory.instance.objectNode();
+        objectNode.put("employeeId", employeeId);
+        objectNode.put("amount", amount);
+        return objectNode;
     }
 }

@@ -2,7 +2,6 @@ package be.cegeka.batchers.taxcalculator.presentation.rest.controller;
 
 import be.cegeka.batchers.taxcalculator.application.service.EmployeeGeneratorService;
 import be.cegeka.batchers.taxcalculator.application.service.EmployeeService;
-import be.cegeka.batchers.taxcalculator.batch.service.SpringBatchRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,7 +13,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -33,9 +31,6 @@ public class GenerateEmployeesRestControllerTest {
     @Mock
     private EmployeeService employeeServiceMock;
 
-    @Mock
-    private SpringBatchRepository springBatchRepositoryMock;
-
     @Before
     public void setUp() throws Exception {
         mockMvc = MockMvcBuilders.standaloneSetup(generateEmployeesRestController)
@@ -51,15 +46,5 @@ public class GenerateEmployeesRestControllerTest {
                 .andReturn();
 
         verify(employeeGeneratorServiceMock).resetEmployees(TEST_NUMBER_OF_EMPLOYEES_TO_GENERATE);
-    }
-
-    @Test
-    public void whenResetEmployees_thenBatchRepositoryIsCalled() throws Exception {
-        mockMvc.perform(post("/generateEmployees").param("employeesCount", "4"))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        verify(springBatchRepositoryMock).removeJobExecutions();
-        verifyNoMoreInteractions(springBatchRepositoryMock);
     }
 }

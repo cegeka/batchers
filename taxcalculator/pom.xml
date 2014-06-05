@@ -35,7 +35,6 @@
         <module>taxcalculator-application</module>
         <module>taxcalculator-batch</module>
         <module>taxcalculator-presentation</module>
-        <module>taxcalculator-to</module>
         <module>taxcalculator-batch-api</module>
     </modules>
 
@@ -68,11 +67,6 @@
             <dependency>
                 <groupId>be.cegeka.batchers</groupId>
                 <artifactId>taxcalculator-application</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>be.cegeka.batchers</groupId>
-                <artifactId>taxcalculator-to</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -129,6 +123,12 @@
                 <groupId>org.springframework.batch</groupId>
                 <artifactId>spring-batch-infrastructure</artifactId>
                 <version>${spring.batch.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.validation</groupId>
+                <artifactId>validation-api</artifactId>
+                <version>1.0.0.GA</version>
             </dependency>
 
             <dependency>
