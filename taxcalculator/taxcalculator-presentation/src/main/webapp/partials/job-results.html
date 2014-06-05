@@ -14,7 +14,8 @@
     <div class="panel"
          ng-class="{COMPLETED:'panel-success', STARTED:'panel-info', FAILED:'panel-danger'}[job.jobExecutionResults[0].status]">
         <div class="panel-heading clearfix">
-            <div class="col-md-2">{{job.jobStartParams.year}}/{{job.jobStartParams.month}}<br/>{{job.jobName}}</div>
+            <div class="col-md-2">{{job.jobStartParams.year}} - {{job.jobStartParams.month | shortMonth}}<br/>{{job.jobName}}
+            </div>
             <div class="col-md-2">
                 <a ng-show="isReportReady(job.jobExecutionResults[0])"
                    href="rest/files/job_report/{{job.jobExecutionResults[0].id}}.pdf"> Latest report

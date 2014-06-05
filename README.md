@@ -1,4 +1,6 @@
-## Setup 
+
+
+## Setup
 
 Install the following:
 > Java 8, Maven 3, Tomcat 7

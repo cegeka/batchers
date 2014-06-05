@@ -70,14 +70,6 @@ public class MonthlyTaxForEmployee {
 
     private String lastErrorMessage;
 
-    public static MonthlyTaxForEmployee from(Employee employee, int year, int month, Money tax, byte[] monthlyReportPdf) {
-        return new MonthlyTaxForEmployee(employee, year, month, tax, monthlyReportPdf, null);
-    }
-
-    public static MonthlyTaxForEmployee from(Employee employee, int year, int month, Money tax, String lastErrorMessage) {
-        return new MonthlyTaxForEmployee(employee, year, month, tax, null, lastErrorMessage);
-    }
-
     private MonthlyTaxForEmployee() {
         //needed for JPA
     }
@@ -90,6 +82,14 @@ public class MonthlyTaxForEmployee {
         this.monthlyReportPdf = monthlyReportPdf;
         this.lastErrorMessage = lastErrorMessage;
         this.calculationDate = DateTime.now();
+    }
+
+    public static MonthlyTaxForEmployee from(Employee employee, int year, int month, Money tax, byte[] monthlyReportPdf) {
+        return new MonthlyTaxForEmployee(employee, year, month, tax, monthlyReportPdf, null);
+    }
+
+    public static MonthlyTaxForEmployee from(Employee employee, int year, int month, Money tax, String lastErrorMessage) {
+        return new MonthlyTaxForEmployee(employee, year, month, tax, null, lastErrorMessage);
     }
 
     public Long getId() {
@@ -116,27 +116,27 @@ public class MonthlyTaxForEmployee {
         return calculationDate;
     }
 
-    public byte[] getMonthlyReportPdf() {
-        return monthlyReportPdf;
-    }
-
-    public String getLastErrorMessage() {
-        return lastErrorMessage;
-    }
-
-    public boolean hasErrorMessage() {
-        return isNotBlank(lastErrorMessage);
-    }
-
     public void setCalculationDate(DateTime calculationDate) {
         this.calculationDate = calculationDate;
+    }
+
+    public byte[] getMonthlyReportPdf() {
+        return monthlyReportPdf;
     }
 
     public void setMonthlyReportPdf(byte[] monthlyReportPdf) {
         this.monthlyReportPdf = monthlyReportPdf;
     }
 
+    public String getLastErrorMessage() {
+        return lastErrorMessage;
+    }
+
     public void setLastErrorMessage(String lastErrorMessage) {
         this.lastErrorMessage = lastErrorMessage;
+    }
+
+    public boolean hasErrorMessage() {
+        return isNotBlank(lastErrorMessage);
     }
 }

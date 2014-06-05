@@ -1,7 +1,10 @@
 package be.cegeka.batchers.taxcalculator.batch.integration;
 
 import be.cegeka.batchers.taxcalculator.application.domain.*;
+import be.cegeka.batchers.taxcalculator.application.domain.EmployeeRepository;
 import be.cegeka.batchers.taxcalculator.batch.config.singlejvm.EmployeeJobConfigSingleJvm;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculation;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculationRepository;
 import org.junit.After;
 import org.junit.Test;
 import org.springframework.batch.core.ExitStatus;

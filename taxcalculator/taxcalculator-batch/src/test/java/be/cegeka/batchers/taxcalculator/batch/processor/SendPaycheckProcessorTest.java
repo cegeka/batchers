@@ -5,9 +5,9 @@ import be.cegeka.batchers.taxcalculator.application.domain.email.EmailAttachment
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailSender;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailTO;
 import be.cegeka.batchers.taxcalculator.application.domain.pdf.PDFGeneratorService;
-import be.cegeka.batchers.taxcalculator.batch.processor.SendPaycheckProcessor;
+import be.cegeka.batchers.taxcalculator.batch.domain.*;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculationRepository;
 import fr.opensagres.xdocreport.core.XDocReportException;
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,7 +20,6 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
 import java.util.Map;
@@ -57,7 +56,7 @@ public class SendPaycheckProcessorTest {
     private Long jobExecutionId;
     private Employee employee;
     private TaxCalculation taxCalculation;
-    private TaxServiceCallResult taxServiceCallResult;
+    private TaxWebserviceCallResult taxWebserviceCallResult;
     private byte[] generatedPdfBytes;
 
 
@@ -72,7 +71,7 @@ public class SendPaycheckProcessorTest {
                 .build();
 
         taxCalculation = new TaxCalculationTestBuilder().withEmployee(employee).withTax(10.0).build();
-        taxServiceCallResult = TaxServiceCallResult.from(taxCalculation, "", HttpStatus.OK.value(), "", DateTime.now(), true);
+        taxWebserviceCallResult = TaxWebserviceCallResult.callSucceeded(taxCalculation);
 
         generatedPdfBytes = new byte[]{0, 1, 2, 3, 4};
         when(pdfGeneratorService.generatePdfAsByteArray(any(), anyMap())).thenReturn(generatedPdfBytes);
@@ -83,7 +82,7 @@ public class SendPaycheckProcessorTest {
 
     @Test
     public void givenAnEmployee_whenProcessEmployee_thenAnEmailWithTheGeneratedPDFIsSent() throws Exception {
-        PayCheck payCheck = sendPaycheckProcessor.process(taxServiceCallResult);
+        PayCheck payCheck = sendPaycheckProcessor.process(taxWebserviceCallResult);
 
         assertThat(payCheck.getTaxCalculation().getEmployee()).isEqualTo(employee);
 
@@ -115,7 +114,7 @@ public class SendPaycheckProcessorTest {
     @Test
     public void givenAnEmployee_whenProcessEmployee_thenJobExecutionIdIsSetOnPaycheck() throws Exception {
 
-        PayCheck payCheck = sendPaycheckProcessor.process(taxServiceCallResult);
+        PayCheck payCheck = sendPaycheckProcessor.process(taxWebserviceCallResult);
 
         assertThat(payCheck.getJobExecutionId()).isEqualTo(jobExecutionId);
     }

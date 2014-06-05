@@ -1,7 +1,7 @@
 package be.cegeka.batchers.taxcalculator.batch.config.remotepartitioning;
 
-import be.cegeka.batchers.taxcalculator.application.domain.PayCheck;
-import be.cegeka.batchers.taxcalculator.application.domain.TaxCalculation;
+import be.cegeka.batchers.taxcalculator.batch.domain.PayCheck;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculation;
 import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceException;
 import be.cegeka.batchers.taxcalculator.batch.config.ItemReaderWriterConfig;
 import be.cegeka.batchers.taxcalculator.batch.config.TempConfigToInitDB;
@@ -53,11 +53,9 @@ public class EmployeeJobConfigMaster extends DefaultBatchConfigurer {
 
     public static final String EMPLOYEE_JOB = "employeeJobRemotePartitioning";
     public static final String TAX_CALCULATION_STEP = "taxCalculationMasterStep";
-    private static final String WS_CALL_STEP = "wsCallStep";
-
     public static final String ROUTING_KEY_REQUESTS = "routingKeyRequests";
     public static final String ROUTING_KEY_REPLIES = "routingKeyReplies";
-
+    private static final String WS_CALL_STEP = "wsCallStep";
     private static Long OVERRIDDEN_BY_EXPRESSION = null;
     private static StepExecution OVERRIDDEN_BY_EXPRESSION_STEP_EXECUTION = null;
 
@@ -174,7 +172,7 @@ public class EmployeeJobConfigMaster extends DefaultBatchConfigurer {
     }
 
     @Bean
-    private AmqpTemplate amqpTemplate() {
+    public AmqpTemplate amqpTemplate() {
         RabbitTemplate rabbitTemplate = new RabbitTemplate();
         rabbitTemplate.setRoutingKey(ROUTING_KEY_REQUESTS);
         rabbitTemplate.setConnectionFactory(connectionFactory());
@@ -195,17 +193,17 @@ public class EmployeeJobConfigMaster extends DefaultBatchConfigurer {
     }
 
     @Bean
-    private Queue replyQueue() {
+    public Queue replyQueue() {
         return new Queue(ROUTING_KEY_REPLIES);
     }
 
     @Bean
-    private Queue requestQueue() {
+    public Queue requestQueue() {
         return new Queue(ROUTING_KEY_REQUESTS);
     }
 
     @Bean
-    private ConnectionFactory connectionFactory() {
+    public ConnectionFactory connectionFactory() {
         CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
         connectionFactory.setAddresses(rabbitmqAddress);
         connectionFactory.setUsername(rabbitmqUsername);
@@ -214,12 +212,12 @@ public class EmployeeJobConfigMaster extends DefaultBatchConfigurer {
     }
 
     @Bean
-    private DirectChannel inboundStaging() {
+    public DirectChannel inboundStaging() {
         return new DirectChannel();
     }
 
     @Bean
-    private RabbitAdmin rabbitAdmin() {
+    public RabbitAdmin rabbitAdmin() {
         return new RabbitAdmin(connectionFactory());
     }
 }

@@ -1,12 +1,12 @@
 package be.cegeka.batchers.taxcalculator.batch.config.remotepartitioning;
 
-import be.cegeka.batchers.taxcalculator.application.domain.EmployeeService;
-import org.junit.Ignore;
+import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculationRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.item.ExecutionContext;
 
 import java.util.ArrayList;
@@ -18,10 +18,11 @@ import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-@Ignore("not yet used")
 public class EmployeeJobPartitionerTest {
     @Mock
-    private EmployeeService employeeService;
+    private TaxCalculationRepository taxCalculationRepository;
+    @Mock
+    private StepExecution stepExecution;
 
     @InjectMocks
     private EmployeeJobPartitioner employeeJobPartitioner;
@@ -32,9 +33,9 @@ public class EmployeeJobPartitionerTest {
         for (long i = 1; i <= 31; i++) {
             employeeIds.add(i);
         }
-        when(employeeService.getEmployeeIds(anyLong(), anyLong(), anyLong())).thenReturn(employeeIds);
+        when(taxCalculationRepository.getUnprocessedEmployeeIds(anyLong(), anyLong(), anyLong())).thenReturn(employeeIds);
 
-        Map<String,ExecutionContext> partitions = employeeJobPartitioner.partition(1);
+        Map<String, ExecutionContext> partitions = employeeJobPartitioner.partition(1);
 
         assertThat(partitions).hasSize(5);
 
@@ -61,9 +62,9 @@ public class EmployeeJobPartitionerTest {
         for (long i = 1; i <= 100; i++) {
             employeeIds.add(i);
         }
-        when(employeeService.getEmployeeIds(anyLong(), anyLong(), anyLong())).thenReturn(employeeIds);
+        when(taxCalculationRepository.getUnprocessedEmployeeIds(anyLong(), anyLong(), anyLong())).thenReturn(employeeIds);
 
-        Map<String,ExecutionContext> partitions = employeeJobPartitioner.partition(1);
+        Map<String, ExecutionContext> partitions = employeeJobPartitioner.partition(1);
 
         assertThat(partitions).hasSize(5);
 

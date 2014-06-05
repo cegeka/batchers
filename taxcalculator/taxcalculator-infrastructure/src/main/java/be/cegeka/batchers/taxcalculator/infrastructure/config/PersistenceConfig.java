@@ -61,20 +61,20 @@ public class PersistenceConfig {
 
     @Bean
     public EntityManagerFactory entityManagerFactory() {
-        LocalContainerEntityManagerFactoryBean entityManager = new LocalContainerEntityManagerFactoryBean();
-        entityManager.setDataSource(dataSource());
-        entityManager.setPersistenceProviderClass(HibernatePersistenceProvider.class);
-        entityManager.setJpaVendorAdapter(jpaVendorAdapter());
-        entityManager.setPackagesToScan("be.cegeka.batchers.taxcalculator");
+        LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
+        entityManagerFactory.setDataSource(dataSource());
+        entityManagerFactory.setPersistenceProviderClass(HibernatePersistenceProvider.class);
+        entityManagerFactory.setJpaVendorAdapter(jpaVendorAdapter());
+        entityManagerFactory.setPackagesToScan("be.cegeka.batchers.taxcalculator");
 
         Properties properties = new Properties();
         properties.put("hibernate.hbm2ddl.auto", "create-drop");
         properties.put("hibernate.show_sql", "true");
 
-        entityManager.setJpaProperties(properties);
-        entityManager.afterPropertiesSet();
+        entityManagerFactory.setJpaProperties(properties);
+        entityManagerFactory.afterPropertiesSet();
 
-        return entityManager.getNativeEntityManagerFactory();
+        return entityManagerFactory.getNativeEntityManagerFactory();
     }
 
     @Bean
