@@ -12,7 +12,6 @@ import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 
 @Component
@@ -33,18 +32,16 @@ public class JobProgressListener implements StepExecutionListener, ItemWriteList
     @Autowired
     private EventBus eventBus;
 
-    @PostConstruct
-    public void setInitialTotalSkipLimit() {
-        currentItemCount = 0;
-        totalItemCount = employeeService.count().intValue();
-    }
-
     @Override
     public void beforeStep(StepExecution stepExecution) {
+        totalItemCount = employeeService.count().intValue();
         jobStartRequest = new JobStartRequest(stepExecution.getJobExecution().getJobConfigurationName(),
                 stepExecution.getJobParameters().getLong("year").intValue(),
                 stepExecution.getJobParameters().getLong("month").intValue());
         stepName = stepExecution.getStepName();
+        currentItemCount = 0;
+        lastPercentageComplete = 0;
+        eventBus.post(new JobProgressEvent(jobStartRequest, stepName, lastPercentageComplete));
     }
 
     @Override

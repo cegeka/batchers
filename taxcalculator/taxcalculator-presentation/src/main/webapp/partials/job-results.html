@@ -1,17 +1,7 @@
 <div class="row">
     <div class="panel panel-default">
         <div class="panel-heading clearfix">
-            <ul>
-                <li>{{model.connected}}</li>
-                <li>{{model.transport}}</li>
-            </ul>
-
-            <h3>Messages</h3>
-            <ul>
-                <li ng-repeat="message in model.messages">
-                    {{message.status}} {{message.jobStartRequest.name}} - {{message.jobStartRequest.year}}/{{message.jobStartRequest.month}}
-                </li>
-            </ul>
+            Job Results
         </div>
     </div>
 </div>
@@ -41,7 +31,9 @@
             <div class="col-md-2">{{job.jobExecutionResults[0].startTime | date:'medium'}}</div>
             <div class="col-md-2">{{job.jobExecutionResults[0].status}}</div>
             <div class="col-md-2">
-                {{job.progress.stepName}}<br/>
+                <div ng-show="job.progress.visible">
+                    {{job.progress.stepName}}<br/>
+                </div>
 
                 <div class="progress progress-striped" ng-show="job.progress.visible">
                     <div class="progress-bar" role="progressbar" aria-valuenow="{{job.progress.percentageComplete}}"
@@ -51,7 +43,7 @@
             </div>
             <div class="col-md-2">
                 <button ng-click="runJob(job)"
-                        ng-disabled="{{job.jobExecutionResults[0].status == 'COMPLETED' || job.jobExecutionResults[0].status == 'STARTED'}}"
+                        ng-hide="{{job.jobExecutionResults[0].status == 'COMPLETED' || job.jobExecutionResults[0].status == 'STARTED'}}"
                         ng-class="{COMPLETED:'run-grey', FAILED:'run-failed', STARTED:'run-started'}[job.jobExecutionResults[0].status]">
                     Run Job
                 </button>

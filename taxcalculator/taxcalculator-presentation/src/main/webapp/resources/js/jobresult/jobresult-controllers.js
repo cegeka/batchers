@@ -48,7 +48,7 @@ jobresultController
             if (message.status) {
                 $scope.refreshJobResultsList();
             }
-            if (message.percentageComplete) {
+            if (message.stepName) {
                 $scope.percentageComplete = message.percentageComplete;
                 $scope.stepName = message.stepName;
                 function withNameYearAndMonth(element, index, array) {
@@ -63,7 +63,7 @@ jobresultController
                 var jobResult = $scope.jobResults.filter(withNameYearAndMonth)[0];
                 if (jobResult) {
                     jobResult.progress = message;
-                    jobResult.progress.visible = jobResult.progress.percentageComplete < 100;
+                    jobResult.progress.visible = jobResult.progress.percentageComplete <= 100;
                 }
             }
             $scope.$apply();
