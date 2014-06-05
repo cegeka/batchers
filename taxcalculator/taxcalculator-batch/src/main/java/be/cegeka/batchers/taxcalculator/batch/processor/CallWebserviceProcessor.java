@@ -31,7 +31,6 @@ public class CallWebserviceProcessor implements ItemProcessor<TaxCalculation, Ta
 
     @Autowired
     private RetryConfig retryConfig;
-    private boolean thrown;
 
     @Override
     public TaxWebserviceCallResult process(TaxCalculation taxCalculation) throws Exception {
