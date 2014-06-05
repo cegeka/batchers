@@ -34,6 +34,7 @@ public class ItemReaderWriterConfig {
         parameters.put("month", stepExecution.getJobParameters().getLong("month").intValue());
         parameters.put("jobExecutionId", stepExecution.getJobExecutionId());
         employeeItemReader.setParameterValues(parameters);
+        employeeItemReader.setSaveState(false);
         return employeeItemReader;
     }
 
@@ -71,6 +72,7 @@ public class ItemReaderWriterConfig {
         queryParams.put("month", month.intValue());
         queryParams.put("jobExecutionId", stepExecution.getJobExecutionId());
         employeeItemReader.setParameterValues(queryParams);
+        employeeItemReader.setSaveState(false);
         return employeeItemReader;
     }
 

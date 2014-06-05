@@ -22,6 +22,6 @@ public class FailedStepStepExecutionListener implements StepExecutionListener {
     }
 
     private boolean someItemsGotSkippedDueToTaxWebServiceExceptions(StepExecution stepExecution) {
-        return stepExecution.getReadCount() != stepExecution.getWriteCount();
+        return stepExecution.getReadCount() != stepExecution.getWriteCount() || stepExecution.getRollbackCount() > 0;
     }
 }
