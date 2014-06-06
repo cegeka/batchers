@@ -9,7 +9,7 @@ import org.springframework.messaging.core.MessageSendingOperations;
 import org.springframework.stereotype.Controller;
 
 @Controller
-public class GreetingController {
+public class WebSocketController {
 
     @Autowired
     private JobService jobService;

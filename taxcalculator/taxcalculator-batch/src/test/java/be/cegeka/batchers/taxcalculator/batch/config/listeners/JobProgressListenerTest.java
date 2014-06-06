@@ -122,9 +122,9 @@ public class JobProgressListenerTest {
     }
 
     private void checkPercentageComplete(JobProgressEvent jobProgressEvent, int expectedPercentage) {
-        assertThat(jobProgressEvent.getJobStartParams().getMonth()).isEqualTo((int) MONTH);
         assertThat(jobProgressEvent.getStepName()).isEqualTo(STEP_NAME);
         assertThat(jobProgressEvent.getJobStartParams().getYear()).isEqualTo((int) YEAR);
+        assertThat(jobProgressEvent.getJobStartParams().getMonth()).isEqualTo((int) MONTH);
         assertThat(jobProgressEvent.getPercentageComplete()).isEqualTo(expectedPercentage);
     }
 
