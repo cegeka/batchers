@@ -4,9 +4,7 @@ import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceNonFatalException;
 import be.cegeka.batchers.taxcalculator.batch.config.ItemReaderWriterConfig;
 import be.cegeka.batchers.taxcalculator.batch.config.TempConfigToInitDB;
-import be.cegeka.batchers.taxcalculator.batch.config.listeners.ChangeStatusOnFailedStepsJobExecListener;
-import be.cegeka.batchers.taxcalculator.batch.config.listeners.CreateMonthlyTaxForEmployeeListener;
-import be.cegeka.batchers.taxcalculator.batch.config.listeners.FailedStepStepExecutionListener;
+import be.cegeka.batchers.taxcalculator.batch.config.listeners.*;
 import be.cegeka.batchers.taxcalculator.batch.config.skippolicy.MaxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy;
 import be.cegeka.batchers.taxcalculator.batch.domain.PayCheck;
 import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculation;
@@ -68,9 +66,14 @@ public class EmployeeJobConfigSingleJvm extends DefaultBatchConfigurer {
     @Autowired
     private FailedStepStepExecutionListener failedStepStepExecutionListener;
     @Autowired
+    private JobStatusListener jobStatusListener;
+    @Autowired
     private MaxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy maxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy;
     @Autowired
     private CreateMonthlyTaxForEmployeeListener createMonthlyTaxForEmployeeListener;
+
+    @Autowired
+    private JobProgressListener jobProgressListener;
 
     @Autowired
     private TaskExecutor taskExecutor;
@@ -82,6 +85,7 @@ public class EmployeeJobConfigSingleJvm extends DefaultBatchConfigurer {
                 .start(taxCalculationStep())
                 .next(wsCallAndGenerateAndSendPaycheckStep())
                 .next(jobResultsPdf())
+                .listener(jobStatusListener)
                 .listener(changeStatusOnFailedStepsJobExecListener)
                 .build();
     }
@@ -95,8 +99,9 @@ public class EmployeeJobConfigSingleJvm extends DefaultBatchConfigurer {
                 .reader(taxCalculatorItemReader)
                 .processor(calculateTaxProcessor)
                 .writer(itemReaderWriterConfig.taxCalculatorItemWriter())
-                .allowStartIfComplete(true)
                 .taskExecutor(taskExecutor)
+                .listener(jobProgressListener)
+                .allowStartIfComplete(true)
                 .build();
     }
 
@@ -119,6 +124,7 @@ public class EmployeeJobConfigSingleJvm extends DefaultBatchConfigurer {
                 .listener(createMonthlyTaxForEmployeeListener)
                 .listener(maxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy)
                 .listener(failedStepStepExecutionListener)
+                .listener(jobProgressListener)
                 .allowStartIfComplete(true)
                 .taskExecutor(taskExecutor)
                 .build();

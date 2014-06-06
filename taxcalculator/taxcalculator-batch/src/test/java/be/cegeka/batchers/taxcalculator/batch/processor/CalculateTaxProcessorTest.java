@@ -6,12 +6,10 @@ import be.cegeka.batchers.taxcalculator.application.service.TaxCalculatorService
 import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculation;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.internal.util.reflection.Whitebox;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.batch.core.StepExecution;
 
