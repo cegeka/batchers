@@ -2,7 +2,7 @@ package be.cegeka.batchers.taxcalculator.application.domain.pdf;
 
 import fr.opensagres.xdocreport.core.XDocReportException;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
@@ -19,11 +19,17 @@ import static be.cegeka.batchers.taxcalculator.application.ApplicationAssertions
 
 public class PDFGeneratorServiceTest {
 
+    private PDFGeneratorService pdfGeneratorService;
+
+    @Before
+    public void initPdfGeneratorService() throws InterruptedException {
+        pdfGeneratorService = new PDFGeneratorService();
+        pdfGeneratorService.initialize();
+        waitForXDocReportToInitialize();
+    }
 
     @Test
     public void given_aWordTemplate_whenConvertingToPdf_thenTheSamePdfIsGenerated() throws IOException, XDocReportException {
-        PDFGeneratorService pdfGeneratorService = new PDFGeneratorService();
-
         Map<String, Object> context = new HashMap<>();
         context.put("test", "cegeka-batchers");
 
@@ -34,11 +40,8 @@ public class PDFGeneratorServiceTest {
     }
 
     @Test
-    @Ignore
     public void pdfGeneratorServiceIsThreadSafe() throws InterruptedException, ExecutionException {
-        PDFGeneratorService pdfGeneratorService = new PDFGeneratorService();
-
-        Set<Future<byte[]>> results = doPdfGenerationInMultipleThreads(5, pdfGeneratorService);
+        Set<Future<byte[]>> results = doPdfGenerationInMultipleThreads(10, pdfGeneratorService);
 
         getTheResultsWhichThrowsAnExceptionInMultipleThreads(results);
         assertThat("no exception has been thrown").isNotEmpty();
@@ -96,4 +99,8 @@ public class PDFGeneratorServiceTest {
         };
     }
 
+    private void waitForXDocReportToInitialize() throws InterruptedException {
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+        countDownLatch.await(2, TimeUnit.SECONDS);
+    }
 }

@@ -42,6 +42,7 @@ public class MonthlyTaxReportServiceTest {
     @Before
     public void setUp() throws Exception {
         PDFGeneratorService pdfGeneratorService = new PDFGeneratorService();
+        pdfGeneratorService.initialize();
         monthlyTaxReportService.setPdfGeneratorService(pdfGeneratorService);
         when(sumOfTaxes.getFailedSum(TEST_YEAR, TEST_MONTH)).thenReturn(FAILED_AMOUNT);
         when(sumOfTaxes.getSuccessSum(TEST_YEAR, TEST_MONTH)).thenReturn(SUCCESS_AMOUNT);
