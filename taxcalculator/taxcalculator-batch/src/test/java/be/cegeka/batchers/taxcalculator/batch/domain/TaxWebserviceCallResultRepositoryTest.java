@@ -1,9 +1,9 @@
 package be.cegeka.batchers.taxcalculator.batch.domain;
 
-import be.cegeka.batchers.taxcalculator.application.domain.*;
+import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeRepository;
+import be.cegeka.batchers.taxcalculator.application.domain.EmployeeTestBuilder;
 import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceFatalException;
-import be.cegeka.batchers.taxcalculator.batch.integration.AbstractIntegrationTest;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.junit.Before;

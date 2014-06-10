@@ -11,8 +11,9 @@
     <name>TaxCalculator</name>
     <description>TaxCalculator - 1.0-SNAPSHOT</description>
     <properties>
-        <spring.framework.version>4.0.3.RELEASE</spring.framework.version>
-        <spring.batch.version>3.0.0.RC2</spring.batch.version>
+        <spring.framework.version>4.0.5.RELEASE</spring.framework.version>
+        <spring.batch.version>3.0.0.RELEASE</spring.batch.version>
+        <spring.integration.version>4.0.1.RELEASE</spring.integration.version>
         <hibernate.version>4.3.1.Final</hibernate.version>
         <slf4j.version>1.7.2</slf4j.version>
         <junit.version>4.11</junit.version>
@@ -107,6 +108,21 @@
                 <artifactId>spring-orm</artifactId>
                 <version>${spring.framework.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.springframework.integration</groupId>
+                <artifactId>spring-integration-http</artifactId>
+                <version>${spring.integration.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.integration</groupId>
+                <artifactId>spring-integration-amqp</artifactId>
+                <version>${spring.integration.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.amqp</groupId>
+                <artifactId>spring-rabbit</artifactId>
+                <version>1.3.4.RELEASE</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.springframework.batch</groupId>
@@ -124,11 +140,22 @@
                 <artifactId>spring-batch-infrastructure</artifactId>
                 <version>${spring.batch.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.springframework.batch</groupId>
+                <artifactId>spring-batch-integration</artifactId>
+                <version>${spring.batch.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>javax.validation</groupId>
                 <artifactId>validation-api</artifactId>
                 <version>1.0.0.GA</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>17.0</version>
             </dependency>
 
             <dependency>

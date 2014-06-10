@@ -3,25 +3,17 @@ package be.cegeka.batchers.taxcalculator.batch.service;
 import be.cegeka.batchers.taxcalculator.batch.domain.PayCheckRepository;
 import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculationRepository;
 import be.cegeka.batchers.taxcalculator.batch.domain.TaxWebserviceCallResultRepository;
-import org.hibernate.jpa.internal.QueryImpl;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.internal.util.reflection.Whitebox;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.internal.util.reflection.Whitebox.setInternalState;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SpringBatchAndBatchRepositoryCleanerTest {

@@ -23,10 +23,20 @@
             </div>
             <div class="col-md-2">{{job.jobExecutionResults[0].startTime | date:'medium'}}</div>
             <div class="col-md-2">{{job.jobExecutionResults[0].status}}</div>
-            <div class="col-md-2"></div>
+            <div class="col-md-2">
+                <div ng-show="job.progress.visible">
+                    {{job.progress.stepName}}<br/>
+                </div>
+
+                <div class="progress progress-striped" ng-show="job.progress.visible">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="{{job.progress.percentageComplete}}"
+                         aria-valuemin="0" aria-valuemax="100" style="width:{{job.progress.percentageComplete}}%;">
+                    </div>
+                </div>
+            </div>
             <div class="col-md-2">
                 <button ng-click="runJob(job)"
-                        ng-disabled="{{job.jobExecutionResults[0].status == 'COMPLETED' || job.jobExecutionResults[0].status == 'STARTED'}}"
+                        ng-hide="{{job.jobExecutionResults[0].status == 'COMPLETED' || job.jobExecutionResults[0].status == 'STARTED'}}"
                         ng-class="{COMPLETED:'run-grey', FAILED:'run-failed', STARTED:'run-started'}[job.jobExecutionResults[0].status]">
                     Run Job
                 </button>

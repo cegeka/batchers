@@ -31,7 +31,7 @@ public class JobResultsServiceImpl implements JobResultsService {
     private Function<JobResult, Integer> onMonth = jobResult -> jobResult.getJobStartParams().getMonth();
 
     public List<JobResult> getJobResults() {
-        List<JobInstance> jobInstancesByJobName = jobExplorer.getJobInstancesByJobName(EmployeeJobConfigSingleJvm.EMPLOYEE_JOB, 0, Integer.MAX_VALUE);
+        List<JobInstance> jobInstancesByJobName = jobExplorer.findJobInstancesByJobName(EmployeeJobConfigSingleJvm.EMPLOYEE_JOB, 0, Integer.MAX_VALUE);
 
         DateTime currentTime = new DateTime();
         List<JobStartParams> months = getJobStartParamsPreviousMonths(currentTime.getYear(), currentTime.getMonthOfYear());

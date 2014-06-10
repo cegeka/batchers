@@ -1,6 +1,7 @@
 package be.cegeka.batchers.taxcalculator.batch.processor;
 
-import be.cegeka.batchers.taxcalculator.application.domain.*;
+import be.cegeka.batchers.taxcalculator.application.domain.Employee;
+import be.cegeka.batchers.taxcalculator.application.domain.EmployeeTestBuilder;
 import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceNonFatalException;
 import be.cegeka.batchers.taxcalculator.batch.config.RetryConfig;
 import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculation;

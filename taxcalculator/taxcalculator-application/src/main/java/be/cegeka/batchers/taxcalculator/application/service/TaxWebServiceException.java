@@ -27,6 +27,10 @@ public abstract class TaxWebServiceException extends Exception {
         this.responseBody = responseBody;
     }
 
+    static String createMessage(Employee employee, Money taxesToPay, String reason) {
+        return String.format("Paying the taxes for employee with id %d with amount %s failed because of %s", employee.getId(), taxesToPay.toString(), reason);
+    }
+
     public String getResponseBody() {
         return responseBody;
     }
@@ -41,9 +45,5 @@ public abstract class TaxWebServiceException extends Exception {
 
     public Employee getEmployee() {
         return employee;
-    }
-
-    static String createMessage(Employee employee, Money taxesToPay, String reason) {
-        return String.format("Paying the taxes for employee with id %d with amount %s failed because of %s", employee.getId(), taxesToPay.toString(), reason);
     }
 }

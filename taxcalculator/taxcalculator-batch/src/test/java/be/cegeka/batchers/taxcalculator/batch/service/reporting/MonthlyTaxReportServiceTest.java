@@ -1,8 +1,8 @@
 package be.cegeka.batchers.taxcalculator.batch.service.reporting;
 
+import be.cegeka.batchers.taxcalculator.application.domain.pdf.PDFGeneratorService;
 import be.cegeka.batchers.taxcalculator.application.domain.reporting.MonthlyReport;
 import be.cegeka.batchers.taxcalculator.application.domain.reporting.MonthlyReportRepository;
-import be.cegeka.batchers.taxcalculator.application.domain.pdf.PDFGeneratorService;
 import fr.opensagres.xdocreport.core.XDocReportException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.junit.Before;
@@ -42,6 +42,7 @@ public class MonthlyTaxReportServiceTest {
     @Before
     public void setUp() throws Exception {
         PDFGeneratorService pdfGeneratorService = new PDFGeneratorService();
+        pdfGeneratorService.initialize();
         monthlyTaxReportService.setPdfGeneratorService(pdfGeneratorService);
         when(sumOfTaxes.getFailedSum(TEST_YEAR, TEST_MONTH)).thenReturn(FAILED_AMOUNT);
         when(sumOfTaxes.getSuccessSum(TEST_YEAR, TEST_MONTH)).thenReturn(SUCCESS_AMOUNT);
