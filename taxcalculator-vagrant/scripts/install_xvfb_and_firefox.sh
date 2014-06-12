@@ -8,7 +8,7 @@ apt-get install firefox xvfb -y
 export DISPLAY=:10
 
 # find existing xvfb process
-XVFB_PID=`ps ax|grep Xvfb|cut -d' ' -f1`
+XVFB_PID=$(pidof /usr/bin/Xvfb)
 if [[ ! -n "$XVFB_PID" ]]; then
   echo "Starting Xvfb"
   Xvfb :10 -ac </dev/null &>/dev/null &
