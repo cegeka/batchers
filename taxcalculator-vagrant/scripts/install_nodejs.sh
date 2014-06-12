@@ -1,12 +1,13 @@
 #!/bin/bash
 set -e
 
+# use ndenv to freeze nodejs version
 rm -rf ~/.ndenv
 git clone https://github.com/riywo/ndenv ~/.ndenv
 echo 'export PATH="$HOME/.ndenv/bin:$HOME/.ndenv/shims:$PATH"' >> ~/.bashrc
 echo 'eval "$(ndenv init -)"' >> ~/.bashrc
 
-export PATH='export PATH="$HOME/.ndenv/bin:$HOME/.ndenv/shims:$PATH"'
+export PATH='$HOME/.ndenv/bin:$HOME/.ndenv/shims:$PATH'
 
 git clone https://github.com/riywo/node-build.git ~/.ndenv/plugins/node-build
 ndenv install v0.10.28

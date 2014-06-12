@@ -4,6 +4,7 @@ set -e
 export DISPLAY=:10
 
 cd ~
+# unarchive tomcat
 tar -xf apache-tomcat-7.0.54.tar.gz
 
 mkdir  apache-tomcat-7.0.54-stubwebservice
