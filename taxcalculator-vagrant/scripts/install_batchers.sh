@@ -4,12 +4,12 @@ set -e
 #move somewhere generic
 export DISPLAY=:10
 
-source ~/.bashrc
+source $HOME/.bashrc
 
-cd ~
+cd $HOME
 rm -rf batchers
 git clone https://github.com/cegeka/batchers.git
-cd ~/batchers/taxcalculator
+cd $HOME/batchers/taxcalculator
 mvn clean install
 
 cd taxcalculator-presentation
