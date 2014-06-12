@@ -9,7 +9,9 @@ export DISPLAY=:10
 
 # find existing xvfb process
 XVFB_PID=$(pidof /usr/bin/Xvfb)
-if [[ ! -n "$XVFB_PID" ]]; then
+if [[ -n "$XVFB_PID" ]]; then
+  echo "Xvfb already started"
+else
   echo "Starting Xvfb"
   Xvfb :10 -ac </dev/null &>/dev/null &
 fi;
