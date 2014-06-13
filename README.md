@@ -23,6 +23,17 @@ Set CHROME\_BIN and FIREFOX\_BIN as environment variables, pointing to the execu
 Import the maven projects in IntelliJ/Eclipse and run:
 > mvn clean install
 
+## Simple Vagrant deployment
+```sh
+https://github.com/cegeka/batchers.git
+cd batchers/taxcalculator-vagrant
+vagrant up standalone
+# take a break :) it takes a lot of time to build the macine (it depends a lot on your Internet speed)
+```
+Open in web browser [http://localhost:9090/taxcalculator/#/](http://localhost:9090/taxcalculator/#/)
+
+More info and master/slave config with Vagrant [here](https://github.com/cegeka/batchers/blob/master/taxcalculator-vagrant/README.md)
+
 ## Running the app
 
 1. Create one Run/Debug configuration for stubwebservice-war exploded on port 9091, context path: /stubwebservice. Or, use cd taxcalculator-stubwebservice && mvn jetty:run
