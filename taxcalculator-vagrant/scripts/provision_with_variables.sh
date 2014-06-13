@@ -22,3 +22,6 @@ export PATH="/home/vagrant/.local/bin/karma:$PATH"
 
 #run script as Vagrant user not as root
 sudo -i -H -u vagrant ./scripts/install_as_vagrant.sh
+
+sed -i '/start_tomcat_if_present/d' /etc/crontab
+echo "@reboot vagrant /home/vagrant/scripts/start_tomcat_if_present.sh" | tee -a /etc/crontab
