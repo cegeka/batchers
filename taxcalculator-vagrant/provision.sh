@@ -3,7 +3,7 @@ set -e
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get update && apt-get upgrade -y
-apt-get install git -y
+apt-get install git software-properties-common -y
 
 # delete the line containing taxcalculatordb etc/hosts
 sed -i '/taxcalculatordb/d' /etc/hosts
