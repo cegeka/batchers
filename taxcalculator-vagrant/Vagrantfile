@@ -15,7 +15,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision "file", source: "scripts", destination: "scripts"
   config.vm.provision "shell", path: "provision.sh"
 
-  batchers_master_ip=ENV['BATCHERS_MASTER_IP']
+  # add default master IP for slave if it is not present
+  batchers_master_ip=ENV['BATCHERS_MASTER_IPBATCHERS_MASTER_IP'] || "192.168.50.4"
+
+  puts "Vagrantfile setting BATCHERS_MASTER_IP to #{batchers_master_ip}"
 
   config.vm.define "standalone" do |standalone|
     # tomcat presentation app
@@ -43,6 +46,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     master.vm.network "forwarded_port", guest: 5672, host: 5672
     # rabbitmq admin
     master.vm.network "forwarded_port", guest: 15672, host: 15672
+
+    config.vm.network "private_network", ip: "192.168.50.4"
 
     master.vm.provision "shell", inline: "export BATCHERS_MASTER_IP=#{batchers_master_ip} && export BATCHERS_PROFILE=master && . scripts/provision_with_variables.sh"
   end
