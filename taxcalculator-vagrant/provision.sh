@@ -1,17 +1,18 @@
 #!/usr/bin/env bash
 set -e
 
-export DEBIAN_FRONTEND=noninteractive
-apt-get update && apt-get upgrade -y
-apt-get install git software-properties-common -y
+#export DEBIAN_FRONTEND=noninteractive
+#apt-get update && apt-get upgrade -y
+#apt-get install git software-properties-common -y
 
-# delete the line containing taxcalculatordb etc/hosts
-sed -i '/taxcalculatordb/d' /etc/hosts
-# set master database ip address
-echo "127.0.0.1     batchersmaster" | tee -a /etc/hosts
 
 # make all files form scripts executable (windows removes this flag)
 chmod +x scripts/*.sh
+
+echo "$USER BATCHERS_PROFILE is $BATCHERS_PROFILE"
+echo "$USER BATCHERS_MASTER_IP is $BATCHERS_MASTER_IP"
+
+./set_master_ip.sh
 
 cd scripts
 find ./ -type f -exec sed -i -e 's/^M$//' {} \;

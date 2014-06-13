@@ -12,17 +12,25 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     v.memory = 1024
   end
 
-  config.vm.define "default" do |default|
+  config.vm.provision "file", source: "set_master_ip.sh", destination: "set_master_ip.sh"
+  config.vm.provision "file", source: "scripts", destination: "/home/vagrant"
+  config.vm.provision "file", source: "provision.sh", destination: "provision.sh"
+
+  batchers_master_ip=ENV['BATCHERS_MASTER_IP']
+
+  config.vm.define "standalone" do |standalone|
     # tomcat presentation app
-    default.vm.network "forwarded_port", guest: 9090, host: 9090
+    standalone.vm.network "forwarded_port", guest: 9090, host: 29090
     # jetty (stub web service) 
-    default.vm.network "forwarded_port", guest: 9091, host: 9091
+    standalone.vm.network "forwarded_port", guest: 9091, host: 29091
     # mysql
-    default.vm.network "forwarded_port", guest: 3306, host: 3306
+    standalone.vm.network "forwarded_port", guest: 3306, host: 23306
     # rabbitmq
-    default.vm.network "forwarded_port", guest: 5672, host: 5672
+    standalone.vm.network "forwarded_port", guest: 5672, host: 25672
     # rabbitmq admin
-    default.vm.network "forwarded_port", guest: 15672, host: 15672
+    standalone.vm.network "forwarded_port", guest: 15672, host: 35672
+
+    standalone.vm.provision "shell", inline: "export BATCHERS_MASTER_IP=#{batchers_master_ip} && export BATCHERS_PROFILE=standalone && . provision.sh"
   end
 
   config.vm.define "master" do |master|
@@ -36,15 +44,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     master.vm.network "forwarded_port", guest: 5672, host: 5672
     # rabbitmq admin
     master.vm.network "forwarded_port", guest: 15672, host: 15672
+
+    master.vm.provision "shell", inline: "export BATCHERS_MASTER_IP=#{batchers_master_ip} && export BATCHERS_PROFILE=master && . provision.sh"
   end
 
   config.vm.define "slave" do |slave|
-    slave.vm.provision "shell" do |shell|
-      shell.inline = "export BATCHERS_MASTER_IP=#{ENV['BATCHERS_MASTER_IP']} && echo \"inside inline BATCHERS_MASTER_IP is $BATCHERS_MASTER_IP \""
-    end
+    slave.vm.provision "shell", inline: "export BATCHERS_MASTER_IP=#{batchers_master_ip} && export BATCHERS_PROFILE=slave && . provision.sh"
   end
-
-  config.vm.provision "file", source: "scripts", destination: "scripts"
-  config.vm.provision "shell", path: "provision.sh"
 
 end
