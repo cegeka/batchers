@@ -16,5 +16,6 @@ rm -rf $HOME/apache-tomcat-7.0.54/webapps/taxcalculator-*
 cp $HOME/batchers/taxcalculator/taxcalculator-presentation/target/taxcalculator-presentation-1.0-SNAPSHOT.war $HOME/apache-tomcat-7.0.54-presentation/webapps/taxcalculator.war
 
 echo "export JAVA_OPTS=\"-DAPP_ENV=staging\"" | tee apache-tomcat-7.0.54-presentation/bin/setenv.sh
+chmod +x apache-tomcat-7.0.54-presentation/bin/setenv.sh
 
 apache-tomcat-7.0.54-presentation/bin/catalina.sh start
