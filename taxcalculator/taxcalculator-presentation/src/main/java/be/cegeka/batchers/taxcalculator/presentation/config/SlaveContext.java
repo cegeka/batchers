@@ -11,6 +11,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @Configuration
 @EnableWebMvc
 @Import({InfrastructureConfig.class, EmployeeGeneratorConfig.class, WebserviceCallConfig.class})
-@ComponentScan(basePackages = {"be.cegeka.batchers.taxcalculator.batch.config", "be.cegeka.batchers.taxcalculator.presentation"})
-public class WebAppContext {
+@ComponentScan(basePackages = {"be.cegeka.batchers.taxcalculator.batch.config"})
+public class SlaveContext {
 }

@@ -1,4 +1,4 @@
-package be.cegeka.batchers.taxcalculator.batch.config;
+package be.cegeka.batchers.taxcalculator.batch.config.singlejvm;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.MonthlyTaxForEmployee;
@@ -13,11 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
+@Profile(value = {"default", "singleJvm", "test"})
 public class ItemReaderWriterConfig {
 
     @Autowired

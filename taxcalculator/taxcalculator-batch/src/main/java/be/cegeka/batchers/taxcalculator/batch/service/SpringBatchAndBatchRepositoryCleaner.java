@@ -5,6 +5,7 @@ import be.cegeka.batchers.taxcalculator.batch.domain.PayCheckRepository;
 import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculationRepository;
 import be.cegeka.batchers.taxcalculator.batch.domain.TaxWebserviceCallResultRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Repository;
 

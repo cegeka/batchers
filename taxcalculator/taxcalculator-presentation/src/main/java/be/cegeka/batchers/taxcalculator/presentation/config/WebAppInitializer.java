@@ -1,5 +1,6 @@
 package be.cegeka.batchers.taxcalculator.presentation.config;
 
+import be.cegeka.batchers.taxcalculator.infrastructure.config.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.WebApplicationInitializer;
@@ -10,6 +11,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 import java.util.Set;
 
+import static be.cegeka.batchers.taxcalculator.infrastructure.config.Environment.getCurrentEnvironment;
+import static java.lang.System.getProperty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class WebAppInitializer implements WebApplicationInitializer {
@@ -24,7 +27,8 @@ public class WebAppInitializer implements WebApplicationInitializer {
         setUpAppEnvToDefaultIfNotProvided();
 
         AnnotationConfigWebApplicationContext ctx = new AnnotationConfigWebApplicationContext();
-        ctx.register(WebAppContext.class);
+
+        ctx.register(getSpringActiveProfile());
 
         ServletRegistration.Dynamic dispatcherServlet = servletContext.addServlet(DISPATCHER_SERVLET_NAME, new DispatcherServlet(ctx));
         dispatcherServlet.setLoadOnStartup(1);
@@ -38,11 +42,18 @@ public class WebAppInitializer implements WebApplicationInitializer {
     }
 
     private void setUpAppEnvToDefaultIfNotProvided() {
-        if (isBlank(System.getProperty("APP_ENV"))) {
+        if (isBlank(getProperty("APP_ENV"))) {
             System.setProperty("APP_ENV", "default");
         }
-        if (isBlank(System.getProperty("log_dir"))) {
+        if (isBlank(getProperty("log_dir"))) {
             System.setProperty("log_dir", "target/logs/");
         }
+    }
+
+    private Class<?> getSpringActiveProfile() {
+        if (getCurrentEnvironment().isMaster()) {
+            return WebAppContext.class;
+        }
+        return SlaveContext.class;
     }
 }
