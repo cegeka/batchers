@@ -3,8 +3,7 @@ set -e
 
 #move somewhere generic
 export DISPLAY=:10
-
-source $HOME/.bashrc
+export PATH="/home/vagrant/.local/bin:/home/vagrant/.ndenv/shims:/home/vagrant/.ndenv/bin/:$PATH"
 
 cd $HOME
 rm -rf batchers

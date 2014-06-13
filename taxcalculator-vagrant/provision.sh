@@ -18,6 +18,8 @@ find ./ -type f -exec sed -i -e 's/^M$//' {} \;
 find ./ -type f -exec sed -i -e $'s/\r$//' {} \;
 cd ..
 
+export PATH="/home/vagrant/.local/bin/karma:$PATH"
+
 ./scripts/install_xvfb_and_firefox.sh
 
 ./scripts/install_oracle_java8.sh
@@ -27,4 +29,4 @@ cd ..
 ./scripts/install_rabbitmq.sh
 
 #run script as Vagrant user not as root
-sudo -H -u vagrant ./scripts/install_as_vagrant.sh
+sudo -i -H -u vagrant ./scripts/install_as_vagrant.sh
