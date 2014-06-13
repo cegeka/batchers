@@ -12,9 +12,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     v.memory = 1024
   end
 
-  config.vm.provision "file", source: "set_master_ip.sh", destination: "set_master_ip.sh"
-  config.vm.provision "file", source: "scripts", destination: "/home/vagrant"
-  config.vm.provision "file", source: "provision.sh", destination: "provision.sh"
+  config.vm.provision "file", source: "scripts", destination: "scripts"
+  config.vm.provision "shell", path: "provision.sh"
 
   batchers_master_ip=ENV['BATCHERS_MASTER_IP']
 
@@ -30,7 +29,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # rabbitmq admin
     standalone.vm.network "forwarded_port", guest: 15672, host: 35672
 
-    standalone.vm.provision "shell", inline: "export BATCHERS_MASTER_IP=#{batchers_master_ip} && export BATCHERS_PROFILE=standalone && . provision.sh"
+    standalone.vm.provision "shell", inline: "export BATCHERS_MASTER_IP=#{batchers_master_ip} && export BATCHERS_PROFILE=standalone && . scripts/provision_with_variables.sh"
   end
 
   config.vm.define "master" do |master|
@@ -45,11 +44,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # rabbitmq admin
     master.vm.network "forwarded_port", guest: 15672, host: 15672
 
-    master.vm.provision "shell", inline: "export BATCHERS_MASTER_IP=#{batchers_master_ip} && export BATCHERS_PROFILE=master && . provision.sh"
+    master.vm.provision "shell", inline: "export BATCHERS_MASTER_IP=#{batchers_master_ip} && export BATCHERS_PROFILE=master && . scripts/provision_with_variables.sh"
   end
 
   config.vm.define "slave" do |slave|
-    slave.vm.provision "shell", inline: "export BATCHERS_MASTER_IP=#{batchers_master_ip} && export BATCHERS_PROFILE=slave && . provision.sh"
+    slave.vm.provision "shell", inline: "export BATCHERS_MASTER_IP=#{batchers_master_ip} && export BATCHERS_PROFILE=slave && . scripts/provision_with_variables.sh"
   end
 
 end
