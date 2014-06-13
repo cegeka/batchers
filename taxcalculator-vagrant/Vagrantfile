@@ -12,17 +12,27 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     v.memory = 1024
   end
 
-  config.vm.define "default" do |default|
+  config.vm.provision "file", source: "scripts", destination: "scripts"
+  config.vm.provision "shell", path: "provision.sh"
+
+  # add default master IP for slave if it is not present
+  batchers_master_ip=ENV['BATCHERS_MASTER_IPBATCHERS_MASTER_IP'] || "192.168.50.4"
+
+  puts "Vagrantfile setting BATCHERS_MASTER_IP to #{batchers_master_ip}"
+
+  config.vm.define "standalone" do |standalone|
     # tomcat presentation app
-    default.vm.network "forwarded_port", guest: 9090, host: 9090
+    standalone.vm.network "forwarded_port", guest: 9090, host: 29090
     # jetty (stub web service) 
-    default.vm.network "forwarded_port", guest: 9091, host: 9091
+    standalone.vm.network "forwarded_port", guest: 9091, host: 29091
     # mysql
-    default.vm.network "forwarded_port", guest: 3306, host: 3306
+    standalone.vm.network "forwarded_port", guest: 3306, host: 23306
     # rabbitmq
-    default.vm.network "forwarded_port", guest: 5672, host: 5672
+    standalone.vm.network "forwarded_port", guest: 5672, host: 25672
     # rabbitmq admin
-    default.vm.network "forwarded_port", guest: 15672, host: 15672
+    standalone.vm.network "forwarded_port", guest: 15672, host: 35672
+
+    standalone.vm.provision "shell", inline: "export BATCHERS_MASTER_IP=#{batchers_master_ip} && export BATCHERS_PROFILE=standalone && . scripts/provision_with_variables.sh"
   end
 
   config.vm.define "master" do |master|
@@ -36,15 +46,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     master.vm.network "forwarded_port", guest: 5672, host: 5672
     # rabbitmq admin
     master.vm.network "forwarded_port", guest: 15672, host: 15672
+
+    config.vm.network "private_network", ip: "192.168.50.4"
+
+    master.vm.provision "shell", inline: "export BATCHERS_MASTER_IP=#{batchers_master_ip} && export BATCHERS_PROFILE=master && . scripts/provision_with_variables.sh"
   end
 
   config.vm.define "slave" do |slave|
-    slave.vm.provision "shell" do |shell|
-      shell.inline = "export BATCHERS_MASTER_IP=#{ENV['BATCHERS_MASTER_IP']} && echo \"inside inline BATCHERS_MASTER_IP is $BATCHERS_MASTER_IP \""
-    end
+    # tomcat presentation app
+    slave.vm.network "forwarded_port", guest: 9090, host: 19090
+    slave.vm.provision "shell", inline: "export BATCHERS_MASTER_IP=#{batchers_master_ip} && export BATCHERS_PROFILE=slave && . scripts/provision_with_variables.sh"
   end
-
-  config.vm.provision "file", source: "scripts", destination: "scripts"
-  config.vm.provision "shell", path: "provision.sh"
 
 end
