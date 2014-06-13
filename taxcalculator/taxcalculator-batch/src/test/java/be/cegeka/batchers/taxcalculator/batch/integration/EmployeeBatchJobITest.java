@@ -4,8 +4,6 @@ import be.cegeka.batchers.taxcalculator.application.domain.*;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailSender;
 import be.cegeka.batchers.taxcalculator.application.domain.email.SmtpServerStub;
 import be.cegeka.batchers.taxcalculator.application.domain.reporting.MonthlyReportRepository;
-import be.cegeka.batchers.taxcalculator.application.domain.EmployeeRepository;
-import be.cegeka.batchers.taxcalculator.application.domain.MonthlyTaxForEmployeeRepository;
 import be.cegeka.batchers.taxcalculator.batch.config.skippolicy.MaxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy;
 import be.cegeka.batchers.taxcalculator.batch.domain.PayCheckRepository;
 import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculationRepository;

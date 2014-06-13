@@ -1,0 +1,50 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+  # Every Vagrant virtual environment requires a box to build off of.
+  config.vm.box = "batchers-master"
+  config.vm.box_url = "https://oss-binaries.phusionpassenger.com/vagrant/boxes/latest/ubuntu-14.04-amd64-vbox.box"
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 1024
+  end
+
+  config.vm.define "default" do |default|
+    # tomcat presentation app
+    default.vm.network "forwarded_port", guest: 9090, host: 9090
+    # jetty (stub web service) 
+    default.vm.network "forwarded_port", guest: 9091, host: 9091
+    # mysql
+    default.vm.network "forwarded_port", guest: 3306, host: 3306
+    # rabbitmq
+    default.vm.network "forwarded_port", guest: 5672, host: 5672
+    # rabbitmq admin
+    default.vm.network "forwarded_port", guest: 15672, host: 15672
+  end
+
+  config.vm.define "master" do |master|
+    # tomcat presentation app
+    master.vm.network "forwarded_port", guest: 9090, host: 9090
+    # jetty (stub web service) 
+    master.vm.network "forwarded_port", guest: 9091, host: 9091
+    # mysql
+    master.vm.network "forwarded_port", guest: 3306, host: 3306
+    # rabbitmq
+    master.vm.network "forwarded_port", guest: 5672, host: 5672
+    # rabbitmq admin
+    master.vm.network "forwarded_port", guest: 15672, host: 15672
+  end
+
+  config.vm.define "slave" do |slave|
+    slave.vm.provision "shell" do |shell|
+      shell.inline = "export BATCHERS_MASTER_IP=#{ENV['BATCHERS_MASTER_IP']} && echo \"inside inline BATCHERS_MASTER_IP is $BATCHERS_MASTER_IP \""
+    end
+  end
+
+  config.vm.provision "file", source: "scripts", destination: "scripts"
+  config.vm.provision "shell", path: "provision.sh"
+
+end

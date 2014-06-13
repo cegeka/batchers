@@ -1,9 +1,6 @@
 package be.cegeka.batchers.taxcalculator.application.domain.reporting;
 
 import be.cegeka.batchers.taxcalculator.application.domain.AbstractRepository;
-import be.cegeka.batchers.taxcalculator.application.domain.reporting.MonthlyReport;
-import org.joda.money.CurrencyUnit;
-import org.joda.money.Money;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;

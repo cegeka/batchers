@@ -65,7 +65,7 @@ public class MonthlyTaxForEmployeeTestBuilder {
     }
 
     public MonthlyTaxForEmployeeTestBuilder withHasError(boolean yesOrNo) {
-        if(yesOrNo) {
+        if (yesOrNo) {
             this.lastErrorMessage = "an error occurred";
             this.pdfByteArray = null;
         } else {
