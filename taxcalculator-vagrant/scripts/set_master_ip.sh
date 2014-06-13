@@ -9,4 +9,5 @@ echo "BATCHERS_MASTER_IP is $BATCHERS_MASTER_IP"
 # delete the line containing batchersmaster in /etc/hosts
 echo "$BATCHERS_MASTER_IP     batchersmaster" | tee -a /etc/hosts
 sed -i '/batchersmaster/d' /etc/hosts
-echo "setting batchersmaster to $BATCHERS_MASTER_IP in /etc/hosts" | tee -a /etc/hosts
+echo "setting batchersmaster to $BATCHERS_MASTER_IP in /etc/hosts"
+echo "$BATCHERS_MASTER_IP	batchersmaster" | tee -a /etc/hosts
