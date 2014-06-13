@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
-#export DEBIAN_FRONTEND=noninteractive
-#apt-get update && apt-get upgrade -y
-#apt-get install git software-properties-common -y
+export DEBIAN_FRONTEND=noninteractive
+apt-get update && apt-get upgrade -y
+apt-get install git software-properties-common -y
 
 
 # make all files form scripts executable (windows removes this flag)
