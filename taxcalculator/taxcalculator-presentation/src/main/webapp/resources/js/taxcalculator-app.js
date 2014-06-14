@@ -10,6 +10,14 @@ taxcalculator_app.config(['$routeProvider', function ($routeProvider) {
         .otherwise({redirectTo: '/'});
 }]);
 
+taxcalculator_app.run(function($rootScope, $location, $anchorScroll, $routeParams) {
+    //when the route is changed scroll to the proper element.
+    $rootScope.$on('$routeChangeSuccess', function(newRoute, oldRoute) {
+        $location.hash($routeParams.scrollTo);
+        $anchorScroll();
+    });
+});
+
 taxcalculator_app.filter('shortMonth', function () {
     var shortMonths = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
     return function (input) {
