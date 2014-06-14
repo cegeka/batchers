@@ -3,6 +3,7 @@ Spring Batch Demo
 
 ># Taxcalculation for employees to learn about Spring Batch 
 
+
 Table of contents
 -----------------
 * [Introduction](#introduction)
@@ -48,12 +49,12 @@ vagrant up standalone
 ```
 Open a web browser and go to [http://localhost:9090/taxcalculator/#/](http://localhost:9090/taxcalculator/#/)
 
-More info and master/slave config with Vagrant [here](/cegeka/batchers/tree/master/taxcalculator-vagrant/README.md)
+More info and master/slave config with Vagrant [here](https://github.com/cegeka/batchers/tree/master/taxcalculator-vagrant/README.md)
 
 
 <a name="code"></a>Show me the code!
 ------------------------------------
-All info about the code and how to install the project and run it, can be found [here](/cegeka/batchers/tree/master/taxcalculator/README.md) 
+All info about the code and how to install the project and run it, can be found [here](https://github.com/cegeka/batchers/tree/master/taxcalculator/README.md) 
 
 
 <a name="team-members"></a>Team members
