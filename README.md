@@ -51,7 +51,7 @@ Open a web browser and go to [http://localhost:9090/taxcalculator/#/](http://loc
 
 More info and master/slave config with Vagrant [here](/cegeka/batchers/tree/master/taxcalculator-vagrant/README.md)
 
-***Note:** for this to work, you need to have Git, Vagrant and VirtualBox installed*
+***Note:** for this to work, you need to have Git, Vagrant and VirtualBox installed* 
 
 <a name="code"></a>Show me the code!
 ------------------------------------
