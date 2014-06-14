@@ -1,8 +1,7 @@
 Spring Batch Demo
 =================
 
->### Taxcalculation for employees to learn about Spring Batch 
-
+># Taxcalculation for employees to learn about Spring Batch 
 
 Table of contents
 -----------------
@@ -15,7 +14,7 @@ Table of contents
 ---------------------------------------
 To learn more about Spring Batch at Cegeka, we created a sample project where a company must calculate and pay taxes to the government for each of it's employees.
 
-### High level requirements
+# High level requirements
 For each employee, the following needs to be done:
 * first the taxes that need to be paid are calculated
 * then, a webservice of the government is called to pay these taxes
@@ -29,7 +28,7 @@ A web-based gui is needed so that:
 ** if a job succeeded for a month, one should not be able to restart the job for that month
 * for each job that ran, a job result pdf must be generated that shows how much taxes have been paid to the government and how much taxes could not be paid 
 
-###  Non functional requirements
+# Non functional requirements
 * If the taxcalculation fails for some reason, the job should stop immediately as this code is completely under our control
 * If a webservice call fails because of a server error (Http status 5xx) for an employee, it should retry 3 times before passing on to the next employee.
 * If for one employee the job was unable to call the webservice due to a server error (Http status 5xx), the job should continue processing all other employees but the job itself should fail so it can be restarted.
@@ -41,6 +40,7 @@ A web-based gui is needed so that:
 <a name="application"></a>Show me the application!
 --------------------------------------------------
 To see the end result without setting up Tomcats, Java, ... we created a Vagrant box. How to do so?
+
 ```sh
 git clone https://github.com/cegeka/batchers.git
 cd batchers/taxcalculator-vagrant
@@ -49,12 +49,13 @@ vagrant up standalone
 ```
 Open a web browser and go to [http://localhost:9090/taxcalculator/#/](http://localhost:9090/taxcalculator/#/)
 
-More info and master/slave config with Vagrant [here](https://github.com/cegeka/batchers/tree/master/taxcalculator-vagrant/README.md)
+More info and master/slave config with Vagrant [here](/cegeka/batchers/tree/master/taxcalculator-vagrant/README.md)
 
+***Note:** for this to work, you need to have Git, Vagrant and VirtualBox installed*
 
 <a name="code"></a>Show me the code!
 ------------------------------------
-All info about the code and how to install the project and run it, can be found [here](https://github.com/cegeka/batchers/tree/master/taxcalculator/README.md) 
+All info about the code and how to install the project and run it, can be found [here](/cegeka/batchers/tree/master/taxcalculator/README.md) 
 
 
 <a name="team-members"></a>Team members
