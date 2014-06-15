@@ -18,13 +18,13 @@ import javax.annotation.PostConstruct;
 public class MaxConsecutiveExceptionsSkipPolicy implements ItemProcessListener<TaxCalculation, PayCheck>, SkipPolicy {
 
     @Value("${employeeJob.taxProcessor.retry.maxConsecutiveAttempts:5}")
-    private int maxConsecutiveSkipsDueToTaxWebServiceExceptions;
+    private int maxConsecutiveAttempts;
 
     private int totalSkipLimit = 0;
 
     @PostConstruct
     public void setInitialTotalSkipLimit() {
-        totalSkipLimit = maxConsecutiveSkipsDueToTaxWebServiceExceptions;
+        totalSkipLimit = maxConsecutiveAttempts;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class MaxConsecutiveExceptionsSkipPolicy implements ItemProcessListener<T
 
     @Override
     public void afterProcess(TaxCalculation item, PayCheck result) {
-        totalSkipLimit += maxConsecutiveSkipsDueToTaxWebServiceExceptions;
+        totalSkipLimit += maxConsecutiveAttempts;
     }
 
     @Override
