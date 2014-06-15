@@ -1,7 +1,13 @@
-package be.cegeka.batchers.taxcalculator.application.domain.email;
+package be.cegeka.batchers.taxcalculator.application.service;
 
 
+import be.cegeka.batchers.taxcalculator.application.domain.email.EmailAttachmentTO;
+import be.cegeka.batchers.taxcalculator.application.domain.email.EmailTO;
+import be.cegeka.batchers.taxcalculator.application.domain.email.SmtpServerStub;
 import be.cegeka.batchers.taxcalculator.application.infrastructure.IntegrationTest;
+import be.cegeka.batchers.taxcalculator.application.service.EmailSenderService;
+import be.cegeka.batchers.taxcalculator.application.service.exceptions.EmailSenderException;
+import org.apache.commons.mail.EmailException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -10,12 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static be.cegeka.batchers.taxcalculator.application.ApplicationAssertions.assertThat;
 
-public class EmailSenderITest extends IntegrationTest {
+public class EmailSenderServiceITest extends IntegrationTest {
 
     private static final String TEST_BODY = "test body";
 
     @Autowired
-    private EmailSender emailSender;
+    private EmailSenderService emailSenderService;
 
     @BeforeClass
     public static void setUpWiser() {
@@ -30,11 +36,11 @@ public class EmailSenderITest extends IntegrationTest {
     @After
     public void resetSendMessages() {
         SmtpServerStub.clearMessages();
-        emailSender.jobHasBeenStarted("a string");
+        emailSenderService.jobHasBeenStarted("a string");
     }
 
     @Test
-    public void sendAnEmailToMe() {
+    public void sendAnEmailToMe() throws EmailSenderException {
         EmailTO emailTO = new EmailTO();
 
         EmailAttachmentTO attachmentTO1 = new EmailAttachmentTO();
@@ -53,7 +59,7 @@ public class EmailSenderITest extends IntegrationTest {
         emailTO.addAttachment(attachmentTO1);
         emailTO.addAttachment(attachmentTO2);
 
-        emailSender.send(emailTO);
+        emailSenderService.send(emailTO);
 
         assertThat(SmtpServerStub.wiser())
                 .hasReceivedMessages(1)
@@ -61,7 +67,7 @@ public class EmailSenderITest extends IntegrationTest {
     }
 
     @Test
-    public void onlyOneEmailIsSentAtAllTime() {
+    public void onlyOneEmailIsSentAtAllTime() throws EmailSenderException {
         EmailTO emailTO = new EmailTO();
 
         emailTO.addTo("radu.cirstoiu@cegeka.com");
@@ -69,8 +75,8 @@ public class EmailSenderITest extends IntegrationTest {
         emailTO.setSubject("test subject");
         emailTO.setBody(TEST_BODY);
 
-        emailSender.send(emailTO);
-        emailSender.send(emailTO);
+        emailSenderService.send(emailTO);
+        emailSenderService.send(emailTO);
 
         assertThat(SmtpServerStub.wiser())
                 .hasReceivedMessages(1)

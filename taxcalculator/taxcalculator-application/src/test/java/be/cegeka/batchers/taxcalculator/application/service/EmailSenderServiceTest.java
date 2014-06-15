@@ -1,16 +1,18 @@
-package be.cegeka.batchers.taxcalculator.application.domain.email;
+package be.cegeka.batchers.taxcalculator.application.service;
 
 
+import be.cegeka.batchers.taxcalculator.application.domain.email.EmailTO;
+import be.cegeka.batchers.taxcalculator.application.service.EmailSenderService;
 import org.apache.commons.mail.Email;
 import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class EmailSenderTest {
+public class EmailSenderServiceTest {
 
     @Test
     public void givenAnEmailTO_whenSendingAnEmail_thenTheCorrectDataIsUsedAndTheEmailIsSent() throws Exception {
-        EmailSender.EmailMapper emailMapper = new EmailSender.EmailMapper();
+        EmailSenderService.EmailMapper emailMapper = new EmailSenderService.EmailMapper();
 
         Email email = emailMapper.mapFromEmailTO(emailTO());
 

@@ -1,10 +1,10 @@
 package be.cegeka.batchers.taxcalculator.batch.integration;
 
 import be.cegeka.batchers.taxcalculator.application.domain.*;
-import be.cegeka.batchers.taxcalculator.application.domain.email.EmailSender;
+import be.cegeka.batchers.taxcalculator.application.service.EmailSenderService;
 import be.cegeka.batchers.taxcalculator.application.domain.email.SmtpServerStub;
 import be.cegeka.batchers.taxcalculator.application.domain.reporting.MonthlyReportRepository;
-import be.cegeka.batchers.taxcalculator.batch.config.skippolicy.MaxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy;
+import be.cegeka.batchers.taxcalculator.batch.config.skippolicy.MaxConsecutiveExceptionsSkipPolicy;
 import be.cegeka.batchers.taxcalculator.batch.domain.PayCheckRepository;
 import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculationRepository;
 import be.cegeka.batchers.taxcalculator.batch.domain.TaxWebserviceCallResultRepository;
@@ -46,7 +46,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     @Autowired
     private String taxServiceUrl;
     @Autowired
-    private MaxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy maxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy;
+    private MaxConsecutiveExceptionsSkipPolicy maxConsecutiveExceptionsSkipPolicy;
     @Autowired
     private SumOfTaxes sumOfTaxes;
     @Autowired
@@ -64,7 +64,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
     @Autowired
     private RestTemplate restTemplate;
     @Autowired
-    private EmailSender emailSender;
+    private EmailSenderService emailSenderService;
 
     private MockRestServiceServer mockServer;
     private JobParameters jobParams;
@@ -80,7 +80,7 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
 
         jobParams = new JobParameters(jobParamsMap);
 
-        setInternalState(emailSender, "emailSendCounter", 0);
+        setInternalState(emailSenderService, "emailSendCounter", 0);
     }
 
     @After
@@ -132,6 +132,20 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
 
         assertThat(jobExecution.getStatus().isUnsuccessful()).isFalse();
+        verifyJob(jobExecution);
+    }
+
+    @Test
+    public void jobContinuesButFailsWhenMailCanNotBeSend() throws Exception {
+        SmtpServerStub.stop();
+
+        haveEmployees(2);
+        respondOneTimeWithSuccess();
+        respondOneTimeWithSuccess();
+
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
+
+        assertThat(jobExecution.getStatus().isUnsuccessful()).isTrue();
         verifyJob(jobExecution);
     }
 

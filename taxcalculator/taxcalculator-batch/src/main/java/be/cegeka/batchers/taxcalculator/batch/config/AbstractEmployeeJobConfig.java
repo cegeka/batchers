@@ -1,11 +1,12 @@
 package be.cegeka.batchers.taxcalculator.batch.config;
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
-import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceNonFatalException;
+import be.cegeka.batchers.taxcalculator.application.service.exceptions.EmailSenderException;
+import be.cegeka.batchers.taxcalculator.application.service.exceptions.TaxWebServiceNonFatalException;
 import be.cegeka.batchers.taxcalculator.batch.config.listeners.CreateMonthlyTaxForEmployeeListener;
 import be.cegeka.batchers.taxcalculator.batch.config.listeners.FailedStepStepExecutionListener;
 import be.cegeka.batchers.taxcalculator.batch.config.listeners.JobProgressListener;
-import be.cegeka.batchers.taxcalculator.batch.config.skippolicy.MaxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy;
+import be.cegeka.batchers.taxcalculator.batch.config.skippolicy.MaxConsecutiveExceptionsSkipPolicy;
 import be.cegeka.batchers.taxcalculator.batch.domain.PayCheck;
 import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculation;
 import be.cegeka.batchers.taxcalculator.batch.processor.CalculateTaxProcessor;
@@ -56,7 +57,7 @@ public abstract class AbstractEmployeeJobConfig extends DefaultBatchConfigurer {
     @Autowired
     private FailedStepStepExecutionListener failedStepStepExecutionListener;
     @Autowired
-    private MaxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy maxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy;
+    private MaxConsecutiveExceptionsSkipPolicy maxConsecutiveExceptionsSkipPolicy;
     @Autowired
     private JobProgressListener jobProgressListener;
     @Autowired
@@ -91,13 +92,14 @@ public abstract class AbstractEmployeeJobConfig extends DefaultBatchConfigurer {
         return stepBuilders.get(stepName)
                 .<TaxCalculation, PayCheck>chunk(5)
                 .faultTolerant()
-                .skipPolicy(maxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy)
+                .skipPolicy(maxConsecutiveExceptionsSkipPolicy)
                 .noRollback(TaxWebServiceNonFatalException.class)
+                .noRollback(EmailSenderException.class)
                 .reader(wsCallItemReader)
                 .processor(compositeItemProcessor)
                 .writer(wsCallItemWriter)
                 .listener(createMonthlyTaxForEmployeeListener)
-                .listener(maxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy)
+                .listener(maxConsecutiveExceptionsSkipPolicy)
                 .listener(failedStepStepExecutionListener)
                 .listener(jobProgressListener)
                 .allowStartIfComplete(true)

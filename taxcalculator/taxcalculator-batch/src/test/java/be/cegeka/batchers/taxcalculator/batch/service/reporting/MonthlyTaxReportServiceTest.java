@@ -1,5 +1,6 @@
 package be.cegeka.batchers.taxcalculator.batch.service.reporting;
 
+import be.cegeka.batchers.taxcalculator.application.domain.pdf.PDFGenerationException;
 import be.cegeka.batchers.taxcalculator.application.domain.pdf.PDFGeneratorService;
 import be.cegeka.batchers.taxcalculator.application.domain.reporting.MonthlyReport;
 import be.cegeka.batchers.taxcalculator.application.domain.reporting.MonthlyReportRepository;
@@ -49,7 +50,7 @@ public class MonthlyTaxReportServiceTest {
     }
 
     @Test
-    public void generateReportWithCorrectData() throws IOException, XDocReportException {
+    public void generateReportWithCorrectData() throws PDFGenerationException, IOException {
         byte[] pdfBytes = monthlyTaxReportService.generateReport(3L, TEST_YEAR, TEST_MONTH);
 
         PDDocument pdfDocument = PDDocument.load(new ByteArrayInputStream(pdfBytes));

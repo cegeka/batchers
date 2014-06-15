@@ -70,7 +70,7 @@ public class PersistenceConfig {
         entityManagerFactory.setPackagesToScan("be.cegeka.batchers.taxcalculator");
 
         Properties properties = new Properties();
-        properties.put("hibernate.show_sql", "true");
+        //properties.put("hibernate.show_sql", "true");
         if (getCurrentEnvironment().isMaster()) {
             properties.put("hibernate.hbm2ddl.auto", "create-drop");
         }

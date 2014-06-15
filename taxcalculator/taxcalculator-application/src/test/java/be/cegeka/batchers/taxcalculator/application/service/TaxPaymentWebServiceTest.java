@@ -4,6 +4,8 @@ import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeTestBuilder;
 import be.cegeka.batchers.taxcalculator.application.domain.taxpayment.TaxServiceResponseTo;
 import be.cegeka.batchers.taxcalculator.application.domain.taxpayment.TaxTo;
+import be.cegeka.batchers.taxcalculator.application.service.exceptions.TaxWebServiceFatalException;
+import be.cegeka.batchers.taxcalculator.application.service.exceptions.TaxWebServiceNonFatalException;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.junit.Before;

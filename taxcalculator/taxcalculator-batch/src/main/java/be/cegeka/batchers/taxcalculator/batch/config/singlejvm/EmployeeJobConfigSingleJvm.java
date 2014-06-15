@@ -1,35 +1,15 @@
 package be.cegeka.batchers.taxcalculator.batch.config.singlejvm;
 
-import be.cegeka.batchers.taxcalculator.application.domain.Employee;
-import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceNonFatalException;
 import be.cegeka.batchers.taxcalculator.batch.config.AbstractEmployeeJobConfig;
 import be.cegeka.batchers.taxcalculator.batch.config.TempConfigToInitDB;
 import be.cegeka.batchers.taxcalculator.batch.config.listeners.*;
-import be.cegeka.batchers.taxcalculator.batch.config.skippolicy.MaxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy;
-import be.cegeka.batchers.taxcalculator.batch.domain.PayCheck;
-import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculation;
-import be.cegeka.batchers.taxcalculator.batch.processor.CalculateTaxProcessor;
-import be.cegeka.batchers.taxcalculator.batch.processor.CallWebserviceProcessor;
-import be.cegeka.batchers.taxcalculator.batch.processor.SendPaycheckProcessor;
-import be.cegeka.batchers.taxcalculator.batch.tasklet.JobResultsTasklet;
 import be.cegeka.batchers.taxcalculator.infrastructure.config.PropertyPlaceHolderConfig;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.configuration.annotation.DefaultBatchConfigurer;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.explore.support.JobExplorerFactoryBean;
-import org.springframework.batch.item.database.JpaPagingItemReader;
-import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
-import org.springframework.core.task.TaskExecutor;
-
-import javax.sql.DataSource;
-import java.util.Arrays;
 
 @Configuration
 @EnableBatchProcessing
