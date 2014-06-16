@@ -1,106 +1,65 @@
 package be.cegeka.batchers.taxcalculator.batch.config.remotepartitioning;
 
-import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceException;
-import be.cegeka.batchers.taxcalculator.batch.config.ItemReaderWriterConfig;
+import be.cegeka.batchers.taxcalculator.batch.config.AbstractEmployeeJobConfig;
 import be.cegeka.batchers.taxcalculator.batch.config.TempConfigToInitDB;
 import be.cegeka.batchers.taxcalculator.batch.config.listeners.ChangeStatusOnFailedStepsJobExecListener;
-import be.cegeka.batchers.taxcalculator.batch.config.listeners.FailedStepStepExecutionListener;
-import be.cegeka.batchers.taxcalculator.batch.config.skippolicy.MaxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy;
-import be.cegeka.batchers.taxcalculator.batch.domain.PayCheck;
-import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculation;
-import be.cegeka.batchers.taxcalculator.batch.processor.CallWebserviceProcessor;
-import be.cegeka.batchers.taxcalculator.batch.processor.SendPaycheckProcessor;
-import be.cegeka.batchers.taxcalculator.batch.tasklet.JobResultsTasklet;
+import be.cegeka.batchers.taxcalculator.batch.config.listeners.JobStatusListener;
 import be.cegeka.batchers.taxcalculator.infrastructure.config.PropertyPlaceHolderConfig;
-import org.springframework.amqp.core.AmqpTemplate;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
-import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.core.RabbitAdmin;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.configuration.annotation.DefaultBatchConfigurer;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.explore.support.JobExplorerFactoryBean;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.partition.PartitionHandler;
 import org.springframework.batch.integration.partition.MessageChannelPartitionHandler;
-import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
-import org.springframework.core.task.TaskExecutor;
-import org.springframework.integration.amqp.channel.PollableAmqpChannel;
-import org.springframework.integration.amqp.outbound.AmqpOutboundEndpoint;
 import org.springframework.integration.annotation.Aggregator;
-import org.springframework.integration.channel.DirectChannel;
+import org.springframework.integration.annotation.Payloads;
+import org.springframework.integration.annotation.Poller;
+import org.springframework.integration.channel.QueueChannel;
+import org.springframework.integration.config.EnableIntegration;
 import org.springframework.integration.core.MessagingTemplate;
-import org.springframework.messaging.MessageChannel;
 
-import javax.sql.DataSource;
-import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableBatchProcessing
+@EnableIntegration
 @ComponentScan(basePackages = "be.cegeka.batchers.taxcalculator.batch")
 @Import({PropertyPlaceHolderConfig.class, TempConfigToInitDB.class, ItemReaderWriterConfig.class})
 @PropertySource("classpath:taxcalculator-batch.properties")
 @Profile(value = {"remotePartitioningMaster", "testRemotePartitioning"})
-public class EmployeeJobConfigMaster extends DefaultBatchConfigurer {
+public class EmployeeJobConfigMaster extends AbstractEmployeeJobConfig {
+
+    private static final int MASTER_WITHOUT_TAX_CALCULATION_STEP = 1;
+
+    public static final String WS_CALL_AND_GENERATE_AND_SEND_PAYCHECK_STEP = "wsCallAndGenerateAndSendPaycheckStep";
+    public static final String JOB_RESULTS_PDF_STEP = "jobResultsPdfStep";
 
     public static final String EMPLOYEE_JOB = "employeeJobRemotePartitioning";
     public static final String TAX_CALCULATION_STEP = "taxCalculationMasterStep";
-    public static final String ROUTING_KEY_REQUESTS = "routingKeyRequests";
-    public static final String ROUTING_KEY_REPLIES = "routingKeyReplies";
-    private static final String WS_CALL_STEP = "wsCallStep";
     public static final long RECEIVE_TIMEOUT = 60000000L;
-    private static Long OVERRIDDEN_BY_EXPRESSION = null;
-    private static StepExecution OVERRIDDEN_BY_EXPRESSION_STEP_EXECUTION = null;
 
     @Autowired
     private JobBuilderFactory jobBuilders;
     @Autowired
-    private StepBuilderFactory stepBuilders;
-    @Autowired
-    private ItemReaderWriterConfig itemReaderWriterConfig;
-    @Autowired
-    private CallWebserviceProcessor callWebserviceProcessor;
-    @Autowired
-    private SendPaycheckProcessor sendPaycheckProcessor;
-    @Autowired
-    private JobResultsTasklet jobResultsTasklet;
+    private JobStatusListener jobStatusListener;
     @Autowired
     private ChangeStatusOnFailedStepsJobExecListener changeStatusOnFailedStepsJobExecListener;
-    @Autowired
-    private FailedStepStepExecutionListener failedStepStepExecutionListener;
-    @Autowired
-    private MaxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy maxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy;
 
     @Autowired
-    private TaskExecutor taskExecutor;
-
+    private ClusterConfig clusterConfig;
     @Autowired
     private EmployeeJobPartitioner employeeJobPartitioner;
-
-    @Value("${rabbitmq.ip}")
-    private String rabbitmqAddress;
-    @Value("${rabbitmq.username}")
-    private String rabbitmqUsername;
-    @Value("${rabbitmq.password}")
-    private String rabbitmqPassword;
-
 
     @Bean
     public Job employeeJob() {
         return jobBuilders.get(EMPLOYEE_JOB)
                 .start(taxCalculationStep())
-                .next(wsCallStep())
+                .next(wsCallAndGenerateAndSendPaycheckStep())
                 .next(jobResultsPdf())
+                .listener(jobStatusListener)
                 .listener(changeStatusOnFailedStepsJobExecListener)
                 .build();
     }
@@ -115,50 +74,21 @@ public class EmployeeJobConfigMaster extends DefaultBatchConfigurer {
     }
 
     @Bean
-    public Step wsCallStep() {
-        CompositeItemProcessor<TaxCalculation, PayCheck> compositeItemProcessor = new CompositeItemProcessor<>();
-        compositeItemProcessor.setDelegates(Arrays.asList(
-                callWebserviceProcessor,
-                sendPaycheckProcessor
-        ));
-
-        return stepBuilders.get(WS_CALL_STEP)
-                .<TaxCalculation, PayCheck>chunk(5)
-                .faultTolerant()
-                .skipPolicy(maxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy)
-                .noRollback(TaxWebServiceException.class)
-                .reader(itemReaderWriterConfig.wsCallItemReader(OVERRIDDEN_BY_EXPRESSION, OVERRIDDEN_BY_EXPRESSION, OVERRIDDEN_BY_EXPRESSION_STEP_EXECUTION))
-                .processor(compositeItemProcessor)
-                .writer(itemReaderWriterConfig.wsCallItemWriter())
-                .listener(maxConsecutiveNonFatalTaxWebServiceExceptionsSkipPolicy)
-                .listener(failedStepStepExecutionListener)
-                .listener(sendPaycheckProcessor)
-                .allowStartIfComplete(true)
-                .taskExecutor(taskExecutor)
-                .build();
+    public Step wsCallAndGenerateAndSendPaycheckStep() {
+        return wsCallAndGenerateAndSendPaycheckStep(WS_CALL_AND_GENERATE_AND_SEND_PAYCHECK_STEP);
     }
 
     @Bean
-    public Step jobResultsPdf() {
-        return stepBuilders.get("JOB_RESULTS_PDF")
-                .tasklet(jobResultsTasklet)
-                .allowStartIfComplete(true)
-                .build();
+    protected Step jobResultsPdf() {
+        return jobResultsPdf(JOB_RESULTS_PDF_STEP);
     }
 
     @Bean
-    public JobExplorer jobExplorer(DataSource dataSource) throws Exception {
-        JobExplorerFactoryBean factory = new JobExplorerFactoryBean();
-        factory.setDataSource(dataSource);
-        factory.afterPropertiesSet();
-        return factory.getObject();
-    }
-
-    @Bean
-    @Aggregator(sendPartialResultsOnExpiry = true, sendTimeout = RECEIVE_TIMEOUT, inputChannel = "inboundStaging")
+    @StepScope
     public PartitionHandler taxCalculationPartitionHandler() {
         MessageChannelPartitionHandler messageChannelPartitionHandler = new MessageChannelPartitionHandler();
-        messageChannelPartitionHandler.setGridSize(1);
+        messageChannelPartitionHandler.setGridSize(clusterConfig.getClusterSize() - MASTER_WITHOUT_TAX_CALCULATION_STEP);
+        messageChannelPartitionHandler.setReplyChannel(replyChannel());
         messageChannelPartitionHandler.setStepName(EmployeeJobConfigSlave.TAX_CALCULATION_STEP);
 
         MessagingTemplate messagingGateway = new MessagingTemplate();
@@ -169,64 +99,28 @@ public class EmployeeJobConfigMaster extends DefaultBatchConfigurer {
         return messageChannelPartitionHandler;
     }
 
-    @Bean
-    public MessageChannel outboundRequests() {
-        MessageChannel directChannel = new PollableAmqpChannel(ROUTING_KEY_REQUESTS, amqpTemplate());
-        return directChannel;
+    //why comment: needed because non serializable objects are removed from the messages, including the replychannel.
+    //since the reply channel is removed, the messageChannelPartitionHandler never receives any message.
+    //here we collect all the results which are incoming and send them to the replyChannel so that the partitionHandler can wait for the results
+    @Aggregator(sendPartialResultsOnExpiry = true, sendTimeout = RECEIVE_TIMEOUT, inputChannel = "inboundResults", outputChannel = "replyChannel",
+            poller = @Poller(maxMessagesPerPoll = "5", fixedDelay = "10000"))
+    public List<?> aggregate(@Payloads List<?> messages) {
+        return messages;
     }
 
     @Bean
-    public MessageChannel inboundStaging() {
-        return new DirectChannel();
+    public QueueChannel outboundRequests() {
+        return new QueueChannel(clusterConfig.requests());
     }
 
     @Bean
-    public AmqpOutboundEndpoint outboundEndpoint() {
-        AmqpOutboundEndpoint amqpOutboundEndpoint = new AmqpOutboundEndpoint(amqpTemplate());
-        return amqpOutboundEndpoint;
+    public QueueChannel inboundResults() {
+        return new QueueChannel(clusterConfig.results());
     }
 
     @Bean
-    public AmqpTemplate amqpTemplate() {
-        RabbitTemplate rabbitTemplate = new RabbitTemplate();
-        rabbitTemplate.setRoutingKey(ROUTING_KEY_REQUESTS);
-        rabbitTemplate.setConnectionFactory(connectionFactory());
-        rabbitTemplate.setReplyTimeout(RECEIVE_TIMEOUT);
-        rabbitTemplate.setReplyQueue(replyQueue());
-        return rabbitTemplate;
+    public QueueChannel replyChannel() {
+        return new QueueChannel();
     }
 
-    @Bean
-    public SimpleMessageListenerContainer replyListenerContainer() {
-        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
-        container.setConnectionFactory(connectionFactory());
-        container.setQueues(replyQueue());
-        container.setMessageListener(amqpTemplate());
-
-        return container;
-    }
-
-    @Bean
-    public Queue replyQueue() {
-        return new Queue(ROUTING_KEY_REPLIES);
-    }
-
-    @Bean
-    public Queue requestQueue() {
-        return new Queue(ROUTING_KEY_REQUESTS);
-    }
-
-    @Bean
-    public ConnectionFactory connectionFactory() {
-        CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
-        connectionFactory.setAddresses(rabbitmqAddress);
-        connectionFactory.setUsername(rabbitmqUsername);
-        connectionFactory.setPassword(rabbitmqPassword);
-        return connectionFactory;
-    }
-
-    @Bean
-    public RabbitAdmin rabbitAdmin() {
-        return new RabbitAdmin(connectionFactory());
-    }
 }

@@ -1,4 +1,4 @@
-package be.cegeka.batchers.taxcalculator.batch;
+package be.cegeka.batchers.taxcalculator.batch.config;
 
 
 import org.springframework.context.annotation.Bean;
@@ -8,7 +8,7 @@ import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 
 @Configuration
-@Profile(value = {"default", "singleJvm","remotePartitioningMaster", "remotePartitioningSlave"})
+@Profile("!test")
 public class TaskExecutorConfig {
 
     @Bean

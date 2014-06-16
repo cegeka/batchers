@@ -1,4 +1,4 @@
-package be.cegeka.batchers.taxcalculator.application.service;
+package be.cegeka.batchers.taxcalculator.application.service.exceptions;
 
 
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;

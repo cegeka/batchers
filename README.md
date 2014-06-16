@@ -1,132 +1,72 @@
+Spring Batch Demo
+=================
+
+>### Taxcalculation for employees to learn about Spring Batch 
+
+Table of contents
+-----------------
+* [Introduction](#introduction)
+* [Show me the application!](#application)
+* [Show me the code!](#code)
+* [Team members](#team-members)
+
+<a name="introduction"></a>Introduction
+---------------------------------------
+To learn more about Spring Batch at Cegeka, we created a sample project where a company must calculate and pay taxes to the government for each of it's employees.
+
+# High level requirements
+For each employee, the following needs to be done:
+* first the taxes that need to be paid are calculated
+* then, a webservice of the government is called to pay these taxes
+* last but not least, a PDF paycheck is generated.
+
+A web-based gui is needed so that:
+* the list of employees can be consulted
+* the taxcalculation jobs of the last 6 months can be consulted
+** if a job failed for a certain month, that month should be marked as an error
+** if a job failed for a certain month, one should be able to restart the job for that month
+** if a job succeeded for a month, one should not be able to restart the job for that month
+* for each job that ran, a job result pdf must be generated that shows how much taxes have been paid to the government and how much taxes could not be paid 
+
+# Non functional requirements
+* If the taxcalculation fails for some reason, the job should stop immediately as this code is completely under our control
+* If a webservice call fails because of a server error (Http status 5xx) for an employee, it should retry 3 times before passing on to the next employee.
+* If for one employee the job was unable to call the webservice due to a server error (Http status 5xx), the job should continue processing all other employees but the job itself should fail so it can be restarted.
+* If the webservice calls continue to fail with server errors (Http status 5xx), for 3 consecutive employees, the job should stop. 
+* If a webservice call fails because of a client error (Http status 4xx) for an employee, the job should stop immediately.
+* If a job is restarted because of failures in the previous run, the webservice calls that already happened for the other employees should not be done again so that we don't pay taxes twice for that employee.
 
 
-## Setup
+<a name="application"></a>Show me the application!
+--------------------------------------------------
+To see the end result without setting up Tomcats, Java, ... we created a Vagrant box. How to do so?
 
-Install the following:
-> Java 8, Maven 3, Tomcat 7
-
-> NodeJS v0.10+ (tested on v0.10.28)
-
-Install Karma, Jasmine and browser launchers by running the following commands:
-> npm install -g karma-ng-scenario karma-junit-reporter
-
-> npm install karma-chrome-launcher --save-dev
-
-> npm install karma-firefox-launcher --save-dev
-
-> npm install -g karma-jasmine
-
-> npm install karma-jasmine --save-dev
-
-Set CHROME\_BIN and FIREFOX\_BIN as environment variables, pointing to the executables themselves.
-
-Import the maven projects in IntelliJ/Eclipse and run:
-> mvn clean install
-
-## Running the app
-
-1. Create one Run/Debug configuration for stubwebservice-war exploded on port 9091, context path: /stubwebservice. Or, use cd taxcalculator-stubwebservice && mvn jetty:run
-2. Create one Run/Debug configuration for presentation-war exploded (different port, preferably 9090), context path: /taxcalculator.  Or, (does not pre-populate database with employees) : cd taxcalculator-presentation && mvn tomcat7:run
-3. Start both servers and connect to [http://localhost:9090/taxcalculator/](http://localhost:9090/taxcalculator/)
-
-## Deployment configuration
-
-There are two system properties that need to be set:
-> __APP_ENV__ - either "default" (this is the default setting, using in-memory HSQLDB) or "staging" (using MySQL)
-
-> __log_dir__ - having "target/logs" as default
-
-You can set these at tomcat startup: -DAPP\_ENV=... -Dlog\_dir=...
-
-## Project structure
-
-#### 1. Presentation
-Shows the employee table and allows the job to be run manually.
-Contains the AngularJs files and rest controllers (for retrieving employees/starting job).
-
-#### 2. Application
-Domain and business logic, services for sending email and generate PDFs
-
-#### 3. Batch
-SpringBatch configuration (Jobs/Steps/Reader/Writers/Processors/Listeners definitions)
-
-#### 4. Infrastructure
-PersistenceConfig and PropertyPlaceHolderConfig
-
-#### 5. Stubwebservice
-Simulates an external service (eg: payments).
-
-It can be configured to timeout and/or fail for specific employees: __taxcalculator-stubwebservice.properties__
-
-__stubwebservice.blacklistemployees__ - employee ids for which the server responds with a 500 internal server error, and how many times
-
-__stubwebservice.timeoutemployees__ - employee ids for which the server times out
-
-## Spring Batch Configuration
-We started from the idea that we will have a list of employees for which we run a __job__ with the following __steps__:
-* Step1: A regular step that calculate taxes (read an Employee, calculates the Tax, writes a TaxCalculation)
-* Step2: A step with a __composite item processor__ with 3 processors:
-    call a webservice to send the tax
-    generate a PDF
-    email it to the employee
-* Step3: A __tasklet__ that generates a report with the sum of all the taxes calculated in the previous step
-
-Our main configuration class for the job is __EmployeeJobConfig__.
-
-```java
-        @Bean
-        public Job employeeJob() {
-                return jobBuilders.get(EMPLOYEE_JOB)
-                        .start(taxCalculationStep())
-                        .next(wsCallStep())
-                        .next(generatePDFStep())
-                        .next(jobResultsPdf())
-                        .listener(employeeJobExecutionListener)
-                        .build();
-        }
+```sh
+git clone https://github.com/cegeka/batchers.git
+cd batchers/taxcalculator-vagrant
+vagrant up standalone
+# take a break :) it takes a lot of time to build the macine (it depends a lot on your Internet speed)
 ```
+Open a web browser and go to [http://localhost:9090/taxcalculator/#/](http://localhost:9090/taxcalculator/#/)
 
-## How Tos
+More info and master/slave config with Vagrant [here](/cegeka/batchers/tree/master/taxcalculator-vagrant/README.md)
 
-#### 1. Attempt to process all items, despite running into exceptions (eg: external services)
+***Note:** for this to work, you need to have Git, Vagrant and VirtualBox installed* 
 
-- Use a unique identifier for each job (eg: current time), and make all other parameter non-identifiable.
-- Use a "always skip policy".
-- Track execution results in the DB.
-- Write the query *carefully* :).
-
-#### 2. Simplify retry/restart logic
-Idempotent operations make retry/failure scenarios a lot easier. When an operation is not idempotent you can create a wrapper for that action that is idempotent
-
-#### 3. Integration testing
-> see __AbstractIntegrationTest__
-
-Spring Batch provides utility classes for testing, such as JobLauncherTestUtils (allows running jobs or steps) and JobRepositoryTestUtils (allows removing job executions from the JobRepository)
-
-#### 4. Using retry
-> see __CallWebserviceProcessor__ for configuring retry within a step
-
-## 4. Lessons learned (so you don't have to!)
-
-#### 1. Transaction Management
-There should be just one transaction manager, shared between JPA and Spring, therefore our Job config extends __DefaultBatchConfigurer__. This provides a default job repository and job launcher.
-
-#### 2. Exception handling during processing
-
-- __Default/No Skip Policy__ - the processing does not continue, the job execution is failed
-- __Skip Policy__ - if the exception can be skipped, then the current chunk is rolled back and reexecuted without the item w/ exception
-- __No-Rollback__ - if the exception is configured not to trigger a roll-back, the processing of the current chunk continues
-
-#### 3. Paging paging item readers
-The item reader query MUST NOT change size during the step execution.
-
-#### 4. Step Scoped Processor
-If a processor is used in a composite, and it should be step scoped, then the processor should also be registered as a listener.
+<a name="code"></a>Show me the code!
+------------------------------------
+All info about the code and how to install the project and run it, can be found [here](/cegeka/batchers/tree/master/taxcalculator/README.md) 
 
 
-## Relevant links
-
-- Spring Batch Reference Documentation: http://docs.spring.io/spring-batch/reference/html/
-- Spring Batch Reference Card on DZone: http://refcardz.dzone.com/refcardz/spring-batch-refcard
-- Spring Batch presentation at Java Users Group by Michael Minella: https://www.youtube.com/watch?v=CYTj5YT7CZU
-- Spring Batch with Java Config: https://blog.codecentric.de/en/2013/06/spring-batch-2-2-javaconfig-part-1-a-comparison-to-xml/
+<a name="team-members"></a>Team members
+---------------------------------------
+* Alex Polatos <Alex.Polatos@cegeka.com>
+* Andrei Petcu <Andrei.Petcu@cegeka.com>
+* Cristina Muntean <Cristina.Muntean@cegeka.com>
+* Edward Moraru
+* Madalin Balan <Madalin.Balan@cegeka.com>
+* Monica Turiac <Monica.Turiac@cegeka.com>
+* Radu Cirstoiu
+* Ronald Dehuysser <Ronald.Dehuysser@cegeka.com>
+* Silviu Catarau <Silviu.Catarau@cegeka.com>
+* Tom Briers <Tom.Briers@cegeka.com>

@@ -15,12 +15,14 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Service
+@Profile("!remotePartitioningSlave")
 public class TaxCalculatorJobService implements JobService {
     private static final Logger LOG = LoggerFactory.getLogger(TaxCalculatorJobService.class);
 

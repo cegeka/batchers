@@ -1,6 +1,6 @@
 package be.cegeka.batchers.taxcalculator.batch.domain;
 
-import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceException;
+import be.cegeka.batchers.taxcalculator.application.service.exceptions.TaxWebServiceException;
 import be.cegeka.batchers.taxcalculator.application.util.jackson.JodaDateTimeSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.hibernate.annotations.Type;

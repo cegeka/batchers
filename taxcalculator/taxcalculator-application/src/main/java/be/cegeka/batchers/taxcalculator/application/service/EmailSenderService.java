@@ -1,5 +1,8 @@
-package be.cegeka.batchers.taxcalculator.application.domain.email;
+package be.cegeka.batchers.taxcalculator.application.service;
 
+import be.cegeka.batchers.taxcalculator.application.domain.email.EmailAttachmentTO;
+import be.cegeka.batchers.taxcalculator.application.domain.email.EmailTO;
+import be.cegeka.batchers.taxcalculator.application.service.exceptions.EmailSenderException;
 import be.cegeka.batchers.taxcalculator.batch.api.JobStartListener;
 import org.apache.commons.mail.*;
 import org.slf4j.Logger;
@@ -19,8 +22,8 @@ import static org.apache.commons.lang3.StringUtils.isNoneBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Service
-public class EmailSender implements JobStartListener {
-    private static final Logger LOG = LoggerFactory.getLogger(EmailSender.class);
+public class EmailSenderService implements JobStartListener {
+    private static final Logger LOG = LoggerFactory.getLogger(EmailSenderService.class);
 
     private static final int MAX_EMAILS_TO_BE_SEND = 1;
 
@@ -37,7 +40,7 @@ public class EmailSender implements JobStartListener {
 
     private int emailSendCounter;
 
-    public void send(EmailTO emailTO) {
+    public void send(EmailTO emailTO) throws EmailSenderException {
         try {
             if (isNotBlank(smtpServer) && emailSendCounter < MAX_EMAILS_TO_BE_SEND) {
                 Email email = new EmailMapper().mapFromEmailTO(emailTO);
@@ -57,7 +60,7 @@ public class EmailSender implements JobStartListener {
             throw e;
         } catch (EmailException | IOException e) {
             LOG.error("Errors occurred while sending the email ", e);
-            throw new IllegalStateException(e);
+            throw new EmailSenderException(e);
         }
     }
 

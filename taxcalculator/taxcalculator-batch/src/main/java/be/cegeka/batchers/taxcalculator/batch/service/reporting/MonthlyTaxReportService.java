@@ -1,5 +1,6 @@
 package be.cegeka.batchers.taxcalculator.batch.service.reporting;
 
+import be.cegeka.batchers.taxcalculator.application.domain.pdf.PDFGenerationException;
 import be.cegeka.batchers.taxcalculator.application.domain.pdf.PDFGeneratorService;
 import be.cegeka.batchers.taxcalculator.application.domain.reporting.MonthlyReport;
 import be.cegeka.batchers.taxcalculator.application.domain.reporting.MonthlyReportRepository;
@@ -23,7 +24,7 @@ public class MonthlyTaxReportService {
     @Autowired
     private MonthlyReportRepository monthlyReportRepository;
 
-    public byte[] generateReport(Long jobExecutionId, int year, int month) throws IOException, XDocReportException {
+    public byte[] generateReport(Long jobExecutionId, int year, int month) throws PDFGenerationException {
         Resource monthlyReportTemplate = new ClassPathResource("monthly-tax-report-template.docx");
 
         Map<String, Object> contextMap = new HashMap<>();

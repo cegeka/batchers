@@ -19,6 +19,7 @@ public class EmployeeGeneratorConfig {
     protected EmployeeGenerator employeeGenerator;
 
     @Bean
+    @Profile("!remotePartitioningSlave")
     public ApplicationInitializer applicationInitializer() {
         ApplicationInitializer applicationInitializer = new ApplicationInitializer();
         applicationInitializer.setGenerateEmployees(true);

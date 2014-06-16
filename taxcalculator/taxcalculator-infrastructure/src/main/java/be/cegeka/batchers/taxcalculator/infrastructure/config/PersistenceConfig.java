@@ -16,6 +16,8 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.Properties;
 
+import static be.cegeka.batchers.taxcalculator.infrastructure.config.Environment.getCurrentEnvironment;
+
 
 @Configuration
 @Import(PropertyPlaceHolderConfig.class)
@@ -68,8 +70,10 @@ public class PersistenceConfig {
         entityManagerFactory.setPackagesToScan("be.cegeka.batchers.taxcalculator");
 
         Properties properties = new Properties();
-        properties.put("hibernate.hbm2ddl.auto", "create-drop");
-        properties.put("hibernate.show_sql", "true");
+        //properties.put("hibernate.show_sql", "true");
+        if (getCurrentEnvironment().isMaster()) {
+            properties.put("hibernate.hbm2ddl.auto", "create-drop");
+        }
 
         entityManagerFactory.setJpaProperties(properties);
         entityManagerFactory.afterPropertiesSet();
