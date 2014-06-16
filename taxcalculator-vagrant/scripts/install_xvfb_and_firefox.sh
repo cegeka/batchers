@@ -16,4 +16,6 @@ else
   Xvfb :10 -ac </dev/null &>/dev/null &
 fi;
 
-echo "export DISPLAY=:10" | tee -a /home/vagrant/.bashrc
+if [ -f /home/vagrant/.bashrc ]; then
+  echo "export DISPLAY=:10" | tee -a /home/vagrant/.bashrc
+fi
