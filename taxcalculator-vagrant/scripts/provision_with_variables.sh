@@ -18,8 +18,6 @@ export PATH="/home/vagrant/.local/bin/karma:$PATH"
 
 ./scripts/install_mysql.sh
 
-./scripts/install_rabbitmq.sh
-
 #run script as Vagrant user not as root
 sudo -i -H -u vagrant ./scripts/install_as_vagrant.sh
 
