@@ -63,7 +63,7 @@ Import the maven projects in IntelliJ/Eclipse and run:
 ### Deployment configuration
 
 There are two system properties that need to be set:
-> __APP_ENV__ - either "default" (this is the default setting, using in-memory HSQLDB) or "staging" (using MySQL)
+> __APP_ENV__ - either "default" (this is the default setting, using in-memory HSQLDB) or "staging" (using MySQL) (for __staging__ you need to add in "/etc/hosts" on GNU/Linux operating systems or in "C:\Windows\System32\drivers\etc\hosts" a entry named __batchersmaster__ that points to the IP of the MySQL database)
 
 > __log_dir__ - having "target/logs" as default
 
