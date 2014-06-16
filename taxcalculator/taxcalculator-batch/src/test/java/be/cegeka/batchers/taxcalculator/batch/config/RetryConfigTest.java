@@ -1,7 +1,7 @@
 package be.cegeka.batchers.taxcalculator.batch.config;
 
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeTestBuilder;
-import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceNonFatalException;
+import be.cegeka.batchers.taxcalculator.application.service.exceptions.TaxWebServiceNonFatalException;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.junit.Before;

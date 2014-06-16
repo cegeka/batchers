@@ -29,7 +29,7 @@ public class PDFGeneratorServiceTest {
     }
 
     @Test
-    public void given_aWordTemplate_whenConvertingToPdf_thenTheSamePdfIsGenerated() throws IOException, XDocReportException {
+    public void given_aWordTemplate_whenConvertingToPdf_thenTheSamePdfIsGenerated() throws IOException, XDocReportException, PDFGenerationException {
         Map<String, Object> context = new HashMap<>();
         context.put("test", "cegeka-batchers");
 

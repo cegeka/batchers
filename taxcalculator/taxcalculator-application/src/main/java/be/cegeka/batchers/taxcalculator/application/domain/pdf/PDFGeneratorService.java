@@ -13,7 +13,6 @@ import javax.annotation.PostConstruct;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static fr.opensagres.xdocreport.converter.ConverterTypeTo.PDF;
 import static fr.opensagres.xdocreport.converter.ConverterTypeVia.XWPF;
@@ -29,17 +28,21 @@ public class PDFGeneratorService {
         xDocReportRegistry.initialize();
     }
 
-    public synchronized byte[] generatePdfAsByteArray(Resource resource, Map<String, Object> contextMap) throws IOException, XDocReportException {
-        final IXDocReport report =  xDocReportRegistry.loadReport(resource.getInputStream(), TemplateEngineKind.Freemarker);
+    public synchronized byte[] generatePdfAsByteArray(Resource resource, Map<String, Object> contextMap) throws PDFGenerationException {
+        try {
+            final IXDocReport report = xDocReportRegistry.loadReport(resource.getInputStream(), TemplateEngineKind.Freemarker);
 
-        final IContext context = report.createContext();
-        context.putMap(contextMap);
+            final IContext context = report.createContext();
+            context.putMap(contextMap);
 
-        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        final Options options = Options.getTo(PDF).via(XWPF);
-        report.convert(context, options, byteArrayOutputStream);
+            final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            final Options options = Options.getTo(PDF).via(XWPF);
+            report.convert(context, options, byteArrayOutputStream);
 
-        return byteArrayOutputStream.toByteArray();
+            return byteArrayOutputStream.toByteArray();
+        } catch (IOException | XDocReportException e) {
+            throw new PDFGenerationException(e);
+        }
     }
 
 }

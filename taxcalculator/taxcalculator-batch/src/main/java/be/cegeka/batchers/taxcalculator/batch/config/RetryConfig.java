@@ -1,6 +1,6 @@
 package be.cegeka.batchers.taxcalculator.batch.config;
 
-import be.cegeka.batchers.taxcalculator.application.service.TaxWebServiceNonFatalException;
+import be.cegeka.batchers.taxcalculator.application.service.exceptions.TaxWebServiceNonFatalException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.backoff.ExponentialBackOffPolicy;

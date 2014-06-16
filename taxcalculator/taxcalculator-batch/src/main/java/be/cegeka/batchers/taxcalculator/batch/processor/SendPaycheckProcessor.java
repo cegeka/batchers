@@ -1,12 +1,15 @@
 package be.cegeka.batchers.taxcalculator.batch.processor;
 
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailAttachmentTO;
-import be.cegeka.batchers.taxcalculator.application.domain.email.EmailSender;
+import be.cegeka.batchers.taxcalculator.application.domain.pdf.PDFGenerationException;
+import be.cegeka.batchers.taxcalculator.application.service.EmailSenderService;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailTO;
 import be.cegeka.batchers.taxcalculator.application.domain.pdf.PDFGeneratorService;
+import be.cegeka.batchers.taxcalculator.application.service.exceptions.EmailSenderException;
 import be.cegeka.batchers.taxcalculator.batch.domain.PayCheck;
 import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculation;
 import be.cegeka.batchers.taxcalculator.batch.domain.TaxWebserviceCallResult;
+import fr.opensagres.xdocreport.core.XDocReportException;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemProcessor;
@@ -16,6 +19,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,18 +36,18 @@ public class SendPaycheckProcessor implements ItemProcessor<TaxWebserviceCallRes
     @Autowired
     private PDFGeneratorService pdfGeneratorService;
     @Autowired
-    private EmailSender emailSender;
+    private EmailSenderService emailSenderService;
 
     @Value("#{stepExecution}")
     private StepExecution stepExecution;
 
     @Override
-    public PayCheck process(TaxWebserviceCallResult taxWebserviceCallResult) throws Exception {
+    public PayCheck process(TaxWebserviceCallResult taxWebserviceCallResult) throws EmailSenderException, PDFGenerationException {
         Resource resource = resourceLoader.getResource(paycheckTemplateFileName);
 
         TaxCalculation taxCalculation = taxWebserviceCallResult.getTaxCalculation();
         byte[] pdfBytes = pdfGeneratorService.generatePdfAsByteArray(resource, getPayCheckPdfContext(taxCalculation));
-        emailSender.send(getEmailTO(taxCalculation, pdfBytes));
+        emailSenderService.send(getEmailTO(taxCalculation, pdfBytes));
 
         return PayCheck.from(stepExecution.getJobExecutionId(), taxCalculation, pdfBytes);
     }

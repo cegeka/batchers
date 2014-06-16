@@ -3,7 +3,8 @@ package be.cegeka.batchers.taxcalculator.batch.processor;
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.domain.EmployeeTestBuilder;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailAttachmentTO;
-import be.cegeka.batchers.taxcalculator.application.domain.email.EmailSender;
+import be.cegeka.batchers.taxcalculator.application.domain.pdf.PDFGenerationException;
+import be.cegeka.batchers.taxcalculator.application.service.EmailSenderService;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailTO;
 import be.cegeka.batchers.taxcalculator.application.domain.pdf.PDFGeneratorService;
 import be.cegeka.batchers.taxcalculator.batch.domain.*;
@@ -39,7 +40,7 @@ public class SendPaycheckProcessorTest {
     private SendPaycheckProcessor sendPaycheckProcessor;
 
     @Mock
-    private EmailSender emailSender;
+    private EmailSenderService emailSenderService;
     @Mock
     private PDFGeneratorService pdfGeneratorService;
     @Captor
@@ -61,7 +62,7 @@ public class SendPaycheckProcessorTest {
 
 
     @Before
-    public void setUp() throws IOException, XDocReportException {
+    public void setUp() throws PDFGenerationException {
         jobExecutionId = 1L;
 
         employee = new EmployeeTestBuilder()
@@ -98,7 +99,7 @@ public class SendPaycheckProcessorTest {
                 .containsKey("monthly_income")
                 .containsKey("monthly_tax");
 
-        verify(emailSender).send(emailToCaptor.capture());
+        verify(emailSenderService).send(emailToCaptor.capture());
         EmailTO capturedEmailTo = emailToCaptor.getValue();
 
         assertThat(capturedEmailTo.getTos()).containsOnly(employee.getEmail());

@@ -1,0 +1,28 @@
+<div class="row">
+    <h1>Welcome to the Batchers project</h1>
+
+    <h3>What is this?</h3>
+    <p><a href="https://github.com/cegeka/batchers/blob/master/README.md">Visit the github page!</a></p>
+
+    <h3>Navigating the application</h3>
+    <p>You can see that the application exists out of 4 parts:</p>
+    <ul>
+        <li>
+            <a href="#/">Home</a> is of course this page
+        </li>
+        <li>
+            In <a href="#/employees">Employees</a> you can see all the employees. By default, 12 employees are generated. You can also alter the number of employees here to real life figures (e.g. 100.000) but note that all existing data will be cleared, including the results of previous batch runs!
+        </li>
+        <li>
+            <a href="#/jobResults">Run Job</a> allows you to run the taxcalculation job for the latest 6 months.
+        </li>
+    </ul>
+
+    <h3>Real life?</h3>
+    <p>To simulate real life projects, the following was done:</p>
+    <ul>
+        <li>Calculation of the tax will take a random amount of time that can be configured between a min and a max. This configuration can be done in the <code>taxcalculator-application.properties</code></em></li>
+        <li>Paying the taxes is done via a webservice which fails for certain users. This configuration can be done in the <code>taxcalculator-stubwebservice.properties</code></em></li>
+    </ul>
+
+</div>

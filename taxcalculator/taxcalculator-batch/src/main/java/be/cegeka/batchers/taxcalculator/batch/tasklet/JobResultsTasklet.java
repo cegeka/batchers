@@ -1,5 +1,6 @@
 package be.cegeka.batchers.taxcalculator.batch.tasklet;
 
+import be.cegeka.batchers.taxcalculator.application.domain.pdf.PDFGenerationException;
 import be.cegeka.batchers.taxcalculator.batch.service.reporting.MonthlyTaxReportService;
 import fr.opensagres.xdocreport.core.XDocReportException;
 import org.springframework.batch.core.StepContribution;
@@ -26,7 +27,7 @@ public class JobResultsTasklet implements Tasklet {
     private Long month;
 
     @Override
-    public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws IOException, XDocReportException {
+    public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws PDFGenerationException {
         Long jobExecutionId = chunkContext.getStepContext().getStepExecution().getJobExecutionId();
         monthlyTaxReportService.generateReport(jobExecutionId, year.intValue(), month.intValue());
         return FINISHED;
