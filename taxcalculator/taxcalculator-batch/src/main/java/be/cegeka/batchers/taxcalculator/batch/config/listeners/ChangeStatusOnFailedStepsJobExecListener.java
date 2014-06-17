@@ -17,7 +17,7 @@ public class ChangeStatusOnFailedStepsJobExecListener extends JobExecutionListen
     public void afterJob(JobExecution jobExecution) {
         List<StepExecution> failedStepExecutions = jobExecution.getStepExecutions()
                 .stream()
-                .filter(stepExecution -> stepExecution.getExitStatus().equals(ExitStatus.FAILED))
+                .filter(stepExecution -> stepExecution.getExitStatus().getExitCode().equals(ExitStatus.FAILED.getExitCode()))
                 .collect(Collectors.toList());
 
         if (failedStepExecutions.size() > 0) {
