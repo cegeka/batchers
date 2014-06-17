@@ -53,7 +53,7 @@ public class TaxCalculatorJobService implements JobService {
                     .addLong("year", year)
                     .toJobParameters();
 
-            System.out.println("Running job in jobservice");
+            LOG.info("Running job in jobservice");
             jobLauncher.run(employeeJob, jobParameters);
         } catch (JobExecutionAlreadyRunningException | JobRestartException
                 | JobInstanceAlreadyCompleteException | JobParametersInvalidException e) {
