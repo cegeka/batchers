@@ -5,7 +5,7 @@ import be.cegeka.batchers.taxcalculator.application.service.exceptions.EmailSend
 import be.cegeka.batchers.taxcalculator.application.service.exceptions.TaxWebServiceNonFatalException;
 import be.cegeka.batchers.taxcalculator.batch.config.listeners.CreateMonthlyTaxForEmployeeListener;
 import be.cegeka.batchers.taxcalculator.batch.config.listeners.FailedStepStepExecutionListener;
-import be.cegeka.batchers.taxcalculator.batch.config.listeners.JobProgressListener;
+import be.cegeka.batchers.taxcalculator.batch.config.listeners.SingleJVMJobProgressListener;
 import be.cegeka.batchers.taxcalculator.batch.config.skippolicy.MaxConsecutiveExceptionsSkipPolicy;
 import be.cegeka.batchers.taxcalculator.batch.domain.PayCheck;
 import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculation;
@@ -29,6 +29,7 @@ import javax.sql.DataSource;
 import java.util.Arrays;
 
 public abstract class AbstractEmployeeJobConfig extends DefaultBatchConfigurer {
+    public static final String EMPLOYEE_JOB = "employeeJob";
 
     @Autowired
     protected DataSource dataSource;
@@ -59,9 +60,9 @@ public abstract class AbstractEmployeeJobConfig extends DefaultBatchConfigurer {
     @Autowired
     private MaxConsecutiveExceptionsSkipPolicy maxConsecutiveExceptionsSkipPolicy;
     @Autowired
-    private JobProgressListener jobProgressListener;
-    @Autowired
     private CreateMonthlyTaxForEmployeeListener createMonthlyTaxForEmployeeListener;
+    @Autowired
+    private SingleJVMJobProgressListener singleJVMJobProgressListener;
 
     @Autowired
     private JobResultsTasklet jobResultsTasklet;
@@ -77,10 +78,12 @@ public abstract class AbstractEmployeeJobConfig extends DefaultBatchConfigurer {
                 .processor(calculateTaxProcessor)
                 .writer(taxCalculatorItemWriter)
                 .taskExecutor(taskExecutor)
-                .listener(jobProgressListener)
+                .listener(taxCalculationStepProgressListener())
                 .allowStartIfComplete(true)
                 .build();
     }
+
+    protected abstract Object taxCalculationStepProgressListener();
 
     protected Step wsCallAndGenerateAndSendPaycheckStep(String stepName) {
         CompositeItemProcessor<TaxCalculation, PayCheck> compositeItemProcessor = new CompositeItemProcessor<>();
@@ -101,7 +104,7 @@ public abstract class AbstractEmployeeJobConfig extends DefaultBatchConfigurer {
                 .listener(createMonthlyTaxForEmployeeListener)
                 .listener(maxConsecutiveExceptionsSkipPolicy)
                 .listener(failedStepStepExecutionListener)
-                .listener(jobProgressListener)
+                .listener(singleJVMJobProgressListener)
                 .allowStartIfComplete(true)
                 .taskExecutor(taskExecutor)
                 .build();

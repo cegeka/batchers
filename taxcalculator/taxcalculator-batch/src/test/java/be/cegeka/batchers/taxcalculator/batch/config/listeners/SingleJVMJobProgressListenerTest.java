@@ -24,14 +24,14 @@ import static be.cegeka.batchers.taxcalculator.application.ApplicationAssertions
 import static org.mockito.Mockito.times;
 
 @RunWith(MockitoJUnitRunner.class)
-public class JobProgressListenerTest {
+public class SingleJVMJobProgressListenerTest {
 
     public static final long YEAR = 2000L;
     public static final long MONTH = 5L;
     public static final String STEP_NAME = "Step name";
 
     @InjectMocks
-    private JobProgressListener jobProgressListener;
+    private SingleJVMJobProgressListener jobProgressListener;
 
     @Mock
     private EventBus eventBus;

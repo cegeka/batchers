@@ -13,16 +13,17 @@ jobresultController
         duration = moment.duration(millis);
         return duration.hours() + "h " + duration.minutes() + "m " + duration.seconds() + "s " + duration.milliseconds() + "ms"
       }
-        $scope.refreshJobResultsList = function () {
-            $scope.jobResults = JobResultsResource.query(
-                {},
-                function (successData) {
-                },
-                function (error) {
-                    $scope.$emit("alert", {'alertClass': 'alert-danger', 'message': 'Could not start job'})
-                }
-            );
-        }
+      $scope.refreshJobResultsList = function () {
+        JobResultsResource.query(
+          {},
+          function (successData) {
+            $scope.jobResults = successData;
+          },
+          function (error) {
+            $scope.$emit("alert", {'alertClass': 'alert-danger', 'message': 'Could not start job'})
+          }
+        );
+      }
 
       $scope.runJob = function (job) {
         RunJobResource.run({year: job.jobStartParams.year, month: job.jobStartParams.month});
@@ -45,32 +46,32 @@ jobresultController
 
         client.subscribe("/jobinfo-updates", function (message) {
           var message = angular.fromJson(message.body);
-            if (message.status) {
-                $scope.refreshJobResultsList();
-            }
-            if (message.stepName) {
-                $scope.percentageComplete = message.percentageComplete;
-                $scope.stepName = message.stepName;
-                function withNameYearAndMonth(element, index, array) {
-                    if (element.jobStartParams.year == message.jobStartParams.year
-                        && element.jobStartParams.month == message.jobStartParams.month) {
-                        return true;
-                    }
-                    return false;
-                };
+          if (message.status) {
+            $scope.refreshJobResultsList();
+          }
+          if (message.stepName) {
+            $scope.percentageComplete = message.percentageComplete;
+            $scope.stepName = message.stepName;
+            function withNameYearAndMonth(element, index, array) {
+              if (element.jobStartParams.year == message.jobStartParams.year
+                && element.jobStartParams.month == message.jobStartParams.month) {
+                return true;
+              }
+              return false;
+            };
 
 
-                var jobResult = $scope.jobResults.filter(withNameYearAndMonth)[0];
-                if (jobResult) {
-                    jobResult.progress = message;
-                    jobResult.progress.visible = jobResult.progress.percentageComplete <= 100;
-                }
+            var jobResult = $scope.jobResults.filter(withNameYearAndMonth)[0];
+            if (jobResult) {
+              jobResult.progress = message;
+              jobResult.progress.visible = jobResult.progress.percentageComplete <= 100;
             }
-            $scope.$apply();
+          }
+          $scope.$apply();
         });
 
         client.send("/app/launch-job", {}, JSON.stringify({ 'message': 'test' }));
       });
-        $scope.refreshJobResultsList();
+      $scope.refreshJobResultsList();
     }
   ]);
