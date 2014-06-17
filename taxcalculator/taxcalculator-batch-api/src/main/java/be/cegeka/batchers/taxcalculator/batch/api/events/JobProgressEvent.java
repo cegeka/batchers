@@ -2,7 +2,9 @@ package be.cegeka.batchers.taxcalculator.batch.api.events;
 
 import be.cegeka.batchers.taxcalculator.batch.domain.JobStartParams;
 
-public class JobProgressEvent {
+import java.io.Serializable;
+
+public class JobProgressEvent implements Serializable {
 
     private JobStartParams jobStartParams;
     private String stepName;

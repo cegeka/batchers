@@ -2,6 +2,7 @@ package be.cegeka.batchers.taxcalculator.batch.config.remotepartitioning;
 
 import be.cegeka.batchers.taxcalculator.batch.config.AbstractEmployeeJobConfig;
 import be.cegeka.batchers.taxcalculator.batch.config.TempConfigToInitDB;
+import be.cegeka.batchers.taxcalculator.batch.config.listeners.SlaveJobProgressListener;
 import be.cegeka.batchers.taxcalculator.infrastructure.config.PropertyPlaceHolderConfig;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -22,12 +23,12 @@ import org.springframework.integration.config.EnableIntegration;
 @PropertySource("classpath:taxcalculator-batch.properties")
 @Profile(value = {"remotePartitioningSlave", "testRemotePartitioning"})
 public class EmployeeJobConfigSlave extends AbstractEmployeeJobConfig {
-
     public static final String TAX_CALCULATION_STEP = "taxCalculationSlaveStep";
-    public static final String WS_CALL_AND_GENERATE_AND_SEND_PAYCHECK_STEP = "wsCallAndGenerateAndSendPaycheckSlaveStep";
 
     @Autowired
     private ClusterConfig clusterConfig;
+    @Autowired
+    private SlaveJobProgressListener slaveJobProgressListener;
 
     @Bean
     @ServiceActivator(inputChannel = "inboundRequests", outputChannel = "outboundResults",
@@ -57,5 +58,10 @@ public class EmployeeJobConfigSlave extends AbstractEmployeeJobConfig {
     @Bean
     public QueueChannel outboundResults() {
         return new QueueChannel(clusterConfig.results());
+    }
+
+    @Override
+    protected Object taxCalculationStepProgressListener() {
+        return slaveJobProgressListener;
     }
 }

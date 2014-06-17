@@ -32,15 +32,11 @@ import java.util.List;
 @Profile(value = {"remotePartitioningMaster", "testRemotePartitioning"})
 public class EmployeeJobConfigMaster extends AbstractEmployeeJobConfig {
 
-    private static final int MASTER_WITHOUT_TAX_CALCULATION_STEP = 1;
-
     public static final String WS_CALL_AND_GENERATE_AND_SEND_PAYCHECK_STEP = "wsCallAndGenerateAndSendPaycheckStep";
     public static final String JOB_RESULTS_PDF_STEP = "jobResultsPdfStep";
-
-    public static final String EMPLOYEE_JOB = "employeeJobRemotePartitioning";
     public static final String TAX_CALCULATION_STEP = "taxCalculationMasterStep";
     public static final long RECEIVE_TIMEOUT = 60000000L;
-
+    private static final int MASTER_WITHOUT_TAX_CALCULATION_STEP = 1;
     @Autowired
     private JobBuilderFactory jobBuilders;
     @Autowired
@@ -123,4 +119,8 @@ public class EmployeeJobConfigMaster extends AbstractEmployeeJobConfig {
         return new QueueChannel();
     }
 
+    @Override
+    protected Object taxCalculationStepProgressListener() {
+        return null;
+    }
 }

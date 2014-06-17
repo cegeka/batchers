@@ -1,6 +1,8 @@
 package be.cegeka.batchers.taxcalculator.batch.domain;
 
-public class JobStartParams {
+import java.io.Serializable;
+
+public class JobStartParams implements Serializable {
 
     public static final String MONTH = "month";
     public static final String YEAR = "year";
