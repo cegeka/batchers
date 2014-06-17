@@ -13,7 +13,7 @@ import org.springframework.messaging.Message;
 import java.util.concurrent.BlockingQueue;
 
 @Configuration
-@Profile(value = {"default", "test", "remotePartitioningMaster", "remotePartitioningSlave", "testRemotePartitioning"})
+@Profile(value = {"remotePartitioningMaster", "remotePartitioningSlave", "testRemotePartitioning"})
 public class ClusterConfig {
 
     public int getClusterSize() {
