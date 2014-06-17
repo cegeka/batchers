@@ -13,7 +13,7 @@ besides this you need Virtualbox, Vagrant and git installed
 ```sh
 https://github.com/cegeka/batchers.git
 cd batchers/taxcalculator-vagrant
-vagrant up standalone
+vagrant up
 # take a break :)
 # it takes 28 minutes on my work machine and 17 on my home computer (the main reason is the Internet speed)
 ```
@@ -33,7 +33,7 @@ If you want to run in slave mode but use some other master (let's say it's IP is
 BATCHERS_MASTER_IP=121.122.123.124 vagrant up slave
 ```
 
-Master and Standalone use the same ports so they will never work together.
+Master and Standalone use the same ports so if you start them together they will pick different ports.
 
 If you want to destroy and rebuild a image run one or all of the commands:
 ```sh

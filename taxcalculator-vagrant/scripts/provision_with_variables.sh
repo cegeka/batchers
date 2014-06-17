@@ -4,6 +4,13 @@ set -e
 echo "$USER BATCHERS_PROFILE is $BATCHERS_PROFILE"
 echo "$USER BATCHERS_MASTER_IP is $BATCHERS_MASTER_IP"
 
+echo "export BATCHERS_PROFILE=$BATCHERS_PROFILE" | tee /etc/profile.d/batchers.sh
+echo "export BATCHERS_MASTER_IP=$BATCHERS_MASTER_IP" | tee -a /etc/profile.d/batchers.sh
+
+chmod +x /etc/profile.d/batchers.sh
+
+source /etc/profile.d/batchers.sh
+
 export DEBIAN_FRONTEND=noninteractive
 apt-get update && apt-get upgrade -y
 apt-get install git software-properties-common -y
