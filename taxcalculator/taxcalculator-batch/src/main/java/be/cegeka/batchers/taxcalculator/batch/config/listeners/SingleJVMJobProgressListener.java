@@ -7,6 +7,9 @@ import be.cegeka.batchers.taxcalculator.batch.mapping.JobStartParamsMapper;
 import com.google.common.eventbus.EventBus;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.annotation.AfterStep;
+import org.springframework.batch.core.annotation.AfterWrite;
+import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -39,6 +42,7 @@ public class SingleJVMJobProgressListener implements JobProgressListener {
     private EventBus eventBus;
 
     @Override
+    @BeforeStep
     public void beforeStep(StepExecution stepExecution) {
         totalItemCount = employeeService.getEmployeeCount().intValue();
         jobStartParams = new JobStartParamsMapper().map(stepExecution.getJobParameters());
@@ -49,6 +53,7 @@ public class SingleJVMJobProgressListener implements JobProgressListener {
     }
 
     @Override
+    @AfterStep
     public ExitStatus afterStep(StepExecution stepExecution) {
         return null;
     }
@@ -58,6 +63,7 @@ public class SingleJVMJobProgressListener implements JobProgressListener {
     }
 
     @Override
+    @AfterWrite
     public void afterWrite(List items) {
         currentItemCount.addAndGet(items.size());
         int percentageComplete = currentItemCount.intValue() * 100 / totalItemCount;
