@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
+source /etc/profile.d/batchers.sh
+
 echo "Installing nodejs"
 ./scripts/install_nodejs.sh
 echo "Installing batchers app"

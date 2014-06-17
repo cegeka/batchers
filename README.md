@@ -44,7 +44,7 @@ To see the end result without setting up Tomcats, Java, ... we created a Vagrant
 ```sh
 git clone https://github.com/cegeka/batchers.git
 cd batchers/taxcalculator-vagrant
-vagrant up standalone
+vagrant up
 # take a break :) it takes a lot of time to build the macine (it depends a lot on your Internet speed)
 ```
 Open a web browser and go to [http://localhost:9090/taxcalculator/#/](http://localhost:9090/taxcalculator/#/)

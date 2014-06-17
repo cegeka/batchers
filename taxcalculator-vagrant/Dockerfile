@@ -35,6 +35,7 @@ RUN /scripts/install_xvfb_and_firefox.sh && mvn clean install
 RUN mkdir -p /etc/my_init.d
 ADD /scripts/install_xvfb_and_firefox.sh /etc/my_init.d/install_xvfb_and_firefox.sh
 ADD /scripts/start_tomcat_if_present.sh /etc/my_init.d/start_tomcat_if_present.sh
+ADD /scripts/set_master_ip.sh /etc/my_init.d/set_master_ip.sh
 
 WORKDIR /
 RUN /scripts/download_tomcat.sh

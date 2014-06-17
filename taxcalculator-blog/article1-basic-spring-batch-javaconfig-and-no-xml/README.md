@@ -69,4 +69,4 @@ public class CalculateTaxProcessor implements ItemProcessor<Employee, TaxCalcula
 }
 ```
 
-With this I finis a short intro in how spring batch works and gets configured. This is just a simplified version of our code. I kept out some parts for clarity. Please feel free to check out our application since it is [open source](https://github.com/cegeka/batchers). Please check out our future blog post about job executions, retrying and exception handling in Spring Batch.
+With this I finish a short intro in how spring batch works and gets configured. This is just a simplified version of our code. I kept out some parts for clarity. Please feel free to check out our application since it is [open source](https://github.com/cegeka/batchers). Please check out our future blog post about job executions, retrying and exception handling in Spring Batch.
