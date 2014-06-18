@@ -1,13 +1,13 @@
 package be.cegeka.batchers.taxcalculator.batch.config.remotepartitioning;
 
+import be.cegeka.batchers.taxcalculator.batch.api.events.JobProgressEvent;
 import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IQueue;
+import com.hazelcast.core.ITopic;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.integration.channel.QueueChannel;
 import org.springframework.messaging.Message;
 
 import java.util.concurrent.BlockingQueue;
@@ -28,6 +28,11 @@ public class ClusterConfig {
     @Bean
     public BlockingQueue<Message<?>> results() {
         return hazelcastInstance().getQueue("results");
+    }
+
+    @Bean
+    public ITopic<JobProgressEvent> jobProgressEventsTopic() {
+        return hazelcastInstance().getTopic("jobProgress");
     }
 
     @Bean

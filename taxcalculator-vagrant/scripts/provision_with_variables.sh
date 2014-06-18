@@ -4,6 +4,13 @@ set -e
 echo "$USER BATCHERS_PROFILE is $BATCHERS_PROFILE"
 echo "$USER BATCHERS_MASTER_IP is $BATCHERS_MASTER_IP"
 
+echo "export BATCHERS_PROFILE=$BATCHERS_PROFILE" | tee /etc/profile.d/batchers.sh
+echo "export BATCHERS_MASTER_IP=$BATCHERS_MASTER_IP" | tee -a /etc/profile.d/batchers.sh
+
+chmod +x /etc/profile.d/batchers.sh
+
+source /etc/profile.d/batchers.sh
+
 export DEBIAN_FRONTEND=noninteractive
 apt-get update && apt-get upgrade -y
 apt-get install git software-properties-common -y
@@ -17,8 +24,6 @@ export PATH="/home/vagrant/.local/bin/karma:$PATH"
 ./scripts/install_oracle_java8.sh
 
 ./scripts/install_mysql.sh
-
-./scripts/install_rabbitmq.sh
 
 #run script as Vagrant user not as root
 sudo -i -H -u vagrant ./scripts/install_as_vagrant.sh

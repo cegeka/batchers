@@ -63,7 +63,7 @@ public class EmployeeRestControllerTest {
                 .withFirstName("firstName")
                 .build();
 
-        EmployeeTo employeeTo = new EmployeeTo(employee.getFirstName(), employee.getLastName(), employee.getEmail(), employee.getIncome(), Money.parse("EUR 200"), 1L);
+        EmployeeTo employeeTo = new EmployeeTo(employee.getFirstName(), employee.getLastName(), employee.getEmail(), employee.getIncome(), Money.parse("EUR 200"), 1L, 0l);
         String expectedJSON = new Jackson2JsonObjectMapper().toJson(asList(employeeTo));
         when(presentationEmployeeRepository.getEmployees(0, 10)).thenReturn(asList(employeeTo));
 

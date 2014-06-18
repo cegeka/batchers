@@ -25,7 +25,9 @@ import java.sql.SQLException;
 
 @RunWith(TaxCalculatorSpringJUnitClassRunner.class)
 @ActiveProfiles("test")
-@ContextConfiguration(classes = {EmployeeJobTestConfig.class, EmployeeJobConfigSingleJvm.class, EmployeeGeneratorTestConfig.class, WebserviceCallConfig.class, PropertyPlaceHolderConfig.class, InfrastructureConfig.class, PersistenceConfig.class})
+@ContextConfiguration(classes = {EmployeeJobTestConfig.class, EmployeeJobConfigSingleJvm.class,
+        EmployeeGeneratorTestConfig.class, WebserviceCallConfig.class, PropertyPlaceHolderConfig.class,
+        InfrastructureConfig.class, PersistenceConfig.class})
 public abstract class AbstractIntegrationTest {
 
     @Autowired

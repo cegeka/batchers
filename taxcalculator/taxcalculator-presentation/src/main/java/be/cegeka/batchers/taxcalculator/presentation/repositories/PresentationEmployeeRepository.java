@@ -17,11 +17,13 @@ public class PresentationEmployeeRepository {
     public static final String GET_EMPLOYEE_COUNT_QUERY = "SELECT COUNT(e) FROM Employee e";
 
     public static final String GET_EMPLOYEE_DETAIL_QUERY = "SELECT NEW be.cegeka.batchers.taxcalculator.presentation.to.EmployeeTo(e.firstName, e.lastName, e.email, e.income, " +
-            "(select sum(mtfe.tax) from MonthlyTaxForEmployee mtfe where mtfe.employee.id = e.id), e.id) " +
+            "(select sum(mtfe.tax) from MonthlyTaxForEmployee mtfe where mtfe.employee.id = e.id), e.id, " +
+            "(select count(mtfe.id) from MonthlyTaxForEmployee mtfe where mtfe.employee.id=e.id and mtfe.lastErrorMessage is not null)) " +
             "FROM Employee e WHERE e.id = :id";
 
     public static final String GET_EMPLOYEES_TOTAL_TAX_QUERY = "SELECT NEW be.cegeka.batchers.taxcalculator.presentation.to.EmployeeTo(e.firstName, e.lastName, e.email, e.income, " +
-            "(select sum(mtfe.tax) from MonthlyTaxForEmployee mtfe where mtfe.employee.id = e.id), e.id) " +
+            "(select sum(mtfe.tax) from MonthlyTaxForEmployee mtfe where mtfe.employee.id = e.id), e.id, " +
+            "(select count(mtfe.id) from MonthlyTaxForEmployee mtfe where mtfe.employee.id=e.id and mtfe.lastErrorMessage is not null)) " +
             "FROM Employee e ORDER BY e.id";
 
     @PersistenceContext
@@ -44,5 +46,9 @@ public class PresentationEmployeeRepository {
 
     public long getEmployeeCount() {
         return entityManager.createQuery(GET_EMPLOYEE_COUNT_QUERY, Long.class).getSingleResult();
+    }
+
+    public void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
     }
 }

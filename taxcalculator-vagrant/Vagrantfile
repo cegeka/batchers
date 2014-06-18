@@ -18,43 +18,51 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # add default master IP for slave if it is not present
   batchers_master_ip=ENV['BATCHERS_MASTER_IPBATCHERS_MASTER_IP'] || "192.168.50.4"
 
-  puts "Vagrantfile setting BATCHERS_MASTER_IP to #{batchers_master_ip}"
+  config.vm.define "standalone", primary: true do |standalone|
+    # for standalone default to localhost
+    batchers_master_ip="127.0.0.1"
 
-  config.vm.define "standalone" do |standalone|
+    puts "Vagrantfile setting BATCHERS_MASTER_IP to #{batchers_master_ip}"
+
     # tomcat presentation app
-    standalone.vm.network "forwarded_port", guest: 9090, host: 29090
+    standalone.vm.network "forwarded_port", guest: 9090, host: 9090, auto_correct: true
     # jetty (stub web service) 
-    standalone.vm.network "forwarded_port", guest: 9091, host: 29091
+    standalone.vm.network "forwarded_port", guest: 9091, host: 9091, auto_correct: true
     # mysql
-    standalone.vm.network "forwarded_port", guest: 3306, host: 23306
+    standalone.vm.network "forwarded_port", guest: 3306, host: 3306, auto_correct: true
     # rabbitmq
-    standalone.vm.network "forwarded_port", guest: 5672, host: 25672
+    standalone.vm.network "forwarded_port", guest: 5672, host: 5672, auto_correct: true
     # rabbitmq admin
-    standalone.vm.network "forwarded_port", guest: 15672, host: 35672
+    standalone.vm.network "forwarded_port", guest: 15672, host: 15672, auto_correct: true
 
     standalone.vm.provision "shell", inline: "export BATCHERS_MASTER_IP=#{batchers_master_ip} && export BATCHERS_PROFILE=standalone && . scripts/provision_with_variables.sh"
   end
 
-  config.vm.define "master" do |master|
-    # tomcat presentation app
-    master.vm.network "forwarded_port", guest: 9090, host: 9090
-    # jetty (stub web service) 
-    master.vm.network "forwarded_port", guest: 9091, host: 9091
-    # mysql
-    master.vm.network "forwarded_port", guest: 3306, host: 3306
-    # rabbitmq
-    master.vm.network "forwarded_port", guest: 5672, host: 5672
-    # rabbitmq admin
-    master.vm.network "forwarded_port", guest: 15672, host: 15672
+  config.vm.define "master", autostart: false do |master|
+    puts "Vagrantfile setting BATCHERS_MASTER_IP to #{batchers_master_ip}"
 
-    config.vm.network "private_network", ip: "192.168.50.4"
+    # tomcat presentation app
+    master.vm.network "forwarded_port", guest: 9090, host: 9090, auto_correct: true
+    # jetty (stub web service) 
+    master.vm.network "forwarded_port", guest: 9091, host: 9091, auto_correct: true
+    # mysql
+    master.vm.network "forwarded_port", guest: 3306, host: 3306, auto_correct: true
+    # rabbitmq
+    master.vm.network "forwarded_port", guest: 5672, host: 5672, auto_correct: true
+    # rabbitmq admin
+    master.vm.network "forwarded_port", guest: 15672, host: 15672, auto_correct: true
+
+    master.vm.network "private_network", ip: "192.168.50.4"
 
     master.vm.provision "shell", inline: "export BATCHERS_MASTER_IP=#{batchers_master_ip} && export BATCHERS_PROFILE=master && . scripts/provision_with_variables.sh"
   end
 
-  config.vm.define "slave" do |slave|
+  config.vm.define "slave", autostart: false do |slave|
+
+    puts "Vagrantfile setting BATCHERS_MASTER_IP to #{batchers_master_ip}"
+
     # tomcat presentation app
-    slave.vm.network "forwarded_port", guest: 9090, host: 19090
+    slave.vm.network "forwarded_port", guest: 9090, host: 19090, auto_correct: true
     slave.vm.provision "shell", inline: "export BATCHERS_MASTER_IP=#{batchers_master_ip} && export BATCHERS_PROFILE=slave && . scripts/provision_with_variables.sh"
   end
 

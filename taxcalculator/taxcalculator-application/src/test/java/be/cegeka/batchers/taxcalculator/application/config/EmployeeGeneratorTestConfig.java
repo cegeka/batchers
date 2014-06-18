@@ -13,4 +13,24 @@ public class EmployeeGeneratorTestConfig extends EmployeeGeneratorConfig {
 
         return applicationInitializer;
     }
+
+    @Bean
+    public String smtp_username() {
+        return "username";
+    }
+
+    @Bean
+    public String smtp_password() {
+        return "password";
+    }
+
+    @Bean
+    public String smtp_port() {
+        return "2500";
+    }
+
+    @Bean
+    public String smtp_server() {
+        return "localhost";
+    }
 }
