@@ -57,10 +57,12 @@ Import the maven projects in IntelliJ/Eclipse and run:
 ---------------------------------------------
 ### Configuration
 1. Define JNDI resources in tomcat/conf/context.xml under <Context> root like this:
-	<Environment name="smtp_server" value="your_smtp_server" type="java.lang.String" />
-	<Environment name="smtp_port" value="your_port" type="java.lang.String" />
-	<Environment name="smtp_username" value="your_username" type="java.lang.String" />
-	<Environment name="smtp_password" value="your_password" type="java.lang.String" />
+    <Context>
+        <Environment name="smtp_server" value="your_smtp_server" type="java.lang.String" />
+        <Environment name="smtp_port" value="your_port" type="java.lang.String" />
+        <Environment name="smtp_username" value="your_username" type="java.lang.String" />
+        <Environment name="smtp_password" value="your_password" type="java.lang.String" />
+    </Context>
 	
 ### Run configuration
 1. Create one Run/Debug configuration for stubwebservice-war exploded on port 9091, context path: /stubwebservice. Or, use cd taxcalculator-stubwebservice && mvn jetty:run
