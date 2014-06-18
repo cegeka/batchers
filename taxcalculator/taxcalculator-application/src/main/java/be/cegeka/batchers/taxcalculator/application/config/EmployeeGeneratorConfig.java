@@ -17,7 +17,7 @@ import javax.naming.NamingException;
 @Configuration
 @EnableTransactionManagement
 @Import({PersistenceConfig.class, PropertyPlaceHolderConfig.class})
-@ComponentScan(basePackages = "be.cegeka.batchers.taxcalculator.application")
+@ComponentScan(basePackages = {"be.cegeka.batchers.taxcalculator.application"})
 @PropertySource("classpath:taxcalculator-application.properties")
 public class EmployeeGeneratorConfig {
     public static final String JNDI_SMTP_USERNAME = "java:comp/env/smtp_username";
