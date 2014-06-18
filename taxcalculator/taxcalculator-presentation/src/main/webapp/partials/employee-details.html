@@ -1,7 +1,7 @@
 <div class="col-md-6">
     <h2> Employee Details</h2>
     <table class="table table-bordered">
-        <tr>
+        <tr ng-class="{'employee-failed': employee.errorCount>0}">
             <td><label>Name: </label></td>
             <td>{{employee.firstName + " " + employee.lastName}}</td>
         </tr>
@@ -18,7 +18,7 @@
             <th>Calculation date</th>
             <th>Status</th>
         </tr>
-        <tr ng-repeat="tax in taxes">
+        <tr ng-repeat="tax in taxes" ng-class="{'employee-failed': tax.status=='FAILURE'}">
             <td>{{tax.month | shortMonth}}</td>
             <td>{{tax.tax}}</td>
             <td>{{tax.calculationDate}}</td>
