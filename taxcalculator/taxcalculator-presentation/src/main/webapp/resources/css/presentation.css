@@ -12,3 +12,8 @@
     background-color: #2b78e3;
     color: #ffffff;
 }
+
+tr.employee-failed td {
+    background-color: #f2dede !important;
+    color: #A94442 !important;
+}

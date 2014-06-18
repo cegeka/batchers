@@ -31,7 +31,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr class="employeeRow" ng-repeat="employee in employees | filter:searchQuery">
+        <tr class="employeeRow" ng-class="{'employee-failed': employee.errorCount>0}" ng-repeat="employee in employees | filter:searchQuery">
             <td>{{employee.firstName}}</td>
             <td>{{employee.lastName}}</td>
             <td><a href="#/employeeDetails/{{employee.id}}">{{employee.email}}</a></td>
