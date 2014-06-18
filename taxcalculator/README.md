@@ -56,7 +56,7 @@ Import the maven projects in IntelliJ/Eclipse and run:
 <a name="running"></a>Running the application
 ---------------------------------------------
 ### Configuration
-1. Define JNDI resources in tomcat/conf/context.xml under <Context> root like this:
+1. Define JNDI resources in tomcat/conf/context.xml under ```<Context>``` root like this:
 ```
     <Context>
         <Environment name="smtp_server" value="your_smtp_server" type="java.lang.String" />
