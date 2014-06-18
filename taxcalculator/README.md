@@ -55,6 +55,15 @@ Import the maven projects in IntelliJ/Eclipse and run:
 
 <a name="running"></a>Running the application
 ---------------------------------------------
+### Configuration
+1. Define JNDI resources in tomcat/conf/context.xml under <Context> root like this:
+    <Context>
+        <Environment name="smtp_server" value="your_smtp_server" type="java.lang.String" />
+        <Environment name="smtp_port" value="your_port" type="java.lang.String" />
+        <Environment name="smtp_username" value="your_username" type="java.lang.String" />
+        <Environment name="smtp_password" value="your_password" type="java.lang.String" />
+    </Context>
+	
 ### Run configuration
 1. Create one Run/Debug configuration for stubwebservice-war exploded on port 9091, context path: /stubwebservice. Or, use cd taxcalculator-stubwebservice && mvn jetty:run
 2. Create one Run/Debug configuration for presentation-war exploded (different port, preferably 9090), context path: /taxcalculator.  Or, (does not pre-populate database with employees) : cd taxcalculator-presentation && mvn tomcat7:run

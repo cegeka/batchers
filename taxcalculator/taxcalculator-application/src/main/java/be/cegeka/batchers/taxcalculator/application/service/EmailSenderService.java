@@ -7,6 +7,7 @@ import be.cegeka.batchers.taxcalculator.batch.api.JobStartListener;
 import org.apache.commons.mail.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -29,26 +30,30 @@ public class EmailSenderService implements JobStartListener {
 
     @Value("${smtp_use_ssl:true}")
     private boolean smtpUseSsl;
-    @Value("${smtp_port:465}")
-    private int smtpPort;
-    @Value("${smtp_server}")
-    private String smtpServer;
-    @Value("${smtp_user_name}")
-    private String smtpUserName;
-    @Value("${smtp_user_password}")
-    private String smtpPassword;
+
+    @Autowired
+    private String smtp_port;
+
+    @Autowired
+    private String smtp_server;
+
+    @Autowired
+    private String smtp_username;
+
+    @Autowired
+    private String smtp_password;
 
     private int emailSendCounter;
 
     public void send(EmailTO emailTO) throws EmailSenderException {
         try {
-            if (isNotBlank(smtpServer) && emailSendCounter < MAX_EMAILS_TO_BE_SEND) {
+            if (isNotBlank(smtp_server) && emailSendCounter < MAX_EMAILS_TO_BE_SEND) {
                 Email email = new EmailMapper().mapFromEmailTO(emailTO);
                 email.setSSLOnConnect(smtpUseSsl);
-                email.setSmtpPort(smtpPort);
-                email.setHostName(smtpServer);
-                if (isNoneBlank(smtpUserName, smtpPassword)) {
-                    email.setAuthenticator(new DefaultAuthenticator(smtpUserName, smtpPassword));
+                email.setSmtpPort(Integer.valueOf(smtp_port));
+                email.setHostName(smtp_server);
+                if (isNoneBlank(smtp_username, smtp_password)) {
+                    email.setAuthenticator(new DefaultAuthenticator(smtp_username, smtp_password));
                 }
 
                 LOG.info("Sending email: " + emailTO);
