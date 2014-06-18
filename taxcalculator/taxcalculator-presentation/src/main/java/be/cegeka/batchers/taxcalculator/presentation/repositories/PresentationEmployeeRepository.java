@@ -47,4 +47,8 @@ public class PresentationEmployeeRepository {
     public long getEmployeeCount() {
         return entityManager.createQuery(GET_EMPLOYEE_COUNT_QUERY, Long.class).getSingleResult();
     }
+
+    public void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 }

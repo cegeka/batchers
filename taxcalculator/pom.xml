@@ -67,6 +67,13 @@
             </dependency>
             <dependency>
                 <groupId>be.cegeka.batchers</groupId>
+                <artifactId>taxcalculator-batch</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+                <type>test-jar</type>
+            </dependency>
+            <dependency>
+                <groupId>be.cegeka.batchers</groupId>
                 <artifactId>taxcalculator-application</artifactId>
                 <version>${project.version}</version>
             </dependency>

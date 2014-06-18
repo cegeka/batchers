@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableTransactionManagement
 @Import({PersistenceConfig.class, PropertyPlaceHolderConfig.class})
-@ComponentScan(basePackages = "be.cegeka.batchers.taxcalculator.application")
+@ComponentScan(basePackages = {"be.cegeka.batchers.taxcalculator.application"})
 @PropertySource("classpath:taxcalculator-application.properties")
 public class EmployeeGeneratorConfig {
 
