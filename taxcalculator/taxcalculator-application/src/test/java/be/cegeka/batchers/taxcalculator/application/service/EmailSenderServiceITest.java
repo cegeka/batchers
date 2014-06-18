@@ -5,9 +5,7 @@ import be.cegeka.batchers.taxcalculator.application.domain.email.EmailAttachment
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailTO;
 import be.cegeka.batchers.taxcalculator.application.domain.email.SmtpServerStub;
 import be.cegeka.batchers.taxcalculator.application.infrastructure.IntegrationTest;
-import be.cegeka.batchers.taxcalculator.application.service.EmailSenderService;
 import be.cegeka.batchers.taxcalculator.application.service.exceptions.EmailSenderException;
-import org.apache.commons.mail.EmailException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -17,14 +15,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static be.cegeka.batchers.taxcalculator.application.ApplicationAssertions.assertThat;
 
 public class EmailSenderServiceITest extends IntegrationTest {
-
     private static final String TEST_BODY = "test body";
 
     @Autowired
     private EmailSenderService emailSenderService;
 
     @BeforeClass
-    public static void setUpWiser() {
+    public static void setUpWiser() throws Exception {
+        SmtpServerStub.wiser().setHostname("localhost");
         SmtpServerStub.start();
     }
 
