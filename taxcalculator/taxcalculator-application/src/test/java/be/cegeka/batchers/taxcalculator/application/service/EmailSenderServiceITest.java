@@ -63,21 +63,4 @@ public class EmailSenderServiceITest extends IntegrationTest {
                 .hasReceivedMessages(1)
                 .hasReceivedMessageContaining(TEST_BODY);
     }
-
-    @Test
-    public void onlyOneEmailIsSentAtAllTime() throws EmailSenderException {
-        EmailTO emailTO = new EmailTO();
-
-        emailTO.addTo("radu.cirstoiu@cegeka.com");
-        emailTO.setFrom("seagulls.cgk@gmail.com");
-        emailTO.setSubject("test subject");
-        emailTO.setBody(TEST_BODY);
-
-        emailSenderService.send(emailTO);
-        emailSenderService.send(emailTO);
-
-        assertThat(SmtpServerStub.wiser())
-                .hasReceivedMessages(1)
-                .hasReceivedMessageContaining(TEST_BODY);
-    }
 }
