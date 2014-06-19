@@ -75,8 +75,8 @@ public class EmployeeBatchJobITest extends AbstractBatchIntegrationTest {
         SmtpServerStub.start();
 
         Map<String, JobParameter> jobParamsMap = new HashMap<>();
-        jobParamsMap.put("month", new JobParameter(MONTH, false));
-        jobParamsMap.put("year", new JobParameter(YEAR, false));
+        jobParamsMap.put("month", new JobParameter(MONTH));
+        jobParamsMap.put("year", new JobParameter(YEAR));
 
         jobParams = new JobParameters(jobParamsMap);
 
