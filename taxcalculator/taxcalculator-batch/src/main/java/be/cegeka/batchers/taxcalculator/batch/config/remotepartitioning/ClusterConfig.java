@@ -1,10 +1,7 @@
 package be.cegeka.batchers.taxcalculator.batch.config.remotepartitioning;
 
 import be.cegeka.batchers.taxcalculator.batch.api.events.JobProgressEvent;
-import com.hazelcast.config.Config;
-import com.hazelcast.config.JoinConfig;
-import com.hazelcast.config.MulticastConfig;
-import com.hazelcast.config.NetworkConfig;
+import com.hazelcast.config.*;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ITopic;
@@ -52,7 +49,6 @@ public class ClusterConfig {
         try {
             InetAddress address = InetAddress.getByName("batchersmaster");
             hostAddress = address.getHostAddress();
-            System.out.println(hostAddress);
         } catch (UnknownHostException e) {
             LOG.warn("Did not find an Ip for batchersmaster");
         }
@@ -62,6 +58,7 @@ public class ClusterConfig {
     @Bean
     public HazelcastInstance hazelcastInstance() {
         Config cfg = new Config();
+
         buildBatchersmasterTCPConfigIfNeeded(cfg);
         HazelcastInstance hz = Hazelcast.newHazelcastInstance(cfg);
         return hz;
@@ -72,11 +69,14 @@ public class ClusterConfig {
         if (batchersmasterIpIfPresent != null && !batchersmasterIpIfPresent.equals("127.0.0.1")) {
             NetworkConfig network = cfg.getNetworkConfig();
 
-            network.getInterfaces().setEnabled(true).addInterface("192.168.51.*");
+            List<String> interfacesToAdd = getInterfacesToAdd();
+            if (interfacesToAdd.size() > 0) {
+                InterfacesConfig interfacesConfig = network.getInterfaces().setEnabled(true);
+//                interfacesToAdd.forEach(interfaceToAdd -> interfacesConfig.addInterface(interfaceToAdd));
+            }
             JoinConfig join = network.getJoin();
             join.getMulticastConfig().setEnabled(true);
             join.getMulticastConfig().setMulticastGroup(MulticastConfig.DEFAULT_MULTICAST_GROUP);
-            LOG.error("getMulticastGroup" + join.getMulticastConfig().getMulticastGroup());
 
             join.getTcpIpConfig().addMember(batchersmasterIpIfPresent).setRequiredMember(null).setEnabled(true);
         }
@@ -84,18 +84,17 @@ public class ClusterConfig {
 
     public static void main(String ...args) throws UnknownHostException {
 //        listNetworkINterfacesIps();
-        getInterfacesToAdd().stream().forEach(mask -> LOG.info("Mask is " + mask));
+//        getInterfacesToAdd().stream().forEach(mask -> LOG.info("Mask is " + mask));
+        new ClusterConfig().hazelcastInstance();
     }
 
     private static List<String> getInterfacesToAdd(){
-        Set<String> interfacesToSearchFor = new TreeSet(){{
-            add(NET_INTERFACE_VBOX_PREFIX);
-        }};
         List<String> interfacesToAdd = listNetworkINterfacesIps()
                 .stream()
-                .filter(existingInterface -> interfacesToSearchFor.contains(existingInterface))
+                .filter(existingInterface -> existingInterface.startsWith(NET_INTERFACE_VBOX_PREFIX))
                 .map(foundINterfacePrefix -> foundINterfacePrefix + ".*")
                 .distinct().collect(Collectors.toList());
+        return interfacesToAdd;
     }
 
     public static List<String> listNetworkINterfacesIps() {
@@ -108,11 +107,9 @@ public class ClusterConfig {
                     if (inetAddress instanceof Inet4Address && !inetAddress.isLoopbackAddress()){
                         String ip = inetAddress.getHostAddress();
                         ipList.add(ip);
-                        LOG.info("InetAddress: " + ip);
                     }
                 }
             }
-            LOG.info("" + ipList.size());
         } catch (Exception e){
             LOG.error("Failed getting the list of interfaces", e);
         }
