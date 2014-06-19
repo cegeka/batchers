@@ -21,7 +21,6 @@ public class EmployeeGeneratorIntegrationTest extends IntegrationTest {
     @Autowired
     private EmployeeGenerator employeeGenerator;
 
-
     @Test
     public void testEmployeeGenerator() {
         employeeGenerator.setNumberOfEmployees(SIZE);
@@ -29,7 +28,6 @@ public class EmployeeGeneratorIntegrationTest extends IntegrationTest {
 
         Long count = employeeRepository.count();
         assertThat(count).isEqualTo(SIZE);
-        employeeGenerator.resetSize();
     }
 
     @Test
@@ -39,7 +37,7 @@ public class EmployeeGeneratorIntegrationTest extends IntegrationTest {
 
     @Test
     public void testEmployeeGeneratorSetsNameAndIncome() {
-        employeeGenerator.setNumberOfEmployees(2L);
+        employeeGenerator.setNumberOfEmployees(SIZE);
         employeeGenerator.resetEmployees();
 
         List<Employee> all = employeeRepository.getAll();
@@ -50,7 +48,5 @@ public class EmployeeGeneratorIntegrationTest extends IntegrationTest {
             assertThat(employee.getIncome()).isGreaterThanOrEqualTo(500);
             assertThat(employee.getIncome()).isLessThanOrEqualTo(5000);
         }
-
-        employeeGenerator.resetSize();
     }
 }
