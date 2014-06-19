@@ -45,7 +45,7 @@ public class TaxCalculatorSpringJUnitClassRunner extends SpringJUnit4ClassRunner
 ```
 
 We tested different succeding and failing test cases for our job that is automatically injected into Spring's __JobLauncherTestUtils__.
-We have for our job two parameters that we pass along to run with:
+The job is run with two parameters that we pass along:
 ```java
 public class EmployeeBatchJobITest extends AbstractBatchIntegrationTest {    
     private static final Long YEAR = 2014L;
