@@ -18,6 +18,7 @@ module.exports = function (config) {
     // list of files / patterns to load in the browser
     files: [
       {pattern: 'src/main/webapp/**/*.html', included: false},
+      'src/main/webapp/resources/js/lib/jquery-2.1.1.min.js',
       'src/main/webapp/resources/js/lib/angular.min.js',
       'src/main/webapp/resources/js/lib/angular-translate.min.js',
       'src/main/webapp/resources/js/**/*.js',
