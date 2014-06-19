@@ -69,20 +69,28 @@ public class ClusterConfig {
         if (batchersmasterIpIfPresent != null && !batchersmasterIpIfPresent.equals("127.0.0.1")) {
             NetworkConfig network = cfg.getNetworkConfig();
 
-            network.getInterfaces().setEnabled(true);
-            List<String> interfacesToAdd = getInterfacesToAdd();
+//            List<String> interfacesToAdd = new ArrayList<>();
+            String i = "10.162.128.113";
+//            String i = "192.168.50.1";
 //            interfacesToAdd.add("192.168.50.1");
-//            interfacesToAdd.add("10.162.128.113");
-            if (interfacesToAdd.size() > 0) {
-                InterfacesConfig interfacesConfig = network.getInterfaces().setEnabled(true);
-                interfacesToAdd.forEach(interfaceToAdd -> interfacesConfig.addInterface(interfaceToAdd));
-            }
+              InterfacesConfig interfacesConfig = network.getInterfaces().setEnabled(true);
+              interfacesConfig.addInterface(i);
+              interfacesConfig.addInterface("10.162.128.113");
+//            if (interfacesToAdd.size() > 0) {
+//                interfacesToAdd.forEach(interfaceToAdd -> interfacesConfig.addInterface(interfaceToAdd));
+//            }
 
             JoinConfig join = network.getJoin();
             join.getMulticastConfig().setEnabled(true);
-            join.getMulticastConfig().setMulticastGroup(MulticastConfig.DEFAULT_MULTICAST_GROUP);
+//            join.getMulticastConfig().setMulticastGroup(MulticastConfig.DEFAULT_MULTICAST_GROUP);
+            join.getMulticastConfig().getTrustedInterfaces().add("192.168.50.1");
 
-            join.getTcpIpConfig().addMember(batchersmasterIpIfPresent).setRequiredMember(null).setEnabled(true);
+            join.getTcpIpConfig()
+//                    .addMember(i)
+//                    .addMember(batchersmasterIpIfPresent)
+                    .addMember("192.168.50.4")
+                    .addMember("10.162.128.112")
+                    .setRequiredMember(null).setEnabled(true);
         }
     }
 
