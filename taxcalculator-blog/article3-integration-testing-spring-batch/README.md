@@ -73,3 +73,20 @@ public class EmployeeBatchJobITest extends AbstractBatchIntegrationTest {
         verifyJob(jobExecution);
     }     
 ```
+
+For more specific cases we can test individual steps using the same JobLauncherTest utils like we do here:
+```java
+public class TaxCalculationStepITest extends AbstractBatchIntegrationTest {
+    @Test
+    public void taxCalculationStep_noWork() throws Exception {
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addLong("year", 2014L, true)
+                .addLong("month", 5L, true)
+                .toJobParameters();
+
+        JobExecution jobExecution = jobLauncherTestUtils.launchStep(EmployeeJobConfigSingleJvm.TAX_CALCULATION_STEP, jobParameters);
+
+        assertThat(jobExecution.getExitStatus()).isEqualTo(ExitStatus.COMPLETED);
+        assertThat(taxCalculationRepository.find(2014, 5, 1L)).isEmpty();
+    }
+```
