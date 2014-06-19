@@ -23,4 +23,14 @@ taxcalculator_app.filter('shortMonth', function () {
     return function (input) {
         return shortMonths[input - 1];
     }
-})
+});
+
+taxcalculator_app.factory('alertsManager', function() {
+  return {
+    alerts: [],
+    addAlert: function(message) {
+      this.alerts = this.alerts || [];
+      this.alerts.push({message: message});
+    }
+  };
+});
