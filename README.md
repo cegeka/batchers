@@ -55,7 +55,7 @@ More info and master/slave config with Vagrant [here](/cegeka/batchers/tree/mast
 
 <a name="code"></a>Show me the code!
 ------------------------------------
-All info about the code and how to install the project and run it, can be found [here](/cegeka/batchers/tree/master/taxcalculator/README.md) 
+All info about the code and how to install the project and run it, can be found [here](/cegeka/batchers/blob/master/taxcalculator/README.md) 
 
 
 <a name="team-members"></a>Team members
