@@ -69,25 +69,18 @@ public class ClusterConfig {
         if (batchersmasterIpIfPresent != null && !batchersmasterIpIfPresent.equals("127.0.0.1")) {
             NetworkConfig network = cfg.getNetworkConfig();
 
-//            List<String> interfacesToAdd = new ArrayList<>();
-            String i = "10.162.128.113";
-//            String i = "192.168.50.1";
-//            interfacesToAdd.add("192.168.50.1");
-              InterfacesConfig interfacesConfig = network.getInterfaces().setEnabled(true);
-              interfacesConfig.addInterface(i);
-              interfacesConfig.addInterface("10.162.128.113");
-//            if (interfacesToAdd.size() > 0) {
-//                interfacesToAdd.forEach(interfaceToAdd -> interfacesConfig.addInterface(interfaceToAdd));
-//            }
+            List<String> interfacesToAdd = getInterfacesToAdd();
+
+            InterfacesConfig interfacesConfig = network.getInterfaces().setEnabled(true);
+            interfacesToAdd.stream().forEach(inter -> {
+                LOG.info("Added interface: " + inter);
+                interfacesConfig.addInterface(inter);
+            });
 
             JoinConfig join = network.getJoin();
             join.getMulticastConfig().setEnabled(true);
-//            join.getMulticastConfig().setMulticastGroup(MulticastConfig.DEFAULT_MULTICAST_GROUP);
-            join.getMulticastConfig().getTrustedInterfaces().add("192.168.50.1");
 
             join.getTcpIpConfig()
-//                    .addMember(i)
-//                    .addMember(batchersmasterIpIfPresent)
                     .addMember("192.168.50.4")
                     .addMember("10.162.128.112")
                     .setRequiredMember(null).setEnabled(true);
@@ -101,9 +94,18 @@ public class ClusterConfig {
     }
 
     private static List<String> getInterfacesToAdd(){
+        Set<String> interestingINterfacesPrefixes = new TreeSet<>();
+        interestingINterfacesPrefixes.add(NET_INTERFACE_VBOX_PREFIX);
+        interestingINterfacesPrefixes.add("10.162.128.");
+
+
         List<String> interfacesToAdd = listNetworkINterfacesIps()
                 .stream()
-                .filter(existingInterface -> existingInterface.startsWith(NET_INTERFACE_VBOX_PREFIX))
+                .filter(existingInterface ->
+                                interestingINterfacesPrefixes.stream()
+                                        .filter(interestingINterfacePrefix ->
+                                                existingInterface.startsWith(interestingINterfacePrefix)).count() > 0
+                )
                 .distinct().collect(Collectors.toList());
         return interfacesToAdd;
     }
