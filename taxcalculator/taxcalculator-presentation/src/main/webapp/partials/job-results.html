@@ -1,3 +1,11 @@
+
+<div ng-repeat="alert in alerts" type="danger">
+    <div class="alert alert-warning alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <strong>Warning!</strong> {{alert.message}}
+    </div>
+</div>
+
 <div class="row">
     <div class="panel panel-default">
         <div class="panel-heading clearfix">
@@ -10,6 +18,7 @@
         </div>
     </div>
 </div>
+
 <div class="row" ng-repeat="job in jobResults">
     <div class="panel"
          ng-class="{COMPLETED:'panel-success', STARTED:'panel-info', FAILED:'panel-danger'}[job.jobExecutionResults[0].status]">

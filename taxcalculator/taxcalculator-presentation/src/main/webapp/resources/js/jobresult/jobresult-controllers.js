@@ -2,8 +2,10 @@ var jobresultController = angular.module('jobresult.controllers', []);
 
 jobresultController
 
-  .controller('JobResultsCtrl', ['$scope', 'JobResultsResource', 'RunJobResource',
-    function ($scope, JobResultsResource, RunJobResource) {
+  .controller('JobResultsCtrl', ['$scope', 'JobResultsResource', 'RunJobResource', 'alertsManager',
+    function ($scope, JobResultsResource, RunJobResource, alertsManager) {
+      $scope.alerts = alertsManager.alerts;
+
       $scope.isReportReady = function (jobExecution) {
         return jobExecution != undefined && jobExecution.status != undefined && (jobExecution.status == 'FAILED' || jobExecution.status == 'COMPLETED');
       }
@@ -20,13 +22,16 @@ jobresultController
             $scope.jobResults = successData;
           },
           function (error) {
-            $scope.$emit("alert", {'alertClass': 'alert-danger', 'message': 'Could not start job'})
+            alertsManager.addAlert('Could not start job', 'alert-danger');
           }
         );
       }
 
       $scope.runJob = function (job) {
-        RunJobResource.run({year: job.jobStartParams.year, month: job.jobStartParams.month});
+        RunJobResource.run({year: job.jobStartParams.year, month: job.jobStartParams.month},
+          function(data) {}, function() {
+            alertsManager.addAlert('Web service down. Could not start job', 'alert-danger');
+          });
       }
 
       $scope.model = {
