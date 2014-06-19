@@ -9,7 +9,6 @@ For our needs we created a base for our integration tests __AbstractBatchIntegra
         EmployeeGeneratorTestConfig.class, WebserviceCallConfig.class, PropertyPlaceHolderConfig.class,
         InfrastructureConfig.class, PersistenceConfig.class})
 public abstract class AbstractBatchIntegrationTest {
-
     @Autowired
     private DataSource dataSource;
 
@@ -26,7 +25,8 @@ public abstract class AbstractBatchIntegrationTest {
 ```
 
 The important thing here is that we need to have a clean slate for each test and for this we need to clear the records generated after each job run.
-We that in the __cleanJobTables__ method that we execute after each test case.
+The reason we choose this solution is because we could not use transaction rollback as spring batch needs to make sure it persisted the status of the job execution.
+We do that in the __cleanJobTables__ method that we execute after each test case.
 
 Another important aspect is that we defined our own class runner, __TaxCalculatorSpringJUnitClassRunner__ so we select an environment configured for testing purposes
 
@@ -42,4 +42,34 @@ public class TaxCalculatorSpringJUnitClassRunner extends SpringJUnit4ClassRunner
         return super.createTestContextManager(clazz);
     }
 }
+```
+
+We tested different succeding and failing test cases for our job that is automatically injected into Spring's __JobLauncherTestUtils__.
+We have for our job two parameters that we pass along to run with:
+```java
+public class EmployeeBatchJobITest extends AbstractBatchIntegrationTest {    
+    private static final Long YEAR = 2014L;
+    private static final Long MONTH = 1L;
+
+    @Autowired
+    private JobLauncherTestUtils jobLauncherTestUtils;
+	private JobParameters jobParams;
+	
+	@Before
+	public void setUp(){
+	   Map<String, JobParameter> jobParamsMap = new HashMap<>();
+        jobParamsMap.put("month", new JobParameter(MONTH, false));
+        jobParamsMap.put("year", new JobParameter(YEAR, false));
+
+        jobParams = new JobParameters(jobParamsMap);}
+	
+	@Test
+    public void jobLaunched_HappyPath() throws Exception {
+        haveEmployees(1);
+        respondOneTimeWithSuccess();
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParams);
+
+        assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
+        verifyJob(jobExecution);
+    }     
 ```
