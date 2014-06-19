@@ -28,7 +28,7 @@ import java.sql.SQLException;
 @ContextConfiguration(classes = {EmployeeJobTestConfig.class, EmployeeJobConfigSingleJvm.class,
         EmployeeGeneratorTestConfig.class, WebserviceCallConfig.class, PropertyPlaceHolderConfig.class,
         InfrastructureConfig.class, PersistenceConfig.class})
-public abstract class AbstractIntegrationTest {
+public abstract class AbstractBatchIntegrationTest {
 
     @Autowired
     private DataSource dataSource;

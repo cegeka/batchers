@@ -19,7 +19,7 @@ import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class TaxCalculationStepITest extends AbstractIntegrationTest {
+public class TaxCalculationStepITest extends AbstractBatchIntegrationTest {
 
     @Autowired
     private JobLauncherTestUtils jobLauncherTestUtils;
