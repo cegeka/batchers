@@ -1,7 +1,7 @@
 package be.cegeka.batchers.taxcalculator.batch.service;
 
 import be.cegeka.batchers.taxcalculator.batch.domain.JobResult;
-import be.cegeka.batchers.taxcalculator.batch.integration.AbstractIntegrationTest;
+import be.cegeka.batchers.taxcalculator.batch.integration.AbstractBatchIntegrationTest;
 import org.joda.time.DateTimeUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -15,7 +15,7 @@ import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class JobResultsServiceImplITest extends AbstractIntegrationTest {
+public class JobResultsServiceImplITest extends AbstractBatchIntegrationTest {
     @Autowired
     private JobResultsServiceImpl jobResultsService;
     @Autowired
