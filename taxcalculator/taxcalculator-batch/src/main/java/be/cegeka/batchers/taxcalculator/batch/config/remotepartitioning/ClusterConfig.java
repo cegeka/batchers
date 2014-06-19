@@ -69,11 +69,15 @@ public class ClusterConfig {
         if (batchersmasterIpIfPresent != null && !batchersmasterIpIfPresent.equals("127.0.0.1")) {
             NetworkConfig network = cfg.getNetworkConfig();
 
+            network.getInterfaces().setEnabled(true);
             List<String> interfacesToAdd = getInterfacesToAdd();
+//            interfacesToAdd.add("192.168.50.1");
+//            interfacesToAdd.add("10.162.128.113");
             if (interfacesToAdd.size() > 0) {
                 InterfacesConfig interfacesConfig = network.getInterfaces().setEnabled(true);
-//                interfacesToAdd.forEach(interfaceToAdd -> interfacesConfig.addInterface(interfaceToAdd));
+                interfacesToAdd.forEach(interfaceToAdd -> interfacesConfig.addInterface(interfaceToAdd));
             }
+
             JoinConfig join = network.getJoin();
             join.getMulticastConfig().setEnabled(true);
             join.getMulticastConfig().setMulticastGroup(MulticastConfig.DEFAULT_MULTICAST_GROUP);
@@ -92,7 +96,6 @@ public class ClusterConfig {
         List<String> interfacesToAdd = listNetworkINterfacesIps()
                 .stream()
                 .filter(existingInterface -> existingInterface.startsWith(NET_INTERFACE_VBOX_PREFIX))
-                .map(foundINterfacePrefix -> foundINterfacePrefix + ".*")
                 .distinct().collect(Collectors.toList());
         return interfacesToAdd;
     }
