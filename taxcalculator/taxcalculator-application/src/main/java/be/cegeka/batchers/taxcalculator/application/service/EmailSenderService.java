@@ -19,7 +19,8 @@ import java.util.List;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toSet;
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNoneBlank;
 
 @Service
 public class EmailSenderService implements JobStartListener {
@@ -47,7 +48,7 @@ public class EmailSenderService implements JobStartListener {
     public void send(EmailTO emailTO) throws EmailSenderException {
         try {
             checkIfEmailCredentialsAreConfigured();
-            if (isNotBlank(smtp_server) && emailSendCounter < MAX_EMAILS_TO_BE_SEND) {
+            if (emailSendCounter < MAX_EMAILS_TO_BE_SEND) {
                 Email email = new EmailMapper().mapFromEmailTO(emailTO);
                 email.setSSLOnConnect(smtpUseSsl);
                 email.setSmtpPort(Integer.valueOf(smtp_port));
@@ -59,6 +60,8 @@ public class EmailSenderService implements JobStartListener {
                 LOG.info("Sending email: " + emailTO);
                 email.send();
                 emailSendCounter++;
+            } else {
+                LOG.info("Request of sending email to {} ignored. Limit reached!", emailTO);
             }
         } catch (IllegalArgumentException e) {
             LOG.error("IllegalArgumentException occurred while sending the email ", e);
