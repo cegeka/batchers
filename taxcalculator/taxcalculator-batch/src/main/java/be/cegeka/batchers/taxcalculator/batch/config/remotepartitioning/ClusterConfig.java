@@ -44,7 +44,7 @@ public class ClusterConfig {
         return hazelcastInstance().getTopic("jobProgress");
     }
 
-    private String getBatchersmasterIpIfPresent(){
+    private static String getBatchersmasterIpIfPresent() {
         String hostAddress = null;
         try {
             InetAddress address = InetAddress.getByName("batchersmaster");
@@ -58,7 +58,8 @@ public class ClusterConfig {
     @Bean
     public HazelcastInstance hazelcastInstance() {
         Config cfg = new Config();
-
+        //if batchersmaster in /etc/hosts points to a IP, try to add it to the cluster
+        //if it does not, the cluster will just broadcast on UDP
         buildBatchersmasterTCPConfigIfNeeded(cfg);
         HazelcastInstance hz = Hazelcast.newHazelcastInstance(cfg);
         return hz;
@@ -80,24 +81,27 @@ public class ClusterConfig {
             JoinConfig join = network.getJoin();
             join.getMulticastConfig().setEnabled(true);
 
+            LOG.info("Added batchersmaster IP to the cluster " + batchersmasterIpIfPresent);
             join.getTcpIpConfig()
-                    .addMember("192.168.50.4")
-                    .addMember("10.162.128.112")
+                    .addMember(batchersmasterIpIfPresent)
                     .setRequiredMember(null).setEnabled(true);
         }
     }
 
-    public static void main(String ...args) throws UnknownHostException {
+    public static void main(String... args) throws UnknownHostException {
 //        listNetworkINterfacesIps();
 //        getInterfacesToAdd().stream().forEach(mask -> LOG.info("Mask is " + mask));
         new ClusterConfig().hazelcastInstance();
     }
 
-    private static List<String> getInterfacesToAdd(){
+    private static List<String> getInterfacesToAdd() {
         Set<String> interestingINterfacesPrefixes = new TreeSet<>();
         interestingINterfacesPrefixes.add(NET_INTERFACE_VBOX_PREFIX);
-        interestingINterfacesPrefixes.add("10.162.128.");
-
+        String batchersmasterInterfacePrefix = getBatchersmasterInterfacePrefix();
+        String batchersmasterInterfacePrefix1 = getBatchersmasterInterfacePrefix();
+        if (batchersmasterInterfacePrefix1 != null) {
+            interestingINterfacesPrefixes.add(batchersmasterInterfacePrefix1);
+        }
 
         List<String> interfacesToAdd = listNetworkINterfacesIps()
                 .stream()
@@ -112,20 +116,33 @@ public class ClusterConfig {
 
     public static List<String> listNetworkINterfacesIps() {
         List<String> ipList = new ArrayList<>();
-        try{
+        try {
             Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
-            for (NetworkInterface netint : Collections.list(nets)){
+            for (NetworkInterface netint : Collections.list(nets)) {
                 Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
                 for (InetAddress inetAddress : Collections.list(inetAddresses)) {
-                    if (inetAddress instanceof Inet4Address && !inetAddress.isLoopbackAddress()){
+                    if (inetAddress instanceof Inet4Address && !inetAddress.isLoopbackAddress()) {
                         String ip = inetAddress.getHostAddress();
                         ipList.add(ip);
                     }
                 }
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             LOG.error("Failed getting the list of interfaces", e);
         }
         return ipList;
     }
+
+    public static String getBatchersmasterInterfacePrefix() {
+        String batchersmasterIpIfPresent = getBatchersmasterIpIfPresent();
+        if (batchersmasterIpIfPresent != null) {
+            String[] ipParts = batchersmasterIpIfPresent.split("\\.");
+            if (ipParts.length == 4) {
+                //return only the first 3 parts of the IP for example 192.168.1.
+                return ipParts[0] + ipParts[1] + ipParts[2] + ".";
+            }
+        }
+        return null;
+    }
+
 }
