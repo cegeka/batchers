@@ -69,4 +69,47 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     slave.vm.provision "shell", inline: "export BATCHERS_MASTER_IP=#{batchers_master_ip} && export BATCHERS_PROFILE=slave && . scripts/provision_with_variables.sh"
   end
 
+  config.vm.define "boxmaster", autostart: false do |boxmaster|
+    boxmaster.vm.box = "batchers-boxmaster"
+    boxmaster.vm.box_url = "ftp://hi25627/vagrant_boxes/boxmaster.box"
+
+    # tomcat presentation app
+    boxmaster.vm.network "forwarded_port", guest: 9090, host: 9090, auto_correct: true
+    # jetty (stub web service)
+    boxmaster.vm.network "forwarded_port", guest: 9091, host: 9091, auto_correct: true
+    # mysql
+    boxmaster.vm.network "forwarded_port", guest: 3306, host: 3306, auto_correct: true
+    # rabbitmq
+    boxmaster.vm.network "forwarded_port", guest: 5672, host: 5672, auto_correct: true
+    # rabbitmq admin
+    boxmaster.vm.network "forwarded_port", guest: 15672, host: 15672, auto_correct: true
+
+    boxmaster.vm.network "private_network", ip: "192.168.50.4"
+  end
+
+  config.vm.define "boxslave", autostart: false do |boxslave|
+    boxslave.vm.box = "batchers-boxslave"
+    boxslave.vm.box_url = "ftp://hi25627/vagrant_boxes/boxslave.box"
+
+    # tomcat presentation app
+    boxslave.vm.network "forwarded_port", guest: 9090, host: 19090, auto_correct: true
+
+    boxslave.vm.network "private_network", ip: "192.168.50.3"
+  end
+
+  config.vm.define "boxstandalone", autostart: false do |boxstandalone|
+    boxstandalone.vm.box = "batchers-boxstandalone"
+    boxstandalone.vm.box_url = "ftp://hi25627/vagrant_boxes/boxstandalone.box"
+
+    # tomcat presentation app
+    boxstandalone.vm.network "forwarded_port", guest: 9090, host: 9090, auto_correct: true
+    # jetty (stub web service)
+    boxstandalone.vm.network "forwarded_port", guest: 9091, host: 9091, auto_correct: true
+    # mysql
+    boxstandalone.vm.network "forwarded_port", guest: 3306, host: 3306, auto_correct: true
+    # rabbitmq
+    boxstandalone.vm.network "forwarded_port", guest: 5672, host: 5672, auto_correct: true
+    # rabbitmq admin
+    boxstandalone.vm.network "forwarded_port", guest: 15672, host: 15672, auto_correct: true
+  end
 end
