@@ -41,17 +41,13 @@ If it fails, the __RetryTemplate__ can pause execution according to the a __Back
 
 The policies provided by Spring Batch out of the box all use __Object.wait()__. A common use case is to backoff with an exponentially increasing wait period, to avoid two retries getting into lock step and both failing. 
 
-For this purpose Spring Batch provides the __ExponentialBackoffPolicy__.
+For this purpose Spring Batch provides the __ExponentialBackoffPolicy__. The configuration is straightforward and clear.
 
-
-Now, we can use our __RetryTemplate__ and call the web service:
-
- ```java
+```java
  
 		@Component
 		@Import(RetryConfig.class)
 		public class CallWebserviceProcessor implements ItemProcessor<TaxCalculation, TaxWebserviceCallResult> {
-			private static final Logger LOG = LoggerFactory.getLogger(CallWebserviceProcessor.class);
 
 			@Autowired
 			private TaxPaymentWebService taxPaymentWebService;
@@ -62,9 +58,16 @@ Now, we can use our __RetryTemplate__ and call the web service:
 			@Autowired
 			private RetryConfig retryConfig;
 
+```
+
+The problem with webservices is the fact that they are not transactional or idempotent. This is why we created __TaxPaymentWebServiceFacade__ which wraps the actual web service but makes it idempotent. If the first invocation fails the second invocation tries again. But if the first invocation finishes successfully the second invocation does not hit the web service and returns the same result. So basically it retries until it gets a 'good' result.
+
+Now it's time to use the  __RetryTemplate__ we defined earlyer to call the web service:
+
+```java
+
 			@Override
 			public TaxWebserviceCallResult process(TaxCalculation taxCalculation) throws Exception {
-				LOG.info("Web service process: " + taxCalculation);
 
 				RetryTemplate retryTemplate = retryConfig.createRetryTemplate();
 				Callable<Void> callable = () -> retryTemplate.execute(doWebserviceCallWithRetryCallback(taxCalculation));
@@ -73,7 +76,11 @@ Now, we can use our __RetryTemplate__ and call the web service:
 
 				return taxWebserviceCallResult;
 			}
+```
 
+The __callable__ wraps the retry template hiding the retries from the calling object. This decouples the retry from our actual web service call.
+
+```java
 			private RetryCallback<Void, TaxWebServiceException> doWebserviceCallWithRetryCallback(TaxCalculation taxCalculation) {
 				return new RetryCallback<Void, TaxWebServiceException>() {
 					@Override
@@ -85,3 +92,5 @@ Now, we can use our __RetryTemplate__ and call the web service:
 			}
 		}
 ```
+
+Please check out our future blog post about integration testing in Spring Batch!
