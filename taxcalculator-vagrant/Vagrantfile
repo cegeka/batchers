@@ -63,6 +63,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     # tomcat presentation app
     slave.vm.network "forwarded_port", guest: 9090, host: 19090, auto_correct: true
+
+    slave.vm.network "private_network", ip: "192.168.50.3"
+
     slave.vm.provision "shell", inline: "export BATCHERS_MASTER_IP=#{batchers_master_ip} && export BATCHERS_PROFILE=slave && . scripts/provision_with_variables.sh"
   end
 
