@@ -101,9 +101,8 @@ public class ClusterConfig {
         interestingINterfacesPrefixes.add("192.168.50");
 
         String batchersmasterInterfacePrefix = getBatchersmasterInterfacePrefix();
-        String batchersmasterInterfacePrefix1 = getBatchersmasterInterfacePrefix();
-        if (batchersmasterInterfacePrefix1 != null) {
-            interestingINterfacesPrefixes.add(batchersmasterInterfacePrefix1);
+        if (batchersmasterInterfacePrefix != null) {
+            interestingINterfacesPrefixes.add(batchersmasterInterfacePrefix);
         }
 
         List<String> interfacesToAdd = listNetworkINterfacesIps()
