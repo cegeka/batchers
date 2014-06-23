@@ -6,6 +6,8 @@ debconf-set-selections <<< 'mysql-server mysql-server/root_password password tax
 debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password taxcalculator'
 apt-get install mysql-server-5.5 -y
 
+service mysql restart
+
 mysql --user=root --password=taxcalculator -e "drop database if exists taxcalculator;"
 mysql --user=root --password=taxcalculator -e "create database taxcalculator;"
 mysql --user=root --password=taxcalculator -e "grant all on *.* to 'taxcalculator'@'%' identified by 'taxcalculator';"

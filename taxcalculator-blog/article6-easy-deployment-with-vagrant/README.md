@@ -1,4 +1,4 @@
-#vagrant up
+# vagrant up
 ```vagrant up``` is all you need to know to start the [batcher's project](https://github.com/cegeka/batchers). Vagrant is not a new project and it is quite popular. There are lots of blog posts about it so I will add a very short description. You may skip it if you are familiar and jump right to the advanced multi machine setup, the networking and packaging of boxes.
 
 # Vagrant Short intro
@@ -18,7 +18,7 @@ vagrant ssh
 ```
 
 # The Vagrantfile
-In our project there is a file called __Vagrantfile__. It is a Ruby based [DSL](http://en.wikipedia.org/wiki/Domain-specific_language) and it defines the way we configure the machines. Let's split this file into simple pieces:
+In our project there is a file called [Vagrantfile](https://github.com/cegeka/batchers/blob/master/taxcalculator-vagrant/Vagrantfile). It is a Ruby based [DSL](http://en.wikipedia.org/wiki/Domain-specific_language) and it defines the way we configure the machines. Let's split this file into simple pieces:
 
 ```ruby
   config.vm.box_url = "https://somehost...../ubuntu-14.04.box"
@@ -48,5 +48,27 @@ Our setup contains at least a master/slave configuration. The __vagrant up__ com
 
 ```
 
-## Packaging boxes
-### Java licensing issues??
+In order to run the master and slave machines just run either ```vagrant up master```, ```vagrant up slave``` or both ```vagrant up master slave```. SSH-in into the machines is similar: ```vagrant ssh master``` or ```vagrant ssh slave```.
+
+We needed for our configuration that the two machines see each other. By default vagrant machines have the same IP and can't ping each other. By manually setting private network ip to the master we were able to connect the slave to the master.
+
+But I want my slave to connect to some other master. How do I do that? Well it's simple: we use environment variables. Jus run:
+
+```BATCHERS_MASTER_IP=192.168.1.100 vagrant up slave```
+
+Where ```192.168.1.100``` is your master's IP address.
+
+# Packaging boxes and faster "vagrant up"
+Setting up a master and a slave machine taxes up quite some time. Fortunately Vagrant offers a option to package these boxes after they have been built. Packaged boxes can be shared over a FTP server and then the deployment to other machines is basically a FTP copy that is done in the background by Vagrant. 
+
+If you want to package Vagrant boxes you can check out the script that packages these boxes in the [vagrant_package.sh](https://github.com/cegeka/batchers/blob/master/taxcalculator-vagrant/vagrant_package.sh) file.
+
+Pulling our pre-built images is simple: just add ```box``` in front of your machine's name:
+
+```
+vagrant up boxmaster
+vagrant up boxslave
+vagrant up boxstandalone
+```
+
+Vagrant is a great tool and it helps you spending less time on configuring complex setups and more on focusing on your app. It proved quite useful for us in the [batchers](https://github.com/cegeka/batchers) project.
