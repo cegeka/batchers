@@ -8,7 +8,7 @@ echo "BATCHERS_MASTER_IP is $BATCHERS_MASTER_IP"
 
 # docker uses /tmp/hosts
 HOSTS_FILE="/etc/hosts"
-if [ -f /etc/hosts ]; then
+if [ -f /tmp/hosts ]; then
   HOSTS_FILE="/tmp/hosts"
 fi
 

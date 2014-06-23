@@ -54,6 +54,7 @@ ADD /scripts/start_tomcat_if_present.sh /etc/my_init.d/start_tomcat_if_present.s
 ADD /scripts/set_master_ip.sh /etc/my_init.d/set_master_ip.sh
 RUN chmod +x /etc/my_init.d/*
 
+WORKDIR /
 RUN /scripts/install_stubwebservice.sh
 RUN /scripts/install_presentation.sh
 
