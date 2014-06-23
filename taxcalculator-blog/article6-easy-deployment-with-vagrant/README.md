@@ -50,7 +50,7 @@ Our setup contains at least a master/slave configuration. The __vagrant up__ com
 
 In order to run the master and slave machines just run either ```vagrant up master```, ```vagrant up slave``` or both ```vagrant up master slave```. SSH-in into the machines is similar: ```vagrant ssh master``` or ```vagrant ssh slave```.
 
-Wee needed for our configuration that the two machines see each other. By default vagrant machines have the same IP and can't ping each other. By manually setting private network ip to the master we were able to connect the slave to the master.
+We needed for our configuration that the two machines see each other. By default vagrant machines have the same IP and can't ping each other. By manually setting private network ip to the master we were able to connect the slave to the master.
 
 But I want my slave to connect to some other master. How do I do that? Well it's simple: we use environment variables. Jus run:
 
@@ -58,7 +58,7 @@ But I want my slave to connect to some other master. How do I do that? Well it's
 
 Where ```192.168.1.100``` is your master's IP address.
 
-## Packaging boxes
+# Packaging boxes and faster "vagrant up"
 Setting up a master and a slave machine taxes up quite some time. Fortunately Vagrant offers a option to package these boxes after they have been built. Packaged boxes can be shared over a FTP server and then the deployment to other machines is basically a FTP copy that is done in the background by Vagrant. 
 
 If you want to package Vagrant boxes you can check out the script that packages these boxes in the [vagrant_package.sh](https://github.com/cegeka/batchers/blob/master/taxcalculator-vagrant/vagrant_package.sh) file.
@@ -70,3 +70,5 @@ vagrant up boxmaster
 vagrant up boxslave
 vagrant up boxstandalone
 ```
+
+Vagrant is a great tool and it helps you spending less time on configuring complex setups and more on focusing on your app. It proved quite useful for us in the [batchers](https://github.com/cegeka/batchers) project.
