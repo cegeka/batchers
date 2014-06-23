@@ -98,6 +98,8 @@ public class ClusterConfig {
         Set<String> interestingINterfacesPrefixes = new TreeSet<>();
         interestingINterfacesPrefixes.add(NET_INTERFACE_VBOX_PREFIX);
         interestingINterfacesPrefixes.add("172.17.0");
+        interestingINterfacesPrefixes.add("192.168.50");
+
         String batchersmasterInterfacePrefix = getBatchersmasterInterfacePrefix();
         String batchersmasterInterfacePrefix1 = getBatchersmasterInterfacePrefix();
         if (batchersmasterInterfacePrefix1 != null) {
