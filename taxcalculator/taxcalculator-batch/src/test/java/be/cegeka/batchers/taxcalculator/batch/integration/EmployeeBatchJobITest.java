@@ -1,8 +1,8 @@
 package be.cegeka.batchers.taxcalculator.batch.integration;
 
 import be.cegeka.batchers.taxcalculator.application.domain.*;
-import be.cegeka.batchers.taxcalculator.application.domain.email.SmtpServerStub;
 import be.cegeka.batchers.taxcalculator.application.domain.reporting.MonthlyReportRepository;
+import be.cegeka.batchers.taxcalculator.application.infrastructure.SmtpServerStub;
 import be.cegeka.batchers.taxcalculator.application.service.EmailSenderService;
 import be.cegeka.batchers.taxcalculator.batch.config.skippolicy.MaxConsecutiveExceptionsSkipPolicy;
 import be.cegeka.batchers.taxcalculator.batch.domain.PayCheckRepository;

@@ -1,7 +1,7 @@
 package be.cegeka.batchers.taxcalculator.application;
 
-import be.cegeka.batchers.taxcalculator.application.domain.email.SmtpAssertions;
 import be.cegeka.batchers.taxcalculator.application.domain.pdf.PdfAssertions;
+import be.cegeka.batchers.taxcalculator.application.infrastructure.SmtpAssertions;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.fest.assertions.api.Assertions;
 import org.subethamail.wiser.Wiser;
