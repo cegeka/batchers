@@ -97,6 +97,7 @@ public class ClusterConfig {
     private static List<String> getInterfacesToAdd() {
         Set<String> interestingINterfacesPrefixes = new TreeSet<>();
         interestingINterfacesPrefixes.add(NET_INTERFACE_VBOX_PREFIX);
+        interestingINterfacesPrefixes.add("172.17.0");
         String batchersmasterInterfacePrefix = getBatchersmasterInterfacePrefix();
         String batchersmasterInterfacePrefix1 = getBatchersmasterInterfacePrefix();
         if (batchersmasterInterfacePrefix1 != null) {

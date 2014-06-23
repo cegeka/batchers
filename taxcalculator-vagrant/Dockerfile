@@ -38,14 +38,26 @@ ADD /scripts/start_tomcat_if_present.sh /etc/my_init.d/start_tomcat_if_present.s
 
 WORKDIR /
 RUN /scripts/download_tomcat.sh
+#RUN /scripts/install_stubwebservice.sh
 
 EXPOSE 9091
 EXPOSE 9090
 
+#RUN /scripts/install_stubwebservice.sh
+ENV LD_LIBRARY_PATH /lib-override
+ENV BATCHERS_MASTER_IP 192.168.50.4
+ENV BATCHERS_PROFILE slave
 RUN /scripts/install_presentation.sh
+
+RUN cp /etc/hosts /tmp/hosts
+RUN mkdir -p -- /lib-override && cp /lib/x86_64-linux-gnu/libnss_files.so.2 /lib-override
+RUN perl -pi -e 's:/etc/hosts:/tmp/hosts:g' /lib-override/libnss_files.so.2
+RUN echo "export LD_LIBRARY_PATH=/lib-override" | tee /etc/profile.d/batchers.sh
+RUN chmod +x /etc/profile.d/batchers.sh
 
 RUN /scripts/start_tomcat_if_present.sh
 
-#ADD /scripts/set_master_ip.sh /etc/my_init.d/set_master_ip.sh
+ADD /scripts/set_master_ip.sh /etc/my_init.d/set_master_ip.sh
 
-CMD ["/sbin/my_init", "--enable-insecure-key"]
+ENTRYPOINT ["/sbin/my_init"]
+CMD ["--enable-insecure-key"]

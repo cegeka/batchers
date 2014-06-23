@@ -9,12 +9,12 @@ cd $HOME
 rm -rf batchers
 git clone https://github.com/cegeka/batchers.git
 cd $HOME/batchers/taxcalculator
-mvn clean install
+mvn clean install -Dmaven.test.skip=true
 
 cd taxcalculator-presentation
-mvn package
+mvn package -Dmaven.test.skip=true
 #~/batchers/taxcalculator/taxcalculator-presentation/target/taxcalculator-presentation-1.0-SNAPSHOT.war
 
 cd ../taxcalculator-stubwebservice/
-mvn package
+mvn package -Dmaven.test.skip=true
 
