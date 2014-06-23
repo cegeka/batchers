@@ -50,6 +50,8 @@ ADD /scripts/start_tomcat_if_present.sh /etc/my_init.d/start_tomcat_if_present.s
 ADD /scripts/set_master_ip.sh /etc/my_init.d/set_master_ip.sh
 RUN chmod +x /etc/my_init.d/*
 
+RUN echo "export BATCHERS_PROFILE=slave" | tee -a /etc/profile.d/batchers.sh
+
 WORKDIR /
 RUN /scripts/install_presentation.sh
 

@@ -16,7 +16,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision "shell", path: "provision.sh"
 
   # add default master IP for slave if it is not present
-  batchers_master_ip=ENV['BATCHERS_MASTER_IPBATCHERS_MASTER_IP'] || "192.168.50.4"
+  batchers_master_ip=ENV['BATCHERS_MASTER_IP'] || "192.168.50.4"
 
   config.vm.define "standalone", primary: true do |standalone|
     # for standalone default to localhost
