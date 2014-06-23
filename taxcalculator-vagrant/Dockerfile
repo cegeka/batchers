@@ -20,10 +20,6 @@ RUN apt-get install libxrender1 -y
 
 RUN scripts/download_tomcat.sh
 
-RUN apt-get install libaio1 libaio-dev -y
-
-RUN scripts/install_mysql.sh
-
 ENV LD_LIBRARY_PATH /lib-override
 RUN cp /etc/hosts /tmp/hosts
 RUN mkdir -p -- /lib-override && cp /lib/x86_64-linux-gnu/libnss_files.so.2 /lib-override
@@ -55,13 +51,11 @@ ADD /scripts/set_master_ip.sh /etc/my_init.d/set_master_ip.sh
 RUN chmod +x /etc/my_init.d/*
 
 WORKDIR /
-RUN /scripts/install_stubwebservice.sh
 RUN /scripts/install_presentation.sh
 
 EXPOSE 3306
 EXPOSE 9090
 EXPOSE 9091
-
 
 ENTRYPOINT ["/sbin/my_init"]
 CMD ["--enable-insecure-key"]
