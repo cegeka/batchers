@@ -6,7 +6,8 @@ export DISPLAY=:10
 # unarchive tomcat
 tar -xf apache-tomcat-7.0.54.tar.gz
 
-mkdir  apache-tomcat-7.0.54-stubwebservice
+rm -rf apache-tomcat-7.0.54-stubwebservice
+mkdir apache-tomcat-7.0.54-stubwebservice
 tar --strip-components 1 -C apache-tomcat-7.0.54-stubwebservice -xzf apache-tomcat-7.0.54.tar.gz
 
 #webservice REST port
