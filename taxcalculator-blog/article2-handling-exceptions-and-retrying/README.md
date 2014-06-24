@@ -93,4 +93,39 @@ The __callable__ wraps the retry template hiding the retries from the calling ob
 		}
 ```
 
+Now, let's talk a little about skippable exception and transaction.
+
+A step in our job is a web service call, generate and send paycheck ("wsCallAndGenerateAndSendPaycheckStep"):
+
+```java
+ protected Step wsCallAndGenerateAndSendPaycheckStep(String stepName) {
+        CompositeItemProcessor<TaxCalculation, PayCheck> compositeItemProcessor = new CompositeItemProcessor<>();
+        compositeItemProcessor.setDelegates(Arrays.asList(
+                callWebserviceProcessor,
+                sendPaycheckProcessor
+        ));
+
+        return stepBuilders.get(stepName)
+                .<TaxCalculation, PayCheck>chunk(5)
+                .faultTolerant()
+                .skipPolicy(maxConsecutiveExceptionsSkipPolicy)
+                .noRollback(TaxWebServiceNonFatalException.class)
+                .noRollback(EmailSenderException.class)
+                .reader(wsCallItemReader)
+                .processor(compositeItemProcessor)
+                .writer(wsCallItemWriter)
+                .listener(createMonthlyTaxForEmployeeListener)
+                .listener(maxConsecutiveExceptionsSkipPolicy)
+                .listener(failedStepStepExecutionListener)
+                .listener(singleJVMJobProgressListener)
+                .allowStartIfComplete(true)
+                .taskExecutor(taskExecutor)
+                .build();
+    }
+```
+
+and this means that __ItemWriter__ receives a list of items to write and if a skippable exception is thrown, Spring Batch attempts to determine which item actually caused the exception so only that item is skipped.
+
+
+
 Please check out our future blog post about integration testing in Spring Batch!
