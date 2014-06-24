@@ -24,6 +24,8 @@ public class ClusterConfig {
     private static final Logger LOG = LoggerFactory.getLogger(ClusterConfig.class);
 
     private static final String NET_INTERFACE_VBOX_PREFIX = "192.168.50";
+    public static final String NET_INTERFACE_DOCKER_PREFIX = "172.17.0";
+    public static final String NET_INTERFACE_INTERNAL_LAN_PREFIX = "10.162.128";
 
     public int getClusterSize() {
         return hazelcastInstance().getCluster().getMembers().size();
@@ -89,20 +91,19 @@ public class ClusterConfig {
     }
 
     public static void main(String... args) throws UnknownHostException {
-//        listNetworkINterfacesIps();
-//        getInterfacesToAdd().stream().forEach(mask -> LOG.info("Mask is " + mask));
         new ClusterConfig().hazelcastInstance();
     }
 
     private static List<String> getInterfacesToAdd() {
-        Set<String> interestingINterfacesPrefixes = new TreeSet<>();
-        interestingINterfacesPrefixes.add(NET_INTERFACE_VBOX_PREFIX);
-        interestingINterfacesPrefixes.add("172.17.0");
-        interestingINterfacesPrefixes.add("192.168.50");
+        List<String> interestingINterfacesPrefixes = new ArrayList<>();
 
         String batchersmasterInterfacePrefix = getBatchersmasterInterfacePrefix();
         if (batchersmasterInterfacePrefix != null) {
             interestingINterfacesPrefixes.add(batchersmasterInterfacePrefix);
+        } else {
+            interestingINterfacesPrefixes.add(NET_INTERFACE_INTERNAL_LAN_PREFIX);
+            interestingINterfacesPrefixes.add(NET_INTERFACE_VBOX_PREFIX);
+            interestingINterfacesPrefixes.add(NET_INTERFACE_DOCKER_PREFIX);
         }
 
         List<String> interfacesToAdd = listNetworkINterfacesIps()
@@ -141,7 +142,7 @@ public class ClusterConfig {
             String[] ipParts = batchersmasterIpIfPresent.split("\\.");
             if (ipParts.length == 4) {
                 //return only the first 3 parts of the IP for example 192.168.1.
-                return ipParts[0] + ipParts[1] + ipParts[2] + ".";
+                return ipParts[0] + "." + ipParts[1]  + "." + ipParts[2] + ".";
             }
         }
         return null;
