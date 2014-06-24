@@ -120,4 +120,4 @@ For testing specific __Job Steps__ in detail, we can use the same _JobLauncherTe
 You want to know more of how we do Integration Testing with Spring Batch? Do not hesitate to take a look at __[EmployeeBatchJobITest](https://github.com/cegeka/batchers/blob/master/taxcalculator/taxcalculator-batch/src/test/java/be/cegeka/batchers/taxcalculator/batch/integration/EmployeeBatchJobITest.java)__!
 
 #That's it for today!
-Please check out our future blog post about integration testing in Spring Batch!
+Stay tuned for our future blog post about showing progress to your users in a nice webapp!
