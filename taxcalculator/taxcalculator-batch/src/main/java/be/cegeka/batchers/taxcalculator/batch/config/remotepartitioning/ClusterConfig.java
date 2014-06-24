@@ -69,6 +69,7 @@ public class ClusterConfig {
 
     private void buildBatchersmasterTCPConfigIfNeeded(Config cfg) {
         String batchersmasterIpIfPresent = getBatchersmasterIpIfPresent();
+        LOG.info("Batchers master Ip is " + batchersmasterIpIfPresent);
         if (batchersmasterIpIfPresent != null && !batchersmasterIpIfPresent.equals("127.0.0.1")) {
             NetworkConfig network = cfg.getNetworkConfig();
 
@@ -98,6 +99,7 @@ public class ClusterConfig {
         List<String> interestingINterfacesPrefixes = new ArrayList<>();
 
         String batchersmasterInterfacePrefix = getBatchersmasterInterfacePrefix();
+        LOG.info("BatchersmasterInterfacePrefix is " + batchersmasterInterfacePrefix);
         if (batchersmasterInterfacePrefix != null) {
             interestingINterfacesPrefixes.add(batchersmasterInterfacePrefix);
         } else {
