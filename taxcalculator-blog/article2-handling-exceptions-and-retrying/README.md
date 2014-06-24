@@ -124,7 +124,7 @@ A step in our job is a web service call, generate and send paycheck ("wsCallAndG
     }
 ```
 
-and this means that __ItemWriter__ receives a list of items to write and if a skippable exception is thrown, Spring Batch attempts to determine which item actually caused the exception so only that item is skipped. There is no rollback for __TaxWebServiceNonFatalException.class__ and __EmailSenderException.class_ and each item is then reprocessed and the write is attemped again. This allows only the item with the error to be skipped instead of needing to skip the entire chunk.
+and this means that __ItemWriter__ receives a list of items to write and if a skippable exception is thrown, Spring Batch attempts to determine which item actually caused the exception so only that item is skipped. There is no rollback for __TaxWebServiceNonFatalException.class__ and __EmailSenderException.class__ and each item is then reprocessed and the write is attemped again. This allows only the item with the error to be skipped instead of needing to skip the entire chunk.
 
 
 
