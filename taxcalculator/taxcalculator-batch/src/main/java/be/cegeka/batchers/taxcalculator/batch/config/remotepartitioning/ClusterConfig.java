@@ -96,27 +96,41 @@ public class ClusterConfig {
     }
 
     private static List<String> getInterfacesToAdd() {
-        List<String> interestingINterfacesPrefixes = new ArrayList<>();
+        List<String> interfacesToAdd = new ArrayList<>();
 
+        List<String> listNetworkINterfacesIps = listNetworkINterfacesIps();
         String batchersmasterInterfacePrefix = getBatchersmasterInterfacePrefix();
         LOG.info("BatchersmasterInterfacePrefix is " + batchersmasterInterfacePrefix);
+
         if (batchersmasterInterfacePrefix != null) {
-            interestingINterfacesPrefixes.add(batchersmasterInterfacePrefix);
+            for (String existingNetworkInterface:listNetworkINterfacesIps){
+                boolean existsInterfaceForMasterIp = existingNetworkInterface.startsWith(batchersmasterInterfacePrefix);
+                if (existsInterfaceForMasterIp){
+                    interfacesToAdd.add(existingNetworkInterface);
+                }
+            }
+        }
+
+        boolean hasInterfaceForMasterIp = interfacesToAdd.size() == 1;
+        if (hasInterfaceForMasterIp) {
+            return interfacesToAdd;
         } else {
+            List<String> interestingINterfacesPrefixes = new ArrayList<>();
             interestingINterfacesPrefixes.add(NET_INTERFACE_INTERNAL_LAN_PREFIX);
             interestingINterfacesPrefixes.add(NET_INTERFACE_VBOX_PREFIX);
             interestingINterfacesPrefixes.add(NET_INTERFACE_DOCKER_PREFIX);
-        }
 
-        List<String> interfacesToAdd = listNetworkINterfacesIps()
-                .stream()
-                .filter(existingInterface ->
-                                interestingINterfacesPrefixes.stream()
-                                        .filter(interestingINterfacePrefix ->
-                                                existingInterface.startsWith(interestingINterfacePrefix)).count() > 0
-                )
-                .distinct().collect(Collectors.toList());
-        return interfacesToAdd;
+            List<String> wellKnownInterfaces = listNetworkINterfacesIps
+                    .stream()
+                    .filter(existingInterface ->
+                                    interestingINterfacesPrefixes.stream()
+                                            .filter(interestingINterfacePrefix ->
+                                                    existingInterface.startsWith(interestingINterfacePrefix)).count() > 0
+                    )
+                    .distinct().collect(Collectors.toList());
+            interfacesToAdd.addAll(wellKnownInterfaces);
+            return interfacesToAdd;
+        }
     }
 
     public static List<String> listNetworkINterfacesIps() {
