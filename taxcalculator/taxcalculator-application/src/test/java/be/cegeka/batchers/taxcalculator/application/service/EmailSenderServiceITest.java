@@ -3,8 +3,8 @@ package be.cegeka.batchers.taxcalculator.application.service;
 
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailAttachmentTO;
 import be.cegeka.batchers.taxcalculator.application.domain.email.EmailTO;
-import be.cegeka.batchers.taxcalculator.application.domain.email.SmtpServerStub;
 import be.cegeka.batchers.taxcalculator.application.infrastructure.IntegrationTest;
+import be.cegeka.batchers.taxcalculator.application.infrastructure.SmtpServerStub;
 import be.cegeka.batchers.taxcalculator.application.service.exceptions.EmailSenderException;
 import org.junit.After;
 import org.junit.AfterClass;

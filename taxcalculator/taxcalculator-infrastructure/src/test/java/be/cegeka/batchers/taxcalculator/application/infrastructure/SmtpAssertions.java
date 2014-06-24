@@ -1,4 +1,4 @@
-package be.cegeka.batchers.taxcalculator.application.domain.email;
+package be.cegeka.batchers.taxcalculator.application.infrastructure;
 
 
 import org.fest.assertions.api.AbstractAssert;
