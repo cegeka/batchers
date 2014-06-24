@@ -19,14 +19,14 @@ import java.util.List;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toSet;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNoneBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Service
 public class EmailSenderService implements JobStartListener {
     private static final Logger LOG = LoggerFactory.getLogger(EmailSenderService.class);
 
-    private static final int MAX_EMAILS_TO_BE_SEND = 1;
+    private static final int MAX_EMAILS_TO_BE_SEND = 5;
 
     @Value("${smtp_use_ssl:true}")
     private boolean smtpUseSsl;
@@ -47,7 +47,8 @@ public class EmailSenderService implements JobStartListener {
 
     public void send(EmailTO emailTO) throws EmailSenderException {
         try {
-            if (isNotBlank(smtp_server) && emailSendCounter < MAX_EMAILS_TO_BE_SEND) {
+            checkIfEmailCredentialsAreConfigured();
+            if (emailSendCounter < MAX_EMAILS_TO_BE_SEND) {
                 Email email = new EmailMapper().mapFromEmailTO(emailTO);
                 email.setSSLOnConnect(smtpUseSsl);
                 email.setSmtpPort(Integer.valueOf(smtp_port));
@@ -59,6 +60,8 @@ public class EmailSenderService implements JobStartListener {
                 LOG.info("Sending email: " + emailTO);
                 email.send();
                 emailSendCounter++;
+            } else {
+                LOG.info("Request of sending email to {} ignored. Limit reached!", emailTO);
             }
         } catch (IllegalArgumentException e) {
             LOG.error("IllegalArgumentException occurred while sending the email ", e);
@@ -67,6 +70,25 @@ public class EmailSenderService implements JobStartListener {
             LOG.error("Errors occurred while sending the email ", e);
             throw new EmailSenderException(e);
         }
+    }
+
+    private void checkIfEmailCredentialsAreConfigured() throws EmailSenderException {
+        if (isBlank(smtp_port)) {
+            throw new EmailSenderException("SMTP port is not configured");
+        }
+
+        if (isBlank(smtp_server)) {
+            throw new EmailSenderException("SMTP server is not configured");
+        }
+
+        if (isBlank(smtp_username)) {
+            throw new EmailSenderException("SMTP username is not configured");
+        }
+
+        if (isBlank(smtp_password)) {
+            throw new EmailSenderException("SMTP password is not configured");
+        }
+
     }
 
     @Override

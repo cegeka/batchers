@@ -1,4 +1,4 @@
-package be.cegeka.batchers.taxcalculator.application.domain.email;
+package be.cegeka.batchers.taxcalculator.application.infrastructure;
 
 import org.subethamail.wiser.Wiser;
 import org.subethamail.wiser.WiserMessage;

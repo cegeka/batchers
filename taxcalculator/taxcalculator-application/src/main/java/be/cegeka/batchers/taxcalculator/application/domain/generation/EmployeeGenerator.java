@@ -7,8 +7,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class EmployeeGenerator {
-    private static final Long GENERATED_COUNT = 21L;
-
     @Value("${number.of.employees:13}")
     private Long numberOfEmployees;
 
@@ -25,9 +23,5 @@ public class EmployeeGenerator {
 
     public void setNumberOfEmployees(Long numberOfEmployees) {
         this.numberOfEmployees = numberOfEmployees;
-    }
-
-    public void resetSize() {
-        numberOfEmployees = GENERATED_COUNT;
     }
 }

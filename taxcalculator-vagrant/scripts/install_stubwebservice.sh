@@ -3,7 +3,6 @@ set -e
 
 export DISPLAY=:10
 
-cd $HOME
 # unarchive tomcat
 tar -xf apache-tomcat-7.0.54.tar.gz
 

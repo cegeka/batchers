@@ -1,9 +1,9 @@
 package be.cegeka.batchers.taxcalculator.batch.integration;
 
 import be.cegeka.batchers.taxcalculator.application.domain.*;
-import be.cegeka.batchers.taxcalculator.application.service.EmailSenderService;
-import be.cegeka.batchers.taxcalculator.application.domain.email.SmtpServerStub;
 import be.cegeka.batchers.taxcalculator.application.domain.reporting.MonthlyReportRepository;
+import be.cegeka.batchers.taxcalculator.application.infrastructure.SmtpServerStub;
+import be.cegeka.batchers.taxcalculator.application.service.EmailSenderService;
 import be.cegeka.batchers.taxcalculator.batch.config.skippolicy.MaxConsecutiveExceptionsSkipPolicy;
 import be.cegeka.batchers.taxcalculator.batch.domain.PayCheckRepository;
 import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculationRepository;
@@ -35,7 +35,7 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
 
-public class EmployeeBatchJobITest extends AbstractIntegrationTest {
+public class EmployeeBatchJobITest extends AbstractBatchIntegrationTest {
     private static final String STATUS_OK = "{\"status\": \"OK\" }";
     private static final String EMAIL_ADDRESS = "employee@email.com";
     private static final Long YEAR = 2014L;
@@ -75,8 +75,8 @@ public class EmployeeBatchJobITest extends AbstractIntegrationTest {
         SmtpServerStub.start();
 
         Map<String, JobParameter> jobParamsMap = new HashMap<>();
-        jobParamsMap.put("month", new JobParameter(MONTH, false));
-        jobParamsMap.put("year", new JobParameter(YEAR, false));
+        jobParamsMap.put("month", new JobParameter(MONTH));
+        jobParamsMap.put("year", new JobParameter(YEAR));
 
         jobParams = new JobParameters(jobParamsMap);
 

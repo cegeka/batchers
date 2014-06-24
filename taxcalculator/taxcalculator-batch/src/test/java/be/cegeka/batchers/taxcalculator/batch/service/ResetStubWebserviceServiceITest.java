@@ -1,6 +1,6 @@
 package be.cegeka.batchers.taxcalculator.batch.service;
 
-import be.cegeka.batchers.taxcalculator.batch.integration.AbstractIntegrationTest;
+import be.cegeka.batchers.taxcalculator.batch.integration.AbstractBatchIntegrationTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-public class ResetStubWebserviceServiceITest extends AbstractIntegrationTest {
+public class ResetStubWebserviceServiceITest extends AbstractBatchIntegrationTest {
 
     @Autowired
     private ResetStubWebserviceService resetStubWebserviceService;
