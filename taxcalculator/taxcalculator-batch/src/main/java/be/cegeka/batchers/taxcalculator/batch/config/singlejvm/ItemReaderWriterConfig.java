@@ -30,9 +30,6 @@ public class ItemReaderWriterConfig {
     public JpaPagingItemReader<Employee> taxCalculatorItemReader(@Value("#{stepExecution}") StepExecution stepExecution) {
         JpaPagingItemReader<Employee> employeeItemReader = new JpaPagingItemReader<>();
 
-        //TODO
-        //stepExecution.getExecutionContext().put("totalAmount", repository.get);
-
         employeeItemReader.setEntityManagerFactory(persistenceConfig.entityManagerFactory());
         employeeItemReader.setQueryString(TaxCalculation.GET_UNPROCESSED_EMPLOYEES_BY_YEAR_AND_MONTH_QUERY);
         Map<String, Object> parameters = new HashMap<>();
