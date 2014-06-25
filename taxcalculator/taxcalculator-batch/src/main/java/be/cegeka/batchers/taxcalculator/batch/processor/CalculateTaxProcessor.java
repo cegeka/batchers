@@ -3,8 +3,6 @@ package be.cegeka.batchers.taxcalculator.batch.processor;
 import be.cegeka.batchers.taxcalculator.application.domain.Employee;
 import be.cegeka.batchers.taxcalculator.application.service.TaxCalculatorService;
 import be.cegeka.batchers.taxcalculator.batch.domain.TaxCalculation;
-import be.cegeka.batchers.taxcalculator.infrastructure.config.Environment;
-import org.apache.commons.lang3.StringUtils;
 import org.joda.money.Money;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +15,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import static be.cegeka.batchers.taxcalculator.infrastructure.config.Environment.getCurrentEnvironment;
-import static java.lang.System.getProperty;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Component
 @StepScope
@@ -36,7 +32,7 @@ public class CalculateTaxProcessor extends StepExecutionListenerSupport implemen
 
     @Override
     public TaxCalculation process(Employee employee) {
-        LOG.info("Tax process for employee {} on env {} ", employee, getCurrentEnvironment());
+        LOG.info("Tax process {} on {} ", employee, getCurrentEnvironment() + getPartitionIfExists());
         Money calculatedTax = taxCalculatorService.calculateTax(employee);
         return TaxCalculation.from(stepExecution.getJobExecutionId(), employee, year.intValue(), month.intValue(), calculatedTax);
     }
@@ -44,5 +40,13 @@ public class CalculateTaxProcessor extends StepExecutionListenerSupport implemen
     @Override
     public void beforeStep(StepExecution stepExecution) {
         this.stepExecution = stepExecution;
+    }
+
+    private String getPartitionIfExists(){
+        Long partition = stepExecution.getExecutionContext().getLong("partition");
+        if (partition != null) {
+            return " Partition " + partition;
+        }
+        return "";
     }
 }
