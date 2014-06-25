@@ -44,12 +44,16 @@ And a definition of a step that configures the TaskExecutor:
 Using this approach allows us to make use of processing power of a cluster of machines.
 
 This setup implies defining a master configuration and a number of slaves.
+We are using Spring Profiles to have two profiles for this setup: __remotePartitioningMaster__ and __remotePartitioningSlave__
+For launching a master configuration we pass as jvm parameter: -Dspring.profiles.active=remotePartitioningMaster. Similar for the slaves.
 
 ### Master configuration
 
 Has the responsibility of creating and sending partitions over a communication channel to a queue where the slaves are listening.
+In other projects we saw communication been done using Spring's AmqpTemplate with RabbitMQ but the configuration is rather complicated
+so we are using instead HazelCast. 
 
-For doing the communication we are using HazelCast. HazelCast requires no configuration, it works out of the box.
+HazelCast requires no configuration, it works out of the box.
 We keep cluster related definitions in this configuration class:
 ```java
 @Configuration
@@ -154,3 +158,31 @@ The important part here is the method that is annotated with __@ServiceActivator
         return new QueueChannel(clusterConfig.results());
     }
 ```
+
+For keeping track of the progress done from each slave we push to a HazelCast topic the number of items written:
+
+```java
+public class JobProgressListener extends StepExecutionListener, ItemWriteListener {}
+public class SlaveJobProgressListener implements JobProgressListener {
+    @Autowired
+    private ClusterConfig clusterConfig;
+	
+	@Override
+    @BeforeStep
+    public void beforeStep(StepExecution stepExecution) {
+        jobStartParams = new JobStartParamsMapper().map(stepExecution.getJobParameters());
+        stepName = stepExecution.getStepName();
+    }
+	
+    @Override
+    @AfterWrite
+    public void afterWrite(List items) {
+        int itemsDone = items.size();
+        JobProgressEvent jobProgressEvent = new JobProgressEvent(jobStartParams, stepName, itemsDone);
+        clusterConfig.jobProgressEventsTopic().publish(jobProgressEvent);
+	}
+```
+We set this listener on the step that we have a partitioner and all is good.
+On the master configuration we simple listen on the same topic and hazelcast takes care of the rest for us.
+
+See you next time when we discuss deployment with __Vagrant__ !
