@@ -12,17 +12,17 @@ For all the tests we used the same amount of data to be processed - __1000 emplo
 
 Below you can find all the scenario's we tested. In all scenario's, the database was running on a different machine.
 
-### Single JVM, single threaded
+#### Single JVM, single threaded
 
 Here we run the taxcalculator application on one single JVM with a SyncTaskExecutor. This means all items in a
 certain step are processed synchronously.
 
-###Single JVM, multi threaded
+####Single JVM, multi threaded
 
 Here we run the taxcalculator application on one single JVM with a SimpleAsyncTaskExecutor. This means all items
 in a certain step are processed in parallel.
 
-###Multi JVM, single threaded
+####Multi JVM, single threaded
 
 Here we run the taxcalculator application on multiple JVM using a master slave configuration. The tasks are
 distributed using partitioning and each slave is using a SyncTaskExecutor. This means all items on a slave are
@@ -30,7 +30,7 @@ processed synchronously.
 
 Here, we do the performance measurements once with 2 slaves and once with 4 slaves.
 
-###Multi JVM, multi threaded
+####Multi JVM, multi threaded
 
 Here we run the taxcalculator application on multiple JVM using a master slave configuration. The tasks are
 distributed using partitioning and each slave is using a SimpleAsyncTaskExecutor. This means all items on a
