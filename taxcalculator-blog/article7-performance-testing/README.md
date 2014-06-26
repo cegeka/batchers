@@ -52,9 +52,9 @@ Here, we do the performance measurements once with 2 slaves and once with 4 slav
 ###Hardware
 |Machine Name    | Installed OS      |Processor                                                 | Memory |
 |----------------|-------------------|----------------------------------------------------------|--------|
-|Database server | Windows ?, 64-bit |Intel Core i7-3740QM Processor (6M Cache, up to 3.70 GHz) | 8 GB   |         
-|Master          |Windows 7, 64bit   |Intel Core i7 3770 3.4GHz (4 cores, 8 threads)            | 16 GB  |
-|Slave1          |Windows 7, 64bit   |Intel Core i7 3770 3.4GHz (4 cores, 8 threads)            | 16 GB  |
-|Slave2          |Windows 7, 64bit   |Intel Core i7 3770 3.4GHz (4 cores, 8 threads)            | 16 GB  |
-|Slave3          |Windows 7, 64bit   |Intel Core i7 3770 3.4GHz (4 cores, 8 threads)            | 16 GB  |
-|Slave4          |Windows 7, 64bit   |Intel Core i7 3770 3.4GHz (4 cores, 8 threads)            | 16 GB  | 
+|Database server | Windows 7, 64-bit |Intel Core i7-3740QM Processor (6M Cache, up to 3.70 GHz) | 8 GB   |         
+|Master          | Windows 7, 64bit  |Intel Core i7 3770 3.4GHz (4 cores, 8 threads)            | 16 GB  |
+|Slave1          | Windows 7, 64bit  |Intel Core i7 3770 3.4GHz (4 cores, 8 threads)            | 16 GB  |
+|Slave2          | Windows 7, 64bit  |Intel Core i7 3770 3.4GHz (4 cores, 8 threads)            | 16 GB  |
+|Slave3          | Windows 7, 64bit  |Intel Core i7 3770 3.4GHz (4 cores, 8 threads)            | 16 GB  |
+|Slave4          | Windows 7, 64bit  |Intel Core i7 3770 3.4GHz (4 cores, 8 threads)            | 16 GB  | 
