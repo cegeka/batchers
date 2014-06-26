@@ -42,10 +42,13 @@ public class CalculateTaxProcessor extends StepExecutionListenerSupport implemen
         this.stepExecution = stepExecution;
     }
 
-    private String getPartitionIfExists(){
-        Long partition = stepExecution.getExecutionContext().getLong("partition");
-        if (partition != null) {
-            return " Partition " + partition;
+    private String getPartitionIfExists() {
+        Object partitionObject = stepExecution.getExecutionContext().get("partition");
+        if (partitionObject != null) {
+            Long partition = (Long) partitionObject;
+            if (partition != null) {
+                return " Partition " + partition;
+            }
         }
         return "";
     }
