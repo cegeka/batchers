@@ -40,21 +40,21 @@ Here, we do the performance measurements once with 2 slaves and once with 4 slav
 
 ###Performance results
     
-|Scenario | Running time |
-|---------|--------------|        
-| Single JVM single threaded | 18 min|
-| Single JVM, multi threaded | 5 min |
-| Multi JVM, single threaded - 2 slaves | 10 min|
-| Multi JVM, single threaded - 4 slaves | 5 min, 30 sec|        
-| Multi JVM, multi threaded - 2 slaves | 3 min |
-| Multi JVM, multi threaded - 4 slaves | TODO: 8 min, 15 sec|
+|Scenario                               | Running time |
+|---------------------------------------|-------------:|        
+| Single JVM single threaded            | 18:00        |
+| Single JVM, multi threaded            | 5:00         |
+| Multi JVM, single threaded - 2 slaves | 10:00        |
+| Multi JVM, single threaded - 4 slaves | 5:30         |        
+| Multi JVM, multi threaded - 2 slaves  | 3:00         |
+| Multi JVM, multi threaded - 4 slaves  | TODO:        |
         
 ###Hardware
-|Machine Name    | Installed OS      |Processor                                                    | Memory |
-|----------------|-------------------|-------------------------------------------------------------|--------|
-|Database server | Windows ?, 64-bit |Intel� Core� i7-3740QM Processor (6M Cache, up to 3.70 GHz) | 8 GB |         
-|Master          |Windows 7, 64bit   |Intel Core i7 3770 3.4GHz (4 cores, 8 threads)               | 16 GB |
-|Slave1          |Windows 7, 64bit   |Intel Core i7 3770 3.4GHz (4 cores, 8 threads)               | 16 GB |
-|Slave2          |Windows 7, 64bit   |Intel Core i7 3770 3.4GHz (4 cores, 8 threads)               | 16 GB |
-|Slave3          |Windows 7, 64bit   |Intel Core i7 3770 3.4GHz (4 cores, 8 threads)               | 16 GB |
-|Slave4          |Windows 7, 64bit   |Intel Core i7 3770 3.4GHz (4 cores, 8 threads)               | 16 GB | 
+|Machine Name    | Installed OS      |Processor                                                 | Memory |
+|----------------|-------------------|----------------------------------------------------------|--------|
+|Database server | Windows ?, 64-bit |Intel Core i7-3740QM Processor (6M Cache, up to 3.70 GHz) | 8 GB   |         
+|Master          |Windows 7, 64bit   |Intel Core i7 3770 3.4GHz (4 cores, 8 threads)            | 16 GB  |
+|Slave1          |Windows 7, 64bit   |Intel Core i7 3770 3.4GHz (4 cores, 8 threads)            | 16 GB  |
+|Slave2          |Windows 7, 64bit   |Intel Core i7 3770 3.4GHz (4 cores, 8 threads)            | 16 GB  |
+|Slave3          |Windows 7, 64bit   |Intel Core i7 3770 3.4GHz (4 cores, 8 threads)            | 16 GB  |
+|Slave4          |Windows 7, 64bit   |Intel Core i7 3770 3.4GHz (4 cores, 8 threads)            | 16 GB  | 
