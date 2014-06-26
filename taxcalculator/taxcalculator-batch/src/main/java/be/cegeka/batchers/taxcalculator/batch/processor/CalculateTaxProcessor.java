@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.listener.StepExecutionListenerSupport;
+import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,11 +44,14 @@ public class CalculateTaxProcessor extends StepExecutionListenerSupport implemen
     }
 
     private String getPartitionIfExists() {
-        Object partitionObject = stepExecution.getExecutionContext().get("partition");
-        if (partitionObject != null) {
-            Long partition = (Long) partitionObject;
-            if (partition != null) {
-                return " Partition " + partition;
+        ExecutionContext executionContext = stepExecution.getExecutionContext();
+        if (executionContext != null) {
+            Object partitionObject = executionContext.get("partition");
+            if (partitionObject != null) {
+                Long partition = (Long) partitionObject;
+                if (partition != null) {
+                    return " Partition " + partition;
+                }
             }
         }
         return "";
