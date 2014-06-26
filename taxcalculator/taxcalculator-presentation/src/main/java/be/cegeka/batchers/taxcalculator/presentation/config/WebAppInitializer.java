@@ -1,6 +1,5 @@
 package be.cegeka.batchers.taxcalculator.presentation.config;
 
-import be.cegeka.batchers.taxcalculator.infrastructure.config.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.WebApplicationInitializer;
