@@ -43,7 +43,6 @@ public class EmployeeJobConfigMaster extends AbstractEmployeeJobConfig {
     private JobStatusListener jobStatusListener;
     @Autowired
     private ChangeStatusOnFailedStepsJobExecListener changeStatusOnFailedStepsJobExecListener;
-
     @Autowired
     private ClusterConfig clusterConfig;
     @Autowired
