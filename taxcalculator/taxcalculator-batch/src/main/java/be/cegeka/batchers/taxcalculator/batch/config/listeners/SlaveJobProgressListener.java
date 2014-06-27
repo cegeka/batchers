@@ -24,11 +24,21 @@ public class SlaveJobProgressListener implements JobProgressListener {
     private JobStartParams jobStartParams;
     private String stepName;
 
+    @Override
+    public void beforeWrite(List items) {
+
+    }
+
     @AfterWrite
     public void afterWrite(List items) {
         int itemsDone = items.size();
         JobProgressEvent jobProgressEvent = new JobProgressEvent(jobStartParams, stepName, itemsDone);
         clusterConfig.jobProgressEventsTopic().publish(jobProgressEvent);
+    }
+
+    @Override
+    public void onWriteError(Exception exception, List items) {
+
     }
 
     @Override

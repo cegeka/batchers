@@ -8,7 +8,6 @@ import com.google.common.eventbus.EventBus;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.annotation.AfterStep;
-import org.springframework.batch.core.annotation.AfterWrite;
 import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,12 +57,21 @@ public class SingleJVMJobProgressListener implements JobProgressListener {
         return null;
     }
 
-    @AfterWrite
+    @Override
+    public void beforeWrite(List items) {
+
+    }
+
     public void afterWrite(List items) {
         currentItemCount.addAndGet(items.size());
         int percentageComplete = currentItemCount.intValue() * 100 / totalItemCount;
 
         sentUpdateIfNeeded(percentageComplete);
+    }
+
+    @Override
+    public void onWriteError(Exception exception, List items) {
+
     }
 
     private synchronized void sentUpdateIfNeeded(int percentageComplete) {
