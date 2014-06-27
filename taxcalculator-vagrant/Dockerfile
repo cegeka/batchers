@@ -38,7 +38,6 @@ WORKDIR /
 ENV PATH "/root/.local/bin:/root/.ndenv/bin:/root/.ndenv/shims:/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/lib/jvm/java-8-oracle/bin"
 RUN karma --version
 
-RUN echo "Cloning batchers"
 RUN git clone https://github.com/cegeka/batchers.git
 
 WORKDIR /batchers/taxcalculator

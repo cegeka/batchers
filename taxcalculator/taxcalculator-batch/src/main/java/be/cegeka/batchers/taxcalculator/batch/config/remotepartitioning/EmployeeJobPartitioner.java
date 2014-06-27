@@ -43,6 +43,7 @@ public class EmployeeJobPartitioner implements Partitioner {
             ExecutionContext value = new ExecutionContext();
             value.putLong("minValue", employeeIds.get(index));
             value.putLong("maxValue", employeeIds.get(Math.min(index + targetSize - 1, size - 1)));
+            value.putLong("partition", partitionNumber);
             result.put("partition" + partitionNumber, value);
         }
 

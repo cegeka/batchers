@@ -13,5 +13,6 @@ if [ -f /tmp/hosts ]; then
 fi
 
 # delete the line containing batchersmaster in $HOSTS_FILE
+sed -i '/batchersmaster/d' $HOSTS_FILE
 echo "setting batchersmaster to $BATCHERS_MASTER_IP in $HOSTS_FILE"
 echo "$BATCHERS_MASTER_IP     batchersmaster" | tee -a $HOSTS_FILE

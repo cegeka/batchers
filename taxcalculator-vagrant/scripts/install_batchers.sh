@@ -2,7 +2,7 @@
 set -e
 
 #move somewhere generic
-export DISPLAY=:10
+if [ -f /etc/profile.d/batchers.sh ]; then source /etc/profile.d/batchers.sh ;fi
 export PATH="/home/vagrant/.local/bin:/home/vagrant/.ndenv/shims:/home/vagrant/.ndenv/bin/:$PATH"
 
 cd $HOME
