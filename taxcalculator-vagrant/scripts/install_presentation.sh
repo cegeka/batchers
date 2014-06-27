@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-export DISPLAY=:10
+source /etc/profile.d/batchers.sh
 
 tar -xf apache-tomcat-7.0.54.tar.gz
 
@@ -11,6 +11,14 @@ tar --strip-components 1 -C apache-tomcat-7.0.54-presentation -xzf apache-tomcat
 
 #change tomcat port form 8080 to 9090
 sed -i 's/"8080"/"9090"/g' apache-tomcat-7.0.54-presentation/conf/server.xml
+
+sed -i '/<Environment/d' apache-tomcat-7.0.54-presentation/conf/context.xml
+sed -i '/<\/Context>/d' apache-tomcat-7.0.54-presentation/conf/context.xml
+echo "<Environment name=\"smtp_server\" value=\"$SMTP_SERVER\" type=\"java.lang.String\" />
+<Environment name=\"smtp_port\" value=\"$SMTP_PORT\" type=\"java.lang.String\" />
+<Environment name=\"smtp_username\" value=\"$SMTP_USERNAME\" type=\"java.lang.String\" />
+<Environment name=\"smtp_password\" value=\"$SMTP_PASSWORD\" type=\"java.lang.String\" />
+</Context>" | tee -a apache-tomcat-7.0.54-presentation/conf/context.xml
 
 rm -rf apache-tomcat-7.0.54-presentation/webapps/taxcalculator*
 cp batchers/taxcalculator/taxcalculator-presentation/target/taxcalculator-presentation-1.0-SNAPSHOT.war apache-tomcat-7.0.54-presentation/webapps/taxcalculator.war
