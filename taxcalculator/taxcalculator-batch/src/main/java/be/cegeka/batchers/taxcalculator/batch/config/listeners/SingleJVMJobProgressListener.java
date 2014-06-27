@@ -58,11 +58,6 @@ public class SingleJVMJobProgressListener implements JobProgressListener {
         return null;
     }
 
-    @Override
-    public void beforeWrite(List items) {
-    }
-
-    @Override
     @AfterWrite
     public void afterWrite(List items) {
         currentItemCount.addAndGet(items.size());
@@ -78,8 +73,4 @@ public class SingleJVMJobProgressListener implements JobProgressListener {
         }
     }
 
-    @Override
-    public void onWriteError(Exception exception, List items) {
-
-    }
 }
