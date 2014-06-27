@@ -5,7 +5,7 @@ set -e
 apt-get install firefox xvfb -y
 
 # configure display for e2e
-export DISPLAY=:10
+if [ -f /etc/profile.d/batchers.sh ]; then source /etc/profile.d/batchers.sh ;fi
 
 # find existing xvfb process
 export XVFB_PID=$(pidof /usr/bin/Xvfb)

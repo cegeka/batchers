@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-export DISPLAY=:10
+if [ -f /etc/profile.d/batchers.sh ]; then source /etc/profile.d/batchers.sh ;fi
 
 # unarchive tomcat
 tar -xf apache-tomcat-7.0.54.tar.gz

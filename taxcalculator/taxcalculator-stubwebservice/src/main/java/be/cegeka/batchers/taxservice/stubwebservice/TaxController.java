@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletResponse;
+
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 public class TaxController {
@@ -23,9 +26,9 @@ public class TaxController {
     public static final String EMPLOYEE_ID = "employeeId";
     public static final String AMOUNT = "amount";
     @Autowired
-    TextFileTaxLogger taxLogger;
+    private TextFileTaxLogger taxLogger;
     @Autowired
-    SpecialEmployeesService specialEmployeesService;
+    private SpecialEmployeesService specialEmployeesService;
 
     @RequestMapping(value = "/taxservice", method = POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -44,6 +47,14 @@ public class TaxController {
         }
     }
 
+    @RequestMapping(value = "/taxservice", method = GET)
+    @ResponseBody
+    public String getWebServiceLog(HttpServletResponse response) {
+        response.setContentType("text/plain");
+        response.setCharacterEncoding("UTF-8");
+        return taxLogger.getLogs();
+    }
+
     private boolean isNotValid(JsonNode jsonNode) {
         return !(jsonNode.hasNonNull(EMPLOYEE_ID) && jsonNode.hasNonNull(AMOUNT));
     }
@@ -51,6 +62,7 @@ public class TaxController {
     @RequestMapping(value = "/reset", method = POST)
     public ResponseEntity resetSpecialEmployeesService() {
         specialEmployeesService.reset();
+        taxLogger.clear();
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

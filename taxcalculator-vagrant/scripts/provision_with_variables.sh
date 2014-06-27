@@ -6,6 +6,12 @@ echo "$USER BATCHERS_MASTER_IP is $BATCHERS_MASTER_IP"
 
 echo "export BATCHERS_PROFILE=$BATCHERS_PROFILE" | tee /etc/profile.d/batchers.sh
 echo "export BATCHERS_MASTER_IP=$BATCHERS_MASTER_IP" | tee -a /etc/profile.d/batchers.sh
+echo "export DISPLAY=:10" | tee -a /etc/profile.d/batchers.sh
+
+echo "export SMTP_SERVER=smtp.googlemail.com" | tee -a /etc/profile.d/batchers.sh
+echo "export SMTP_PORT=465" | tee -a /etc/profile.d/batchers.sh
+echo "export SMTP_USERNAME=john.batchers" | tee -a /etc/profile.d/batchers.sh
+echo "export SMTP_PASSWORD=taxcalculator" | tee -a /etc/profile.d/batchers.sh
 
 chmod +x /etc/profile.d/batchers.sh
 
