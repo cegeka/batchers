@@ -47,7 +47,7 @@ Here, we do the performance measurements once with 2 slaves and once with 4 slav
 | Multi JVM, single threaded - 2 slaves | 10:00        |
 | Multi JVM, single threaded - 4 slaves | 5:30         |        
 | Multi JVM, multi threaded - 2 slaves  | 3:00         |
-| Multi JVM, multi threaded - 4 slaves  | TODO:        |
+| Multi JVM, multi threaded - 4 slaves  | 2:05         |
         
 ###Hardware
 |Machine Name    | Installed OS      |Processor                                                 | Memory |
