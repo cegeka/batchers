@@ -127,8 +127,8 @@ $sshiinsecurekeyroot 172.17.0.4
 root@a119f7a6d242:~#
 ```
 
-Feel free to fork my dotfiles or write your won for managing Docker, just don't be intimidated by the long parameters that Docker requires.
+Feel free to fork [my dotfiles](https://github.com/andreicristianpetcu/dotfiles) or write your won functions for managing Docker, just don't be intimidated by the long parameters that Docker requires.
 
 
 ## Docker final verdict
-Ok so there are some limitations with working with Docker but still it is an excelent tool, it has lots of startups that base their work on Docker and the big companies have been using it since before it was considered "stable" by it's developers. 
+Ok so there are some limitations with working with Docker but still it is an excellent tool, it has lots of startups that base their work on Docker and the big companies have been using it since before it was considered "stable" by it's developers. We really like it and we will probably use it in the future.
