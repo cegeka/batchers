@@ -27,7 +27,7 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
 ```
 
 ## The Controller
-The [controller](https://github.com/cegeka/batchers/blob/master/taxcalculator/taxcalculator-presentation/src/main/java/be/cegeka/batchers/taxcalculator/presentation/websockets/WebSocketController.java#L25-L28) actually sends messages using a [MessageSendingOperations](https://github.com/spring-projects/spring-framework/blob/master/spring-messaging/src/main/java/org/springframework/messaging/core/MessageSendingOperations.java). The [@Subscribe](https://github.com/Noia/guava-libraries/blob/master/guava/src/com/google/common/eventbus/Subscribe.java) annotation is part of Google's EventBus and we use it to pass messages internally in our application:
+The [controller](https://github.com/cegeka/batchers/blob/master/taxcalculator/taxcalculator-presentation/src/main/java/be/cegeka/batchers/taxcalculator/presentation/websockets/WebSocketController.java#L25-L28) actually sends messages using a [MessageSendingOperations](https://github.com/spring-projects/spring-framework/blob/master/spring-messaging/src/main/java/org/springframework/messaging/core/MessageSendingOperations.java#L33). The [@Subscribe](https://github.com/Noia/guava-libraries/blob/master/guava/src/com/google/common/eventbus/Subscribe.java#L45) annotation is part of Google's EventBus and we use it to pass messages internally in our application:
 
 ```Java
 @Controller
