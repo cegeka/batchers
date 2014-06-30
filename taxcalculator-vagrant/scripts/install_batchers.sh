@@ -10,7 +10,7 @@ rm -rf batchers
 git clone https://github.com/cegeka/batchers.git
 cd $HOME/batchers/taxcalculator
 # check out stable version
-git checkout e31ab8f
+git checkout d35241f
 mvn clean install
 
 cd taxcalculator-presentation
