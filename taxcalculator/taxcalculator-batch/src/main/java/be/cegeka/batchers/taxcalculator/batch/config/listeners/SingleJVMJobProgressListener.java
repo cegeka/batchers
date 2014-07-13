@@ -52,6 +52,21 @@ public class SingleJVMJobProgressListener implements JobProgressListener {
     }
 
     @Override
+    public void afterWrite(List items) {
+        currentItemCount.addAndGet(items.size());
+        int percentageComplete = currentItemCount.intValue() * 100 / totalItemCount;
+
+        sentUpdateIfNeeded(percentageComplete);
+    }
+
+    private synchronized void sentUpdateIfNeeded(int percentageComplete) {
+        if (percentageComplete > lastPercentageComplete.get()) {
+            lastPercentageComplete = new AtomicInteger(percentageComplete);
+            eventBus.post(new JobProgressEvent(jobStartParams, stepName, lastPercentageComplete.intValue()));
+        }
+    }
+
+    @Override
     @AfterStep
     public ExitStatus afterStep(StepExecution stepExecution) {
         return null;
@@ -62,23 +77,10 @@ public class SingleJVMJobProgressListener implements JobProgressListener {
 
     }
 
-    public void afterWrite(List items) {
-        currentItemCount.addAndGet(items.size());
-        int percentageComplete = currentItemCount.intValue() * 100 / totalItemCount;
-
-        sentUpdateIfNeeded(percentageComplete);
-    }
-
     @Override
     public void onWriteError(Exception exception, List items) {
 
     }
 
-    private synchronized void sentUpdateIfNeeded(int percentageComplete) {
-        if (percentageComplete > lastPercentageComplete.get()) {
-            lastPercentageComplete = new AtomicInteger(percentageComplete);
-            eventBus.post(new JobProgressEvent(jobStartParams, stepName, lastPercentageComplete.intValue()));
-        }
-    }
 
 }

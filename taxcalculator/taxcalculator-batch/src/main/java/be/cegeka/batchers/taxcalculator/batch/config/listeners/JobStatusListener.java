@@ -1,6 +1,6 @@
 package be.cegeka.batchers.taxcalculator.batch.config.listeners;
 
-import be.cegeka.batchers.taxcalculator.batch.api.events.JobEvent;
+import be.cegeka.batchers.taxcalculator.batch.api.events.JobStatusEvent;
 import be.cegeka.batchers.taxcalculator.batch.domain.JobStartParams;
 import be.cegeka.batchers.taxcalculator.batch.mapping.JobStartParamsMapper;
 import com.google.common.eventbus.EventBus;
@@ -27,7 +27,7 @@ public class JobStatusListener extends JobExecutionListenerSupport {
 
     private void sendJobStatus(JobExecution jobExecution) {
         JobStartParams jobStartParams = new JobStartParamsMapper().map(jobExecution.getJobParameters());
-        eventBus.post(new JobEvent(jobStartParams, jobExecution.getStatus().name()));
+        eventBus.post(new JobStatusEvent(jobStartParams, jobExecution.getStatus().name()));
     }
 
 }

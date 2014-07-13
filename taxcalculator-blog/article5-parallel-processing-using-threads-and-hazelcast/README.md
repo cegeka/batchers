@@ -1,28 +1,30 @@
-# Parallel processing
+# Parallel processing with Spring Batch and HazelCast
 
-In our application we take two approaces to achieve this with Spring Batch:
+So, we now know how long a job takes and we want to speed things up. In our application we take two approaces to increase our performance with Spring Batch:
 
 ## 1. Parallel chunks processing
-
+Thanks to parallel processing, several chunks can be executed in parallel on the server. When 
 In the definition of a step we provide a __TaskExecutor__ that will carry on executing the processor for each chunk.
 
 This is an example of definition of a TaskExecutor that uses multiple threads:
 ```java
-@Configuration
-@Profile("!test")
-public class TaskExecutorConfig {
 
-    @Bean
-    public TaskExecutor taskExecutor() {
-        return new SimpleAsyncTaskExecutor();
-    }
-}
+	@Configuration
+	@Profile("!test")
+	public class TaskExecutorConfig {
+	
+	    @Bean
+	    public TaskExecutor taskExecutor() {
+	        return new SimpleAsyncTaskExecutor();
+	    }
+	}
 ```
 
 And a definition of a step that configures the TaskExecutor:
 
 ```java
- @Autowired
+
+ 	@Autowired
     private TaskExecutor taskExecutor;
 
     protected Step taxCalculationStep(String stepName) {
@@ -41,7 +43,7 @@ And a definition of a step that configures the TaskExecutor:
 
 ## 2. Remote partitioning
 
-Using this approach allows us to make use of processing power of a cluster of machines.
+Thanks to Remote Partitioning, we can harvest the processing power of a cluster of machines.
 
 This setup implies defining a master configuration and a number of slaves.
 We are using Spring Profiles to have two profiles for this setup: __remotePartitioningMaster__ and __remotePartitioningSlave__
@@ -128,7 +130,8 @@ In our master configuration we have defined a step that uses partitioning with a
 The important part here is the method that is annotated with __@ServiceActivator__ and a proxy is created and each time a new request is pushed the StepExecutionRequestHandler's __handle__ method is invoked.
 
 ```java
-  @Bean
+
+	@Bean
     @ServiceActivator(inputChannel = "inboundRequests", outputChannel = "outboundResults",
             poller = @Poller(maxMessagesPerPoll = "5", fixedDelay = "10000"))
     public StepExecutionRequestHandler stepExecutionRequestHandler() throws Exception {
