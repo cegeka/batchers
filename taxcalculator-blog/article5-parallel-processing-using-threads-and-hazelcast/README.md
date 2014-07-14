@@ -1,12 +1,12 @@
-# Parallel processing with Spring Batch and HazelCast
+# Parallel and distributed processing with Spring Batch and HazelCast
 
-So, we now know how long a job takes and we want to speed things up. In our application we take two approaces to increase our performance with Spring Batch:
+In our TaxCalculator application we now know how long a job takes. And it's time to speed things up. In our application we take two approaches to increase our performance with Spring Batch, parallel processing and remote partitioning using HazelCast:
 
 ## 1. Parallel chunks processing
-Thanks to parallel processing, several chunks can be executed in parallel on the server. When 
-In the definition of a step we provide a __TaskExecutor__ that will carry on executing the processor for each chunk.
+Thanks to parallel processing, several chunks can be executed in parallel on the server. In the definition of a step we provide a __TaskExecutor__. In our tests, we off course provide a __SyncTaskExecutor__ but that doesn't help in production for increasing the performance. Spring provides the __SimpleAsyncTaskExecutor__ out-of-the-box which does alle the heavy lifting for us.
 
-This is an example of definition of a TaskExecutor that uses multiple threads:
+Here we create a _TaskExecutor_ that uses multiple threads:
+
 ```java
 
 	@Configuration
@@ -20,7 +20,7 @@ This is an example of definition of a TaskExecutor that uses multiple threads:
 	}
 ```
 
-And a definition of a step that configures the TaskExecutor:
+And in the definition of a step we use that _TaskExecutor_:
 
 ```java
 
@@ -41,47 +41,51 @@ And a definition of a step that configures the TaskExecutor:
     }
 ```	
 
-## 2. Remote partitioning
+## 2. Remote partitioning with HazelCast
+But, things aren't fast enough just yet. And thanks to remote partitioning, we can harvest the processing power of a cluster of machines. Spring supports this out-of-the-box thanks to AMQP and RabbitMQ... but it's horrible to setup and there are not a lot of examples out there yet on how to do it in pure JavaConfig. After having lost almost lost three days, we gave up on the integration of Spring Batch with RabbitMQ for remote partitioning.
 
-Thanks to Remote Partitioning, we can harvest the processing power of a cluster of machines.
+But, no worries, HazelCast to the rescue! HazelCast is an in-memory data grid with some other features like a distributed queue. Integrating HazelCast with Spring Batch went like a breeze and we have the added benefit that we don't have to setup RabbitMQ. 
 
-This setup implies defining a master configuration and a number of slaves.
-We are using Spring Profiles to have two profiles for this setup: __remotePartitioningMaster__ and __remotePartitioningSlave__
-For launching a master configuration we pass as jvm parameter: -Dspring.profiles.active=remotePartitioningMaster. Similar for the slaves.
+So, how do we integrate HazelCast with Spring Batch? We will use the Master-Slave Pattern where the master will distribute the work and the slaves will process the work provided by the master.
 
-### Master configuration
+But first, we create a special Spring Configuration which defines everything related to HazelCast.
 
-Has the responsibility of creating and sending partitions over a communication channel to a queue where the slaves are listening.
-In other projects we saw communication been done using Spring's AmqpTemplate with RabbitMQ but the configuration is rather complicated
-so we are using instead HazelCast. 
-
-HazelCast requires no configuration, it works out of the box.
-We keep cluster related definitions in this configuration class:
 ```java
-@Configuration
-@Profile(value = {"remotePartitioningMaster", "remotePartitioningSlave", "testRemotePartitioning"})
-public class ClusterConfig {
-    public int getClusterSize() { 
-        return hazelcastInstance().getCluster().getMembers().size();
-    }
-    @Bean
-    public BlockingQueue<Message<?>> requests() {
-        return hazelcastInstance().getQueue("requests");
-    }
-    @Bean
-    public BlockingQueue<Message<?>> results() {
-        return hazelcastInstance().getQueue("results");
-    }   
-    @Bean
-    public HazelcastInstance hazelcastInstance() {
-        Config cfg = new Config();
-        HazelcastInstance hz = Hazelcast.newHazelcastInstance(cfg);
-        return hz;
-    }
+
+	@Configuration
+	@Profile(value = {"remotePartitioningMaster", "remotePartitioningSlave", "testRemotePartitioning"})
+	public class ClusterConfig {
+	    public int getClusterSize() { 
+	        return hazelcastInstance().getCluster().getMembers().size();
+	    }
+	    @Bean
+	    public BlockingQueue<Message<?>> requests() {
+	        return hazelcastInstance().getQueue("requests");
+	    }
+	    @Bean
+	    public BlockingQueue<Message<?>> results() {
+	        return hazelcastInstance().getQueue("results");
+	    }   
+	    @Bean
+	    public HazelcastInstance hazelcastInstance() {
+	        Config cfg = new Config();
+	        HazelcastInstance hz = Hazelcast.newHazelcastInstance(cfg);
+	        return hz;
+	    }
+	}
 ```
 
-In our master configuration we have defined a step that uses partitioning with a partitioner and a partitionHandler defined below:
+The master has the responsibility of creating and sending partitions over a communication channel to a queue where the slaves are listening. Since the communication channel can be a __BlockingQueue__, we can use the distributed queue from HazelCast. In this config, we define two queue's: the _requests_ queue on which the Master will distribute the work and the _results_ queue on which slaves signal that an item is processed.
+
+
+To enable the Master-Slave setup, we are using Spring Profiles: __remotePartitioningMaster__ and __remotePartitioningSlave__
+For launching a master configuration we pass as jvm parameter: ```-Dspring.profiles.active=remotePartitioningMaster```. Similar for the slaves.
+
+### Master configuration
+In our master configuration, [EmployeeJobConfigMaster](https://github.com/cegeka/batchers/blob/master/taxcalculator/taxcalculator-batch/src/main/java/be/cegeka/batchers/taxcalculator/batch/config/remotepartitioning/EmployeeJobConfigMaster.java), we define a step that does the partitioning using a partitioner and a partitionHandler defined below:
+
 ```java
+
     @Bean
     public Step taxCalculationStep() {
         return stepBuilders
@@ -125,9 +129,18 @@ In our master configuration we have defined a step that uses partitioning with a
     public QueueChannel inboundResults() {
         return new QueueChannel(clusterConfig.results());
     }
+
+	@Bean
+    public QueueChannel replyChannel() {
+        return new QueueChannel();
+    }
 ```
+
+The master automatically takes into account how many slaves there are thanks to the _clusterConfig.getClusterSize()_ method so it can optimize the workload. Do not forget to annotate the _EmployeeJobConfigMaster_ class with __@EnableIntegration__ annotation so that Spring knows it must process the annotations like @__Aggregator__.
+
+
 ### Slave configuration
-The important part here is the method that is annotated with __@ServiceActivator__ and a proxy is created and each time a new request is pushed the StepExecutionRequestHandler's __handle__ method is invoked.
+Our slave configuration, [EmployeeJobConfigSlave](https://github.com/cegeka/batchers/blob/master/taxcalculator/taxcalculator-batch/src/main/java/be/cegeka/batchers/taxcalculator/batch/config/remotepartitioning/EmployeeJobConfigSlave.java) is also annotated with the annotation __@EnableIntegration__ and allows us to use the __@ServiceActivator__. The method annotated with the __@ServiceActivator__, takes in the work from the _inboudRequests_ queue provided by the master, processes it and then signals on the _outboundResults_ queue that the work is done.
 
 ```java
 
@@ -161,31 +174,4 @@ The important part here is the method that is annotated with __@ServiceActivator
         return new QueueChannel(clusterConfig.results());
     }
 ```
-
-For keeping track of the progress done from each slave we push to a HazelCast topic the number of items written:
-
-```java
-public class JobProgressListener extends StepExecutionListener, ItemWriteListener {}
-public class SlaveJobProgressListener implements JobProgressListener {
-    @Autowired
-    private ClusterConfig clusterConfig;
-	
-	@Override
-    @BeforeStep
-    public void beforeStep(StepExecution stepExecution) {
-        jobStartParams = new JobStartParamsMapper().map(stepExecution.getJobParameters());
-        stepName = stepExecution.getStepName();
-    }
-	
-    @Override
-    @AfterWrite
-    public void afterWrite(List items) {
-        int itemsDone = items.size();
-        JobProgressEvent jobProgressEvent = new JobProgressEvent(jobStartParams, stepName, itemsDone);
-        clusterConfig.jobProgressEventsTopic().publish(jobProgressEvent);
-	}
-```
-We set this listener on the step that we have a partitioner and all is good.
-On the master configuration we simple listen on the same topic and hazelcast takes care of the rest for us.
-
-See you next time when we discuss deployment with __Vagrant__ !
+And that's it! Integrating Spring Batch with HazelCast is easy-peasy and results in less code and in easier configuration and installation. We recommend this setup instead of using the Spring preferred way with RabbitMQ. 
