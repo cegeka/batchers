@@ -3,6 +3,7 @@ set -e
 
 # install firefox xvfb for e2e headless tests
 apt-get install firefox chromium-browser xvfb -y
+rm -rf /usr/bin/chrome && ln -s /usr/bin/chromium-browser /usr/bin/chrome
 
 # configure display for e2e
 if [ -f /etc/profile.d/batchers.sh ]; then source /etc/profile.d/batchers.sh ;fi
