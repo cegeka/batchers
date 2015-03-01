@@ -1,7 +1,7 @@
 package be.cegeka.batchers.taxcalculator.batch.config.remotepartitioning;
 
 import be.cegeka.batchers.taxcalculator.application.service.EmployeeService;
-import be.cegeka.batchers.taxcalculator.batch.api.events.JobEvent;
+import be.cegeka.batchers.taxcalculator.batch.api.events.JobStatusEvent;
 import be.cegeka.batchers.taxcalculator.batch.api.events.JobProgressEvent;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -37,7 +37,7 @@ public class JobProgressNotifier implements MessageListener<JobProgressEvent> {
     }
 
     @Subscribe
-    public void onJobEvent(JobEvent jobProgressEvent) {
+    public void onJobEvent(JobStatusEvent jobProgressEvent) {
         if (jobProgressEvent.getStatus() == BatchStatus.STARTED.name()) {
             employeeCount = employeeService.getEmployeeCount();
             progressCount = new AtomicInteger(0);

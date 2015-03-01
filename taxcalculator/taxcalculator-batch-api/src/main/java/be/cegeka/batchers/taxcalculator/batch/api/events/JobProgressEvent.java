@@ -4,7 +4,7 @@ import be.cegeka.batchers.taxcalculator.batch.domain.JobStartParams;
 
 import java.io.Serializable;
 
-public class JobProgressEvent implements Serializable {
+public class JobProgressEvent implements JobEvent {
 
     private JobStartParams jobStartParams;
     private String stepName;
