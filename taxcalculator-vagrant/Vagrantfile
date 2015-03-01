@@ -15,6 +15,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision "file", source: "scripts", destination: "scripts"
   config.vm.provision "shell", path: "provision.sh"
 
+  config.vm.synced_folder "../../batchers", "/vagrant"
+
   # add default master IP for slave if it is not present
   batchers_master_ip=ENV['BATCHERS_MASTER_IP'] || "192.168.50.4"
 
