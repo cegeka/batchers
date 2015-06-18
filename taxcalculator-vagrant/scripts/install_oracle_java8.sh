@@ -9,4 +9,4 @@ sudo apt-get install oracle-java8-installer -y --force-yes
 # do not install maven before java because it will install openjdk7
 sudo apt-get install maven -y
 # set java8 as default
-sudo apt-get install oracle-java8-set-default -y
+sudo apt-get install oracle-java8-set-default -y --force-yes
